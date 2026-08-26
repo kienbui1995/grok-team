@@ -132,18 +132,20 @@ export function parseSoftwareTeamPipelineItem(
   const id = typeof rec.id === "string" ? rec.id.trim() : "";
   const roleRaw = typeof rec.roleId === "string" ? rec.roleId : null;
   if (!id || !isSoftwareTeamRoleId(roleRaw)) return null;
+  const stageRaw = typeof rec.stageId === "string" ? rec.stageId : null;
+  const sourceRaw =
+    typeof rec.stageSource === "string" ? rec.stageSource : null;
   return createSoftwareTeamPipelineItem({
     id,
     sessionId: typeof rec.sessionId === "string" ? rec.sessionId : "",
     roleId: roleRaw,
-    stageId: typeof rec.stageId === "string" ? rec.stageId : undefined,
+    stageId: isSoftwareTeamSdlcStageId(stageRaw) ? stageRaw : undefined,
     title: typeof rec.title === "string" ? rec.title : "",
     planRef: typeof rec.planRef === "string" ? rec.planRef : "",
     goalRef: typeof rec.goalRef === "string" ? rec.goalRef : "",
     artifactRef: typeof rec.artifactRef === "string" ? rec.artifactRef : "",
     updatedAt: typeof rec.updatedAt === "number" ? rec.updatedAt : undefined,
-    stageSource:
-      typeof rec.stageSource === "string" ? rec.stageSource : undefined,
+    stageSource: isSoftwareTeamStageSource(sourceRaw) ? sourceRaw : undefined,
   });
 }
 
