@@ -1,8 +1,9 @@
 /**
- * Settings → Extensions → Agents: Software Team DLC enable + roster.
+ * Settings → Extensions → Agents: Software Works edition toggle.
+ * Roster / board / handoff live in SDLC Studio (Agents pane), not here.
  */
 
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { createT, type Locale, type MessageKey } from "@/i18n";
 import { UiSwitch } from "@/components/settings/shared";
 import { useSettingsModel } from "@/providers/SettingsModelContext";
@@ -10,39 +11,12 @@ import { useSoftwareTeamDlcPref } from "@/hooks/useSoftwareTeamDlc";
 import {
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGES,
-  kanbanColumnSdlcAliasKey,
   planSoftwareTeamDlcPackWrite,
   softwareTeamDlcPackManifest,
   softwareTeamRoleSlashHint,
-  softwareTeamRoleStarterPrompt,
 } from "@/lib/softwareTeamDlc";
 
 type TFn = (key: MessageKey, vars?: Record<string, string | number>) => string;
-
-async function copyText(text: string): Promise<boolean> {
-  try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-  } catch {
-    /* fall through */
-  }
-  try {
-    const el = document.createElement("textarea");
-    el.value = text;
-    el.setAttribute("readonly", "");
-    el.style.position = "fixed";
-    el.style.left = "-9999px";
-    document.body.appendChild(el);
-    el.select();
-    const ok = document.execCommand("copy");
-    document.body.removeChild(el);
-    return ok;
-  } catch {
-    return false;
-  }
-}
 
 export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
   const tr = useMemo(() => createT(locale), [locale]);
@@ -51,8 +25,6 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
   const settings = useSettingsModel();
   const sessionDataMode = String(settings.sessionDataMode ?? "shared");
   const projectPath = settings.projectPath ?? null;
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [copyError, setCopyError] = useState(false);
 
   const sharedUserPlan = planSoftwareTeamDlcPackWrite({
     sessionDataMode,
@@ -64,15 +36,6 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
     projectPath,
   });
   const manifest = softwareTeamDlcPackManifest();
-
-  const onCopy = useCallback(
-    async (roleId: (typeof SOFTWARE_TEAM_ROLES)[number]["id"]) => {
-      const ok = await copyText(softwareTeamRoleStarterPrompt(roleId));
-      setCopyError(!ok);
-      setCopiedId(ok ? roleId : null);
-    },
-    [],
-  );
 
   return (
     <section
@@ -117,6 +80,7 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
 
       {enabled ? (
         <>
+          <p className="ext-ref-block__lead">{t("softwareTeamDlc.openStudio")}</p>
           <div className="ext-ref-section-label">{t("softwareTeamDlc.rosterTitle")}</div>
           <p className="ext-ref-block__lead">{t("softwareTeamDlc.rosterHint")}</p>
           <ul className="software-team-dlc__roster" role="list">
@@ -131,23 +95,9 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
                   </span>
                 </div>
                 <p className="software-team-dlc__role-desc">{t(role.descKey)}</p>
-                <button
-                  type="button"
-                  className="btn btn--ghost btn--sm"
-                  onClick={() => void onCopy(role.id)}
-                >
-                  {copiedId === role.id
-                    ? t("softwareTeamDlc.copied")
-                    : t("softwareTeamDlc.copyStarter")}
-                </button>
               </li>
             ))}
           </ul>
-          {copyError ? (
-            <p className="ext-ref-block__lead" role="status">
-              {t("softwareTeamDlc.copyFailed")}
-            </p>
-          ) : null}
 
           <div className="ext-ref-section-label">{t("softwareTeamDlc.sdlcTitle")}</div>
           <p className="ext-ref-block__lead">{t("softwareTeamDlc.sdlcHint")}</p>
@@ -155,10 +105,6 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
             {SOFTWARE_TEAM_SDLC_STAGES.map((stage) => (
               <li key={stage.id}>
                 <strong>{t(stage.titleKey)}</strong>
-                <span>
-                  {" → "}
-                  {t(kanbanColumnSdlcAliasKey(stage.kanbanColumn))}
-                </span>
               </li>
             ))}
           </ul>

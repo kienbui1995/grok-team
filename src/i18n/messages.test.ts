@@ -214,6 +214,9 @@ describe("i18n catalog", () => {
       ["fileCard.code", ["{ext}"]],
       ["settings.autoUpdateConfirm.message", ["{version}"]],
       ["softwareTeamDlc.slashHint", ["{slash}"]],
+      ["softwareTeamDlc.handoffTo", ["{role}"]],
+      ["softwareTeamDlc.moveStage", ["{stage}"]],
+      ["softwareTeamDlc.roleOnStage", ["{role}", "{stage}"]],
     ];
     for (const loc of LOCALES) {
       for (const [key, vars] of cases) {

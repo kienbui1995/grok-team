@@ -1,14 +1,19 @@
-/** fil messages — domain: Software Team DLC (opt-in workspace pack) */
+/** fil messages — domain: Software Works / SDLC Studio */
 export const filSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "Software Team DLC",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "I-enable ang Software Team DLC",
-  "softwareTeamDlc.enableDesc": "Opsyonal na workspace pack: mga role ng AI team at alias ng SDLC sa existing Agent Kanban. Naka-off by default. Hindi nire-rebrand ang app at hindi nagla-launch ng extra CLI agents.",
-  "softwareTeamDlc.optInNote": "Ito ay downloadable-content mode para sa Grok Build — hindi pangalawang agent runtime.",
-  "softwareTeamDlc.noSkinAutoApply": "Hindi kailanman awtomatikong ina-apply ang appearance skins. Pumili ng .grokskin sa Settings → Appearance kung gusto mo.",
-  "softwareTeamDlc.sharedHomeNote": "Hindi sinusulat muli ang shared session data (GROK_HOME=~/.grok). Nananatili sa app ang presets hangga't hindi mo i-install sa project o Independent agent-home.",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "I-enable ang Software Works",
+  "softwareTeamDlc.enableDesc":
+    "Kapag naka-on, ang pane ng Agents ay SDLC studio: roster, pipeline board, at role handoff sa Grok Build. Naka-off by default. Hindi nire-rebrand ang app habang naka-off at hindi nagla-launch ng extra CLI agents.",
+  "softwareTeamDlc.optInNote":
+    "Ang Software Works ay ang software-delivery edition para sa Grok Build — hindi pangalawang agent runtime.",
+  "softwareTeamDlc.noSkinAutoApply":
+    "Hindi kailanman awtomatikong ina-apply ang appearance skins. Pumili ng .grokskin sa Settings → Appearance kung gusto mo.",
+  "softwareTeamDlc.sharedHomeNote":
+    "Hindi sinusulat muli ang shared session data (GROK_HOME=~/.grok). Nananatili sa app ang presets hangga't hindi mo i-install sa project o Independent agent-home.",
   "softwareTeamDlc.rosterTitle": "Roster ng team",
-  "softwareTeamDlc.rosterHint": "Isang Grok Build session bawat role. Kopyahin ang starter sa composer, o i-tag ang Kanban card. Gamitin ang attach-chat kapag kailangan ng context ng ibang session.",
+  "softwareTeamDlc.rosterHint":
+    "Isang Grok Build session bawat role. I-bind ang session sa studio board. Ang handoff ay nagpapasulong ng susunod na role at kumokopya ng starter.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Scope, acceptance, at backlog. Naghahand-off ng isang slice na pwedeng i-ship.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -26,7 +31,8 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "Nakopya",
   "softwareTeamDlc.copyFailed": "Hindi nakopya — piliin ang starter at kopyahin nang manu-mano.",
   "softwareTeamDlc.sdlcTitle": "Mga yugto ng SDLC",
-  "softwareTeamDlc.sdlcHint": "Mga alias sa Needs you / Working / Done. Gumagalaw pa rin ang cards ayon sa live run state — hindi gumagawa ng bagong board ang pack na ito.",
+  "softwareTeamDlc.sdlcHint":
+    "Ang studio board (Backlog → Design → Build → Review → Ship) ang pinagmulan ng katotohanan. Ang live agent columns ay pampaalam lang.",
   "softwareTeamDlc.stage.backlog": "Backlog",
   "softwareTeamDlc.stage.design": "Design",
   "softwareTeamDlc.stage.build": "Build",
@@ -38,13 +44,48 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "Backlog (idle)",
   "softwareTeamDlc.assignRole": "I-assign ang role",
   "softwareTeamDlc.assignStage": "I-assign ang SDLC stage",
-  "softwareTeamDlc.clearTag": "Alisin ang team tag",
-  "softwareTeamDlc.packTitle": "Mga template ng pack",
-  "softwareTeamDlc.packHint": "Naka-bundle sa app ang agent, skill, at workflow presets. Available agad kapag naka-on ang DLC.",
-  "softwareTeamDlc.honesty.noParallelAgents": "Hindi nagpapasimula ang pack ng parallel CLI agents. Team = naka-tag na sessions + attach-chat.",
+  "softwareTeamDlc.clearTag": "I-unbind ang session",
+  "softwareTeamDlc.packTitle": "Mga template ng role",
+  "softwareTeamDlc.packHint":
+    "Naka-bundle sa app ang agent, skill, at workflow presets. Available agad kapag naka-on ang Software Works.",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "Hindi nagpapasimula ng parallel CLI agents. Team = naka-bind na sessions + attach-chat + handoff starters.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Ang workbench at Remote IM ay Grok Build pa rin ang kinokontrol.",
-  "softwareTeamDlc.kanbanHint": "Ang SDLC aliases ay mga label sa live agent board. I-right-click ang card para mag-assign ng role.",
-  "softwareTeamDlc.install.blockedShared": "Hindi pwedeng magsulat ng user-home templates habang Shared ang session data — masasamahan nito ang ~/.grok.",
-  "softwareTeamDlc.install.needProject": "Pumili ng project folder para i-install ang templates sa .grok directory nito.",
-  "softwareTeamDlc.install.independentOk": "Puwedeng magsulat ang Independent mode ng templates sa App agent-home (hindi ~/.grok).",
+  "softwareTeamDlc.kanbanHint":
+    "Ang SDLC Studio ang pipeline. I-right-click ang card para ilipat ang stage o i-hand off ang susunod na role.",
+  "softwareTeamDlc.install.blockedShared":
+    "Hindi pwedeng magsulat ng user-home templates habang Shared ang session data — masasamahan nito ang ~/.grok.",
+  "softwareTeamDlc.install.needProject":
+    "Pumili ng project folder para i-install ang templates sa .grok directory nito.",
+  "softwareTeamDlc.install.independentOk":
+    "Puwedeng magsulat ang Independent mode ng templates sa App agent-home (hindi ~/.grok).",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "Isang pipeline: i-bind ang session, ilipat ang stage, i-hand off ang susunod na role.",
+  "softwareTeamDlc.pipelineTitle": "Pipeline",
+  "softwareTeamDlc.liveAgents": "Mga live na agent",
+  "softwareTeamDlc.addItem": "Magdagdag ng item",
+  "softwareTeamDlc.editItem": "I-edit ang item",
+  "softwareTeamDlc.itemTitle": "Pamagat",
+  "softwareTeamDlc.itemTitlePlaceholder": "Pangalan ng slice",
+  "softwareTeamDlc.planRef": "Plan",
+  "softwareTeamDlc.goalRef": "Goal",
+  "softwareTeamDlc.artifactRef": "Artifact",
+  "softwareTeamDlc.planPlaceholder": "Plan o /plan note",
+  "softwareTeamDlc.goalPlaceholder": "Goal o /goal note",
+  "softwareTeamDlc.artifactPlaceholder": "PR, path, o deliverable",
+  "softwareTeamDlc.bindSession": "I-bind ang session",
+  "softwareTeamDlc.unbound": "Walang session",
+  "softwareTeamDlc.sessionLabel": "Session",
+  "softwareTeamDlc.handoff": "I-hand off",
+  "softwareTeamDlc.handoffTo": "I-hand off kay {role}",
+  "softwareTeamDlc.handoffDone": "Tapos na ang pipeline — nasa Ship na ang Tech Writer.",
+  "softwareTeamDlc.handoffCopied": "Nakopya ang starter ng susunod na role",
+  "softwareTeamDlc.noNextRole": "Wala nang further handoff ang role na ito.",
+  "softwareTeamDlc.moveStage": "Ilipat sa {stage}",
+  "softwareTeamDlc.removeItem": "Alisin sa board",
+  "softwareTeamDlc.emptyBoard":
+    "Wala pang work items. Magdagdag ng slice o i-bind ang session sa role.",
+  "softwareTeamDlc.openStudio": "Buksan ang SDLC Studio mula sa sidebar (Agents).",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

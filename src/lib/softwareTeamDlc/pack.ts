@@ -26,42 +26,42 @@ export type SoftwareTeamPackFile = {
 
 const ROLE_STARTERS: Record<SoftwareTeamRoleId, string> = {
   product: [
-    "Act as the Product role in this Grok Build session (Software Team DLC).",
+    "Act as the Product role in this Grok Build session (Software Works / SDLC Studio).",
     "Stay on Grok Build — do not switch runtimes or spawn extra CLI agents.",
     "Clarify the user outcome, scope, and acceptance checks.",
     "Write a short backlog: problem, in-scope / out-of-scope, and the next Design handoff.",
     "Ask before expanding scope. Prefer one shippable slice.",
   ].join("\n"),
   architect: [
-    "Act as the Architect role in this Grok Build session (Software Team DLC).",
+    "Act as the Architect role in this Grok Build session (Software Works / SDLC Studio).",
     "Stay on Grok Build — do not switch runtimes or spawn extra CLI agents.",
     "Propose a design that fits this repo: modules, data flow, and risks.",
     "Call out files to touch and what not to rewrite.",
     "Hand off a concrete Build plan the Engineer role can execute.",
   ].join("\n"),
   engineer: [
-    "Act as the Engineer role in this Grok Build session (Software Team DLC).",
+    "Act as the Engineer role in this Grok Build session (Software Works / SDLC Studio).",
     "Stay on Grok Build — do not switch runtimes or spawn extra CLI agents.",
     "Implement the agreed slice. Match existing code style.",
     "Do not add features outside the handoff. Keep App.tsx / AppWorkbench.tsx untouched unless the task is a documented shrink.",
     "Summarize files changed and how to verify.",
   ].join("\n"),
   reviewer: [
-    "Act as the Reviewer role in this Grok Build session (Software Team DLC).",
+    "Act as the Reviewer role in this Grok Build session (Software Works / SDLC Studio).",
     "Stay on Grok Build — do not switch runtimes or spawn extra CLI agents.",
     "Review the current diff for correctness, regressions, and honesty.",
     "Prefer specific file:line comments. Do not rewrite the change unless asked.",
     "Gate Ship on must-fix items only; list nits separately.",
   ].join("\n"),
   qa: [
-    "Act as the QA role in this Grok Build session (Software Team DLC).",
+    "Act as the QA role in this Grok Build session (Software Works / SDLC Studio).",
     "Stay on Grok Build — do not switch runtimes or spawn extra CLI agents.",
     "List test cases for the slice: happy path, edges, and a likely regression.",
     "Run or name the existing unit/typecheck commands. Do not claim a Tauri browser pass you did not do.",
     "Report fail/pass with commands used.",
   ].join("\n"),
   writer: [
-    "Act as the Tech Writer role in this Grok Build session (Software Team DLC).",
+    "Act as the Tech Writer role in this Grok Build session (Software Works / SDLC Studio).",
     "Stay on Grok Build — do not switch runtimes or spawn extra CLI agents.",
     "Update agent-facing wiki or in-app i18n only when the product change needs it.",
     "Do not invent user-facing README sections the user did not ask for.",
@@ -114,10 +114,11 @@ function skillMd(roleId: SoftwareTeamRoleId): string {
 }
 
 const HANDOFF_WORKFLOW = [
-  "// Software Team DLC — single-agent SDLC handoff hint.",
+  "// Software Works / SDLC Studio — single-agent SDLC handoff hint.",
   "// Runs inside Grok Build. Does not spawn a second CLI runtime.",
   "fn main() {",
-  '    print("Software Team DLC handoff: Backlog → Design → Build → Review → Ship");',
+  '    print("SDLC Studio handoff: Product → Architect → Engineer → Reviewer → QA → Writer");',
+  '    print("Pipeline stages: Backlog → Design → Build → Review → Ship");',
   '    print("Use one Grok Build session per role, or attach-chat across sessions.");',
   '    print("Do not rewrite shared ~/.grok; do not auto-apply appearance skins.");',
   "}",

@@ -1,14 +1,19 @@
-/** ja messages — domain: Software Team DLC (opt-in workspace pack) */
+/** ja messages — domain: Software Works / SDLC Studio */
 export const jaSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "ソフトウェアチーム DLC",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "ソフトウェアチーム DLC を有効にする",
-  "softwareTeamDlc.enableDesc": "任意のワークスペースパック。既存のエージェント Kanban に AI チーム役割と SDLC 別名を載せます。既定はオフ。アプリの再ブランドや追加 CLI エージェント起動はしません。",
-  "softwareTeamDlc.optInNote": "Grok Build 向けのダウンロードコンテンツモードです。第二のエージェントランタイムではありません。",
-  "softwareTeamDlc.noSkinAutoApply": "外観スキンは自動適用しません。必要なときだけ設定 → 外観で .grokskin を選んでください。",
-  "softwareTeamDlc.sharedHomeNote": "共有セッションデータ（GROK_HOME=~/.grok）は書き換えません。プリセットはアプリ内に留まり、プロジェクトまたは独立 agent-home へ入れたときだけディスクに出ます。",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Software Works を有効にする",
+  "softwareTeamDlc.enableDesc":
+    "オンにするとエージェント欄は SDLC スタジオになります。編成、パイプライン盤、役割の受け渡しは Grok Build 上です。既定はオフ。オフのときはアプリを再ブランドせず、追加 CLI エージェントも起動しません。",
+  "softwareTeamDlc.optInNote":
+    "Software Works は Grok Build 向けのソフトウエア納品エディションです。第二のエージェントランタイムではありません。",
+  "softwareTeamDlc.noSkinAutoApply":
+    "外観スキンは自動適用しません。必要なときだけ設定 → 外観で .grokskin を選んでください。",
+  "softwareTeamDlc.sharedHomeNote":
+    "共有セッションデータ（GROK_HOME=~/.grok）は書き換えません。プリセットはアプリ内に留まり、プロジェクトまたは独立 agent-home へ入れたときだけディスクに出ます。",
   "softwareTeamDlc.rosterTitle": "チーム編成",
-  "softwareTeamDlc.rosterHint": "役割ごとに 1 つの Grok Build セッション。スターターを Composer にコピーするか、Kanban カードにタグします。文脈が必要なら attach-chat を使います。",
+  "softwareTeamDlc.rosterHint":
+    "役割ごとに 1 つの Grok Build セッション。スタジオ盤でセッションを結びます。受け渡しは次の役割へ進め、スターターをコピーします。",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "範囲・受け入れ・バックログ。出荷できる一切片を渡します。",
   "softwareTeamDlc.role.architect": "Architect",
@@ -26,7 +31,8 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "コピーしました",
   "softwareTeamDlc.copyFailed": "コピーできませんでした — スターターを選択して手動でコピーしてください。",
   "softwareTeamDlc.sdlcTitle": "SDLC 段階",
-  "softwareTeamDlc.sdlcHint": "要対応 / 作業中 / 完了の別名です。カードはライブ実行状態で動きます。このパックは新しいボードを作りません。",
+  "softwareTeamDlc.sdlcHint":
+    "スタジオ盤（Backlog → Design → Build → Review → Ship）が唯一の真実です。ライブエージェント列は参考情報です。",
   "softwareTeamDlc.stage.backlog": "Backlog",
   "softwareTeamDlc.stage.design": "Design",
   "softwareTeamDlc.stage.build": "Build",
@@ -38,13 +44,48 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "Backlog（待機）",
   "softwareTeamDlc.assignRole": "役割を割り当て",
   "softwareTeamDlc.assignStage": "SDLC 段階を割り当て",
-  "softwareTeamDlc.clearTag": "チームタグを消す",
-  "softwareTeamDlc.packTitle": "パックのテンプレート",
-  "softwareTeamDlc.packHint": "エージェント・スキル・ワークフローのプリセットはアプリに同梱されています。DLC をオンにするとすぐ使えます。",
-  "softwareTeamDlc.honesty.noParallelAgents": "このパックは並列 CLI エージェントを起動しません。チーム = タグ付きセッション + attach-chat。",
+  "softwareTeamDlc.clearTag": "セッションの結びを解除",
+  "softwareTeamDlc.packTitle": "役割テンプレート",
+  "softwareTeamDlc.packHint":
+    "エージェント・スキル・ワークフローのプリセットはアプリに同梱されています。Software Works をオンにするとすぐ使えます。",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "並列 CLI エージェントは起動しません。チーム = 結んだセッション + attach-chat + 受け渡しスターター。",
   "softwareTeamDlc.honesty.grokBuildOnly": "ワークベンチと Remote IM が操るのはこれまでどおり Grok Build だけです。",
-  "softwareTeamDlc.kanbanHint": "SDLC 別名はライブエージェント盤のラベルです。カードを右クリックして役割を割り当てます。",
-  "softwareTeamDlc.install.blockedShared": "セッションデータが共有のときはユーザーホームへ書けません — ~/.grok を書き換えてしまいます。",
-  "softwareTeamDlc.install.needProject": "そのプロジェクトの .grok にテンプレートを入れるには、プロジェクトフォルダを選んでください。",
-  "softwareTeamDlc.install.independentOk": "独立モードは App の agent-home に書けます（~/.grok ではありません）。",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio がパイプラインです。カードを右クリックして段階を動かすか、次の役割へ渡します。",
+  "softwareTeamDlc.install.blockedShared":
+    "セッションデータが共有のときはユーザーホームへ書けません — ~/.grok を書き換えてしまいます。",
+  "softwareTeamDlc.install.needProject":
+    "そのプロジェクトの .grok にテンプレートを入れるには、プロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.install.independentOk":
+    "独立モードは App の agent-home に書けます（~/.grok ではありません）。",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "一本のパイプライン：セッションを結び、段階を動かし、次の役割へ渡す。",
+  "softwareTeamDlc.pipelineTitle": "パイプライン",
+  "softwareTeamDlc.liveAgents": "ライブエージェント",
+  "softwareTeamDlc.addItem": "作業項目を追加",
+  "softwareTeamDlc.editItem": "作業項目を編集",
+  "softwareTeamDlc.itemTitle": "タイトル",
+  "softwareTeamDlc.itemTitlePlaceholder": "スライス名",
+  "softwareTeamDlc.planRef": "プラン",
+  "softwareTeamDlc.goalRef": "ゴール",
+  "softwareTeamDlc.artifactRef": "成果物",
+  "softwareTeamDlc.planPlaceholder": "プランまたは /plan メモ",
+  "softwareTeamDlc.goalPlaceholder": "ゴールまたは /goal メモ",
+  "softwareTeamDlc.artifactPlaceholder": "PR、パス、納品物",
+  "softwareTeamDlc.bindSession": "セッションを結ぶ",
+  "softwareTeamDlc.unbound": "セッションなし",
+  "softwareTeamDlc.sessionLabel": "セッション",
+  "softwareTeamDlc.handoff": "受け渡し",
+  "softwareTeamDlc.handoffTo": "{role} へ渡す",
+  "softwareTeamDlc.handoffDone": "パイプライン完了 — Tech Writer は Ship 段階です。",
+  "softwareTeamDlc.handoffCopied": "次の役割のスターターをコピーしました",
+  "softwareTeamDlc.noNextRole": "この役割にこれ以上の受け渡しはありません。",
+  "softwareTeamDlc.moveStage": "{stage} へ移動",
+  "softwareTeamDlc.removeItem": "盤から削除",
+  "softwareTeamDlc.emptyBoard":
+    "作業項目はまだありません。スライスを追加するか、セッションを役割に結んでください。",
+  "softwareTeamDlc.openStudio": "サイドバー（エージェント）から SDLC Studio を開きます。",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

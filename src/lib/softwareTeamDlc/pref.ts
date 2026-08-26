@@ -1,5 +1,5 @@
 /**
- * Software Team DLC — opt-in enable preference.
+ * Software Works / SDLC Studio — opt-in edition preference.
  *
  * Local App pref (not agent-home / not ~/.grok). Off by default so ordinary
  * Grok App users are unchanged. Never auto-applies an appearance skin.

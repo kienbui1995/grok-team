@@ -1,7 +1,7 @@
 /**
- * Software Team DLC — pack write planner.
+ * Software Works — pack write planner.
  *
- * In-app presets are always available when the DLC is enabled (no disk I/O).
+ * In-app presets are always available when the edition is enabled (no disk I/O).
  * Optional filesystem install must never rewrite shared `~/.grok`.
  */
 

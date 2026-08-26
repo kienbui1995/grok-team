@@ -1,14 +1,19 @@
-/** id messages — domain: Software Team DLC (opt-in workspace pack) */
+/** id messages — domain: Software Works / SDLC Studio */
 export const idSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "DLC Tim Perangkat Lunak",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "Aktifkan DLC Tim Perangkat Lunak",
-  "softwareTeamDlc.enableDesc": "Paket ruang kerja opsional: peran tim AI dan alias SDLC pada Kanban Agen yang ada. Default mati. Tidak mengubah merek aplikasi atau menjalankan agen CLI tambahan.",
-  "softwareTeamDlc.optInNote": "Ini mode konten yang dapat diunduh untuk Grok Build — bukan runtime agen kedua.",
-  "softwareTeamDlc.noSkinAutoApply": "Skin tampilan tidak pernah diterapkan otomatis. Pilih .grokskin di Pengaturan → Tampilan jika Anda menginginkannya.",
-  "softwareTeamDlc.sharedHomeNote": "Data sesi bersama (GROK_HOME=~/.grok) tidak pernah ditulis ulang. Preset tetap di aplikasi kecuali Anda memasangnya ke proyek atau agent-home Independen.",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Aktifkan Software Works",
+  "softwareTeamDlc.enableDesc":
+    "Saat aktif, panel Agen menjadi studio SDLC: daftar tim, papan pipeline, dan serah peran di Grok Build. Default mati. Tidak mengubah merek aplikasi saat mati dan tidak menjalankan agen CLI tambahan.",
+  "softwareTeamDlc.optInNote":
+    "Software Works adalah edisi pengiriman perangkat lunak untuk Grok Build — bukan runtime agen kedua.",
+  "softwareTeamDlc.noSkinAutoApply":
+    "Skin tampilan tidak pernah diterapkan otomatis. Pilih .grokskin di Pengaturan → Tampilan jika Anda menginginkannya.",
+  "softwareTeamDlc.sharedHomeNote":
+    "Data sesi bersama (GROK_HOME=~/.grok) tidak pernah ditulis ulang. Preset tetap di aplikasi kecuali Anda memasangnya ke proyek atau agent-home Independen.",
   "softwareTeamDlc.rosterTitle": "Daftar tim",
-  "softwareTeamDlc.rosterHint": "Satu sesi Grok Build per peran. Salin starter ke komposer, atau tandai kartu Kanban. Gunakan attach-chat saat sesi butuh konteks satu sama lain.",
+  "softwareTeamDlc.rosterHint":
+    "Satu sesi Grok Build per peran. Ikat sesi di papan studio. Serah peran memajukan peran berikutnya dan menyalin starter.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Lingkup, penerimaan, dan backlog. Menyerahkan satu irisan yang bisa dikirim.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -26,7 +31,8 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "Disalin",
   "softwareTeamDlc.copyFailed": "Tidak bisa menyalin — pilih starter dan salin secara manual.",
   "softwareTeamDlc.sdlcTitle": "Tahap SDLC",
-  "softwareTeamDlc.sdlcHint": "Alias pada Butuh Anda / Bekerja / Selesai. Kartu tetap bergerak menurut status jalan langsung — paket ini tidak membuat papan baru.",
+  "softwareTeamDlc.sdlcHint":
+    "Papan studio (Backlog → Design → Build → Review → Ship) adalah sumber kebenaran. Kolom agen langsung tetap informatif.",
   "softwareTeamDlc.stage.backlog": "Backlog",
   "softwareTeamDlc.stage.design": "Design",
   "softwareTeamDlc.stage.build": "Build",
@@ -38,13 +44,48 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "Backlog (menganggur)",
   "softwareTeamDlc.assignRole": "Tetapkan peran",
   "softwareTeamDlc.assignStage": "Tetapkan tahap SDLC",
-  "softwareTeamDlc.clearTag": "Hapus tag tim",
-  "softwareTeamDlc.packTitle": "Templat paket",
-  "softwareTeamDlc.packHint": "Preset agen, skill, dan alur kerja dibundel di aplikasi. Tersedia segera setelah DLC aktif.",
-  "softwareTeamDlc.honesty.noParallelAgents": "Paket tidak memulai agen CLI paralel. Tim = sesi bertanda + attach-chat.",
+  "softwareTeamDlc.clearTag": "Lepas sesi",
+  "softwareTeamDlc.packTitle": "Templat peran",
+  "softwareTeamDlc.packHint":
+    "Preset agen, skill, dan alur kerja dibundel di aplikasi. Tersedia segera setelah Software Works aktif.",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "Tidak memulai agen CLI paralel. Tim = sesi terikat + attach-chat + starter serah peran.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Workbench dan Remote IM tetap hanya mengendalikan Grok Build.",
-  "softwareTeamDlc.kanbanHint": "Alias SDLC adalah label pada papan agen langsung. Klik kanan kartu untuk menetapkan peran.",
-  "softwareTeamDlc.install.blockedShared": "Tidak dapat menulis templat home pengguna saat data sesi Bersama — itu akan menulis ulang ~/.grok.",
-  "softwareTeamDlc.install.needProject": "Pilih folder proyek untuk memasang templat di direktori .grok proyek itu.",
-  "softwareTeamDlc.install.independentOk": "Mode Independen boleh menulis templat ke agent-home Aplikasi (bukan ~/.grok).",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio adalah pipeline. Klik kanan kartu untuk memindahkan tahap atau menyerahkan peran berikutnya.",
+  "softwareTeamDlc.install.blockedShared":
+    "Tidak dapat menulis templat home pengguna saat data sesi Bersama — itu akan menulis ulang ~/.grok.",
+  "softwareTeamDlc.install.needProject":
+    "Pilih folder proyek untuk memasang templat di direktori .grok proyek itu.",
+  "softwareTeamDlc.install.independentOk":
+    "Mode Independen boleh menulis templat ke agent-home Aplikasi (bukan ~/.grok).",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "Satu pipeline: ikat sesi, pindahkan tahap, serahkan peran berikutnya.",
+  "softwareTeamDlc.pipelineTitle": "Pipeline",
+  "softwareTeamDlc.liveAgents": "Agen langsung",
+  "softwareTeamDlc.addItem": "Tambah item",
+  "softwareTeamDlc.editItem": "Sunting item",
+  "softwareTeamDlc.itemTitle": "Judul",
+  "softwareTeamDlc.itemTitlePlaceholder": "Nama irisan",
+  "softwareTeamDlc.planRef": "Rencana",
+  "softwareTeamDlc.goalRef": "Tujuan",
+  "softwareTeamDlc.artifactRef": "Artefak",
+  "softwareTeamDlc.planPlaceholder": "Rencana atau catatan /plan",
+  "softwareTeamDlc.goalPlaceholder": "Tujuan atau catatan /goal",
+  "softwareTeamDlc.artifactPlaceholder": "PR, jalur, atau hasil kirim",
+  "softwareTeamDlc.bindSession": "Ikat sesi",
+  "softwareTeamDlc.unbound": "Tidak ada sesi",
+  "softwareTeamDlc.sessionLabel": "Sesi",
+  "softwareTeamDlc.handoff": "Serahkan",
+  "softwareTeamDlc.handoffTo": "Serahkan ke {role}",
+  "softwareTeamDlc.handoffDone": "Pipeline selesai — Tech Writer ada di tahap Ship.",
+  "softwareTeamDlc.handoffCopied": "Starter peran berikutnya disalin",
+  "softwareTeamDlc.noNextRole": "Peran ini tidak punya serah peran lagi.",
+  "softwareTeamDlc.moveStage": "Pindah ke {stage}",
+  "softwareTeamDlc.removeItem": "Hapus dari papan",
+  "softwareTeamDlc.emptyBoard":
+    "Belum ada item. Tambah irisan atau ikat sesi ke suatu peran.",
+  "softwareTeamDlc.openStudio": "Buka SDLC Studio dari bilah sisi (Agen).",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

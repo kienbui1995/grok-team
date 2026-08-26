@@ -46,6 +46,53 @@ export {
 } from "./sessionTags";
 
 export {
+  SOFTWARE_TEAM_DLC_PIPELINE_CHANGE_EVENT,
+  SOFTWARE_TEAM_DLC_PIPELINE_KEY,
+  SOFTWARE_TEAM_STAGE_SOURCES,
+  addSoftwareTeamPipelineItem,
+  applySessionKanbanBoardToPipeline,
+  applySessionKanbanToItem,
+  applySessionKanbanToPipeline,
+  assignSessionToPipeline,
+  bindPipelineItemSession,
+  clearSessionFromPipeline,
+  createEmptySoftwareTeamPipelineStore,
+  createSoftwareTeamPipelineItem,
+  hydratePipelineFromSessionTags,
+  isSoftwareTeamStageSource,
+  loadSoftwareTeamPipelineStore,
+  newSoftwareTeamPipelineItemId,
+  parseSoftwareTeamPipelineItem,
+  parseSoftwareTeamPipelineStore,
+  persistSoftwareTeamPipeline,
+  pipelineItemById,
+  pipelineItemForSession,
+  pipelineItemHasArtifact,
+  pipelineItemsByStage,
+  pipelineItemsForRole,
+  projectSessionTagsFromPipeline,
+  removeSoftwareTeamPipelineItem,
+  serializeSoftwareTeamPipelineStore,
+  setPipelineItemRole,
+  setPipelineItemStage,
+  stageFromSessionKanbanColumn,
+  updateSoftwareTeamPipelineItem,
+  type SoftwareTeamPipelineItem,
+  type SoftwareTeamPipelineItemDraft,
+  type SoftwareTeamPipelineStore,
+  type SoftwareTeamStageSource,
+} from "./pipeline";
+
+export {
+  SOFTWARE_TEAM_HANDOFF_CHAIN,
+  applySoftwareTeamHandoff,
+  applySoftwareTeamHandoffToStore,
+  composeHandoffStarter,
+  nextSoftwareTeamRole,
+  type SoftwareTeamHandoffResult,
+} from "./handoff";
+
+export {
   SOFTWARE_TEAM_DLC_INSTALL_TARGETS,
   planSoftwareTeamDlcPackWrite,
   softwareTeamDlcWouldRewriteSharedGrokHome,

@@ -1,8 +1,9 @@
 /**
- * Software Team DLC — session ↔ role / SDLC stage tags.
+ * Software Works — session tag projection.
  *
- * Local overlay only. Does not change Host session schema or move Kanban
- * cards (placement stays live run-state).
+ * Tags are written from the pipeline store so they cannot drift from the
+ * SDLC board. Prefer `persistSoftwareTeamPipeline` over writing this map
+ * directly.
  */
 
 import {

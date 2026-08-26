@@ -1,19 +1,19 @@
-/** English messages — domain: Software Team DLC (opt-in workspace pack) */
+/** English messages — domain: Software Works / SDLC Studio */
 export const enSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "Software Team DLC",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "Enable Software Team DLC",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Enable Software Works",
   "softwareTeamDlc.enableDesc":
-    "Optional workspace pack: AI team roles and SDLC aliases on the existing Agent Kanban. Off by default. Does not rebrand the app or spawn extra CLI agents.",
+    "When on, the Agents pane is an SDLC studio: roster, pipeline board, and role handoff on Grok Build. Off by default. Does not rebrand the app while off, and does not spawn extra CLI agents.",
   "softwareTeamDlc.optInNote":
-    "This is a downloadable-content mode for Grok Build — not a second agent runtime.",
+    "Software Works is the software-delivery edition for Grok Build — not a second agent runtime.",
   "softwareTeamDlc.noSkinAutoApply":
     "Appearance skins are never applied automatically. Choose a .grokskin in Settings → Appearance if you want one.",
   "softwareTeamDlc.sharedHomeNote":
     "Shared session data (GROK_HOME=~/.grok) is never rewritten. Presets stay in the app unless you install them into a project or Independent agent-home.",
   "softwareTeamDlc.rosterTitle": "Team roster",
   "softwareTeamDlc.rosterHint":
-    "One Grok Build session per role. Copy a starter into the composer, or tag a Kanban card. Use attach-chat when sessions need each other’s context.",
+    "One Grok Build session per role. Bind a session on the studio board. Handoff advances the next role and copies its starter.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc":
     "Scope, acceptance, and backlog. Hands off a single shippable slice.",
@@ -38,7 +38,7 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.copyFailed": "Could not copy — select the starter and copy it manually.",
   "softwareTeamDlc.sdlcTitle": "SDLC stages",
   "softwareTeamDlc.sdlcHint":
-    "Aliases on Needs you / Working / Done. Cards still move by live agent run state — this pack does not invent a new board.",
+    "The studio board (Backlog → Design → Build → Review → Ship) is the source of truth. Live agent columns stay informational.",
   "softwareTeamDlc.stage.backlog": "Backlog",
   "softwareTeamDlc.stage.design": "Design",
   "softwareTeamDlc.stage.build": "Build",
@@ -50,20 +50,49 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "Backlog (idle)",
   "softwareTeamDlc.assignRole": "Assign role",
   "softwareTeamDlc.assignStage": "Assign SDLC stage",
-  "softwareTeamDlc.clearTag": "Clear team tag",
-  "softwareTeamDlc.packTitle": "Pack templates",
+  "softwareTeamDlc.clearTag": "Unbind session",
+  "softwareTeamDlc.packTitle": "Role templates",
   "softwareTeamDlc.packHint":
-    "Agent, skill, and workflow presets are bundled in the app. They are available as soon as the DLC is on.",
+    "Agent, skill, and workflow presets are bundled in the app. They are available as soon as Software Works is on.",
   "softwareTeamDlc.honesty.noParallelAgents":
-    "The pack does not start parallel CLI agents. Team = tagged sessions + attach-chat.",
+    "Does not start parallel CLI agents. Team = bound sessions + attach-chat + handoff starters.",
   "softwareTeamDlc.honesty.grokBuildOnly":
     "Workbench and Remote IM still control Grok Build only.",
   "softwareTeamDlc.kanbanHint":
-    "SDLC aliases are labels on the live agent board. Right-click a card to assign a role.",
+    "SDLC Studio is the pipeline. Right-click a card to move its stage or hand off the next role.",
   "softwareTeamDlc.install.blockedShared":
     "Cannot write user-home templates while session data is Shared — that would rewrite ~/.grok.",
   "softwareTeamDlc.install.needProject":
     "Select a project folder to install templates under that project’s .grok directory.",
   "softwareTeamDlc.install.independentOk":
     "Independent mode may write templates to the App agent-home (not ~/.grok).",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "One pipeline: bind a session, move the stage, hand off the next role.",
+  "softwareTeamDlc.pipelineTitle": "Pipeline",
+  "softwareTeamDlc.liveAgents": "Live agents",
+  "softwareTeamDlc.addItem": "Add work item",
+  "softwareTeamDlc.editItem": "Edit work item",
+  "softwareTeamDlc.itemTitle": "Title",
+  "softwareTeamDlc.itemTitlePlaceholder": "Slice name",
+  "softwareTeamDlc.planRef": "Plan",
+  "softwareTeamDlc.goalRef": "Goal",
+  "softwareTeamDlc.artifactRef": "Artifact",
+  "softwareTeamDlc.planPlaceholder": "Plan or /plan note",
+  "softwareTeamDlc.goalPlaceholder": "Goal or /goal note",
+  "softwareTeamDlc.artifactPlaceholder": "PR, path, or deliverable",
+  "softwareTeamDlc.bindSession": "Bind session",
+  "softwareTeamDlc.unbound": "No session",
+  "softwareTeamDlc.sessionLabel": "Session",
+  "softwareTeamDlc.handoff": "Hand off",
+  "softwareTeamDlc.handoffTo": "Hand off to {role}",
+  "softwareTeamDlc.handoffDone": "Pipeline complete — Writer has the Ship stage.",
+  "softwareTeamDlc.handoffCopied": "Next-role starter copied",
+  "softwareTeamDlc.noNextRole": "This role has no further handoff.",
+  "softwareTeamDlc.moveStage": "Move to {stage}",
+  "softwareTeamDlc.removeItem": "Remove from board",
+  "softwareTeamDlc.emptyBoard":
+    "No work items yet. Add a slice or bind a session to a role.",
+  "softwareTeamDlc.openStudio": "Open SDLC Studio from the sidebar (Agents).",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

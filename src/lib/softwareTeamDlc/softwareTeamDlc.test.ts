@@ -4,31 +4,49 @@ import {
   DEFAULT_SOFTWARE_TEAM_DLC_ENABLED,
   SOFTWARE_TEAM_DLC_CHANGE_EVENT,
   SOFTWARE_TEAM_DLC_INSTALL_TARGETS,
+  SOFTWARE_TEAM_DLC_PIPELINE_KEY,
   SOFTWARE_TEAM_DLC_STORAGE_KEY,
   SOFTWARE_TEAM_DLC_TAGS_KEY,
+  SOFTWARE_TEAM_HANDOFF_CHAIN,
   SOFTWARE_TEAM_ROLE_IDS,
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGE_IDS,
+  addSoftwareTeamPipelineItem,
+  applySessionKanbanToPipeline,
+  applySoftwareTeamHandoff,
+  applySoftwareTeamHandoffToStore,
+  assignSessionToPipeline,
+  clearSessionFromPipeline,
   clearSoftwareTeamSessionTag,
+  createEmptySoftwareTeamPipelineStore,
+  createSoftwareTeamPipelineItem,
   getSoftwareTeamSessionTag,
+  hydratePipelineFromSessionTags,
   isSoftwareTeamDlcEnabled,
   isSoftwareTeamRoleId,
   kanbanColumnSdlcAliasKey,
   loadSoftwareTeamDlcEnabled,
+  loadSoftwareTeamPipelineStore,
   loadSoftwareTeamSessionTagMap,
   mapSdlcStageToKanbanColumn,
+  nextSoftwareTeamRole,
   parseSoftwareTeamDlcEnabled,
   parseSoftwareTeamSessionTagMap,
+  persistSoftwareTeamPipeline,
+  pipelineItemForSession,
   planSoftwareTeamDlcPackWrite,
+  projectSessionTagsFromPipeline,
   saveSoftwareTeamDlcEnabled,
   saveSoftwareTeamSessionTagMap,
   sdlcStagesForKanbanColumn,
+  setPipelineItemStage,
   softwareTeamDlcPackFiles,
   softwareTeamDlcPackManifest,
   softwareTeamDlcWouldRewriteSharedGrokHome,
   softwareTeamRoleById,
   softwareTeamRoleSlashHint,
   softwareTeamRoleStarterPrompt,
+  stageFromSessionKanbanColumn,
   upsertSoftwareTeamSessionTag,
 } from "./index";
 
@@ -186,6 +204,177 @@ describe("Software Team DLC session tags", () => {
     );
     expect(storage.getItem(SOFTWARE_TEAM_DLC_TAGS_KEY)).toContain("product");
     expect(loadSoftwareTeamSessionTagMap(storage).abc.roleId).toBe("product");
+  });
+});
+
+describe("Software Works pipeline board ↔ session ↔ handoff", () => {
+  it("board stage change updates the item and the session-tag projection", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "w1",
+      sessionId: "sess-1",
+      roleId: "engineer",
+      stageId: "build",
+      title: "Auth slice",
+      planRef: "/plan auth",
+      updatedAt: 1,
+    });
+    store = setPipelineItemStage(store, "w1", "review", 2);
+    const item = pipelineItemForSession(store, "sess-1");
+    expect(item?.stageId).toBe("review");
+    expect(item?.roleId).toBe("engineer");
+    expect(item?.stageSource).toBe("board");
+    expect(item?.planRef).toBe("/plan auth");
+    const tags = projectSessionTagsFromPipeline(store);
+    expect(tags["sess-1"]).toEqual({ roleId: "engineer", stageId: "review" });
+  });
+
+  it("session working/done status reflects on the board; needs_you does not clobber Design", () => {
+    expect(stageFromSessionKanbanColumn("working")).toBe("build");
+    expect(stageFromSessionKanbanColumn("done")).toBe("ship");
+    expect(stageFromSessionKanbanColumn("needs_you")).toBeNull();
+    expect(stageFromSessionKanbanColumn("idle")).toBeNull();
+
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "w2",
+      sessionId: "sess-2",
+      roleId: "architect",
+      stageId: "design",
+      updatedAt: 1,
+    });
+    const untouched = applySessionKanbanToPipeline(store, "sess-2", "needs_you", 3);
+    expect(untouched).toBe(store);
+    expect(pipelineItemForSession(untouched, "sess-2")?.stageId).toBe("design");
+
+    store = applySessionKanbanToPipeline(store, "sess-2", "working", 4);
+    expect(pipelineItemForSession(store, "sess-2")).toMatchObject({
+      stageId: "build",
+      stageSource: "session",
+    });
+    store = applySessionKanbanToPipeline(store, "sess-2", "done", 5);
+    expect(pipelineItemForSession(store, "sess-2")?.stageId).toBe("ship");
+  });
+
+  it("handoff walks Product→…→Writer and copies the next starter with artifacts", () => {
+    expect([...SOFTWARE_TEAM_HANDOFF_CHAIN]).toEqual([
+      "product",
+      "architect",
+      "engineer",
+      "reviewer",
+      "qa",
+      "writer",
+    ]);
+    expect(nextSoftwareTeamRole("product")).toBe("architect");
+    expect(nextSoftwareTeamRole("writer")).toBeNull();
+
+    const first = createSoftwareTeamPipelineItem({
+      id: "w3",
+      sessionId: "sess-3",
+      roleId: "product",
+      stageId: "backlog",
+      title: "Billing",
+      goalRef: "checkout works",
+      artifactRef: "docs/plan.md",
+      updatedAt: 1,
+    });
+    expect(first).not.toBeNull();
+    const step = applySoftwareTeamHandoff(first!, 10);
+    expect(step.kind).toBe("advanced");
+    if (step.kind !== "advanced") return;
+    expect(step.toRole).toBe("architect");
+    expect(step.toStage).toBe("design");
+    expect(step.item.roleId).toBe("architect");
+    expect(step.item.stageSource).toBe("handoff");
+    expect(step.starter).toMatch(/Architect/);
+    expect(step.starter).toMatch(/Grok Build/);
+    expect(step.starter).not.toMatch(/Claude|Codex/i);
+    expect(step.starter).toContain("Billing");
+    expect(step.starter).toContain("checkout works");
+    expect(step.starter).toContain("docs/plan.md");
+
+    let store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      first!,
+    );
+    const walk: string[] = ["product"];
+    let currentId = "w3";
+    for (let i = 0; i < 8; i += 1) {
+      const { store: nextStore, result } = applySoftwareTeamHandoffToStore(
+        store,
+        currentId,
+        20 + i,
+      );
+      store = nextStore;
+      if (!result || result.kind === "done") break;
+      walk.push(result.toRole);
+    }
+    expect(walk).toEqual([...SOFTWARE_TEAM_HANDOFF_CHAIN]);
+    expect(pipelineItemForSession(store, "sess-3")?.roleId).toBe("writer");
+    expect(pipelineItemForSession(store, "sess-3")?.stageId).toBe("ship");
+  });
+
+  it("persists pipeline as SoT and migrates leftover session tags", () => {
+    const storage = memoryStore();
+    saveSoftwareTeamSessionTagMap(
+      { legacy: { roleId: "qa", stageId: "review" } },
+      storage,
+    );
+    const migrated = loadSoftwareTeamPipelineStore(storage);
+    expect(pipelineItemForSession(migrated, "legacy")?.roleId).toBe("qa");
+    expect(pipelineItemForSession(migrated, "legacy")?.stageId).toBe("review");
+
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "w4",
+      sessionId: "sess-4",
+      roleId: "reviewer",
+      stageId: "review",
+      updatedAt: 1,
+    });
+    store = setPipelineItemStage(store, "w4", "ship", 2);
+    persistSoftwareTeamPipeline(store, storage);
+    expect(storage.getItem(SOFTWARE_TEAM_DLC_PIPELINE_KEY)).toContain("ship");
+    expect(loadSoftwareTeamSessionTagMap(storage)["sess-4"]).toEqual({
+      roleId: "reviewer",
+      stageId: "ship",
+    });
+    expect(loadSoftwareTeamPipelineStore(storage).items[0]?.stageId).toBe("ship");
+  });
+
+  it("assign/clear session keeps one session bound and drops empty tag-only items", () => {
+    let store = assignSessionToPipeline(
+      createEmptySoftwareTeamPipelineStore(),
+      "s-a",
+      { roleId: "product" },
+      1,
+    );
+    store = assignSessionToPipeline(store, "s-a", { roleId: "engineer", stageId: "build" }, 2);
+    expect(store.items).toHaveLength(1);
+    expect(pipelineItemForSession(store, "s-a")).toMatchObject({
+      roleId: "engineer",
+      stageId: "build",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "other",
+      sessionId: "s-b",
+      roleId: "writer",
+      title: "Release notes",
+      updatedAt: 3,
+    });
+    store = assignSessionToPipeline(store, "s-b", { roleId: "writer" }, 4);
+    expect(pipelineItemForSession(store, "s-b")?.title).toBe("Release notes");
+    store = clearSessionFromPipeline(store, "s-a");
+    expect(pipelineItemForSession(store, "s-a")).toBeNull();
+    store = clearSessionFromPipeline(store, "s-b");
+    expect(pipelineItemForSession(store, "s-b")).toBeNull();
+    expect(store.items.some((item) => item.id === "other")).toBe(true);
+    expect(store.items.find((item) => item.id === "other")?.sessionId).toBe("");
+  });
+
+  it("hydrate from tags does not invent Claude/Codex roles", () => {
+    const store = hydratePipelineFromSessionTags({
+      a: { roleId: "product", stageId: "backlog" },
+    });
+    expect(store.items[0]?.roleId).toBe("product");
+    expect(SOFTWARE_TEAM_ROLE_IDS.includes(store.items[0]!.roleId)).toBe(true);
   });
 });
 

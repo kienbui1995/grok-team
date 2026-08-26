@@ -529,15 +529,17 @@ describe("settingsCatalog", () => {
     ).toBe(true);
   });
 
-  it("registers Software Team DLC on extensions / agents", () => {
+  it("registers Software Works / SDLC Studio on extensions / agents", () => {
     const entry = SETTINGS_ENTRIES.find((e) => e.id === "ext.softwareTeamDlc");
     expect(entry?.section).toBe("extensions");
     expect(entry?.tab).toBe("agents");
     expect(entry?.anchorId).toBe("settings-anchor-software-team-dlc");
     const tZh = createT("zh");
     const tEn = createT("en");
-    const hits = searchSettingsEntries("software team", tZh, tEn);
+    const hits = searchSettingsEntries("software works", tZh, tEn);
     expect(hits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const studio = searchSettingsEntries("sdlc studio", tZh, tEn);
+    expect(studio.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const dlc = searchSettingsEntries("dlc", tZh, tEn);
     expect(dlc.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const zhHits = searchSettingsEntries("软件团队", tZh, tEn);

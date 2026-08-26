@@ -1,9 +1,9 @@
 /**
- * Software Team DLC — role catalog (presets, not a second agent OS).
+ * Software Works — role catalog (presets, not a second agent OS).
  *
  * Each role is an in-app template: agent/skill/workflow names, starter prompt,
- * slash hint, and a default SDLC stage. Enabling the DLC does not spawn extra
- * CLI processes; the user attaches roles to existing Grok Build sessions.
+ * slash hint, and a default SDLC stage. Enabling the edition does not spawn
+ * extra CLI processes; roles bind to existing Grok Build sessions.
  */
 
 import type { MessageKey } from "@/i18n";

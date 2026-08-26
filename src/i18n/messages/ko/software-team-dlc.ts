@@ -1,14 +1,19 @@
-/** ko messages — domain: Software Team DLC (opt-in workspace pack) */
+/** ko messages — domain: Software Works / SDLC Studio */
 export const koSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "소프트웨어 팀 DLC",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "소프트웨어 팀 DLC 사용",
-  "softwareTeamDlc.enableDesc": "선택 워크스페이스 팩: 기존 에이전트 칸반에 AI 팀 역할과 SDLC 별칭을 올립니다. 기본은 끔. 앱을 리브랜드하거나 추가 CLI 에이전트를 켜지 않습니다.",
-  "softwareTeamDlc.optInNote": "Grok Build용 다운로드 콘텐츠 모드입니다. 두 번째 에이전트 런타임이 아닙니다.",
-  "softwareTeamDlc.noSkinAutoApply": "모양 스킨은 자동 적용되지 않습니다. 필요하면 설정 → 모양에서 .grokskin을 고르세요.",
-  "softwareTeamDlc.sharedHomeNote": "공유 세션 데이터(GROK_HOME=~/.grok)는 다시 쓰지 않습니다. 프리셋은 앱 안에 있고, 프로젝트나 독립 agent-home에 설치할 때만 디스크에 나갑니다.",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Software Works 사용",
+  "softwareTeamDlc.enableDesc":
+    "켜면 에이전트 칸이 SDLC 스튜디오가 됩니다. 로스터, 파이프라인 보드, 역할 핸드오프는 Grok Build 위에서만 동작합니다. 기본은 끔. 꺼져 있을 때는 앱을 리브랜드하지 않으며 추가 CLI 에이전트를 켜지 않습니다.",
+  "softwareTeamDlc.optInNote":
+    "Software Works는 Grok Build용 소프트웨어 납품 에디션입니다. 두 번째 에이전트 런타임이 아닙니다.",
+  "softwareTeamDlc.noSkinAutoApply":
+    "모양 스킨은 자동 적용되지 않습니다. 필요하면 설정 → 모양에서 .grokskin을 고르세요.",
+  "softwareTeamDlc.sharedHomeNote":
+    "공유 세션 데이터(GROK_HOME=~/.grok)는 다시 쓰지 않습니다. 프리셋은 앱 안에 있고, 프로젝트나 독립 agent-home에 설치할 때만 디스크에 나갑니다.",
   "softwareTeamDlc.rosterTitle": "팀 로스터",
-  "softwareTeamDlc.rosterHint": "역할마다 Grok Build 세션 하나. 스타터를 컴포저에 복사하거나 칸반 카드에 태그를 답니다. 맥락이 필요하면 attach-chat을 쓰세요.",
+  "softwareTeamDlc.rosterHint":
+    "역할마다 Grok Build 세션 하나. 스튜디오 보드에서 세션을 묶습니다. 핸드오프는 다음 역할로 넘기고 스타터를 복사합니다.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "범위, 수락, 백로그. 출고 가능한 한 조각을 넘깁니다.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -26,7 +31,8 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "복사됨",
   "softwareTeamDlc.copyFailed": "복사하지 못했습니다 — 스타터를 선택한 뒤 직접 복사하세요.",
   "softwareTeamDlc.sdlcTitle": "SDLC 단계",
-  "softwareTeamDlc.sdlcHint": "필요함 / 작업 중 / 완료의 별칭입니다. 카드는 여전히 실시간 실행 상태로 움직입니다. 이 팩은 새 보드를 만들지 않습니다.",
+  "softwareTeamDlc.sdlcHint":
+    "스튜디오 보드(Backlog → Design → Build → Review → Ship)가 단일 진실입니다. 실시간 에이전트 열은 참고용입니다.",
   "softwareTeamDlc.stage.backlog": "Backlog",
   "softwareTeamDlc.stage.design": "Design",
   "softwareTeamDlc.stage.build": "Build",
@@ -38,13 +44,48 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "Backlog(유휴)",
   "softwareTeamDlc.assignRole": "역할 지정",
   "softwareTeamDlc.assignStage": "SDLC 단계 지정",
-  "softwareTeamDlc.clearTag": "팀 태그 지우기",
-  "softwareTeamDlc.packTitle": "팩 템플릿",
-  "softwareTeamDlc.packHint": "에이전트·스킬·워크플로 프리셋이 앱에 들어 있습니다. DLC를 켜면 바로 쓸 수 있습니다.",
-  "softwareTeamDlc.honesty.noParallelAgents": "이 팩은 병렬 CLI 에이전트를 시작하지 않습니다. 팀 = 태그된 세션 + attach-chat.",
+  "softwareTeamDlc.clearTag": "세션 연결 해제",
+  "softwareTeamDlc.packTitle": "역할 템플릿",
+  "softwareTeamDlc.packHint":
+    "에이전트·스킬·워크플로 프리셋이 앱에 들어 있습니다. Software Works를 켜면 바로 쓸 수 있습니다.",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "병렬 CLI 에이전트를 시작하지 않습니다. 팀 = 묶인 세션 + attach-chat + 핸드오프 스타터.",
   "softwareTeamDlc.honesty.grokBuildOnly": "워크벤치와 Remote IM은 여전히 Grok Build만 제어합니다.",
-  "softwareTeamDlc.kanbanHint": "SDLC 별칭은 실시간 에이전트 보드의 라벨입니다. 카드를 오른쪽 클릭해 역할을 지정하세요.",
-  "softwareTeamDlc.install.blockedShared": "세션 데이터가 공유일 때는 사용자 홈에 쓸 수 없습니다 — ~/.grok를 다시 쓰게 됩니다.",
-  "softwareTeamDlc.install.needProject": "해당 프로젝트의 .grok에 템플릿을 넣으려면 프로젝트 폴더를 선택하세요.",
-  "softwareTeamDlc.install.independentOk": "독립 모드는 앱 agent-home에 쓸 수 있습니다(~/.grok 아님).",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio가 파이프라인입니다. 카드를 오른쪽 클릭해 단계를 옮기거나 다음 역할로 넘기세요.",
+  "softwareTeamDlc.install.blockedShared":
+    "세션 데이터가 공유일 때는 사용자 홈에 쓸 수 없습니다 — ~/.grok를 다시 쓰게 됩니다.",
+  "softwareTeamDlc.install.needProject":
+    "해당 프로젝트의 .grok에 템플릿을 넣으려면 프로젝트 폴더를 선택하세요.",
+  "softwareTeamDlc.install.independentOk":
+    "독립 모드는 앱 agent-home에 쓸 수 있습니다(~/.grok 아님).",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "하나의 파이프라인: 세션을 묶고, 단계를 옮기고, 다음 역할로 넘깁니다.",
+  "softwareTeamDlc.pipelineTitle": "파이프라인",
+  "softwareTeamDlc.liveAgents": "실시간 에이전트",
+  "softwareTeamDlc.addItem": "작업 항목 추가",
+  "softwareTeamDlc.editItem": "작업 항목 편집",
+  "softwareTeamDlc.itemTitle": "제목",
+  "softwareTeamDlc.itemTitlePlaceholder": "슬라이스 이름",
+  "softwareTeamDlc.planRef": "계획",
+  "softwareTeamDlc.goalRef": "목표",
+  "softwareTeamDlc.artifactRef": "산출물",
+  "softwareTeamDlc.planPlaceholder": "계획 또는 /plan 메모",
+  "softwareTeamDlc.goalPlaceholder": "목표 또는 /goal 메모",
+  "softwareTeamDlc.artifactPlaceholder": "PR, 경로, 산출물",
+  "softwareTeamDlc.bindSession": "세션 묶기",
+  "softwareTeamDlc.unbound": "세션 없음",
+  "softwareTeamDlc.sessionLabel": "세션",
+  "softwareTeamDlc.handoff": "넘기기",
+  "softwareTeamDlc.handoffTo": "{role}에게 넘기기",
+  "softwareTeamDlc.handoffDone": "파이프라인 완료 — Tech Writer가 Ship 단계입니다.",
+  "softwareTeamDlc.handoffCopied": "다음 역할 스타터를 복사했습니다",
+  "softwareTeamDlc.noNextRole": "이 역할에는 더 이상 핸드오프가 없습니다.",
+  "softwareTeamDlc.moveStage": "{stage}(으)로 이동",
+  "softwareTeamDlc.removeItem": "보드에서 제거",
+  "softwareTeamDlc.emptyBoard":
+    "아직 작업 항목이 없습니다. 슬라이스를 추가하거나 세션을 역할에 묶으세요.",
+  "softwareTeamDlc.openStudio": "사이드바(에이전트)에서 SDLC Studio를 여세요.",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

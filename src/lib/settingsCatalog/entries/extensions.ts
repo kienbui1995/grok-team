@@ -121,10 +121,14 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "softwareTeamDlc.sdlcTitle",
     ],
     keywords: [
+      "software works",
+      "sdlc studio",
       "software team",
       "ai software dlc",
       "dlc",
       "sdlc",
+      "pipeline",
+      "handoff",
       "team roster",
       "product",
       "architect",
@@ -133,6 +137,7 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "workspace pack",
       "软件团队",
       "软件团队 dlc",
+      "软件工坊",
     ],
   },
   {

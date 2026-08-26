@@ -1,14 +1,19 @@
-/** uk messages — domain: Software Team DLC (opt-in workspace pack) */
+/** uk messages — domain: Software Works / SDLC Studio */
 export const ukSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "DLC програмної команди",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "Увімкнути DLC програмної команди",
-  "softwareTeamDlc.enableDesc": "Необов’язковий пакет робочого простору: ролі ІІ-команди та псевдоніми SDLC на наявній канбан-дошці агентів. Типово вимкнено. Не змінює бренд застосунку й не запускає зайвих CLI-агентів.",
-  "softwareTeamDlc.optInNote": "Це режим завантажуваного вмісту для Grok Build — не друге середовище агентів.",
-  "softwareTeamDlc.noSkinAutoApply": "Скіни вигляду ніколи не застосовуються самі. Оберіть .grokskin у Параметри → Вигляд, якщо потрібен.",
-  "softwareTeamDlc.sharedHomeNote": "Спільні дані сесій (GROK_HOME=~/.grok) ніколи не перезаписуються. Заготовки лишаються в застосунку, доки ви не встановите їх у проєкт або незалежний agent-home.",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Увімкнути Software Works",
+  "softwareTeamDlc.enableDesc":
+    "Коли увімкнено, панель агентів стає SDLC-студією: склад, дошка конвеєра й передача ролей на Grok Build. Типово вимкнено. Не змінює бренд застосунку, поки вимкнено, і не запускає зайвих CLI-агентів.",
+  "softwareTeamDlc.optInNote":
+    "Software Works — редакція поставки ПЗ для Grok Build, а не друге середовище агентів.",
+  "softwareTeamDlc.noSkinAutoApply":
+    "Скіни вигляду ніколи не застосовуються самі. Оберіть .grokskin у Параметри → Вигляд, якщо потрібен.",
+  "softwareTeamDlc.sharedHomeNote":
+    "Спільні дані сесій (GROK_HOME=~/.grok) ніколи не перезаписуються. Заготовки лишаються в застосунку, доки ви не встановите їх у проєкт або незалежний agent-home.",
   "softwareTeamDlc.rosterTitle": "Склад команди",
-  "softwareTeamDlc.rosterHint": "Одна сесія Grok Build на роль. Скопіюйте стартер у композер або позначте картку канбану. attach-chat — коли сесіям потрібен чужий контекст.",
+  "softwareTeamDlc.rosterHint":
+    "Одна сесія Grok Build на роль. Прив’яжіть сесію на дошці студії. Передача рухає наступну роль і копіює стартер.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Обсяг, приймання й беклог. Передає один відвантажуваний зріз.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -26,7 +31,8 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "Скопійовано",
   "softwareTeamDlc.copyFailed": "Не вдалося скопіювати — виділіть стартер і скопіюйте вручну.",
   "softwareTeamDlc.sdlcTitle": "Етапи SDLC",
-  "softwareTeamDlc.sdlcHint": "Псевдоніми на «Потрібен ви» / «Працює» / «Готово». Картки й далі рухаються за живим станом запуску — пакет не створює нову дошку.",
+  "softwareTeamDlc.sdlcHint":
+    "Дошка студії (Backlog → Design → Build → Review → Ship) — джерело істини. Живі колонки агентів лишаються довідковими.",
   "softwareTeamDlc.stage.backlog": "Backlog",
   "softwareTeamDlc.stage.design": "Design",
   "softwareTeamDlc.stage.build": "Build",
@@ -38,13 +44,48 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "Backlog (простоювання)",
   "softwareTeamDlc.assignRole": "Призначити роль",
   "softwareTeamDlc.assignStage": "Призначити етап SDLC",
-  "softwareTeamDlc.clearTag": "Зняти командну мітку",
-  "softwareTeamDlc.packTitle": "Шаблони пакета",
-  "softwareTeamDlc.packHint": "Заготовки агента, навички й workflow входять до застосунку. Вони доступні одразу після увімкнення DLC.",
-  "softwareTeamDlc.honesty.noParallelAgents": "Пакет не запускає паралельні CLI-агенти. Команда = позначені сесії + attach-chat.",
+  "softwareTeamDlc.clearTag": "Відв’язати сесію",
+  "softwareTeamDlc.packTitle": "Шаблони ролей",
+  "softwareTeamDlc.packHint":
+    "Заготовки агента, навички й workflow входять до застосунку. Вони доступні одразу після увімкнення Software Works.",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "Не запускає паралельні CLI-агенти. Команда = прив’язані сесії + attach-chat + стартери передачі.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Верстак і Remote IM як і раніше керують лише Grok Build.",
-  "softwareTeamDlc.kanbanHint": "Псевдоніми SDLC — підписи на живій дошці агентів. Правий клік по картці призначає роль.",
-  "softwareTeamDlc.install.blockedShared": "Не можна писати шаблони в домашній каталог користувача в спільному режимі — це перезаписало б ~/.grok.",
-  "softwareTeamDlc.install.needProject": "Оберіть теку проєкту, щоб установити шаблони в його каталог .grok.",
-  "softwareTeamDlc.install.independentOk": "Незалежний режим може писати шаблони в agent-home застосунку (не ~/.grok).",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio — це конвеєр. Правий клік по картці змінює етап або передає наступну роль.",
+  "softwareTeamDlc.install.blockedShared":
+    "Не можна писати шаблони в домашній каталог користувача в спільному режимі — це перезаписало б ~/.grok.",
+  "softwareTeamDlc.install.needProject":
+    "Оберіть теку проєкту, щоб установити шаблони в його каталог .grok.",
+  "softwareTeamDlc.install.independentOk":
+    "Незалежний режим може писати шаблони в agent-home застосунку (не ~/.grok).",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "Один конвеєр: прив’яжіть сесію, зсуньте етап, передайте наступну роль.",
+  "softwareTeamDlc.pipelineTitle": "Конвеєр",
+  "softwareTeamDlc.liveAgents": "Живі агенти",
+  "softwareTeamDlc.addItem": "Додати елемент",
+  "softwareTeamDlc.editItem": "Змінити елемент",
+  "softwareTeamDlc.itemTitle": "Назва",
+  "softwareTeamDlc.itemTitlePlaceholder": "Ім’я зрізу",
+  "softwareTeamDlc.planRef": "План",
+  "softwareTeamDlc.goalRef": "Мета",
+  "softwareTeamDlc.artifactRef": "Артефакт",
+  "softwareTeamDlc.planPlaceholder": "План або нотатка /plan",
+  "softwareTeamDlc.goalPlaceholder": "Мета або нотатка /goal",
+  "softwareTeamDlc.artifactPlaceholder": "PR, шлях або поставка",
+  "softwareTeamDlc.bindSession": "Прив’язати сесію",
+  "softwareTeamDlc.unbound": "Немає сесії",
+  "softwareTeamDlc.sessionLabel": "Сесія",
+  "softwareTeamDlc.handoff": "Передати",
+  "softwareTeamDlc.handoffTo": "Передати {role}",
+  "softwareTeamDlc.handoffDone": "Конвеєр завершено — Tech Writer на етапі Ship.",
+  "softwareTeamDlc.handoffCopied": "Стартер наступної ролі скопійовано",
+  "softwareTeamDlc.noNextRole": "У цієї ролі немає подальшої передачі.",
+  "softwareTeamDlc.moveStage": "Перемістити в {stage}",
+  "softwareTeamDlc.removeItem": "Прибрати з дошки",
+  "softwareTeamDlc.emptyBoard":
+    "Поки немає елементів. Додайте зріз або прив’яжіть сесію до ролі.",
+  "softwareTeamDlc.openStudio": "Відкрийте SDLC Studio в бічній панелі (Агенти).",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

@@ -1,12 +1,20 @@
-# Software Team DLC（可选工作区包）
+# Software Works / SDLC Studio
 
-Opt-in **workspace pack** for Grok App. Internal name: **Software Team DLC**. UI may say **AI Software DLC**.
+Opt-in **software-delivery edition** for Grok App. When on, the Agents pane **is** the product for making software: roster, pipeline board, and role handoff. When off, ordinary Grok App is unchanged.
 
-This is **not** a rebrand of Grok App, and **not** a second agent runtime (Claude / Codex). Remote IM and the workbench still control **Grok Build** only.
+Internal pref key stays `grok.softwareTeamDlc.*` (stable). UI says **Software Works** / **SDLC Studio**.
+
+This is **not** a rebrand of the whole app, and **not** a second agent runtime (Claude / Codex). Remote IM and the workbench still control **Grok Build** only.
 
 ## What it is
 
-A downloadable-content **mode**: team roles + SDLC aliases on top of Hub agents / skills / workflows, Plan / Goal, and the existing Agent Kanban.
+A single pipeline for a slice of software:
+
+1. Bind a Grok Build session to a role.
+2. Move the item on the SDLC board (Backlog → Design → Build → Review → Ship).
+3. Hand off Product → Architect → Engineer → Reviewer → QA → Writer. The item’s stage updates and the next-role starter is copied (no new CLI process).
+
+Plan / goal / artifact fields live on the work item so the next role sees the same slice.
 
 - **Off by default.** Ordinary Grok App users are unchanged.
 - **Never auto-applies** an appearance skin (see [appearance-skins.md](./appearance-skins.md)).
@@ -17,47 +25,56 @@ A downloadable-content **mode**: team roles + SDLC aliases on top of Hub agents 
 | Surface | Detail |
 |---------|--------|
 | Setting | Settings → Extensions → **Agents** |
-| Toggle | `Enable Software Team DLC` |
+| Toggle | `Enable Software Works` |
 | Pref key | `grok.softwareTeamDlc.enabled` (`localStorage`, `"1"` / `"0"`) |
 | Catalog id | `ext.softwareTeamDlc` |
 | Anchor | `settings-anchor-software-team-dlc` |
-| Deep link | `#/settings/extensions/agents` (scrolls to the DLC card) |
+| Deep link | `#/settings/extensions/agents` |
+| Studio | Sidebar **Agents** (Kanban pane) becomes **SDLC Studio** |
 
 No Host `AppSettings` field — same pattern as Developer mode. Changing the toggle does not spawn agents and does not write `config.toml`.
 
-## Roles (presets)
+## Pipeline (source of truth)
 
-| Role | Pack / slash | Default SDLC |
-|------|----------------|--------------|
-| Product | `team-product` · `/team-product` | Backlog |
-| Architect | `team-architect` · `/team-architect` | Design |
-| Engineer | `team-engineer` · `/team-engineer` | Build |
-| Reviewer | `team-reviewer` · `/team-reviewer` | Review |
-| QA | `team-qa` · `/team-qa` | Review |
-| Tech Writer | `team-writer` · `/team-writer` | Ship |
+Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`).
 
-Each role is an **in-app** agent + skill template + starter prompt. The first slice does **not** add slash handlers in `AppWorkbench` (growth freeze). Users copy the starter into the composer, or tag a Kanban card.
+Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef`.
 
-**Team = multiple Grok Build sessions** (one role each) plus existing **attach-chat**. Do not spawn parallel CLI processes for this pack.
+| Write | Effect |
+|-------|--------|
+| Board stage change | Updates the item (`stageSource: board`) and **rewrites** session tags from the store. |
+| Live session `working` / `done` | Maps to Build / Ship (`stageSource: session`). `needs_you` / `idle` do **not** overwrite Design / Review / Backlog. |
+| Handoff | Next role + that role’s default stage (`stageSource: handoff`) + starter text. |
+| Session tags | Projection only (`grok.softwareTeamDlc.sessionTags`). Never a second dead overlay. Legacy tags hydrate into items on first load. |
 
-## SDLC → Kanban (no new board)
+Does not change Host session schema. Does not spawn CLI processes.
 
-Live cards still sit in **Needs you / Working / Done / Idle** from run state (`kanbanBoard.ts`). Stages are **aliases + session tags**:
+## Roles
 
-| SDLC | Kanban column |
-|------|----------------|
-| Backlog | Needs you |
-| Design | Needs you |
-| Build | Working |
-| Review | Needs you |
-| Ship | Done |
-| (idle alias) | Idle → Backlog (idle) |
+| Role | Pack / slash hint | Default stage | Next handoff |
+|------|-------------------|---------------|--------------|
+| Product | `team-product` · `/team-product` | Backlog | Architect |
+| Architect | `team-architect` · `/team-architect` | Design | Engineer |
+| Engineer | `team-engineer` · `/team-engineer` | Build | Reviewer |
+| Reviewer | `team-reviewer` · `/team-reviewer` | Review | QA |
+| QA | `team-qa` · `/team-qa` | Review | Writer |
+| Tech Writer | `team-writer` · `/team-writer` | Ship | (done) |
 
-Session tags: `grok.softwareTeamDlc.sessionTags` (local). Right-click a Kanban card when the DLC is on. Tags do **not** move cards.
+Slash names are **hints on the roster**. First-class entry is the studio (copy starter / handoff). `AppWorkbench.applySlashItem` is not extended (growth freeze).
+
+**Team = bound Grok Build sessions** plus existing **attach-chat**. Do not spawn parallel CLI processes.
+
+## UI
+
+- Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty).
+- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab.
+- Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
+- Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`.
+- Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).
 
 ## Pack files
 
-Pure helpers: `src/lib/softwareTeamDlc/`. Manifest is idempotent (`softwareTeamDlcPackManifest`).
+Helpers: `src/lib/softwareTeamDlc/`. Manifest is idempotent (`softwareTeamDlcPackManifest`).
 
 Write planner: `planSoftwareTeamDlcPackWrite`.
 
@@ -66,21 +83,15 @@ Write planner: `planSoftwareTeamDlcPackWrite`.
 | `user` | **refused** (`blocked_shared_user`) | allowed | — |
 | `project` | n/a (not GROK_HOME) | n/a | allowed if a project path is set |
 
-First slice ships **in-app presets + copy starter**. Disk install is planned only; do not call Host scaffold APIs that write user GROK_HOME while shared.
-
-## UI / i18n / dialogs
-
-- Roster panel: `src/components/SoftwareTeamDlcPanel.tsx` (Extensions → Agents).
-- Kanban overlay: `KanbanBoardPage` reads the enable pref; column aliases + `ContextMenu` for tags.
-- Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).
-- Controls: `UiSwitch` / `ContextMenu` — no `window.confirm`, no native `<select>`.
+Disk install is planned only; do not call Host scaffold APIs that write user GROK_HOME while shared.
 
 ## Forbidden
 
 - New `useState` / feature blocks in `src/App.tsx` or `src/app/AppWorkbench.tsx`.
 - Auto-apply `.grokskin`.
-- Claude / Codex runtime, Remote IM Phase 5, Session API scope creep.
+- Claude / Codex runtime, Remote IM, Session API scope creep.
 - Claiming parallel multi-agent execution that the Host does not provide.
+- Full-repo rebrand while the edition is off.
 
 ## Related
 

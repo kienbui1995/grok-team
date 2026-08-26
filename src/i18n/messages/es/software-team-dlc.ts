@@ -1,14 +1,19 @@
-/** es messages — domain: Software Team DLC (opt-in workspace pack) */
+/** es messages — domain: Software Works / SDLC Studio */
 export const esSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "DLC de equipo de software",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "Activar DLC de equipo de software",
-  "softwareTeamDlc.enableDesc": "Paquete opcional: roles de equipo de IA y alias SDLC en el Kanban de agentes existente. Desactivado por defecto. No cambia la marca de la app ni lanza agentes CLI extra.",
-  "softwareTeamDlc.optInNote": "Es un modo de contenido descargable para Grok Build — no un segundo runtime de agentes.",
-  "softwareTeamDlc.noSkinAutoApply": "Las skins de apariencia nunca se aplican solas. Elige un .grokskin en Ajustes → Apariencia si quieres una.",
-  "softwareTeamDlc.sharedHomeNote": "Los datos de sesión compartidos (GROK_HOME=~/.grok) nunca se reescriben. Los presets quedan en la app salvo que los instales en un proyecto o en el agent-home Independiente.",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Activar Software Works",
+  "softwareTeamDlc.enableDesc":
+    "Al activarlo, el panel de agentes es un estudio SDLC: plantilla, tablero de pipeline y handoff de roles sobre Grok Build. Desactivado por defecto. No cambia la marca con el modo apagado ni lanza agentes CLI extra.",
+  "softwareTeamDlc.optInNote":
+    "Software Works es la edición de entrega de software para Grok Build — no un segundo runtime de agentes.",
+  "softwareTeamDlc.noSkinAutoApply":
+    "Las skins de apariencia nunca se aplican solas. Elige un .grokskin en Ajustes → Apariencia si quieres una.",
+  "softwareTeamDlc.sharedHomeNote":
+    "Los datos de sesión compartidos (GROK_HOME=~/.grok) nunca se reescriben. Los presets quedan en la app salvo que los instales en un proyecto o en el agent-home Independiente.",
   "softwareTeamDlc.rosterTitle": "Plantilla del equipo",
-  "softwareTeamDlc.rosterHint": "Una sesión de Grok Build por rol. Copia un starter al compositor o etiqueta una tarjeta Kanban. Usa attach-chat cuando las sesiones necesiten el contexto de otras.",
+  "softwareTeamDlc.rosterHint":
+    "Una sesión de Grok Build por rol. Vincula una sesión en el tablero del estudio. El handoff avanza el siguiente rol y copia su starter.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Alcance, aceptación y backlog. Entrega una rodaja enviable.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -26,7 +31,8 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "Copiado",
   "softwareTeamDlc.copyFailed": "No se pudo copiar — selecciona el starter y cópialo a mano.",
   "softwareTeamDlc.sdlcTitle": "Etapas SDLC",
-  "softwareTeamDlc.sdlcHint": "Alias en Te necesita / Trabajando / Hecho. Las tarjetas siguen el estado de ejecución en vivo — este paquete no inventa un tablero nuevo.",
+  "softwareTeamDlc.sdlcHint":
+    "El tablero del estudio (Backlog → Design → Build → Review → Ship) es la fuente de verdad. Las columnas de agentes en vivo son informativas.",
   "softwareTeamDlc.stage.backlog": "Backlog",
   "softwareTeamDlc.stage.design": "Design",
   "softwareTeamDlc.stage.build": "Build",
@@ -38,13 +44,48 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "Backlog (inactivo)",
   "softwareTeamDlc.assignRole": "Asignar rol",
   "softwareTeamDlc.assignStage": "Asignar etapa SDLC",
-  "softwareTeamDlc.clearTag": "Quitar etiqueta de equipo",
-  "softwareTeamDlc.packTitle": "Plantillas del paquete",
-  "softwareTeamDlc.packHint": "Los presets de agente, skill y workflow van en la app. Están disponibles en cuanto el DLC está activo.",
-  "softwareTeamDlc.honesty.noParallelAgents": "El paquete no arranca agentes CLI en paralelo. Equipo = sesiones etiquetadas + attach-chat.",
+  "softwareTeamDlc.clearTag": "Desvincular sesión",
+  "softwareTeamDlc.packTitle": "Plantillas de rol",
+  "softwareTeamDlc.packHint":
+    "Los presets de agente, skill y workflow van en la app. Están disponibles en cuanto Software Works está activo.",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "No arranca agentes CLI en paralelo. Equipo = sesiones vinculadas + attach-chat + starters de handoff.",
   "softwareTeamDlc.honesty.grokBuildOnly": "El workbench y Remote IM siguen controlando solo Grok Build.",
-  "softwareTeamDlc.kanbanHint": "Los alias SDLC son etiquetas del tablero de agentes en vivo. Clic derecho en una tarjeta para asignar un rol.",
-  "softwareTeamDlc.install.blockedShared": "No se pueden escribir plantillas en el home de usuario con datos de sesión Compartidos — reescribiría ~/.grok.",
-  "softwareTeamDlc.install.needProject": "Elige una carpeta de proyecto para instalar plantillas en su directorio .grok.",
-  "softwareTeamDlc.install.independentOk": "El modo Independiente puede escribir plantillas en el agent-home de la app (no ~/.grok).",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio es el pipeline. Clic derecho en una tarjeta para mover la etapa o pasar el siguiente rol.",
+  "softwareTeamDlc.install.blockedShared":
+    "No se pueden escribir plantillas en el home de usuario con datos de sesión Compartidos — reescribiría ~/.grok.",
+  "softwareTeamDlc.install.needProject":
+    "Elige una carpeta de proyecto para instalar plantillas en su directorio .grok.",
+  "softwareTeamDlc.install.independentOk":
+    "El modo Independiente puede escribir plantillas en el agent-home de la app (no ~/.grok).",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "Un pipeline: vincula una sesión, mueve la etapa, entrega el siguiente rol.",
+  "softwareTeamDlc.pipelineTitle": "Pipeline",
+  "softwareTeamDlc.liveAgents": "Agentes en vivo",
+  "softwareTeamDlc.addItem": "Añadir elemento",
+  "softwareTeamDlc.editItem": "Editar elemento",
+  "softwareTeamDlc.itemTitle": "Título",
+  "softwareTeamDlc.itemTitlePlaceholder": "Nombre de la rodaja",
+  "softwareTeamDlc.planRef": "Plan",
+  "softwareTeamDlc.goalRef": "Objetivo",
+  "softwareTeamDlc.artifactRef": "Artefacto",
+  "softwareTeamDlc.planPlaceholder": "Plan o nota /plan",
+  "softwareTeamDlc.goalPlaceholder": "Objetivo o nota /goal",
+  "softwareTeamDlc.artifactPlaceholder": "PR, ruta o entregable",
+  "softwareTeamDlc.bindSession": "Vincular sesión",
+  "softwareTeamDlc.unbound": "Sin sesión",
+  "softwareTeamDlc.sessionLabel": "Sesión",
+  "softwareTeamDlc.handoff": "Entregar",
+  "softwareTeamDlc.handoffTo": "Entregar a {role}",
+  "softwareTeamDlc.handoffDone": "Pipeline completo — Tech Writer está en Ship.",
+  "softwareTeamDlc.handoffCopied": "Starter del siguiente rol copiado",
+  "softwareTeamDlc.noNextRole": "Este rol no tiene más handoff.",
+  "softwareTeamDlc.moveStage": "Mover a {stage}",
+  "softwareTeamDlc.removeItem": "Quitar del tablero",
+  "softwareTeamDlc.emptyBoard":
+    "Aún no hay elementos. Añade una rodaja o vincula una sesión a un rol.",
+  "softwareTeamDlc.openStudio": "Abre SDLC Studio desde la barra lateral (Agentes).",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

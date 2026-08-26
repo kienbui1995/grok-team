@@ -1,14 +1,19 @@
-/** ta messages — domain: Software Team DLC (opt-in workspace pack) */
+/** ta messages — domain: Software Works / SDLC Studio */
 export const taSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "மென்பொருள் குழு DLC",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "மென்பொருள் குழு DLC-ஐ இயக்கு",
-  "softwareTeamDlc.enableDesc": "விருப்ப பணிஇடப் பொதி: இருக்கும் Agent Kanban-இல் AI குழுப் பங்குகளும் SDLC மாற்றுப்பெயர்களும். இயல்பு நிலை அணைப்பு. செயலியை மறுமுத்திரையிடாது; கூடுதல் CLI முகவர்களைத் தொடங்காது.",
-  "softwareTeamDlc.optInNote": "இது Grok Build-க்கான பதிவிறக்க உள்ளடக்கப் பயன்முறை — இரண்டாவது முகவர் இயக்கச்சூழல் அல்ல.",
-  "softwareTeamDlc.noSkinAutoApply": "தோற்றத் தோல்கள் தானாகப் பயன்படுத்தப்படா. வேண்டுமானால் அமைப்புகள் → தோற்றம் என்பதில் .grokskin தேர்ந்தெடுக்கவும்.",
-  "softwareTeamDlc.sharedHomeNote": "பகிரப்பட்ட அமர்வுத் தரவு (GROK_HOME=~/.grok) ஒருபோதும் மீண்டும் எழுதப்படாது. முன்னமைவுகள் செயலியில் இருக்கும்; திட்டம் அல்லது தனி agent-home-இல் நிறுவும் வரை வட்டில் போகாது.",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Software Works-ஐ இயக்கு",
+  "softwareTeamDlc.enableDesc":
+    "இயக்கினால் Agents பலகம் SDLC ஸ்டுடியோ ஆகும்: பட்டியல், குழாய் பலகை, பங்கு ஒப்படைப்பு — அனைத்தும் Grok Build-இல். இயல்பு நிலை அணைப்பு. அணைத்திருக்கும்போது செயலியை மறுமுத்திரையிடாது; கூடுதல் CLI முகவர்களைத் தொடங்காது.",
+  "softwareTeamDlc.optInNote":
+    "Software Works என்பது Grok Build-க்கான மென்பொருள் வழங்கல் பதிப்பு — இரண்டாவது முகவர் இயக்கச்சூழல் அல்ல.",
+  "softwareTeamDlc.noSkinAutoApply":
+    "தோற்றத் தோல்கள் தானாகப் பயன்படுத்தப்படா. வேண்டுமானால் அமைப்புகள் → தோற்றம் என்பதில் .grokskin தேர்ந்தெடுக்கவும்.",
+  "softwareTeamDlc.sharedHomeNote":
+    "பகிரப்பட்ட அமர்வுத் தரவு (GROK_HOME=~/.grok) ஒருபோதும் மீண்டும் எழுதப்படாது. முன்னமைவுகள் செயலியில் இருக்கும்; திட்டம் அல்லது தனி agent-home-இல் நிறுவும் வரை வட்டில் போகாது.",
   "softwareTeamDlc.rosterTitle": "குழுப் பட்டியல்",
-  "softwareTeamDlc.rosterHint": "ஒரு பங்குக்கு ஒரு Grok Build அமர்வு. தொடக்க உரையை composer-இல் நகலெடுக்கவும் அல்லது Kanban அட்டையைக் குறியிடவும். சூழல் தேவைப்பட்டால் attach-chat பயன்படுத்தவும்.",
+  "softwareTeamDlc.rosterHint":
+    "ஒரு பங்குக்கு ஒரு Grok Build அமர்வு. ஸ்டுடியோ பலகையில் அமர்வை இணைக்கவும். ஒப்படைப்பு அடுத்த பங்கை முன்னேற்றி தொடக்க உரையை நகலெடுக்கும்.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "எல்லை, ஏற்பு, பின்நிரல். அனுப்பக்கூடிய ஒரு துண்டை ஒப்படைக்கிறது.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -26,7 +31,8 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "நகலெடுக்கப்பட்டது",
   "softwareTeamDlc.copyFailed": "நகலெடுக்க முடியவில்லை — தொடக்க உரையைத் தேர்ந்தெடுத்து கைமுறையாக நகலெடுக்கவும்.",
   "softwareTeamDlc.sdlcTitle": "SDLC நிலைகள்",
-  "softwareTeamDlc.sdlcHint": "உங்களுக்குத் தேவை / வேலை செய்கிறது / முடிந்தது ஆகியவற்றின் மாற்றுப்பெயர்கள். அட்டைகள் நேரடி இயக்க நிலையாலேயே நகரும் — இந்தப் பொதி புதிய பலகையை உருவாக்காது.",
+  "softwareTeamDlc.sdlcHint":
+    "ஸ்டுடியோ பலகை (Backlog → Design → Build → Review → Ship) தான் ஒரே உண்மை. நேரடி முகவர் நெடுவரிசைகள் தகவலுக்கே.",
   "softwareTeamDlc.stage.backlog": "Backlog",
   "softwareTeamDlc.stage.design": "Design",
   "softwareTeamDlc.stage.build": "Build",
@@ -38,13 +44,48 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "Backlog (காத்திருப்பு)",
   "softwareTeamDlc.assignRole": "பங்கை ஒதுக்கு",
   "softwareTeamDlc.assignStage": "SDLC நிலையை ஒதுக்கு",
-  "softwareTeamDlc.clearTag": "குழுக் குறியை அகற்று",
-  "softwareTeamDlc.packTitle": "பொதி வார்ப்புருக்கள்",
-  "softwareTeamDlc.packHint": "முகவர், திறன், பணிப்பாய்வு முன்னமைவுகள் செயலியில் உள்ளன. DLC இயங்கிய உடன் கிடைக்கும்.",
-  "softwareTeamDlc.honesty.noParallelAgents": "இந்தப் பொதி இணை CLI முகவர்களைத் தொடங்காது. குழு = குறியிட்ட அமர்வுகள் + attach-chat.",
+  "softwareTeamDlc.clearTag": "அமர்வு இணைப்பை அகற்று",
+  "softwareTeamDlc.packTitle": "பங்கு வார்ப்புருக்கள்",
+  "softwareTeamDlc.packHint":
+    "முகவர், திறன், பணிப்பாய்வு முன்னமைவுகள் செயலியில் உள்ளன. Software Works இயங்கிய உடன் கிடைக்கும்.",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "இணை CLI முகவர்களைத் தொடங்காது. குழு = இணைத்த அமர்வுகள் + attach-chat + ஒப்படைப்புத் தொடக்கங்கள்.",
   "softwareTeamDlc.honesty.grokBuildOnly": "பணிமேடை மற்றும் Remote IM இன்னும் Grok Build-ஐ மட்டுமே கட்டுப்படுத்துகின்றன.",
-  "softwareTeamDlc.kanbanHint": "SDLC மாற்றுப்பெயர்கள் நேரடி முகவர் பலகையின் சிட்டைகள். பங்கை ஒதுக்க அட்டையில் வலது கிளிக் செய்யவும்.",
-  "softwareTeamDlc.install.blockedShared": "அமர்வுத் தரவு பகிரப்பட்டதாக இருக்கும்போது பயனர் இல்ல வார்ப்புருக்களை எழுத முடியாது — அது ~/.grok-ஐ மீண்டும் எழுதும்.",
-  "softwareTeamDlc.install.needProject": "அந்தத் திட்டத்தின் .grok கோப்பகத்தில் வார்ப்புருக்களை நிறுவ ஒரு திட்டக் கோப்புறையைத் தேர்ந்தெடுக்கவும்.",
-  "softwareTeamDlc.install.independentOk": "தனிப் பயன்முறை செயலி agent-home-இல் எழுதலாம் (~/.grok அல்ல).",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio தான் குழாய். நிலையை நகர்த்த அல்லது அடுத்த பங்கை ஒப்படைக்க அட்டையில் வலது கிளிக் செய்யவும்.",
+  "softwareTeamDlc.install.blockedShared":
+    "அமர்வுத் தரவு பகிரப்பட்டதாக இருக்கும்போது பயனர் இல்ல வார்ப்புருக்களை எழுத முடியாது — அது ~/.grok-ஐ மீண்டும் எழுதும்.",
+  "softwareTeamDlc.install.needProject":
+    "அந்தத் திட்டத்தின் .grok கோப்பகத்தில் வார்ப்புருக்களை நிறுவ ஒரு திட்டக் கோப்புறையைத் தேர்ந்தெடுக்கவும்.",
+  "softwareTeamDlc.install.independentOk":
+    "தனிப் பயன்முறை செயலி agent-home-இல் எழுதலாம் (~/.grok அல்ல).",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "ஒரே குழாய்: அமர்வை இணை, நிலையை நகர்த்து, அடுத்த பங்கை ஒப்படை.",
+  "softwareTeamDlc.pipelineTitle": "குழாய்",
+  "softwareTeamDlc.liveAgents": "நேரடி முகவர்கள்",
+  "softwareTeamDlc.addItem": "பணி உருப்படியைச் சேர்",
+  "softwareTeamDlc.editItem": "பணி உருப்படியைத் திருத்து",
+  "softwareTeamDlc.itemTitle": "தலைப்பு",
+  "softwareTeamDlc.itemTitlePlaceholder": "துண்டு பெயர்",
+  "softwareTeamDlc.planRef": "திட்டம்",
+  "softwareTeamDlc.goalRef": "இலக்கு",
+  "softwareTeamDlc.artifactRef": "விளைபொருள்",
+  "softwareTeamDlc.planPlaceholder": "திட்டம் அல்லது /plan குறிப்பு",
+  "softwareTeamDlc.goalPlaceholder": "இலக்கு அல்லது /goal குறிப்பு",
+  "softwareTeamDlc.artifactPlaceholder": "PR, பாதை அல்லது வழங்கல்",
+  "softwareTeamDlc.bindSession": "அமர்வை இணை",
+  "softwareTeamDlc.unbound": "அமர்வு இல்லை",
+  "softwareTeamDlc.sessionLabel": "அமர்வு",
+  "softwareTeamDlc.handoff": "ஒப்படை",
+  "softwareTeamDlc.handoffTo": "{role}க்கு ஒப்படை",
+  "softwareTeamDlc.handoffDone": "குழாய் முடிந்தது — Tech Writer Ship நிலையில் உள்ளார்.",
+  "softwareTeamDlc.handoffCopied": "அடுத்த பங்கின் தொடக்க உரை நகலெடுக்கப்பட்டது",
+  "softwareTeamDlc.noNextRole": "இந்தப் பங்கிற்கு மேலும் ஒப்படைப்பு இல்லை.",
+  "softwareTeamDlc.moveStage": "{stage}க்கு நகர்த்து",
+  "softwareTeamDlc.removeItem": "பலகையிலிருந்து அகற்று",
+  "softwareTeamDlc.emptyBoard":
+    "இன்னும் பணி உருப்படிகள் இல்லை. ஒரு துண்டைச் சேர்க்கவும் அல்லது அமர்வைப் பங்குடன் இணைக்கவும்.",
+  "softwareTeamDlc.openStudio": "பக்கப்பட்டியில் (முகவர்கள்) இருந்து SDLC Studio-ஐத் திறக்கவும்.",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

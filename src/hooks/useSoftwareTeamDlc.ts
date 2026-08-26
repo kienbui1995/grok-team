@@ -1,29 +1,51 @@
 /**
- * Software Team DLC — enable flag + session tags (local prefs).
+ * Software Works / SDLC Studio — enable flag + pipeline store (local prefs).
  */
 
 import { useCallback, useEffect, useState } from "react";
 import {
   SOFTWARE_TEAM_DLC_CHANGE_EVENT,
-  clearSoftwareTeamSessionTag,
+  SOFTWARE_TEAM_DLC_PIPELINE_CHANGE_EVENT,
+  applySessionKanbanBoardToPipeline,
+  applySessionKanbanToPipeline,
+  applySoftwareTeamHandoffToStore,
+  assignSessionToPipeline,
+  bindPipelineItemSession,
+  clearSessionFromPipeline,
   loadSoftwareTeamDlcEnabled,
-  loadSoftwareTeamSessionTagMap,
+  loadSoftwareTeamPipelineStore,
+  persistSoftwareTeamPipeline,
+  pipelineItemForSession,
+  projectSessionTagsFromPipeline,
+  removeSoftwareTeamPipelineItem,
   saveSoftwareTeamDlcEnabled,
-  saveSoftwareTeamSessionTagMap,
-  upsertSoftwareTeamSessionTag,
+  setPipelineItemRole,
+  setPipelineItemStage,
+  type SoftwareTeamHandoffResult,
+  type SoftwareTeamPipelineItem,
+  type SoftwareTeamPipelineItemDraft,
+  type SoftwareTeamPipelineStore,
   type SoftwareTeamRoleId,
   type SoftwareTeamSdlcStageId,
   type SoftwareTeamSessionTag,
   type SoftwareTeamSessionTagMap,
+  addSoftwareTeamPipelineItem,
+  updateSoftwareTeamPipelineItem,
 } from "@/lib/softwareTeamDlc";
+import type { AgentKanbanColumnId } from "@/lib/kanbanBoard";
 
-const TAGS_CHANGE = "grok-software-team-dlc-tags-change";
-
-function emitTagsChange(): void {
+function emitPipelineUi(): void {
   if (typeof window === "undefined" || typeof window.dispatchEvent !== "function") {
     return;
   }
-  window.dispatchEvent(new Event(TAGS_CHANGE));
+  window.dispatchEvent(new Event(SOFTWARE_TEAM_DLC_PIPELINE_CHANGE_EVENT));
+  window.dispatchEvent(new Event("grok-software-team-dlc-tags-change"));
+}
+
+function commit(store: SoftwareTeamPipelineStore): SoftwareTeamPipelineStore {
+  persistSoftwareTeamPipeline(store);
+  emitPipelineUi();
+  return store;
 }
 
 export function useSoftwareTeamDlcEnabled(): boolean {
@@ -47,6 +69,156 @@ export function useSoftwareTeamDlcPref(): {
   return { enabled, setEnabled };
 }
 
+export function useSoftwareTeamPipeline(): {
+  store: SoftwareTeamPipelineStore;
+  items: SoftwareTeamPipelineItem[];
+  itemForSession: (sessionId: string) => SoftwareTeamPipelineItem | null;
+  addItem: (draft: SoftwareTeamPipelineItemDraft) => SoftwareTeamPipelineItem | null;
+  updateItem: (
+    itemId: string,
+    patch: Partial<Omit<SoftwareTeamPipelineItem, "id">>,
+  ) => void;
+  setStage: (itemId: string, stageId: SoftwareTeamSdlcStageId) => void;
+  setRole: (itemId: string, roleId: SoftwareTeamRoleId) => void;
+  bindSession: (itemId: string, sessionId: string) => void;
+  assignSession: (
+    sessionId: string,
+    patch: { roleId?: SoftwareTeamRoleId; stageId?: SoftwareTeamSdlcStageId },
+  ) => void;
+  clearSession: (sessionId: string) => void;
+  removeItem: (itemId: string) => void;
+  handoff: (itemId: string) => SoftwareTeamHandoffResult | null;
+  applySessionKanban: (sessionId: string, column: AgentKanbanColumnId) => void;
+  applySessionKanbanBoard: (
+    placements: ReadonlyArray<{ sessionId: string; column: AgentKanbanColumnId }>,
+  ) => void;
+} {
+  const [store, setStore] = useState(loadSoftwareTeamPipelineStore);
+
+  useEffect(() => {
+    const sync = () => setStore(loadSoftwareTeamPipelineStore());
+    window.addEventListener(SOFTWARE_TEAM_DLC_PIPELINE_CHANGE_EVENT, sync);
+    window.addEventListener("grok-software-team-dlc-tags-change", sync);
+    return () => {
+      window.removeEventListener(SOFTWARE_TEAM_DLC_PIPELINE_CHANGE_EVENT, sync);
+      window.removeEventListener("grok-software-team-dlc-tags-change", sync);
+    };
+  }, []);
+
+  useEffect(() => {
+    const loaded = loadSoftwareTeamPipelineStore();
+    if (loaded.items.length > 0) {
+      persistSoftwareTeamPipeline(loaded);
+    }
+  }, []);
+
+  const itemForSession = useCallback(
+    (sessionId: string) => pipelineItemForSession(store, sessionId),
+    [store],
+  );
+
+  const addItem = useCallback((draft: SoftwareTeamPipelineItemDraft) => {
+    const next = addSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), draft);
+    const created = next.items[next.items.length - 1] ?? null;
+    setStore(commit(next));
+    return created;
+  }, []);
+
+  const updateItem = useCallback(
+    (itemId: string, patch: Partial<Omit<SoftwareTeamPipelineItem, "id">>) => {
+      setStore(
+        commit(updateSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), itemId, patch)),
+      );
+    },
+    [],
+  );
+
+  const setStage = useCallback((itemId: string, stageId: SoftwareTeamSdlcStageId) => {
+    setStore(commit(setPipelineItemStage(loadSoftwareTeamPipelineStore(), itemId, stageId)));
+  }, []);
+
+  const setRole = useCallback((itemId: string, roleId: SoftwareTeamRoleId) => {
+    setStore(commit(setPipelineItemRole(loadSoftwareTeamPipelineStore(), itemId, roleId)));
+  }, []);
+
+  const bindSession = useCallback((itemId: string, sessionId: string) => {
+    setStore(
+      commit(bindPipelineItemSession(loadSoftwareTeamPipelineStore(), itemId, sessionId)),
+    );
+  }, []);
+
+  const assignSession = useCallback(
+    (
+      sessionId: string,
+      patch: { roleId?: SoftwareTeamRoleId; stageId?: SoftwareTeamSdlcStageId },
+    ) => {
+      setStore(
+        commit(assignSessionToPipeline(loadSoftwareTeamPipelineStore(), sessionId, patch)),
+      );
+    },
+    [],
+  );
+
+  const clearSession = useCallback((sessionId: string) => {
+    setStore(commit(clearSessionFromPipeline(loadSoftwareTeamPipelineStore(), sessionId)));
+  }, []);
+
+  const removeItem = useCallback((itemId: string) => {
+    setStore(commit(removeSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), itemId)));
+  }, []);
+
+  const handoff = useCallback((itemId: string): SoftwareTeamHandoffResult | null => {
+    const { store: next, result } = applySoftwareTeamHandoffToStore(
+      loadSoftwareTeamPipelineStore(),
+      itemId,
+    );
+    setStore(commit(next));
+    return result;
+  }, []);
+
+  const applySessionKanban = useCallback(
+    (sessionId: string, column: AgentKanbanColumnId) => {
+      const current = loadSoftwareTeamPipelineStore();
+      const next = applySessionKanbanToPipeline(current, sessionId, column);
+      if (next === current) return;
+      setStore(commit(next));
+    },
+    [],
+  );
+
+  const applySessionKanbanBoard = useCallback(
+    (
+      placements: ReadonlyArray<{
+        sessionId: string;
+        column: AgentKanbanColumnId;
+      }>,
+    ) => {
+      const current = loadSoftwareTeamPipelineStore();
+      const next = applySessionKanbanBoardToPipeline(current, placements);
+      if (next === current) return;
+      setStore(commit(next));
+    },
+    [],
+  );
+
+  return {
+    store,
+    items: store.items,
+    itemForSession,
+    addItem,
+    updateItem,
+    setStage,
+    setRole,
+    bindSession,
+    assignSession,
+    clearSession,
+    removeItem,
+    handoff,
+    applySessionKanban,
+    applySessionKanbanBoard,
+  };
+}
+
 export function useSoftwareTeamSessionTags(): {
   tags: SoftwareTeamSessionTagMap;
   tagFor: (sessionId: string) => SoftwareTeamSessionTag | null;
@@ -56,44 +228,18 @@ export function useSoftwareTeamSessionTags(): {
   ) => void;
   clear: (sessionId: string) => void;
 } {
-  const [tags, setTags] = useState(loadSoftwareTeamSessionTagMap);
-  useEffect(() => {
-    const sync = () => setTags(loadSoftwareTeamSessionTagMap());
-    window.addEventListener(TAGS_CHANGE, sync);
-    return () => window.removeEventListener(TAGS_CHANGE, sync);
-  }, []);
-
-  const assign = useCallback(
-    (
-      sessionId: string,
-      patch: { roleId?: SoftwareTeamRoleId; stageId?: SoftwareTeamSdlcStageId },
-    ) => {
-      const next = upsertSoftwareTeamSessionTag(
-        loadSoftwareTeamSessionTagMap(),
-        sessionId,
-        patch,
-      );
-      saveSoftwareTeamSessionTagMap(next);
-      setTags(next);
-      emitTagsChange();
-    },
-    [],
-  );
-
-  const clear = useCallback((sessionId: string) => {
-    const next = clearSoftwareTeamSessionTag(
-      loadSoftwareTeamSessionTagMap(),
-      sessionId,
-    );
-    saveSoftwareTeamSessionTagMap(next);
-    setTags(next);
-    emitTagsChange();
-  }, []);
+  const pipeline = useSoftwareTeamPipeline();
+  const tags = projectSessionTagsFromPipeline(pipeline.store);
 
   const tagFor = useCallback(
     (sessionId: string) => tags[sessionId] ?? null,
     [tags],
   );
 
-  return { tags, tagFor, assign, clear };
+  return {
+    tags,
+    tagFor,
+    assign: pipeline.assignSession,
+    clear: pipeline.clearSession,
+  };
 }

@@ -1,14 +1,19 @@
-/** zh-TW messages — domain: Software Team DLC (opt-in workspace pack) */
+/** zh-TW messages — domain: Software Works / SDLC Studio */
 export const zhTWSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "軟體團隊 DLC",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "啟用軟體團隊 DLC",
-  "softwareTeamDlc.enableDesc": "可選工作區包：在既有 Agent 看板上疊加 AI 團隊角色與 SDLC 別名。預設關閉。不改應用品牌，也不另起 CLI 行程。",
-  "softwareTeamDlc.optInNote": "這是給 Grok Build 用的可下載內容模式，不是第二套 Agent 執行環境。",
-  "softwareTeamDlc.noSkinAutoApply": "外觀皮膚絕不會自動套用。若要皮膚，請到設定 → 外觀自行選擇 .grokskin。",
-  "softwareTeamDlc.sharedHomeNote": "共用工作階段資料（GROK_HOME=~/.grok）不會被改寫。預設留在應用內；只有裝到專案或獨立 agent-home 才會落盤。",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "啟用 Software Works",
+  "softwareTeamDlc.enableDesc":
+    "開啟後，智慧體看板成為 SDLC 工坊：名單、流水線看板與角色交接，仍只跑 Grok Build。預設關閉。關閉時不改應用品牌，也不另起 CLI 行程。",
+  "softwareTeamDlc.optInNote":
+    "Software Works 是 Grok Build 的軟體交付版，不是第二套 Agent 執行環境。",
+  "softwareTeamDlc.noSkinAutoApply":
+    "外觀皮膚絕不會自動套用。若要皮膚，請到設定 → 外觀自行選擇 .grokskin。",
+  "softwareTeamDlc.sharedHomeNote":
+    "共用工作階段資料（GROK_HOME=~/.grok）不會被改寫。預設留在應用內；只有裝到專案或獨立 agent-home 才會落盤。",
   "softwareTeamDlc.rosterTitle": "團隊名單",
-  "softwareTeamDlc.rosterHint": "每個角色一個 Grok Build 工作階段。把開場提示複製進輸入框，或幫看板卡片打標籤。工作階段之間要脈絡時用 attach-chat。",
+  "softwareTeamDlc.rosterHint":
+    "每個角色一個 Grok Build 工作階段。在工坊看板上綁定工作階段。交接會推進下一角色並複製開場提示。",
   "softwareTeamDlc.role.product": "產品",
   "softwareTeamDlc.role.product.desc": "範圍、驗收與待辦。交出一塊能交付的切片。",
   "softwareTeamDlc.role.architect": "架構",
@@ -26,7 +31,8 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "已複製",
   "softwareTeamDlc.copyFailed": "無法複製 — 請選取開場文字後手動複製。",
   "softwareTeamDlc.sdlcTitle": "SDLC 階段",
-  "softwareTeamDlc.sdlcHint": "對應「需要你／進行中／完成」的別名。卡片仍依即時執行狀態移動 — 本包不另起看板。",
+  "softwareTeamDlc.sdlcHint":
+    "工坊看板（待辦 → 設計 → 建置 → 審查 → 發布）是唯一真相。即時代理欄只作參考。",
   "softwareTeamDlc.stage.backlog": "待辦",
   "softwareTeamDlc.stage.design": "設計",
   "softwareTeamDlc.stage.build": "建置",
@@ -38,13 +44,46 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "待辦（閒置）",
   "softwareTeamDlc.assignRole": "指定角色",
   "softwareTeamDlc.assignStage": "指定 SDLC 階段",
-  "softwareTeamDlc.clearTag": "清除團隊標籤",
-  "softwareTeamDlc.packTitle": "包內範本",
-  "softwareTeamDlc.packHint": "代理、技能與工作流程預設已打進應用。DLC 開啟即可用。",
-  "softwareTeamDlc.honesty.noParallelAgents": "本包不會並行拉起 CLI 代理。團隊 = 打了標籤的工作階段 + attach-chat。",
+  "softwareTeamDlc.clearTag": "解除工作階段綁定",
+  "softwareTeamDlc.packTitle": "角色範本",
+  "softwareTeamDlc.packHint":
+    "代理、技能與工作流程預設已打進應用。Software Works 開啟即可用。",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "不會並行拉起 CLI 代理。團隊 = 綁定的工作階段 + attach-chat + 交接開場。",
   "softwareTeamDlc.honesty.grokBuildOnly": "工作台與遠端控制仍然只調度 Grok Build。",
-  "softwareTeamDlc.kanbanHint": "SDLC 別名是即時代理看板上的標籤。右鍵卡片可指定角色。",
-  "softwareTeamDlc.install.blockedShared": "工作階段資料為共用時不能寫入使用者家目錄範本 — 那會改寫 ~/.grok。",
-  "softwareTeamDlc.install.needProject": "請先選一個專案資料夾，才能把範本裝進該專案的 .grok 目錄。",
-  "softwareTeamDlc.install.independentOk": "獨立模式可以把範本寫到應用的 agent-home（不是 ~/.grok）。",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio 就是流水線。右鍵卡片可改階段或交接下一角色。",
+  "softwareTeamDlc.install.blockedShared":
+    "工作階段資料為共用時不能寫入使用者家目錄範本 — 那會改寫 ~/.grok。",
+  "softwareTeamDlc.install.needProject":
+    "請先選一個專案資料夾，才能把範本裝進該專案的 .grok 目錄。",
+  "softwareTeamDlc.install.independentOk":
+    "獨立模式可以把範本寫到應用的 agent-home（不是 ~/.grok）。",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint": "一條流水線：綁定工作階段、移動階段、交接下一角色。",
+  "softwareTeamDlc.pipelineTitle": "流水線",
+  "softwareTeamDlc.liveAgents": "即時代理",
+  "softwareTeamDlc.addItem": "新增工作項",
+  "softwareTeamDlc.editItem": "編輯工作項",
+  "softwareTeamDlc.itemTitle": "標題",
+  "softwareTeamDlc.itemTitlePlaceholder": "切片名稱",
+  "softwareTeamDlc.planRef": "計畫",
+  "softwareTeamDlc.goalRef": "目標",
+  "softwareTeamDlc.artifactRef": "產物",
+  "softwareTeamDlc.planPlaceholder": "計畫或 /plan 備註",
+  "softwareTeamDlc.goalPlaceholder": "目標或 /goal 備註",
+  "softwareTeamDlc.artifactPlaceholder": "PR、路徑或交付物",
+  "softwareTeamDlc.bindSession": "綁定工作階段",
+  "softwareTeamDlc.unbound": "未綁定工作階段",
+  "softwareTeamDlc.sessionLabel": "工作階段",
+  "softwareTeamDlc.handoff": "交接",
+  "softwareTeamDlc.handoffTo": "交接給 {role}",
+  "softwareTeamDlc.handoffDone": "流水線完成 — 技術寫作已在發布階段。",
+  "softwareTeamDlc.handoffCopied": "已複製下一角色開場",
+  "softwareTeamDlc.noNextRole": "此角色沒有後續交接。",
+  "softwareTeamDlc.moveStage": "移到 {stage}",
+  "softwareTeamDlc.removeItem": "從看板移除",
+  "softwareTeamDlc.emptyBoard": "還沒有工作項。新增切片，或把工作階段綁到角色。",
+  "softwareTeamDlc.openStudio": "從側欄「智慧體看板」開啟 SDLC Studio。",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

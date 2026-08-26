@@ -1,14 +1,19 @@
-/** zh messages — domain: Software Team DLC (opt-in workspace pack) */
+/** zh messages — domain: Software Works / SDLC Studio */
 export const zhSoftwareTeamDlc = {
-  "softwareTeamDlc.title": "软件团队 DLC",
-  "softwareTeamDlc.uiName": "AI Software DLC",
-  "softwareTeamDlc.enable": "启用软件团队 DLC",
-  "softwareTeamDlc.enableDesc": "可选工作区包：在现有 Agent 看板上叠加 AI 团队角色与 SDLC 别名。默认关闭。不改应用品牌，也不另起 CLI 进程。",
-  "softwareTeamDlc.optInNote": "这是给 Grok Build 用的可下载内容模式，不是第二套 Agent 运行时。",
-  "softwareTeamDlc.noSkinAutoApply": "外观皮肤绝不会自动套用。若要皮肤，请到设置 → 外观自行选择 .grokskin。",
-  "softwareTeamDlc.sharedHomeNote": "共享会话数据（GROK_HOME=~/.grok）不会被改写。预设留在应用内；只有装到项目或独立 agent-home 才会落盘。",
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "启用 Software Works",
+  "softwareTeamDlc.enableDesc":
+    "开启后，智能体看板成为 SDLC 工坊：名单、流水线看板与角色交接，仍只跑 Grok Build。默认关闭。关闭时不改应用品牌，也不另起 CLI 进程。",
+  "softwareTeamDlc.optInNote":
+    "Software Works 是 Grok Build 的软件交付版，不是第二套 Agent 运行时。",
+  "softwareTeamDlc.noSkinAutoApply":
+    "外观皮肤绝不会自动套用。若要皮肤，请到设置 → 外观自行选择 .grokskin。",
+  "softwareTeamDlc.sharedHomeNote":
+    "共享会话数据（GROK_HOME=~/.grok）不会被改写。预设留在应用内；只有装到项目或独立 agent-home 才会落盘。",
   "softwareTeamDlc.rosterTitle": "团队名单",
-  "softwareTeamDlc.rosterHint": "每个角色一个 Grok Build 会话。把开场提示复制进输入框，或给看板卡片打标签。会话之间要上下文时用 attach-chat。",
+  "softwareTeamDlc.rosterHint":
+    "每个角色一个 Grok Build 会话。在工坊看板上绑定会话。交接会推进下一角色并复制开场提示。",
   "softwareTeamDlc.role.product": "产品",
   "softwareTeamDlc.role.product.desc": "范围、验收与待办。交出一块能交付的切片。",
   "softwareTeamDlc.role.architect": "架构",
@@ -26,7 +31,8 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.copied": "已复制",
   "softwareTeamDlc.copyFailed": "无法复制 — 请选中开场文字后手动复制。",
   "softwareTeamDlc.sdlcTitle": "SDLC 阶段",
-  "softwareTeamDlc.sdlcHint": "对应「需要你 / 进行中 / 完成」的别名。卡片仍按实时运行状态移动 — 本包不另起看板。",
+  "softwareTeamDlc.sdlcHint":
+    "工坊看板（待办 → 设计 → 构建 → 评审 → 发布）是唯一真相。实时代理列只作参考。",
   "softwareTeamDlc.stage.backlog": "待办",
   "softwareTeamDlc.stage.design": "设计",
   "softwareTeamDlc.stage.build": "构建",
@@ -38,13 +44,46 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.columnMap.idle": "待办（空闲）",
   "softwareTeamDlc.assignRole": "指定角色",
   "softwareTeamDlc.assignStage": "指定 SDLC 阶段",
-  "softwareTeamDlc.clearTag": "清除团队标签",
-  "softwareTeamDlc.packTitle": "包内模板",
-  "softwareTeamDlc.packHint": "代理、技能与工作流预设已打进应用。DLC 打开即可用。",
-  "softwareTeamDlc.honesty.noParallelAgents": "本包不会并行拉起 CLI 代理。团队 = 打了标签的会话 + attach-chat。",
+  "softwareTeamDlc.clearTag": "解除会话绑定",
+  "softwareTeamDlc.packTitle": "角色模板",
+  "softwareTeamDlc.packHint":
+    "代理、技能与工作流预设已打进应用。Software Works 打开即可用。",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "不会并行拉起 CLI 代理。团队 = 绑定的会话 + attach-chat + 交接开场。",
   "softwareTeamDlc.honesty.grokBuildOnly": "工作台与远程控制仍然只调度 Grok Build。",
-  "softwareTeamDlc.kanbanHint": "SDLC 别名是实时代理看板上的标签。右键卡片可指定角色。",
-  "softwareTeamDlc.install.blockedShared": "会话数据为共享时不能写入用户主目录模板 — 那会改写 ~/.grok。",
-  "softwareTeamDlc.install.needProject": "请先选一个项目文件夹，才能把模板装进该项目的 .grok 目录。",
-  "softwareTeamDlc.install.independentOk": "独立模式可以把模板写到应用的 agent-home（不是 ~/.grok）。",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio 就是流水线。右键卡片可改阶段或交接下一角色。",
+  "softwareTeamDlc.install.blockedShared":
+    "会话数据为共享时不能写入用户主目录模板 — 那会改写 ~/.grok。",
+  "softwareTeamDlc.install.needProject":
+    "请先选一个项目文件夹，才能把模板装进该项目的 .grok 目录。",
+  "softwareTeamDlc.install.independentOk":
+    "独立模式可以把模板写到应用的 agent-home（不是 ~/.grok）。",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint": "一条流水线：绑定会话、移动阶段、交接下一角色。",
+  "softwareTeamDlc.pipelineTitle": "流水线",
+  "softwareTeamDlc.liveAgents": "实时代理",
+  "softwareTeamDlc.addItem": "添加工作项",
+  "softwareTeamDlc.editItem": "编辑工作项",
+  "softwareTeamDlc.itemTitle": "标题",
+  "softwareTeamDlc.itemTitlePlaceholder": "切片名称",
+  "softwareTeamDlc.planRef": "计划",
+  "softwareTeamDlc.goalRef": "目标",
+  "softwareTeamDlc.artifactRef": "产物",
+  "softwareTeamDlc.planPlaceholder": "计划或 /plan 备注",
+  "softwareTeamDlc.goalPlaceholder": "目标或 /goal 备注",
+  "softwareTeamDlc.artifactPlaceholder": "PR、路径或交付物",
+  "softwareTeamDlc.bindSession": "绑定会话",
+  "softwareTeamDlc.unbound": "未绑定会话",
+  "softwareTeamDlc.sessionLabel": "会话",
+  "softwareTeamDlc.handoff": "交接",
+  "softwareTeamDlc.handoffTo": "交接给 {role}",
+  "softwareTeamDlc.handoffDone": "流水线完成 — 技术写作已在发布阶段。",
+  "softwareTeamDlc.handoffCopied": "已复制下一角色开场",
+  "softwareTeamDlc.noNextRole": "此角色没有后续交接。",
+  "softwareTeamDlc.moveStage": "移到 {stage}",
+  "softwareTeamDlc.removeItem": "从看板移除",
+  "softwareTeamDlc.emptyBoard": "还没有工作项。添加切片，或把会话绑到角色。",
+  "softwareTeamDlc.openStudio": "从侧栏「智能体看板」打开 SDLC Studio。",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
 } as const;

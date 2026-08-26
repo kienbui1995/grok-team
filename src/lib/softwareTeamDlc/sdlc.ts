@@ -1,9 +1,9 @@
 /**
- * Software Team DLC — SDLC stages mapped onto the existing Agent Kanban.
+ * Software Works / SDLC Studio — stages for the pipeline board.
  *
- * Does **not** invent a fifth board schema. Live cards still sit in
- * Needs you / Working / Done / Idle from run state. Stages are tags +
- * column aliases when the DLC is enabled.
+ * Studio board (Backlog → Design → Build → Review → Ship) is the source
+ * of truth when the edition is on. Live Agent Kanban columns remain an
+ * informational alias of run state.
  */
 
 import type { AgentKanbanColumnId } from "@/lib/kanbanBoard";
