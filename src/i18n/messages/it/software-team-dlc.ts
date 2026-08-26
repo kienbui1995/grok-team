@@ -240,5 +240,5 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "Quel titolo non può diventare un nome file.",
   "softwareTeamDlc.exportHostError": "Impossibile esportare il riepilogo: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "Il file pipeline è cambiato altrove. Lasciato intatto (backup {file}). La lavagna resta nell’app.",
+    "Il file pipeline è cambiato altrove. Lasciato intatto. La lavagna resta nell’app. Il prossimo salvataggio scrive un backup {file} invece di sostituire il file.",
 } as const;

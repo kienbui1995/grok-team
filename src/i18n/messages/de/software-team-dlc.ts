@@ -240,5 +240,5 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "Dieser Titel wird kein gültiger Dateiname.",
   "softwareTeamDlc.exportHostError": "Kurzfassung nicht exportiert: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "Projekt-Pipeline wurde anderswo geändert. Datei unangetastet (Sicherung {file}). Board bleibt im App-Cache.",
+    "Projekt-Pipeline wurde anderswo geändert. Datei unangetastet. Board bleibt in der App. Der nächste Speichern schreibt eine Sicherung {file} statt die Datei zu ersetzen.",
 } as const;

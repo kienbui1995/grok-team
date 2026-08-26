@@ -217,5 +217,5 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "这个标题不能当成文件名。",
   "softwareTeamDlc.exportHostError": "无法导出摘要：{error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "项目流水线文件在别处改过。原文件未动（备份 {file}）。看板仍留在应用里。",
+    "项目流水线文件在别处改过。原文件未动。看板仍留在应用里。下次保存会把外来文件备份为 {file}，而不是覆盖它。",
 } as const;

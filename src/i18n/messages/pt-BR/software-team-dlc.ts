@@ -240,5 +240,5 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "Esse título não pode virar nome de arquivo.",
   "softwareTeamDlc.exportHostError": "Não foi possível exportar o resumo: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "O arquivo de pipeline mudou em outro lugar. Permaneceu intacto (backup {file}). O quadro fica no app.",
+    "O arquivo de pipeline mudou em outro lugar. Permaneceu intacto. O quadro fica no app. O próximo salvamento grava um backup {file} em vez de substituir o arquivo.",
 } as const;

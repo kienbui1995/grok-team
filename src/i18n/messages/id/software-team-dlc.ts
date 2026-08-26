@@ -240,5 +240,5 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "Judul itu tidak bisa menjadi nama berkas.",
   "softwareTeamDlc.exportHostError": "Tidak dapat mengekspor ringkasan: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "Berkas pipeline berubah di tempat lain. Dibiarkan utuh (cadangan {file}). Papan tetap di aplikasi.",
+    "Berkas pipeline berubah di tempat lain. Dibiarkan utuh. Papan tetap di aplikasi. Penyimpanan berikutnya menulis cadangan {file} daripada menimpa berkas.",
 } as const;

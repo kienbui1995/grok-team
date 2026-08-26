@@ -167,6 +167,8 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "project pipeline",
       "delivery detail",
       "activity log",
+      "archive delivery",
+      "export summary",
       "软件团队",
       "软件团队 dlc",
       "软件工坊",

@@ -240,5 +240,5 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "그 제목은 파일 이름이 될 수 없습니다.",
   "softwareTeamDlc.exportHostError": "요약을 내보내지 못했습니다: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "프로젝트 파이프라인 파일이 다른 곳에서 바뀌었습니다. 그대로 두었습니다(백업 {file}). 보드는 앱에 유지됩니다.",
+    "프로젝트 파이프라인 파일이 다른 곳에서 바뀌었습니다. 그대로 두었습니다. 보드는 앱에 유지됩니다. 다음 저장은 파일을 덮어쓰지 않고 백업 {file} 을(를) 씁니다.",
 } as const;

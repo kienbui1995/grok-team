@@ -240,5 +240,5 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "Это название нельзя сделать именем файла.",
   "softwareTeamDlc.exportHostError": "Не удалось экспортировать сводку: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "Файл пайплайна изменился в другом месте. Не тронут (копия {file}). Доска остаётся в приложении.",
+    "Файл пайплайна изменился в другом месте. Не тронут. Доска остаётся в приложении. Следующее сохранение запишет копию {file}, а не заменит файл.",
 } as const;

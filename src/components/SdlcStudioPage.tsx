@@ -25,6 +25,7 @@ import {
   SOFTWARE_TEAM_SDLC_STAGES,
   SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
   SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+  SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
   SOFTWARE_TEAM_PIPELINE_FILE_EVENT,
   SOFTWARE_TEAM_ROLE_FILTER_ALL,
   SOFTWARE_TEAM_STAGE_FILTER_ALL,
@@ -237,7 +238,11 @@ export function SdlcStudioPage({
         if (result.ok && result.kind === "replaced") {
           setStatus(t("softwareTeamDlc.pipelineFileReloaded"));
         } else if (!result.ok && result.kind === "conflict") {
-          setStatus(t("softwareTeamDlc.pipelineFileConflict"));
+          setStatus(
+            t("softwareTeamDlc.pipelineFileConflict", {
+              file: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+            }),
+          );
         }
       });
     };
@@ -339,6 +344,7 @@ export function SdlcStudioPage({
     detailTarget,
     pipeline.items,
     pipeline.store.activity,
+    pipeline.store.archivedDeliveryIds,
     sessions,
     untitledLabel,
   ]);
@@ -1226,7 +1232,7 @@ export function SdlcStudioPage({
                   (fileStatus.reason === "parse_fail" ||
                     fileStatus.reason === "conflict")
                 ? t(softwareTeamPipelineFileMessageKey(fileStatus.reason), {
-                    file: ".grok/software-works.json.bak",
+                    file: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
                   })
                 : t(softwareTeamPipelineFileMessageKey(fileStatus.reason))}
           </p>

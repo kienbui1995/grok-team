@@ -240,5 +240,5 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "Цю назву не можна зробити іменем файлу.",
   "softwareTeamDlc.exportHostError": "Не вдалося експортувати підсумок: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "Файл пайплайна змінився деінде. Не змінено (копія {file}). Дошка лишається в застосунку.",
+    "Файл пайплайна змінився деінде. Не змінено. Дошка лишається в застосунку. Наступне збереження запише копію {file}, а не замінить файл.",
 } as const;

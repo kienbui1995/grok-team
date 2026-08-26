@@ -558,6 +558,10 @@ describe("settingsCatalog", () => {
     expect(attach.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const sot = searchSettingsEntries("software-works.json", tZh, tEn);
     expect(sot.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const archive = searchSettingsEntries("archive delivery", tZh, tEn);
+    expect(archive.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const exp = searchSettingsEntries("export summary", tZh, tEn);
+    expect(exp.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const zhHits = searchSettingsEntries("软件团队", tZh, tEn);
     expect(zhHits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(

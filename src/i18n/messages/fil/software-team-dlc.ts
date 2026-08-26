@@ -240,5 +240,5 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "Hindi magiging file name ang pamagat na iyon.",
   "softwareTeamDlc.exportHostError": "Hindi na-export ang buod: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "Nagbago ang pipeline file sa ibang lugar. Hindi ginagalaw (backup {file}). Nanatili ang board sa app.",
+    "Nagbago ang pipeline file sa ibang lugar. Hindi ginagalaw. Nanatili ang board sa app. Ang susunod na save ay susulat ng backup {file} sa halip na palitan ang file.",
 } as const;

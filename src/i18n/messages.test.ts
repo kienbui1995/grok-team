@@ -83,6 +83,14 @@ describe("i18n catalog", () => {
         file: ".grok/software-works.json.bak",
       }),
     ).toContain(".grok/software-works.json.bak");
+    expect(
+      t("en", "softwareTeamDlc.pipelineFileConflict", {
+        file: ".grok/software-works.json.bak",
+      }),
+    ).toContain(".grok/software-works.json.bak");
+    expect(
+      t("en", "softwareTeamDlc.exportOk", { file: "docs/sdlc/billing-delivery.md" }),
+    ).toContain("docs/sdlc/billing-delivery.md");
   });
 
   it("createT binds locale (English is the product default)", () => {
@@ -241,6 +249,8 @@ describe("i18n catalog", () => {
       ["softwareTeamDlc.install.ok", ["{n}", "{target}"]],
       ["softwareTeamDlc.install.hostError", ["{error}"]],
       ["softwareTeamDlc.createFailed", ["{error}"]],
+      ["softwareTeamDlc.pipelineFileConflict", ["{file}"]],
+      ["softwareTeamDlc.exportOk", ["{file}"]],
     ];
     for (const loc of LOCALES) {
       for (const [key, vars] of cases) {

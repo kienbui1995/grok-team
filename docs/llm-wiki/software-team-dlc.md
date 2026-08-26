@@ -43,7 +43,7 @@ Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) i
 
 | Host + project folder | Effect |
 |-----------------------|--------|
-| Load Studio | Read the file. Valid doc replaces the cache. Missing file keeps the cache (next mutate creates the file). |
+| Load Studio | Read the file. Valid doc replaces a **clean** cache. Missing file keeps the cache (next mutate creates the file). Dirty local + newer file → conflict (keep memory). |
 | Mutate (add / stage / handoff / notes / deliveryId) | Cache write **and** project file when allowed. |
 | Parse fail / newer schema | **Refuse overwrite.** Copy raw text to `.grok/software-works.json.bak` when possible. Keep the cache. |
 | No Host / no project / path *is* `~/.grok` | Cache only + honesty. Never rewrite shared GROK_HOME. |

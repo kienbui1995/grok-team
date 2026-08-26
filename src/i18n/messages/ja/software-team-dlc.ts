@@ -240,5 +240,5 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "このタイトルはファイル名にできません。",
   "softwareTeamDlc.exportHostError": "要約を書き出せませんでした: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "プロジェクトのパイプラインが他で変わりました。ファイルはそのまま（バックアップ {file}）。ボードはアプリ内に残します。",
+    "プロジェクトのパイプラインが他で変わりました。ファイルはそのままです。ボードはアプリ内に残します。次の保存はファイルを上書きせず、バックアップ {file} を書き込みます。",
 } as const;

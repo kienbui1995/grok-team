@@ -217,5 +217,5 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "這個標題不能當成檔名。",
   "softwareTeamDlc.exportHostError": "無法匯出摘要：{error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "專案流水線檔在別處改過。原檔未動（備份 {file}）。看板仍留在應用裡。",
+    "專案流水線檔在別處改過。原檔未動。看板仍留在應用裡。下次儲存會把外來檔備份為 {file}，而不是覆蓋它。",
 } as const;

@@ -248,5 +248,5 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.exportBadSlug": "That delivery title cannot become a file name.",
   "softwareTeamDlc.exportHostError": "Could not export the summary: {error}",
   "softwareTeamDlc.pipelineFileConflict":
-    "Project pipeline file changed elsewhere. Left it untouched (backup {file}). Your board stays in the app.",
+    "Project pipeline file changed elsewhere. Left it untouched. Your board stays in the app. Next save writes a backup {file} instead of replacing the file.",
 } as const;
