@@ -1,0 +1,5 @@
+{
+  "name": "grok-app",
+  "install": "bash .cursor/install.sh",
+  "start": "pnpm dev:ui"
+}
