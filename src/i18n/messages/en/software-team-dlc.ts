@@ -174,4 +174,8 @@ export const enSoftwareTeamDlc = {
     "Session finished. Hand off or Ship — the board does not auto-advance.",
   "softwareTeamDlc.attachSeeded":
     "Seeded {n} attach-chat sessions on the composer draft (max 3).",
+  "softwareTeamDlc.addTeammateGroup": "Add team session",
+  "softwareTeamDlc.addTeammate": "Add {role} session",
+  "softwareTeamDlc.attachedHint":
+    "{n} team chats on this delivery (attach-chat, max 3)",
 } as const;

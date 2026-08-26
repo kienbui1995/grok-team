@@ -166,4 +166,8 @@ export const jaSoftwareTeamDlc = {
     "セッション終了。受け渡すか Ship — 盤は自動では進みません。",
   "softwareTeamDlc.attachSeeded":
     "下書きに attach-chat セッションを {n} 件載せました（最大 3）。",
+  "softwareTeamDlc.addTeammateGroup": "チームセッションを追加",
+  "softwareTeamDlc.addTeammate": "{role} セッションを追加",
+  "softwareTeamDlc.attachedHint":
+    "このデリバリーにチームチャット {n} 件（attach-chat、最大 3）",
 } as const;

@@ -166,4 +166,8 @@ export const itSoftwareTeamDlc = {
     "Sessione finita. Passa o Ship — la bacheca non avanza da sola.",
   "softwareTeamDlc.attachSeeded":
     "Inserite {n} sessioni attach-chat nella bozza (max 3).",
+  "softwareTeamDlc.addTeammateGroup": "Aggiungi sessione di team",
+  "softwareTeamDlc.addTeammate": "Aggiungi sessione {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} chat di team in questa consegna (attach-chat, max 3)",
 } as const;

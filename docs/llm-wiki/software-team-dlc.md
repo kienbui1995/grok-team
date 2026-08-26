@@ -132,13 +132,17 @@ Empty board or toolbar **Start a delivery** (`GlassModal`): slice title, first r
 | Refuse | No project path (`need_project`), path *is* `~/.grok` (`blocked_shared_home`), no desktop Host (`need_host`). |
 | Never | Shared GROK_HOME, fake success in the browser preview. |
 
-Then: create a pipeline item (`deliveryId`) + existing session launch (starter in composer).
+Then: create a pipeline item (`deliveryId`) + **new** session launch (starter in composer). Does **not** bind the currently open chat.
+
+Empty Studio auto-opens this modal once per visit; the toolbar button opens it any time.
 
 ## Attach-chat (max 3)
 
 Existing domain: `src/lib/chatAttach.ts` (`MAX_ATTACHED_CHATS = 3`). Workbench chips live in `useAttachChat` / composer restore — **not** extended in AppWorkbench.
 
-Studio helper `deliveryAttach.ts` picks up to 3 **other** bound session UUIDs on the same `deliveryId` (prefer Product / Engineer / Reviewer) and seeds `composerSessionDraft.chatAttachments` plus `[[chat:]]` tokens on launch. Non-UUID ids are skipped. There is **no** Host “attach team sessions” RPC. Live chips appear when Workbench restores that session draft.
+Studio helper `deliveryAttach.ts` picks up to 3 **other** bound session UUIDs on the **same** `deliveryId` (prefer Product / Engineer / Reviewer) and seeds `composerSessionDraft.chatAttachments` plus `[[chat:]]` tokens on launch. Items with a different or empty delivery id are not mixed in. Non-UUID ids are skipped. There is **no** Host “attach team sessions” RPC. Live chips appear when Workbench restores that session draft.
+
+Context menu **Add team session** creates an unbound sibling card (same slice refs + `deliveryId`) and opens a **new** Grok Build session for a missing Product / Engineer / Reviewer role. New work items inherit the board’s delivery id when one exists.
 
 ## Slash `/team-*`
 

@@ -166,4 +166,8 @@ export const taSoftwareTeamDlc = {
     "அமர்வு முடிந்தது. ஒப்படைக்கவும் அல்லது Ship — பலகை தானாக முன்னேறாது.",
   "softwareTeamDlc.attachSeeded":
     "வரைவில் {n} attach-chat அமர்வுகள் விதைக்கப்பட்டன (அதிகபட்சம் 3).",
+  "softwareTeamDlc.addTeammateGroup": "குழு அமர்வை சேர்",
+  "softwareTeamDlc.addTeammate": "{role} அமர்வை சேர்",
+  "softwareTeamDlc.attachedHint":
+    "இந்த விநியோகத்தில் {n} குழு அரட்டைகள் (attach-chat, அதிகபட்சம் 3)",
 } as const;

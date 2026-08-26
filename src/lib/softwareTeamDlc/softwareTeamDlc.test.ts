@@ -63,6 +63,8 @@ import {
   installSoftwareTeamDlcPack,
   isSoftwareTeamSharedHomePath,
   launchSoftwareTeamWorkItem,
+  inheritSoftwareTeamDeliveryId,
+  missingSoftwareTeamDeliveryRoles,
   pickSoftwareTeamAttachSessions,
   pickSoftwareTeamInstallTarget,
   planSoftwareTeamWorkspaceBootstrap,
@@ -72,7 +74,9 @@ import {
   seedSoftwareTeamAttachStarter,
   seedSoftwareTeamComposerDraft,
   softwareTeamAttachRefs,
+  resolveSoftwareTeamDeliveryId,
   softwareTeamDeliveryItemDraft,
+  softwareTeamDeliverySiblingDraft,
   softwareTeamLaunchItemPatch,
   softwareTeamWriterShipWritesFiles,
   writeSoftwareTeamWorkspaceBootstrap,
@@ -1301,6 +1305,16 @@ describe("Software Works start a delivery + workspace bootstrap", () => {
     });
     expect(draft.roleId).toBe("product");
     expect(draft.deliveryId).toBeTruthy();
+    expect(draft.sessionId).toBe("");
+  });
+
+  it("does not bind an existing chat when starting a delivery", () => {
+    const draft = softwareTeamDeliveryItemDraft({
+      title: "Auth",
+      roleId: "product",
+    });
+    expect(draft.sessionId).toBe("");
+    expect(draft.sessionId).not.toBe("current-chat");
   });
 });
 
@@ -1408,6 +1422,74 @@ describe("Software Works attach-chat seed (max 3)", () => {
     const text = seedSoftwareTeamAttachStarter("hello starter", refs);
     expect(text).toMatch(/\[\[chat:/);
     expect(text).toContain("hello starter");
+  });
+
+  it("does not attach sessions from another delivery or unscoped cards", () => {
+    const uuid = (n: number) =>
+      `bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb${n}`;
+    const items = [
+      createSoftwareTeamPipelineItem({
+        id: "cur",
+        sessionId: uuid(1),
+        roleId: "qa",
+        deliveryId: "d-keep",
+      })!,
+      createSoftwareTeamPipelineItem({
+        id: "same",
+        sessionId: uuid(2),
+        roleId: "product",
+        deliveryId: "d-keep",
+      })!,
+      createSoftwareTeamPipelineItem({
+        id: "other",
+        sessionId: uuid(3),
+        roleId: "engineer",
+        deliveryId: "d-other",
+      })!,
+      createSoftwareTeamPipelineItem({
+        id: "loose",
+        sessionId: uuid(4),
+        roleId: "reviewer",
+        deliveryId: "",
+      })!,
+    ];
+    expect(
+      pickSoftwareTeamAttachSessions(items, items[0]!).map((row) => row.roleId),
+    ).toEqual(["product"]);
+  });
+
+  it("inherits one delivery id and drafts an unbound sibling", () => {
+    const a = createSoftwareTeamPipelineItem({
+      id: "i1",
+      roleId: "product",
+      deliveryId: "del-9",
+      title: "Auth",
+      planRef: "docs/sdlc/spec.md",
+      updatedAt: 1,
+    })!;
+    const b = createSoftwareTeamPipelineItem({
+      id: "i2",
+      roleId: "engineer",
+      deliveryId: "del-9",
+      updatedAt: 2,
+    })!;
+    expect(inheritSoftwareTeamDeliveryId([a, b])).toBe("del-9");
+    expect(resolveSoftwareTeamDeliveryId([a, b])).toBe("del-9");
+    const sibling = softwareTeamDeliverySiblingDraft({
+      source: a,
+      roleId: "reviewer",
+      deliveryId: "del-9",
+    });
+    expect(sibling).toMatchObject({
+      roleId: "reviewer",
+      sessionId: "",
+      deliveryId: "del-9",
+      title: "Auth",
+      planRef: "docs/sdlc/spec.md",
+    });
+    expect(missingSoftwareTeamDeliveryRoles([a, b], "del-9")).toEqual([
+      "reviewer",
+    ]);
   });
 });
 

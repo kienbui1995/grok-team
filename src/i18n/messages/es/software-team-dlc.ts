@@ -166,4 +166,8 @@ export const esSoftwareTeamDlc = {
     "Sesión terminada. Pasa o Ship — el tablero no avanza solo.",
   "softwareTeamDlc.attachSeeded":
     "Se sembraron {n} sesiones attach-chat en el borrador (máx. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Añadir sesión de equipo",
+  "softwareTeamDlc.addTeammate": "Añadir sesión de {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} chats de equipo en esta entrega (attach-chat, máx. 3)",
 } as const;

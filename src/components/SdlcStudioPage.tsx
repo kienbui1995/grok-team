@@ -3,7 +3,7 @@
  * Mounted from the Agents / Kanban pane when the edition is on.
  */
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Locale, MessageKey } from "@/i18n";
 import { createT } from "@/i18n";
 import { ContextMenu, type ContextMenuItem } from "@/components/ContextMenu";
@@ -24,11 +24,16 @@ import {
   SOFTWARE_TEAM_SDLC_STAGES,
   applySoftwareTeamShipChoice,
   decideSoftwareTeamDoneCta,
+  ensureSoftwareTeamItemDeliveryId,
+  missingSoftwareTeamDeliveryRoles,
   nextSoftwareTeamRole,
+  pickSoftwareTeamAttachSessions,
   planSoftwareTeamDlcPackWrite,
   planSoftwareTeamWorkspaceBootstrap,
+  resolveSoftwareTeamDeliveryId,
   softwareTeamBootstrapMessageKey,
   softwareTeamDeliveryItemDraft,
+  softwareTeamDeliverySiblingDraft,
   softwareTeamRoleById,
   softwareTeamRoleSlashHint,
   softwareTeamRoleStarterPrompt,
@@ -78,16 +83,13 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
-function emptyDraft(
-  roleId: SoftwareTeamRoleId = "product",
-  sessionId = "",
-): ItemDraft {
+function emptyDraft(roleId: SoftwareTeamRoleId = "product"): ItemDraft {
   const role = softwareTeamRoleById(roleId);
   return {
     title: "",
     roleId,
     stageId: role?.defaultStage ?? "backlog",
-    sessionId,
+    sessionId: "",
     planRef: "",
     goalRef: "",
     artifactRef: "",
@@ -188,6 +190,17 @@ export function SdlcStudioPage({
     x: number;
     y: number;
   } | null>(null);
+  const emptyWizardOffered = useRef(false);
+
+  useEffect(() => {
+    if (emptyWizardOffered.current) return;
+    if (pipeline.items.length > 0) {
+      emptyWizardOffered.current = true;
+      return;
+    }
+    emptyWizardOffered.current = true;
+    setWizard({ title: "", roleId: "product", bootstrap: false });
+  }, [pipeline.items.length]);
 
   const sessionTitle = useCallback(
     (sessionId: string) => {
@@ -353,7 +366,7 @@ export function SdlcStudioPage({
     const draft = softwareTeamDeliveryItemDraft({
       title,
       roleId: wizard.roleId,
-      sessionId: currentSessionId ?? "",
+      sessionId: "",
       planRef,
       artifactRef,
     });
@@ -369,17 +382,46 @@ export function SdlcStudioPage({
     if (launched.ok) actions.applyLaunchNav(launched);
   }, [
     actions,
-    currentSessionId,
     pipeline,
     t,
     wizard,
     workspace.projectPath,
   ]);
 
+  const onAddTeammate = useCallback(
+    async (source: SoftwareTeamPipelineItem, roleId: SoftwareTeamRoleId) => {
+      const ensured = ensureSoftwareTeamItemDeliveryId(source);
+      if (ensured.patched) {
+        pipeline.updateItem(source.id, { deliveryId: ensured.deliveryId });
+      }
+      const created = pipeline.addItem(
+        softwareTeamDeliverySiblingDraft({
+          source,
+          roleId,
+          deliveryId: ensured.deliveryId,
+        }),
+      );
+      if (!created) return;
+      const attachItems = [
+        ...pipeline.items.map((item) =>
+          item.id === source.id
+            ? { ...item, deliveryId: ensured.deliveryId }
+            : item,
+        ),
+        created,
+      ];
+      const launched = await actions.launchItem(itemToStarterFields(created), {
+        createIfMissing: true,
+        items: attachItems,
+      });
+      setStatus(actions.describeLaunch(launched));
+      if (launched.ok) actions.applyLaunchNav(launched);
+    },
+    [actions, pipeline],
+  );
+
   const openCreate = (roleId?: SoftwareTeamRoleId) => {
-    setEditor(
-      emptyDraft(roleId ?? "product", currentSessionId ?? ""),
-    );
+    setEditor(emptyDraft(roleId ?? "product"));
   };
 
   const persistEditor = () => {
@@ -405,6 +447,7 @@ export function SdlcStudioPage({
       planRef: editor.planRef,
       goalRef: editor.goalRef,
       artifactRef: editor.artifactRef,
+      deliveryId: resolveSoftwareTeamDeliveryId(pipeline.items),
       stageSource: "board",
     });
     return created?.id ?? null;
@@ -503,6 +546,24 @@ export function SdlcStudioPage({
       label: t("softwareTeamDlc.openInComposer"),
       onClick: () => void onOpenInComposer(menuItem),
     });
+    const teammateRoles = missingSoftwareTeamDeliveryRoles(
+      pipeline.items,
+      menuItem.deliveryId,
+    );
+    if (teammateRoles.length) {
+      items.push({
+        label: t("softwareTeamDlc.addTeammateGroup"),
+        children: teammateRoles.map((roleId) => ({
+          id: `teammate-${roleId}`,
+          label: t("softwareTeamDlc.addTeammate", {
+            role: t(
+              softwareTeamRoleById(roleId)?.titleKey ?? "softwareTeamDlc.rosterTitle",
+            ),
+          }),
+          onClick: () => void onAddTeammate(menuItem, roleId),
+        })),
+      });
+    }
     if (menuItem.sessionId) {
       items.push({
         label: t("dashboard.openSession"),
@@ -520,7 +581,16 @@ export function SdlcStudioPage({
       onClick: () => pipeline.removeItem(menuItem.id),
     });
     return items;
-  }, [menu, menuItem, onHandoff, onOpenInComposer, onSelectSession, pipeline, t]);
+  }, [
+    menu,
+    menuItem,
+    onAddTeammate,
+    onHandoff,
+    onOpenInComposer,
+    onSelectSession,
+    pipeline,
+    t,
+  ]);
 
   return (
     <div className="auto-page agent-kanban-page sdlc-studio" data-testid="sdlc-studio">
@@ -596,7 +666,8 @@ export function SdlcStudioPage({
                       onClick={() => {
                         const created = pipeline.addItem({
                           roleId: role.id,
-                          sessionId: currentSessionId ?? "",
+                          sessionId: "",
+                          deliveryId: resolveSoftwareTeamDeliveryId(pipeline.items),
                           stageSource: "board",
                         });
                         if (created) void onOpenInComposer(created);
@@ -876,6 +947,18 @@ export function SdlcStudioPage({
                                 {t("softwareTeamDlc.sessionDoneHint")}
                               </span>
                             ) : null}
+                            {(() => {
+                              const n = pickSoftwareTeamAttachSessions(
+                                pipeline.items,
+                                item,
+                              ).length;
+                              if (!n) return null;
+                              return (
+                                <span className="sdlc-studio__refs">
+                                  {t("softwareTeamDlc.attachedHint", { n })}
+                                </span>
+                              );
+                            })()}
                           </button>
                           {(() => {
                             const cta = decideSoftwareTeamDoneCta(item);

@@ -7,7 +7,10 @@
 
 import * as api from "@/lib/api";
 import type { MessageKey } from "@/i18n";
-import type { SoftwareTeamPipelineItemDraft } from "./pipeline";
+import type {
+  SoftwareTeamPipelineItem,
+  SoftwareTeamPipelineItemDraft,
+} from "./pipeline";
 import { softwareTeamRoleById, type SoftwareTeamRoleId } from "./roles";
 
 export const SOFTWARE_TEAM_BOOTSTRAP_RELATIVE = [
@@ -208,6 +211,35 @@ export async function writeSoftwareTeamWorkspaceBootstrap(input: {
   }
 }
 
+export function inheritSoftwareTeamDeliveryId(
+  items: readonly Pick<SoftwareTeamPipelineItem, "deliveryId" | "updatedAt">[],
+): string {
+  const withId = items.filter((item) => (item.deliveryId ?? "").trim());
+  const unique = [...new Set(withId.map((item) => item.deliveryId.trim()))];
+  if (unique.length === 1) return unique[0]!;
+  const latest = [...withId].sort((a, b) => b.updatedAt - a.updatedAt)[0];
+  return (latest?.deliveryId ?? "").trim();
+}
+
+/** Prefer an explicit id, else the board’s single/latest delivery, else a new one. */
+export function resolveSoftwareTeamDeliveryId(
+  items: readonly Pick<SoftwareTeamPipelineItem, "deliveryId" | "updatedAt">[],
+  preferred?: string | null,
+): string {
+  const pref = (preferred ?? "").trim();
+  if (pref) return pref;
+  return inheritSoftwareTeamDeliveryId(items) || newSoftwareTeamDeliveryId();
+}
+
+export function ensureSoftwareTeamItemDeliveryId(
+  item: SoftwareTeamPipelineItem,
+): { item: SoftwareTeamPipelineItem; deliveryId: string; patched: boolean } {
+  const existing = item.deliveryId.trim();
+  if (existing) return { item, deliveryId: existing, patched: false };
+  const deliveryId = newSoftwareTeamDeliveryId();
+  return { item: { ...item, deliveryId }, deliveryId, patched: true };
+}
+
 export function softwareTeamDeliveryItemDraft(input: {
   title: string;
   roleId?: SoftwareTeamRoleId | null;
@@ -228,6 +260,29 @@ export function softwareTeamDeliveryItemDraft(input: {
     planRef: (input.planRef ?? "").trim(),
     goalRef: (input.goalRef ?? "").trim() || title,
     artifactRef: (input.artifactRef ?? "").trim(),
+    stageSource: "board",
+  };
+}
+
+/** Sibling role on the same delivery. Always unbound — launch creates a new session. */
+export function softwareTeamDeliverySiblingDraft(input: {
+  source: Pick<
+    SoftwareTeamPipelineItem,
+    "title" | "planRef" | "goalRef" | "artifactRef"
+  >;
+  roleId: SoftwareTeamRoleId;
+  deliveryId: string;
+}): SoftwareTeamPipelineItemDraft {
+  const role = softwareTeamRoleById(input.roleId) ?? softwareTeamRoleById("product")!;
+  return {
+    title: input.source.title,
+    roleId: role.id,
+    stageId: role.defaultStage,
+    sessionId: "",
+    deliveryId: input.deliveryId.trim(),
+    planRef: input.source.planRef,
+    goalRef: input.source.goalRef,
+    artifactRef: input.source.artifactRef,
     stageSource: "board",
   };
 }

@@ -166,4 +166,8 @@ export const koSoftwareTeamDlc = {
     "세션이 끝났습니다. 넘기거나 Ship — 보드는 자동으로 진행하지 않습니다.",
   "softwareTeamDlc.attachSeeded":
     "초안에 attach-chat 세션 {n}개를 심었습니다(최대 3).",
+  "softwareTeamDlc.addTeammateGroup": "팀 세션 추가",
+  "softwareTeamDlc.addTeammate": "{role} 세션 추가",
+  "softwareTeamDlc.attachedHint":
+    "이 딜리버리에 팀 채팅 {n}개(attach-chat, 최대 3)",
 } as const;

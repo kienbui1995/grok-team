@@ -73,6 +73,10 @@ describe("i18n catalog", () => {
       t("en", "softwareTeamDlc.startDeliveryBootstrapped", { n: 3 }),
     ).toContain("3");
     expect(t("en", "softwareTeamDlc.handoffCta", { role: "QA" })).toContain("QA");
+    expect(t("en", "softwareTeamDlc.addTeammate", { role: "Engineer" })).toContain(
+      "Engineer",
+    );
+    expect(t("en", "softwareTeamDlc.attachedHint", { n: 2 })).toContain("2");
   });
 
   it("createT binds locale (English is the product default)", () => {

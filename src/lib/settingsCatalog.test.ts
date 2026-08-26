@@ -552,6 +552,10 @@ describe("settingsCatalog", () => {
     expect(notes.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const start = searchSettingsEntries("start a delivery", tZh, tEn);
     expect(start.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const team = searchSettingsEntries("team session", tZh, tEn);
+    expect(team.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const attach = searchSettingsEntries("attach-chat", tZh, tEn);
+    expect(attach.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const zhHits = searchSettingsEntries("软件团队", tZh, tEn);
     expect(zhHits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(

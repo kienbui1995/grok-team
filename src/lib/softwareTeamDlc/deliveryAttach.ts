@@ -52,7 +52,10 @@ export function pickSoftwareTeamAttachSessions(
     const sid = item.sessionId.trim();
     if (!sid || sid === self) return false;
     if (!isChatSessionId(sid)) return false;
-    if (deliveryId && item.deliveryId && item.deliveryId !== deliveryId) {
+    const otherDelivery = (item.deliveryId ?? "").trim();
+    if (deliveryId) {
+      if (otherDelivery !== deliveryId) return false;
+    } else if (otherDelivery) {
       return false;
     }
     return true;
@@ -99,4 +102,23 @@ export function seedSoftwareTeamAttachStarter(
 ): string {
   if (!refs.length) return starter;
   return prependChatTokens(starter, [...refs]);
+}
+
+/** Preferred roles on this delivery that do not already have a card. */
+export function missingSoftwareTeamDeliveryRoles(
+  items: readonly SoftwareTeamPipelineItem[],
+  deliveryId: string,
+  prefer: readonly SoftwareTeamRoleId[] = SOFTWARE_TEAM_ATTACH_PREFER,
+): SoftwareTeamRoleId[] {
+  const id = deliveryId.trim();
+  const present = new Set(
+    items
+      .filter((item) =>
+        id
+          ? (item.deliveryId ?? "").trim() === id
+          : !(item.deliveryId ?? "").trim(),
+      )
+      .map((item) => item.roleId),
+  );
+  return prefer.filter((role) => !present.has(role));
 }

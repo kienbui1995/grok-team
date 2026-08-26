@@ -166,4 +166,8 @@ export const filSoftwareTeamDlc = {
     "Tapos na ang session. Mag-handoff o Ship — hindi kusa ang board.",
   "softwareTeamDlc.attachSeeded":
     "May {n} attach-chat session sa draft (max 3).",
+  "softwareTeamDlc.addTeammateGroup": "Magdagdag ng team session",
+  "softwareTeamDlc.addTeammate": "Magdagdag ng session para kay {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} team chat sa delivery na ito (attach-chat, max 3)",
 } as const;

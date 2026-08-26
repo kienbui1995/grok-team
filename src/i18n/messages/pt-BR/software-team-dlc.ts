@@ -166,4 +166,8 @@ export const ptBRSoftwareTeamDlc = {
     "Sessão concluída. Passe ou Ship — o quadro não avança sozinho.",
   "softwareTeamDlc.attachSeeded":
     "{n} sessões attach-chat semeadas no rascunho (máx. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Adicionar sessão da equipe",
+  "softwareTeamDlc.addTeammate": "Adicionar sessão de {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} chats da equipe nesta entrega (attach-chat, máx. 3)",
 } as const;

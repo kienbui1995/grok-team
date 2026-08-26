@@ -166,4 +166,8 @@ export const ukSoftwareTeamDlc = {
     "Сесію завершено. Передайте або Ship — дошка сама не рухається.",
   "softwareTeamDlc.attachSeeded":
     "У чернетку додано {n} сесій attach-chat (макс. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Додати сесію команди",
+  "softwareTeamDlc.addTeammate": "Додати сесію {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} командних чатів у цій поставці (attach-chat, макс. 3)",
 } as const;

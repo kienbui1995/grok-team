@@ -166,4 +166,8 @@ export const deSoftwareTeamDlc = {
     "Sitzung fertig. Übergeben oder Ship — das Board rückt nicht von selbst vor.",
   "softwareTeamDlc.attachSeeded":
     "{n} attach-chat-Sitzungen im Composer-Entwurf vorgemerkt (max. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Teamsitzung hinzufügen",
+  "softwareTeamDlc.addTeammate": "{role}-Sitzung hinzufügen",
+  "softwareTeamDlc.attachedHint":
+    "{n} Team-Chats in dieser Lieferung (attach-chat, max. 3)",
 } as const;

@@ -154,4 +154,8 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.shipCta": "发布 · 技术写作开场",
   "softwareTeamDlc.sessionDoneHint": "会话已结束。请交接或发布 — 看板不会自动推进。",
   "softwareTeamDlc.attachSeeded": "已在输入草稿种下 {n} 个 attach-chat 会话（最多 3 个）。",
+  "softwareTeamDlc.addTeammateGroup": "添加团队会话",
+  "softwareTeamDlc.addTeammate": "添加{role}会话",
+  "softwareTeamDlc.attachedHint":
+    "此交付有 {n} 个团队会话（attach-chat，最多 3 个）",
 } as const;

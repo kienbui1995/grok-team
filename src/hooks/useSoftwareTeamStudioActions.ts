@@ -65,7 +65,11 @@ export function useSoftwareTeamStudioActions(input: {
       sessionId?: string | null;
       deliveryId?: string | null;
     },
-    opts?: { starter?: string | null; createIfMissing?: boolean },
+    opts?: {
+      starter?: string | null;
+      createIfMissing?: boolean;
+      items?: readonly SoftwareTeamPipelineItem[];
+    },
   ) => Promise<SoftwareTeamLaunchResult>;
   applyLaunchNav: (result: SoftwareTeamLaunchResult) => void;
   describeLaunch: (result: SoftwareTeamLaunchResult) => string;
@@ -229,12 +233,16 @@ export function useSoftwareTeamStudioActions(input: {
         sessionId?: string | null;
         deliveryId?: string | null;
       },
-      opts?: { starter?: string | null; createIfMissing?: boolean },
+      opts?: {
+        starter?: string | null;
+        createIfMissing?: boolean;
+        items?: readonly SoftwareTeamPipelineItem[];
+      },
     ) => {
       setLaunching(true);
       try {
         const sibling = item.id
-          ? pickSoftwareTeamAttachSessions(pipelineItems ?? [], {
+          ? pickSoftwareTeamAttachSessions(opts?.items ?? pipelineItems ?? [], {
               id: item.id,
               sessionId: item.sessionId ?? "",
               deliveryId: item.deliveryId ?? "",

@@ -166,4 +166,8 @@ export const idSoftwareTeamDlc = {
     "Sesi selesai. Serahkan atau Ship — papan tidak maju sendiri.",
   "softwareTeamDlc.attachSeeded":
     "{n} sesi attach-chat disemai di draf (maks. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Tambah sesi tim",
+  "softwareTeamDlc.addTeammate": "Tambah sesi {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} obrolan tim pada pengiriman ini (attach-chat, maks. 3)",
 } as const;

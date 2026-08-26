@@ -166,4 +166,8 @@ export const ruSoftwareTeamDlc = {
     "Сессия завершена. Передайте или Ship — доска сама не двигается.",
   "softwareTeamDlc.attachSeeded":
     "В черновик добавлено {n} сессий attach-chat (макс. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Добавить сессию команды",
+  "softwareTeamDlc.addTeammate": "Добавить сессию {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} командных чатов в этой поставке (attach-chat, макс. 3)",
 } as const;

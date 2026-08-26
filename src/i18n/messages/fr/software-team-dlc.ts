@@ -166,4 +166,8 @@ export const frSoftwareTeamDlc = {
     "Session terminée. Passez ou Ship — le tableau n’avance pas tout seul.",
   "softwareTeamDlc.attachSeeded":
     "{n} sessions attach-chat semées dans le brouillon (max. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Ajouter une session d’équipe",
+  "softwareTeamDlc.addTeammate": "Ajouter une session {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} chats d’équipe sur cette livraison (attach-chat, max. 3)",
 } as const;
