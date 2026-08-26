@@ -13,7 +13,7 @@ export const ukSoftwareTeamDlc = {
     "Спільні дані сесій (GROK_HOME=~/.grok) ніколи не перезаписуються. Заготовки лишаються в застосунку, доки ви не встановите їх у проєкт або незалежний agent-home.",
   "softwareTeamDlc.rosterTitle": "Склад команди",
   "softwareTeamDlc.rosterHint":
-    "Одна сесія Grok Build на роль. Прив’яжіть сесію на дошці студії. Передача рухає наступну роль і копіює стартер.",
+    "Одна сесія Grok Build на роль. Відкрийте картку — стартер ролі потрапить у поле вводу. Передача рухає наступну роль і завантажує її стартер туди ж.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Обсяг, приймання й беклог. Передає один відвантажуваний зріз.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "Відв’язати сесію",
   "softwareTeamDlc.packTitle": "Шаблони ролей",
   "softwareTeamDlc.packHint":
-    "Заготовки агента, навички й workflow входять до застосунку. Вони доступні одразу після увімкнення Software Works.",
+    "Заготовки в застосунку. Встановлення пише 6 агентів, 6 навичок і team-handoff.rhai в .grok проєкту або незалежний agent-home — спільний ~/.grok не чіпає.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "Не запускає паралельні CLI-агенти. Команда = прив’язані сесії + attach-chat + стартери передачі.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Верстак і Remote IM як і раніше керують лише Grok Build.",
@@ -59,9 +59,18 @@ export const ukSoftwareTeamDlc = {
     "Оберіть теку проєкту, щоб установити шаблони в його каталог .grok.",
   "softwareTeamDlc.install.independentOk":
     "Незалежний режим може писати шаблони в agent-home застосунку (не ~/.grok).",
+  "softwareTeamDlc.install.action": "Встановити пакет ролей",
+  "softwareTeamDlc.install.installing": "Встановлення пакета…",
+  "softwareTeamDlc.install.ok": "Встановлено файлів пакета: {n} ({target}).",
+  "softwareTeamDlc.install.targetProject": ".grok проєкту",
+  "softwareTeamDlc.install.targetUser": "незалежний agent-home",
+  "softwareTeamDlc.install.needHost":
+    "Встановлення потребує настільний Host. Цей попередній перегляд не пише файли і не удає успіх.",
+  "softwareTeamDlc.install.hostError": "Встановлення не вдалося: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Куди ставити",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "Один конвеєр: прив’яжіть сесію, зсуньте етап, передайте наступну роль.",
+    "Прив’яжіть або створіть сесію, завантажте стартер у поле вводу, зсуньте етап, передайте наступну роль.",
   "softwareTeamDlc.pipelineTitle": "Конвеєр",
   "softwareTeamDlc.liveAgents": "Живі агенти",
   "softwareTeamDlc.addItem": "Додати елемент",
@@ -81,6 +90,19 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "Передати {role}",
   "softwareTeamDlc.handoffDone": "Конвеєр завершено — Tech Writer на етапі Ship.",
   "softwareTeamDlc.handoffCopied": "Стартер наступної ролі скопійовано",
+  "softwareTeamDlc.handoffLoaded": "Стартер наступної ролі в полі вводу.",
+  "softwareTeamDlc.openInComposer": "Відкрити в полі вводу",
+  "softwareTeamDlc.createAndOpen": "Створити сесію й відкрити",
+  "softwareTeamDlc.saveAndOpen": "Зберегти й відкрити",
+  "softwareTeamDlc.starterLoaded": "Стартер ролі в полі вводу.",
+  "softwareTeamDlc.needHostCreate":
+    "Без Host сесію не створити. Прив’яжіть наявну або відкрийте настільний застосунок.",
+  "softwareTeamDlc.createFailed": "Не вдалося створити сесію: {error}",
+  "softwareTeamDlc.planChromeSet": "Нотатку плану прикріплено до цієї сесії.",
+  "softwareTeamDlc.planChromeSkipped":
+    "Поле плану лишається на картці. Host не записав план-хром.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Після встановлення пакета /team-* вставляє чип навички. До того відкрийте сесію з дошки.",
   "softwareTeamDlc.noNextRole": "У цієї ролі немає подальшої передачі.",
   "softwareTeamDlc.moveStage": "Перемістити в {stage}",
   "softwareTeamDlc.removeItem": "Прибрати з дошки",

@@ -12,11 +12,11 @@ See `docs/llm-wiki/release.md`.
 ## [Unreleased]
 
 ### Added
-- **Software Works / SDLC Studio (opt-in)**: Settings → Extensions → Agents can enable a software-delivery edition. The Agents pane becomes a pipeline board (Backlog → Design → Build → Review → Ship) bound to session + role + plan/goal/artifact, with Product→…→Writer handoff. Off by default; never rewrites shared `~/.grok`; never auto-applies a skin.
+- **Software Works / SDLC Studio (opt-in)**: Settings → Extensions → Agents can enable a software-delivery edition. The Agents pane becomes a pipeline board (Backlog → Design → Build → Review → Ship) bound to session + role + plan/goal/artifact, with Product→…→Writer handoff. Open/create a session from the board to load the role starter into the composer. Install writes the 6+6+workflow pack into project `.grok/` or Independent agent-home (refuses shared `~/.grok`; never fakes Host success). `/team-*` appears in the slash palette when the edition is on (skill chip; CLI resolves after install). Off by default; never auto-applies a skin.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
-- **Software Works / SDLC Studio（可选）**：设置 → 扩展 → 代理可开启软件交付版。智能体看板变为流水线（待办 → 设计 → 构建 → 评审 → 发布），绑定会话 + 角色 + 计划/目标/产物，并支持 Product→…→Writer 交接。默认关；不改写共享 `~/.grok`；不自动套皮肤。
+- **Software Works / SDLC Studio（可选）**：设置 → 扩展 → 代理可开启软件交付版。智能体看板变为流水线（待办 → 设计 → 构建 → 评审 → 发布），绑定会话 + 角色 + 计划/目标/产物，并支持 Product→…→Writer 交接。从看板打开/新建会话会把角色开场写入输入框。安装包写入项目 `.grok/` 或独立 agent-home（拒绝共享 `~/.grok`，不假装 Host 成功）。开启后斜杠 `/team-*` 出现在面板（技能芯片；安装后 CLI 才能解析）。默认关；不自动套皮肤。
 - **自定义外观**：设置 → 外观 → 主题可改文字颜色（默认跟随浅/深色近黑/近白）和字体阴影（默认关）。「恢复默认」需二次确认，会把这两项恢复出厂。这两项会随 `.grokskin` 导入导出。
 
 ### Changed

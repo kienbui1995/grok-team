@@ -13,7 +13,7 @@ export const frSoftwareTeamDlc = {
     "Les données de session partagées (GROK_HOME=~/.grok) ne sont jamais réécrites. Les préréglages restent dans l’app tant que vous ne les installez pas dans un projet ou l’agent-home Indépendant.",
   "softwareTeamDlc.rosterTitle": "Effectif de l’équipe",
   "softwareTeamDlc.rosterHint":
-    "Une session Grok Build par rôle. Liez une session sur le tableau du studio. La passation avance le rôle suivant et copie son starter.",
+    "Une session Grok Build par rôle. Ouvrez une carte pour placer le starter dans le compositeur. La passation avance le rôle suivant et y charge son starter.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Périmètre, recette et backlog. Passe une seule tranche livrable.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "Délier la session",
   "softwareTeamDlc.packTitle": "Modèles de rôle",
   "softwareTeamDlc.packHint":
-    "Les préréglages agent, skill et workflow sont inclus dans l’app. Ils sont disponibles dès que Software Works est activé.",
+    "Les préréglages sont dans l’app. Installer écrit 6 agents, 6 skills et team-handoff.rhai dans le .grok du projet ou l’agent-home Indépendant — jamais le ~/.grok partagé.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "Ne démarre pas d’agents CLI en parallèle. Équipe = sessions liées + attach-chat + starters de passation.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Le workbench et Remote IM contrôlent toujours uniquement Grok Build.",
@@ -59,9 +59,18 @@ export const frSoftwareTeamDlc = {
     "Choisissez un dossier projet pour installer les modèles dans son répertoire .grok.",
   "softwareTeamDlc.install.independentOk":
     "Le mode Indépendant peut écrire les modèles dans l’agent-home de l’app (pas ~/.grok).",
+  "softwareTeamDlc.install.action": "Installer le pack de rôles",
+  "softwareTeamDlc.install.installing": "Installation du pack…",
+  "softwareTeamDlc.install.ok": "{n} fichiers du pack installés ({target}).",
+  "softwareTeamDlc.install.targetProject": ".grok du projet",
+  "softwareTeamDlc.install.targetUser": "agent-home Indépendant",
+  "softwareTeamDlc.install.needHost":
+    "L’installation exige l’hôte bureau. Cet aperçu ne peut pas écrire de fichiers — il ne simulera pas un succès.",
+  "softwareTeamDlc.install.hostError": "Échec de l’installation : {error}",
+  "softwareTeamDlc.install.chooseTarget": "Cible d’installation",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "Un pipeline : lier une session, déplacer l’étape, passer le rôle suivant.",
+    "Lier ou créer une session, charger le starter dans le compositeur, déplacer l’étape, passer le rôle suivant.",
   "softwareTeamDlc.pipelineTitle": "Pipeline",
   "softwareTeamDlc.liveAgents": "Agents live",
   "softwareTeamDlc.addItem": "Ajouter un élément",
@@ -81,6 +90,19 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "Passer à {role}",
   "softwareTeamDlc.handoffDone": "Pipeline terminé — Tech Writer est à l’étape Ship.",
   "softwareTeamDlc.handoffCopied": "Starter du rôle suivant copié",
+  "softwareTeamDlc.handoffLoaded": "Le starter du rôle suivant est dans le compositeur.",
+  "softwareTeamDlc.openInComposer": "Ouvrir dans le compositeur",
+  "softwareTeamDlc.createAndOpen": "Créer une session et ouvrir",
+  "softwareTeamDlc.saveAndOpen": "Enregistrer et ouvrir",
+  "softwareTeamDlc.starterLoaded": "Le starter du rôle est dans le compositeur.",
+  "softwareTeamDlc.needHostCreate":
+    "Impossible de créer une session sans l’hôte. Liez une session existante ou ouvrez l’app bureau.",
+  "softwareTeamDlc.createFailed": "Impossible de créer une session : {error}",
+  "softwareTeamDlc.planChromeSet": "Note de plan attachée à cette session.",
+  "softwareTeamDlc.planChromeSkipped":
+    "Le champ plan reste sur la carte. L’hôte n’a pas persisté le chrome de plan.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Après installation, /team-* insère la puce skill. Avant, ouvrez une session depuis le tableau.",
   "softwareTeamDlc.noNextRole": "Ce rôle n’a plus de passation.",
   "softwareTeamDlc.moveStage": "Déplacer vers {stage}",
   "softwareTeamDlc.removeItem": "Retirer du tableau",

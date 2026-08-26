@@ -13,7 +13,7 @@ export const taSoftwareTeamDlc = {
     "பகிரப்பட்ட அமர்வுத் தரவு (GROK_HOME=~/.grok) ஒருபோதும் மீண்டும் எழுதப்படாது. முன்னமைவுகள் செயலியில் இருக்கும்; திட்டம் அல்லது தனி agent-home-இல் நிறுவும் வரை வட்டில் போகாது.",
   "softwareTeamDlc.rosterTitle": "குழுப் பட்டியல்",
   "softwareTeamDlc.rosterHint":
-    "ஒரு பங்குக்கு ஒரு Grok Build அமர்வு. ஸ்டுடியோ பலகையில் அமர்வை இணைக்கவும். ஒப்படைப்பு அடுத்த பங்கை முன்னேற்றி தொடக்க உரையை நகலெடுக்கும்.",
+    "ஒரு பங்குக்கு ஒரு Grok Build அமர்வு. அட்டையைத் திறந்தால் பங்கு தொடக்க உரை உள்ளீட்டில் இருக்கும். ஒப்படைப்பு அடுத்த பங்கை முன்னேற்றி அந்த உரையை அங்கே ஏற்றும்.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "எல்லை, ஏற்பு, பின்நிரல். அனுப்பக்கூடிய ஒரு துண்டை ஒப்படைக்கிறது.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "அமர்வு இணைப்பை அகற்று",
   "softwareTeamDlc.packTitle": "பங்கு வார்ப்புருக்கள்",
   "softwareTeamDlc.packHint":
-    "முகவர், திறன், பணிப்பாய்வு முன்னமைவுகள் செயலியில் உள்ளன. Software Works இயங்கிய உடன் கிடைக்கும்.",
+    "முன்னமைவுகள் செயலியில் உள்ளன. நிறுவல் 6 முகவர்கள், 6 திறன்கள், team-handoff.rhai ஆகியவற்றை திட்ட .grok அல்லது தனி agent-home-இல் எழுதும் — பகிர்ந்த ~/.grok அல்ல.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "இணை CLI முகவர்களைத் தொடங்காது. குழு = இணைத்த அமர்வுகள் + attach-chat + ஒப்படைப்புத் தொடக்கங்கள்.",
   "softwareTeamDlc.honesty.grokBuildOnly": "பணிமேடை மற்றும் Remote IM இன்னும் Grok Build-ஐ மட்டுமே கட்டுப்படுத்துகின்றன.",
@@ -59,9 +59,18 @@ export const taSoftwareTeamDlc = {
     "அந்தத் திட்டத்தின் .grok கோப்பகத்தில் வார்ப்புருக்களை நிறுவ ஒரு திட்டக் கோப்புறையைத் தேர்ந்தெடுக்கவும்.",
   "softwareTeamDlc.install.independentOk":
     "தனிப் பயன்முறை செயலி agent-home-இல் எழுதலாம் (~/.grok அல்ல).",
+  "softwareTeamDlc.install.action": "பங்கு தொகுப்பை நிறுவு",
+  "softwareTeamDlc.install.installing": "தொகுப்பு நிறுவப்படுகிறது…",
+  "softwareTeamDlc.install.ok": "{n} தொகுப்புக் கோப்புகள் நிறுவப்பட்டன ({target}).",
+  "softwareTeamDlc.install.targetProject": "திட்ட .grok",
+  "softwareTeamDlc.install.targetUser": "தனி agent-home",
+  "softwareTeamDlc.install.needHost":
+    "நிறுவலுக்கு desktop Host தேவை. இந்த முன்னோட்டம் கோப்பு எழுதாது — வெற்றியைப் பாசாங்கு செய்யாது.",
+  "softwareTeamDlc.install.hostError": "நிறுவல் தோல்வி: {error}",
+  "softwareTeamDlc.install.chooseTarget": "நிறுவல் இலக்கு",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "ஒரே குழாய்: அமர்வை இணை, நிலையை நகர்த்து, அடுத்த பங்கை ஒப்படை.",
+    "அமர்வை இணை அல்லது உருவாக்கு, பங்கு தொடக்க உரையை உள்ளீட்டில் ஏற்று, நிலையை நகர்த்து, அடுத்த பங்கை ஒப்படை.",
   "softwareTeamDlc.pipelineTitle": "குழாய்",
   "softwareTeamDlc.liveAgents": "நேரடி முகவர்கள்",
   "softwareTeamDlc.addItem": "பணி உருப்படியைச் சேர்",
@@ -81,6 +90,19 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "{role}க்கு ஒப்படை",
   "softwareTeamDlc.handoffDone": "குழாய் முடிந்தது — Tech Writer Ship நிலையில் உள்ளார்.",
   "softwareTeamDlc.handoffCopied": "அடுத்த பங்கின் தொடக்க உரை நகலெடுக்கப்பட்டது",
+  "softwareTeamDlc.handoffLoaded": "அடுத்த பங்கின் தொடக்க உரை உள்ளீட்டில் உள்ளது.",
+  "softwareTeamDlc.openInComposer": "உள்ளீட்டில் திற",
+  "softwareTeamDlc.createAndOpen": "அமர்வை உருவாக்கி திற",
+  "softwareTeamDlc.saveAndOpen": "சேமித்து திற",
+  "softwareTeamDlc.starterLoaded": "பங்கு தொடக்க உரை உள்ளீட்டில் உள்ளது.",
+  "softwareTeamDlc.needHostCreate":
+    "Host இல்லாமல் அமர்வை உருவாக்க முடியாது. உள்ள அமர்வை இணைக்கவும் அல்லது desktop செயலியைத் திறக்கவும்.",
+  "softwareTeamDlc.createFailed": "அமர்வை உருவாக்க முடியவில்லை: {error}",
+  "softwareTeamDlc.planChromeSet": "திட்டக் குறிப்பு இந்த அமர்வில் இணைக்கப்பட்டது.",
+  "softwareTeamDlc.planChromeSkipped":
+    "திட்டப் புலம் அட்டையில் உள்ளது. Host திட்டப் பட்டையை எழுதவில்லை.",
+  "softwareTeamDlc.slashAfterInstall":
+    "தொகுப்பு நிறுவிய பின் /team-* திறன் சிப்பைச் செருகும். அதற்கு முன் பலகையிலிருந்து அமர்வைத் திறக்கவும்.",
   "softwareTeamDlc.noNextRole": "இந்தப் பங்கிற்கு மேலும் ஒப்படைப்பு இல்லை.",
   "softwareTeamDlc.moveStage": "{stage}க்கு நகர்த்து",
   "softwareTeamDlc.removeItem": "பலகையிலிருந்து அகற்று",

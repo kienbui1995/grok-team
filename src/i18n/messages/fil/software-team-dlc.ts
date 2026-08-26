@@ -13,7 +13,7 @@ export const filSoftwareTeamDlc = {
     "Hindi sinusulat muli ang shared session data (GROK_HOME=~/.grok). Nananatili sa app ang presets hangga't hindi mo i-install sa project o Independent agent-home.",
   "softwareTeamDlc.rosterTitle": "Roster ng team",
   "softwareTeamDlc.rosterHint":
-    "Isang Grok Build session bawat role. I-bind ang session sa studio board. Ang handoff ay nagpapasulong ng susunod na role at kumokopya ng starter.",
+    "Isang Grok Build session bawat role. Buksan ang card para ilagay ang starter sa composer. Ang handoff ay nagpapasulong ng susunod na role at niloload ang starter doon.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Scope, acceptance, at backlog. Naghahand-off ng isang slice na pwedeng i-ship.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "I-unbind ang session",
   "softwareTeamDlc.packTitle": "Mga template ng role",
   "softwareTeamDlc.packHint":
-    "Naka-bundle sa app ang agent, skill, at workflow presets. Available agad kapag naka-on ang Software Works.",
+    "Naka-bundle sa app ang presets. Ang install ay nagsusulat ng 6 agents, 6 skills, at team-handoff.rhai sa .grok ng proyekto o Independent agent-home — hindi sa shared ~/.grok.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "Hindi nagpapasimula ng parallel CLI agents. Team = naka-bind na sessions + attach-chat + handoff starters.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Ang workbench at Remote IM ay Grok Build pa rin ang kinokontrol.",
@@ -59,9 +59,18 @@ export const filSoftwareTeamDlc = {
     "Pumili ng project folder para i-install ang templates sa .grok directory nito.",
   "softwareTeamDlc.install.independentOk":
     "Puwedeng magsulat ang Independent mode ng templates sa App agent-home (hindi ~/.grok).",
+  "softwareTeamDlc.install.action": "I-install ang role pack",
+  "softwareTeamDlc.install.installing": "Ini-install ang pack…",
+  "softwareTeamDlc.install.ok": "Na-install ang {n} pack file ({target}).",
+  "softwareTeamDlc.install.targetProject": "project .grok",
+  "softwareTeamDlc.install.targetUser": "Independent agent-home",
+  "softwareTeamDlc.install.needHost":
+    "Kailangan ng desktop Host ang install. Hindi makakasulat ng file ang preview na ito — hindi ito magpapanggap na successful.",
+  "softwareTeamDlc.install.hostError": "Bigo ang install: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Target ng install",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "Isang pipeline: i-bind ang session, ilipat ang stage, i-hand off ang susunod na role.",
+    "I-bind o gumawa ng session, iload ang role starter sa composer, ilipat ang stage, i-hand off ang susunod na role.",
   "softwareTeamDlc.pipelineTitle": "Pipeline",
   "softwareTeamDlc.liveAgents": "Mga live na agent",
   "softwareTeamDlc.addItem": "Magdagdag ng item",
@@ -81,6 +90,19 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "I-hand off kay {role}",
   "softwareTeamDlc.handoffDone": "Tapos na ang pipeline — nasa Ship na ang Tech Writer.",
   "softwareTeamDlc.handoffCopied": "Nakopya ang starter ng susunod na role",
+  "softwareTeamDlc.handoffLoaded": "Nasa composer na ang starter ng susunod na role.",
+  "softwareTeamDlc.openInComposer": "Buksan sa composer",
+  "softwareTeamDlc.createAndOpen": "Gumawa ng session at buksan",
+  "softwareTeamDlc.saveAndOpen": "I-save at buksan",
+  "softwareTeamDlc.starterLoaded": "Nasa composer na ang role starter.",
+  "softwareTeamDlc.needHostCreate":
+    "Hindi makagawa ng session kung walang Host. I-bind ang existing session, o buksan ang desktop app.",
+  "softwareTeamDlc.createFailed": "Hindi nakagawa ng session: {error}",
+  "softwareTeamDlc.planChromeSet": "May plan note na sa session na ito.",
+  "softwareTeamDlc.planChromeSkipped":
+    "Nasa card pa rin ang plan field. Hindi nag-persist ang Host ng plan chrome.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Pagkatapos i-install ang pack, naglalagay ang /team-* ng skill chip. Bago iyon, magbukas ng session mula sa board.",
   "softwareTeamDlc.noNextRole": "Wala nang further handoff ang role na ito.",
   "softwareTeamDlc.moveStage": "Ilipat sa {stage}",
   "softwareTeamDlc.removeItem": "Alisin sa board",

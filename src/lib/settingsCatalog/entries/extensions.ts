@@ -119,6 +119,8 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "softwareTeamDlc.enableDesc",
       "softwareTeamDlc.rosterTitle",
       "softwareTeamDlc.sdlcTitle",
+      "softwareTeamDlc.install.action",
+      "softwareTeamDlc.openInComposer",
     ],
     keywords: [
       "software works",
@@ -135,9 +137,13 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "reviewer",
       "qa",
       "workspace pack",
+      "install pack",
+      "role pack",
+      "open in composer",
       "软件团队",
       "软件团队 dlc",
       "软件工坊",
+      "安装角色包",
     ],
   },
   {

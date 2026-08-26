@@ -13,7 +13,7 @@ export const zhTWSoftwareTeamDlc = {
     "共用工作階段資料（GROK_HOME=~/.grok）不會被改寫。預設留在應用內；只有裝到專案或獨立 agent-home 才會落盤。",
   "softwareTeamDlc.rosterTitle": "團隊名單",
   "softwareTeamDlc.rosterHint":
-    "每個角色一個 Grok Build 工作階段。在工坊看板上綁定工作階段。交接會推進下一角色並複製開場提示。",
+    "每個角色一個 Grok Build 工作階段。開啟卡片即可把角色開場寫入輸入框。交接會推進下一角色並把開場載入該工作階段輸入框。",
   "softwareTeamDlc.role.product": "產品",
   "softwareTeamDlc.role.product.desc": "範圍、驗收與待辦。交出一塊能交付的切片。",
   "softwareTeamDlc.role.architect": "架構",
@@ -47,7 +47,7 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "解除工作階段綁定",
   "softwareTeamDlc.packTitle": "角色範本",
   "softwareTeamDlc.packHint":
-    "代理、技能與工作流程預設已打進應用。Software Works 開啟即可用。",
+    "預設打在應用裡。安裝會把 6 個代理、6 個技能與 team-handoff.rhai 寫入專案 .grok 或獨立 agent-home，絕不改寫共用 ~/.grok。",
   "softwareTeamDlc.honesty.noParallelAgents":
     "不會並行拉起 CLI 代理。團隊 = 綁定的工作階段 + attach-chat + 交接開場。",
   "softwareTeamDlc.honesty.grokBuildOnly": "工作台與遠端控制仍然只調度 Grok Build。",
@@ -59,8 +59,18 @@ export const zhTWSoftwareTeamDlc = {
     "請先選一個專案資料夾，才能把範本裝進該專案的 .grok 目錄。",
   "softwareTeamDlc.install.independentOk":
     "獨立模式可以把範本寫到應用的 agent-home（不是 ~/.grok）。",
+  "softwareTeamDlc.install.action": "安裝角色包",
+  "softwareTeamDlc.install.installing": "正在安裝…",
+  "softwareTeamDlc.install.ok": "已安裝 {n} 個包檔案（{target}）。",
+  "softwareTeamDlc.install.targetProject": "專案 .grok",
+  "softwareTeamDlc.install.targetUser": "獨立 agent-home",
+  "softwareTeamDlc.install.needHost":
+    "安裝需要桌面 Host。此預覽不能寫檔，也不會假裝成功。",
+  "softwareTeamDlc.install.hostError": "安裝失敗：{error}",
+  "softwareTeamDlc.install.chooseTarget": "安裝目標",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
-  "softwareTeamDlc.studioHint": "一條流水線：綁定工作階段、移動階段、交接下一角色。",
+  "softwareTeamDlc.studioHint":
+    "綁定或新建工作階段，把角色開場載入輸入框，移動階段，交接下一角色。",
   "softwareTeamDlc.pipelineTitle": "流水線",
   "softwareTeamDlc.liveAgents": "即時代理",
   "softwareTeamDlc.addItem": "新增工作項",
@@ -80,6 +90,19 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "交接給 {role}",
   "softwareTeamDlc.handoffDone": "流水線完成 — 技術寫作已在發布階段。",
   "softwareTeamDlc.handoffCopied": "已複製下一角色開場",
+  "softwareTeamDlc.handoffLoaded": "下一角色開場已在輸入框。",
+  "softwareTeamDlc.openInComposer": "在輸入框開啟",
+  "softwareTeamDlc.createAndOpen": "新建工作階段並開啟",
+  "softwareTeamDlc.saveAndOpen": "儲存並開啟",
+  "softwareTeamDlc.starterLoaded": "角色開場已在輸入框。",
+  "softwareTeamDlc.needHostCreate":
+    "沒有 Host 無法新建工作階段。請綁定既有工作階段，或開啟桌面應用。",
+  "softwareTeamDlc.createFailed": "無法新建工作階段：{error}",
+  "softwareTeamDlc.planChromeSet": "已把計畫備註附到此工作階段。",
+  "softwareTeamDlc.planChromeSkipped":
+    "計畫欄位留在卡片上。Host 沒有寫入計畫列。",
+  "softwareTeamDlc.slashAfterInstall":
+    "安裝包之後，/team-* 會插入技能晶片。之前請從看板開啟工作階段。",
   "softwareTeamDlc.noNextRole": "此角色沒有後續交接。",
   "softwareTeamDlc.moveStage": "移到 {stage}",
   "softwareTeamDlc.removeItem": "從看板移除",

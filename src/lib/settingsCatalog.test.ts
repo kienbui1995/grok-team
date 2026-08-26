@@ -542,6 +542,8 @@ describe("settingsCatalog", () => {
     expect(studio.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const dlc = searchSettingsEntries("dlc", tZh, tEn);
     expect(dlc.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const install = searchSettingsEntries("install pack", tZh, tEn);
+    expect(install.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const zhHits = searchSettingsEntries("软件团队", tZh, tEn);
     expect(zhHits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(

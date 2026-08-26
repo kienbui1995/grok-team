@@ -109,3 +109,36 @@ export {
   type SoftwareTeamPackFile,
   type SoftwareTeamPackKind,
 } from "./pack";
+
+export { softwareTeamSlashSkillInfos } from "./slash";
+
+export {
+  SOFTWARE_TEAM_PACK_INSTALL_FAIL_REASONS,
+  defaultSoftwareTeamPackHost,
+  installSoftwareTeamDlcPack,
+  pickSoftwareTeamInstallTarget,
+  softwareTeamInstallFailMessageKey,
+  type SoftwareTeamPackFileAction,
+  type SoftwareTeamPackFileResult,
+  type SoftwareTeamPackInstallFailReason,
+  type SoftwareTeamPackInstallResult,
+  type SoftwareTeamPackWriteHost,
+} from "./install";
+
+export {
+  SOFTWARE_TEAM_CHAT_HASH,
+  attachSoftwareTeamPlanChrome,
+  composeRoleSessionStarter,
+  decideSoftwareTeamComposerNav,
+  defaultSoftwareTeamLaunchHost,
+  launchSoftwareTeamWorkItem,
+  requestSoftwareTeamChatPane,
+  resolveSoftwareTeamWorkspace,
+  seedSoftwareTeamComposerDraft,
+  type SoftwareTeamComposerNav,
+  type SoftwareTeamLaunchFailReason,
+  type SoftwareTeamLaunchHost,
+  type SoftwareTeamLaunchResult,
+  type SoftwareTeamPlanChromeOutcome,
+  type SoftwareTeamStarterFields,
+} from "./sessionLaunch";

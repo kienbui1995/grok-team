@@ -13,7 +13,7 @@ export const idSoftwareTeamDlc = {
     "Data sesi bersama (GROK_HOME=~/.grok) tidak pernah ditulis ulang. Preset tetap di aplikasi kecuali Anda memasangnya ke proyek atau agent-home Independen.",
   "softwareTeamDlc.rosterTitle": "Daftar tim",
   "softwareTeamDlc.rosterHint":
-    "Satu sesi Grok Build per peran. Ikat sesi di papan studio. Serah peran memajukan peran berikutnya dan menyalin starter.",
+    "Satu sesi Grok Build per peran. Buka kartu agar starter peran masuk ke komposer. Serah peran memajukan peran berikutnya dan memuat starternya di sana.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Lingkup, penerimaan, dan backlog. Menyerahkan satu irisan yang bisa dikirim.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "Lepas sesi",
   "softwareTeamDlc.packTitle": "Templat peran",
   "softwareTeamDlc.packHint":
-    "Preset agen, skill, dan alur kerja dibundel di aplikasi. Tersedia segera setelah Software Works aktif.",
+    "Preset ada di aplikasi. Instal menulis 6 agen, 6 skill, dan team-handoff.rhai ke .grok proyek atau agent-home Independen — bukan ~/.grok bersama.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "Tidak memulai agen CLI paralel. Tim = sesi terikat + attach-chat + starter serah peran.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Workbench dan Remote IM tetap hanya mengendalikan Grok Build.",
@@ -59,9 +59,18 @@ export const idSoftwareTeamDlc = {
     "Pilih folder proyek untuk memasang templat di direktori .grok proyek itu.",
   "softwareTeamDlc.install.independentOk":
     "Mode Independen boleh menulis templat ke agent-home Aplikasi (bukan ~/.grok).",
+  "softwareTeamDlc.install.action": "Instal paket peran",
+  "softwareTeamDlc.install.installing": "Menginstal paket…",
+  "softwareTeamDlc.install.ok": "Terinstal {n} berkas paket ({target}).",
+  "softwareTeamDlc.install.targetProject": ".grok proyek",
+  "softwareTeamDlc.install.targetUser": "agent-home Independen",
+  "softwareTeamDlc.install.needHost":
+    "Instal membutuhkan Host desktop. Pratinjau ini tidak dapat menulis berkas dan tidak akan berpura-pura berhasil.",
+  "softwareTeamDlc.install.hostError": "Instal gagal: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Target instal",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "Satu pipeline: ikat sesi, pindahkan tahap, serahkan peran berikutnya.",
+    "Ikat atau buat sesi, muat starter peran ke komposer, pindahkan tahap, serahkan peran berikutnya.",
   "softwareTeamDlc.pipelineTitle": "Pipeline",
   "softwareTeamDlc.liveAgents": "Agen langsung",
   "softwareTeamDlc.addItem": "Tambah item",
@@ -81,6 +90,19 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "Serahkan ke {role}",
   "softwareTeamDlc.handoffDone": "Pipeline selesai — Tech Writer ada di tahap Ship.",
   "softwareTeamDlc.handoffCopied": "Starter peran berikutnya disalin",
+  "softwareTeamDlc.handoffLoaded": "Starter peran berikutnya ada di komposer.",
+  "softwareTeamDlc.openInComposer": "Buka di komposer",
+  "softwareTeamDlc.createAndOpen": "Buat sesi dan buka",
+  "softwareTeamDlc.saveAndOpen": "Simpan dan buka",
+  "softwareTeamDlc.starterLoaded": "Starter peran ada di komposer.",
+  "softwareTeamDlc.needHostCreate":
+    "Tanpa Host sesi tidak dapat dibuat. Ikat sesi yang ada, atau buka aplikasi desktop.",
+  "softwareTeamDlc.createFailed": "Tidak dapat membuat sesi: {error}",
+  "softwareTeamDlc.planChromeSet": "Catatan rencana dilampirkan ke sesi ini.",
+  "softwareTeamDlc.planChromeSkipped":
+    "Bidang rencana tetap di kartu. Host tidak menulis chrome rencana.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Setelah paket terinstal, /team-* menyisipkan chip skill. Sebelum itu, buka sesi dari papan.",
   "softwareTeamDlc.noNextRole": "Peran ini tidak punya serah peran lagi.",
   "softwareTeamDlc.moveStage": "Pindah ke {stage}",
   "softwareTeamDlc.removeItem": "Hapus dari papan",

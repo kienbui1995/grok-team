@@ -13,7 +13,7 @@ export const ptBRSoftwareTeamDlc = {
     "Os dados de sessão compartilhados (GROK_HOME=~/.grok) nunca são reescritos. Os presets ficam no app até você instalá-los num projeto ou no agent-home Independente.",
   "softwareTeamDlc.rosterTitle": "Elenco da equipe",
   "softwareTeamDlc.rosterHint":
-    "Uma sessão Grok Build por papel. Vincule uma sessão no quadro do estúdio. O handoff avança o próximo papel e copia o starter.",
+    "Uma sessão Grok Build por papel. Abra um cartão para colocar o starter no compositor. O handoff avança o próximo papel e carrega o starter lá.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Escopo, aceite e backlog. Entrega um único recorte enviável.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "Desvincular sessão",
   "softwareTeamDlc.packTitle": "Modelos de papel",
   "softwareTeamDlc.packHint":
-    "Os presets de agente, skill e workflow vêm no app. Ficam disponíveis assim que o Software Works está ligado.",
+    "Os presets vêm no app. Instalar grava 6 agentes, 6 skills e team-handoff.rhai no .grok do projeto ou no agent-home Independente — nunca o ~/.grok compartilhado.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "Não inicia agentes CLI em paralelo. Equipe = sessões vinculadas + attach-chat + starters de handoff.",
   "softwareTeamDlc.honesty.grokBuildOnly": "O workbench e o Remote IM ainda controlam só o Grok Build.",
@@ -59,9 +59,18 @@ export const ptBRSoftwareTeamDlc = {
     "Selecione uma pasta de projeto para instalar os modelos no .grok desse projeto.",
   "softwareTeamDlc.install.independentOk":
     "O modo Independente pode gravar modelos no agent-home do App (não ~/.grok).",
+  "softwareTeamDlc.install.action": "Instalar pacote de papéis",
+  "softwareTeamDlc.install.installing": "Instalando pacote…",
+  "softwareTeamDlc.install.ok": "Instalados {n} arquivos do pacote ({target}).",
+  "softwareTeamDlc.install.targetProject": ".grok do projeto",
+  "softwareTeamDlc.install.targetUser": "agent-home Independente",
+  "softwareTeamDlc.install.needHost":
+    "A instalação precisa do Host do desktop. Esta prévia não grava arquivos e não finge sucesso.",
+  "softwareTeamDlc.install.hostError": "Falha na instalação: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Destino da instalação",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "Um pipeline: vincule uma sessão, mova a etapa, passe o próximo papel.",
+    "Vincule ou crie uma sessão, carregue o starter no compositor, mova a etapa, passe o próximo papel.",
   "softwareTeamDlc.pipelineTitle": "Pipeline",
   "softwareTeamDlc.liveAgents": "Agentes ao vivo",
   "softwareTeamDlc.addItem": "Adicionar item",
@@ -81,6 +90,19 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "Passar para {role}",
   "softwareTeamDlc.handoffDone": "Pipeline concluído — Tech Writer está em Ship.",
   "softwareTeamDlc.handoffCopied": "Starter do próximo papel copiado",
+  "softwareTeamDlc.handoffLoaded": "O starter do próximo papel está no compositor.",
+  "softwareTeamDlc.openInComposer": "Abrir no compositor",
+  "softwareTeamDlc.createAndOpen": "Criar sessão e abrir",
+  "softwareTeamDlc.saveAndOpen": "Salvar e abrir",
+  "softwareTeamDlc.starterLoaded": "O starter do papel está no compositor.",
+  "softwareTeamDlc.needHostCreate":
+    "Sem o Host não dá para criar uma sessão. Vincule uma existente ou abra o app desktop.",
+  "softwareTeamDlc.createFailed": "Não foi possível criar a sessão: {error}",
+  "softwareTeamDlc.planChromeSet": "Nota de plano anexada a esta sessão.",
+  "softwareTeamDlc.planChromeSkipped":
+    "O campo de plano fica no cartão. O Host não persistiu o chrome de plano.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Depois de instalar o pacote, /team-* insere o chip de skill. Antes, abra uma sessão pelo quadro.",
   "softwareTeamDlc.noNextRole": "Este papel não tem mais handoff.",
   "softwareTeamDlc.moveStage": "Mover para {stage}",
   "softwareTeamDlc.removeItem": "Remover do quadro",

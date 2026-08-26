@@ -13,7 +13,7 @@ export const esSoftwareTeamDlc = {
     "Los datos de sesión compartidos (GROK_HOME=~/.grok) nunca se reescriben. Los presets quedan en la app salvo que los instales en un proyecto o en el agent-home Independiente.",
   "softwareTeamDlc.rosterTitle": "Plantilla del equipo",
   "softwareTeamDlc.rosterHint":
-    "Una sesión de Grok Build por rol. Vincula una sesión en el tablero del estudio. El handoff avanza el siguiente rol y copia su starter.",
+    "Una sesión de Grok Build por rol. Abre una tarjeta para poner el starter en el compositor. El handoff avanza el siguiente rol y carga su starter ahí.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Alcance, aceptación y backlog. Entrega una rodaja enviable.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "Desvincular sesión",
   "softwareTeamDlc.packTitle": "Plantillas de rol",
   "softwareTeamDlc.packHint":
-    "Los presets de agente, skill y workflow van en la app. Están disponibles en cuanto Software Works está activo.",
+    "Los presets van en la app. Instalar escribe 6 agentes, 6 skills y team-handoff.rhai en el .grok del proyecto o el agent-home Independiente — nunca el ~/.grok compartido.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "No arranca agentes CLI en paralelo. Equipo = sesiones vinculadas + attach-chat + starters de handoff.",
   "softwareTeamDlc.honesty.grokBuildOnly": "El workbench y Remote IM siguen controlando solo Grok Build.",
@@ -59,9 +59,18 @@ export const esSoftwareTeamDlc = {
     "Elige una carpeta de proyecto para instalar plantillas en su directorio .grok.",
   "softwareTeamDlc.install.independentOk":
     "El modo Independiente puede escribir plantillas en el agent-home de la app (no ~/.grok).",
+  "softwareTeamDlc.install.action": "Instalar paquete de roles",
+  "softwareTeamDlc.install.installing": "Instalando paquete…",
+  "softwareTeamDlc.install.ok": "Se instalaron {n} archivos del paquete ({target}).",
+  "softwareTeamDlc.install.targetProject": ".grok del proyecto",
+  "softwareTeamDlc.install.targetUser": "agent-home Independiente",
+  "softwareTeamDlc.install.needHost":
+    "La instalación necesita el Host de escritorio. Esta vista previa no puede escribir archivos y no fingirá éxito.",
+  "softwareTeamDlc.install.hostError": "La instalación falló: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Destino de instalación",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "Un pipeline: vincula una sesión, mueve la etapa, entrega el siguiente rol.",
+    "Vincula o crea una sesión, carga el starter en el compositor, mueve la etapa, entrega el siguiente rol.",
   "softwareTeamDlc.pipelineTitle": "Pipeline",
   "softwareTeamDlc.liveAgents": "Agentes en vivo",
   "softwareTeamDlc.addItem": "Añadir elemento",
@@ -81,6 +90,19 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "Entregar a {role}",
   "softwareTeamDlc.handoffDone": "Pipeline completo — Tech Writer está en Ship.",
   "softwareTeamDlc.handoffCopied": "Starter del siguiente rol copiado",
+  "softwareTeamDlc.handoffLoaded": "El starter del siguiente rol está en el compositor.",
+  "softwareTeamDlc.openInComposer": "Abrir en el compositor",
+  "softwareTeamDlc.createAndOpen": "Crear sesión y abrir",
+  "softwareTeamDlc.saveAndOpen": "Guardar y abrir",
+  "softwareTeamDlc.starterLoaded": "El starter del rol está en el compositor.",
+  "softwareTeamDlc.needHostCreate":
+    "Sin Host no se puede crear una sesión. Vincula una existente o abre la app de escritorio.",
+  "softwareTeamDlc.createFailed": "No se pudo crear la sesión: {error}",
+  "softwareTeamDlc.planChromeSet": "Nota de plan adjuntada a esta sesión.",
+  "softwareTeamDlc.planChromeSkipped":
+    "El campo de plan queda en la tarjeta. El Host no persistió el chrome de plan.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Tras instalar el paquete, /team-* inserta el chip de skill. Antes, abre una sesión desde el tablero.",
   "softwareTeamDlc.noNextRole": "Este rol no tiene más handoff.",
   "softwareTeamDlc.moveStage": "Mover a {stage}",
   "softwareTeamDlc.removeItem": "Quitar del tablero",

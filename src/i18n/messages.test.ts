@@ -217,6 +217,9 @@ describe("i18n catalog", () => {
       ["softwareTeamDlc.handoffTo", ["{role}"]],
       ["softwareTeamDlc.moveStage", ["{stage}"]],
       ["softwareTeamDlc.roleOnStage", ["{role}", "{stage}"]],
+      ["softwareTeamDlc.install.ok", ["{n}", "{target}"]],
+      ["softwareTeamDlc.install.hostError", ["{error}"]],
+      ["softwareTeamDlc.createFailed", ["{error}"]],
     ];
     for (const loc of LOCALES) {
       for (const [key, vars] of cases) {

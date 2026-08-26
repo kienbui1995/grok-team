@@ -13,7 +13,7 @@ export const zhSoftwareTeamDlc = {
     "共享会话数据（GROK_HOME=~/.grok）不会被改写。预设留在应用内；只有装到项目或独立 agent-home 才会落盘。",
   "softwareTeamDlc.rosterTitle": "团队名单",
   "softwareTeamDlc.rosterHint":
-    "每个角色一个 Grok Build 会话。在工坊看板上绑定会话。交接会推进下一角色并复制开场提示。",
+    "每个角色一个 Grok Build 会话。打开卡片即可把角色开场写入输入框。交接会推进下一角色并把开场载入该会话输入框。",
   "softwareTeamDlc.role.product": "产品",
   "softwareTeamDlc.role.product.desc": "范围、验收与待办。交出一块能交付的切片。",
   "softwareTeamDlc.role.architect": "架构",
@@ -47,7 +47,7 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "解除会话绑定",
   "softwareTeamDlc.packTitle": "角色模板",
   "softwareTeamDlc.packHint":
-    "代理、技能与工作流预设已打进应用。Software Works 打开即可用。",
+    "预设打在应用里。安装会把 6 个代理、6 个技能和 team-handoff.rhai 写入项目 .grok 或独立 agent-home，绝不改写共享 ~/.grok。",
   "softwareTeamDlc.honesty.noParallelAgents":
     "不会并行拉起 CLI 代理。团队 = 绑定的会话 + attach-chat + 交接开场。",
   "softwareTeamDlc.honesty.grokBuildOnly": "工作台与远程控制仍然只调度 Grok Build。",
@@ -59,8 +59,18 @@ export const zhSoftwareTeamDlc = {
     "请先选一个项目文件夹，才能把模板装进该项目的 .grok 目录。",
   "softwareTeamDlc.install.independentOk":
     "独立模式可以把模板写到应用的 agent-home（不是 ~/.grok）。",
+  "softwareTeamDlc.install.action": "安装角色包",
+  "softwareTeamDlc.install.installing": "正在安装…",
+  "softwareTeamDlc.install.ok": "已安装 {n} 个包文件（{target}）。",
+  "softwareTeamDlc.install.targetProject": "项目 .grok",
+  "softwareTeamDlc.install.targetUser": "独立 agent-home",
+  "softwareTeamDlc.install.needHost":
+    "安装需要桌面 Host。此预览不能写文件，也不会假装成功。",
+  "softwareTeamDlc.install.hostError": "安装失败：{error}",
+  "softwareTeamDlc.install.chooseTarget": "安装目标",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
-  "softwareTeamDlc.studioHint": "一条流水线：绑定会话、移动阶段、交接下一角色。",
+  "softwareTeamDlc.studioHint":
+    "绑定或新建会话，把角色开场载入输入框，移动阶段，交接下一角色。",
   "softwareTeamDlc.pipelineTitle": "流水线",
   "softwareTeamDlc.liveAgents": "实时代理",
   "softwareTeamDlc.addItem": "添加工作项",
@@ -80,6 +90,19 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "交接给 {role}",
   "softwareTeamDlc.handoffDone": "流水线完成 — 技术写作已在发布阶段。",
   "softwareTeamDlc.handoffCopied": "已复制下一角色开场",
+  "softwareTeamDlc.handoffLoaded": "下一角色开场已在输入框。",
+  "softwareTeamDlc.openInComposer": "在输入框打开",
+  "softwareTeamDlc.createAndOpen": "新建会话并打开",
+  "softwareTeamDlc.saveAndOpen": "保存并打开",
+  "softwareTeamDlc.starterLoaded": "角色开场已在输入框。",
+  "softwareTeamDlc.needHostCreate":
+    "没有 Host 无法新建会话。请绑定已有会话，或打开桌面应用。",
+  "softwareTeamDlc.createFailed": "无法新建会话：{error}",
+  "softwareTeamDlc.planChromeSet": "已把计划备注附到此会话。",
+  "softwareTeamDlc.planChromeSkipped":
+    "计划字段留在卡片上。Host 没有写入计划条。",
+  "softwareTeamDlc.slashAfterInstall":
+    "安装包之后，/team-* 会插入技能芯片。之前请从看板打开会话。",
   "softwareTeamDlc.noNextRole": "此角色没有后续交接。",
   "softwareTeamDlc.moveStage": "移到 {stage}",
   "softwareTeamDlc.removeItem": "从看板移除",

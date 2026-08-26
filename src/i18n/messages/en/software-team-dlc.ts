@@ -13,7 +13,7 @@ export const enSoftwareTeamDlc = {
     "Shared session data (GROK_HOME=~/.grok) is never rewritten. Presets stay in the app unless you install them into a project or Independent agent-home.",
   "softwareTeamDlc.rosterTitle": "Team roster",
   "softwareTeamDlc.rosterHint":
-    "One Grok Build session per role. Bind a session on the studio board. Handoff advances the next role and copies its starter.",
+    "One Grok Build session per role. Open a card to put the role starter in the composer. Handoff advances the next role and loads its starter there.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc":
     "Scope, acceptance, and backlog. Hands off a single shippable slice.",
@@ -53,7 +53,7 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "Unbind session",
   "softwareTeamDlc.packTitle": "Role templates",
   "softwareTeamDlc.packHint":
-    "Agent, skill, and workflow presets are bundled in the app. They are available as soon as Software Works is on.",
+    "Presets are bundled in the app. Install writes 6 agents, 6 skills, and team-handoff.rhai into the project .grok folder or Independent agent-home — never shared ~/.grok.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "Does not start parallel CLI agents. Team = bound sessions + attach-chat + handoff starters.",
   "softwareTeamDlc.honesty.grokBuildOnly":
@@ -66,9 +66,18 @@ export const enSoftwareTeamDlc = {
     "Select a project folder to install templates under that project’s .grok directory.",
   "softwareTeamDlc.install.independentOk":
     "Independent mode may write templates to the App agent-home (not ~/.grok).",
+  "softwareTeamDlc.install.action": "Install role pack",
+  "softwareTeamDlc.install.installing": "Installing pack…",
+  "softwareTeamDlc.install.ok": "Installed {n} pack files ({target}).",
+  "softwareTeamDlc.install.targetProject": "project .grok",
+  "softwareTeamDlc.install.targetUser": "Independent agent-home",
+  "softwareTeamDlc.install.needHost":
+    "Install needs the desktop Host. This preview cannot write files — it will not pretend to succeed.",
+  "softwareTeamDlc.install.hostError": "Install failed: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Install target",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "One pipeline: bind a session, move the stage, hand off the next role.",
+    "Bind or create a session, load the role starter into the composer, move the stage, hand off the next role.",
   "softwareTeamDlc.pipelineTitle": "Pipeline",
   "softwareTeamDlc.liveAgents": "Live agents",
   "softwareTeamDlc.addItem": "Add work item",
@@ -88,6 +97,19 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "Hand off to {role}",
   "softwareTeamDlc.handoffDone": "Pipeline complete — Writer has the Ship stage.",
   "softwareTeamDlc.handoffCopied": "Next-role starter copied",
+  "softwareTeamDlc.handoffLoaded": "Next-role starter is in the composer.",
+  "softwareTeamDlc.openInComposer": "Open in composer",
+  "softwareTeamDlc.createAndOpen": "Create session and open",
+  "softwareTeamDlc.saveAndOpen": "Save and open",
+  "softwareTeamDlc.starterLoaded": "Role starter is in the composer.",
+  "softwareTeamDlc.needHostCreate":
+    "Cannot create a session without the Host. Bind an existing session, or open the desktop app.",
+  "softwareTeamDlc.createFailed": "Could not create a session: {error}",
+  "softwareTeamDlc.planChromeSet": "Plan note attached on this session.",
+  "softwareTeamDlc.planChromeSkipped":
+    "Plan field is on the card. Host did not persist plan chrome.",
+  "softwareTeamDlc.slashAfterInstall":
+    "After pack install, /team-* inserts the skill chip. Before that, open a session from the board.",
   "softwareTeamDlc.noNextRole": "This role has no further handoff.",
   "softwareTeamDlc.moveStage": "Move to {stage}",
   "softwareTeamDlc.removeItem": "Remove from board",

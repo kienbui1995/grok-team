@@ -13,7 +13,7 @@ export const jaSoftwareTeamDlc = {
     "共有セッションデータ（GROK_HOME=~/.grok）は書き換えません。プリセットはアプリ内に留まり、プロジェクトまたは独立 agent-home へ入れたときだけディスクに出ます。",
   "softwareTeamDlc.rosterTitle": "チーム編成",
   "softwareTeamDlc.rosterHint":
-    "役割ごとに 1 つの Grok Build セッション。スタジオ盤でセッションを結びます。受け渡しは次の役割へ進め、スターターをコピーします。",
+    "役割ごとに 1 つの Grok Build セッション。カードを開くと役割スターターが入力欄に入ります。受け渡しは次の役割へ進め、そのスターターを入力欄に載せます。",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "範囲・受け入れ・バックログ。出荷できる一切片を渡します。",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "セッションの結びを解除",
   "softwareTeamDlc.packTitle": "役割テンプレート",
   "softwareTeamDlc.packHint":
-    "エージェント・スキル・ワークフローのプリセットはアプリに同梱されています。Software Works をオンにするとすぐ使えます。",
+    "プリセットはアプリに同梱。インストールは 6 エージェント、6 スキル、team-handoff.rhai をプロジェクトの .grok または独立 agent-home に書き、共有 ~/.grok は触りません。",
   "softwareTeamDlc.honesty.noParallelAgents":
     "並列 CLI エージェントは起動しません。チーム = 結んだセッション + attach-chat + 受け渡しスターター。",
   "softwareTeamDlc.honesty.grokBuildOnly": "ワークベンチと Remote IM が操るのはこれまでどおり Grok Build だけです。",
@@ -59,9 +59,18 @@ export const jaSoftwareTeamDlc = {
     "そのプロジェクトの .grok にテンプレートを入れるには、プロジェクトフォルダを選んでください。",
   "softwareTeamDlc.install.independentOk":
     "独立モードは App の agent-home に書けます（~/.grok ではありません）。",
+  "softwareTeamDlc.install.action": "役割パックをインストール",
+  "softwareTeamDlc.install.installing": "パックをインストール中…",
+  "softwareTeamDlc.install.ok": "{n} 個のパックファイルをインストールしました（{target}）。",
+  "softwareTeamDlc.install.targetProject": "プロジェクト .grok",
+  "softwareTeamDlc.install.targetUser": "独立 agent-home",
+  "softwareTeamDlc.install.needHost":
+    "インストールにはデスクトップ Host が必要です。このプレビューはファイルを書けず、成功したふりもしません。",
+  "softwareTeamDlc.install.hostError": "インストール失敗: {error}",
+  "softwareTeamDlc.install.chooseTarget": "インストール先",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "一本のパイプライン：セッションを結び、段階を動かし、次の役割へ渡す。",
+    "セッションを結ぶか作成し、役割スターターを入力欄へ載せ、段階を動かし、次の役割へ渡す。",
   "softwareTeamDlc.pipelineTitle": "パイプライン",
   "softwareTeamDlc.liveAgents": "ライブエージェント",
   "softwareTeamDlc.addItem": "作業項目を追加",
@@ -81,6 +90,19 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "{role} へ渡す",
   "softwareTeamDlc.handoffDone": "パイプライン完了 — Tech Writer は Ship 段階です。",
   "softwareTeamDlc.handoffCopied": "次の役割のスターターをコピーしました",
+  "softwareTeamDlc.handoffLoaded": "次の役割のスターターが入力欄にあります。",
+  "softwareTeamDlc.openInComposer": "入力欄で開く",
+  "softwareTeamDlc.createAndOpen": "セッションを作成して開く",
+  "softwareTeamDlc.saveAndOpen": "保存して開く",
+  "softwareTeamDlc.starterLoaded": "役割スターターが入力欄にあります。",
+  "softwareTeamDlc.needHostCreate":
+    "Host がないとセッションを作れません。既存セッションを結ぶか、デスクトップアプリを開いてください。",
+  "softwareTeamDlc.createFailed": "セッションを作成できませんでした: {error}",
+  "softwareTeamDlc.planChromeSet": "このセッションにプランメモを付けました。",
+  "softwareTeamDlc.planChromeSkipped":
+    "プラン欄はカードに残します。Host はプランバーを書きませんでした。",
+  "softwareTeamDlc.slashAfterInstall":
+    "パック導入後、/team-* はスキルチップを挿入します。それまでは盤からセッションを開いてください。",
   "softwareTeamDlc.noNextRole": "この役割にこれ以上の受け渡しはありません。",
   "softwareTeamDlc.moveStage": "{stage} へ移動",
   "softwareTeamDlc.removeItem": "盤から削除",

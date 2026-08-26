@@ -330,8 +330,10 @@ export function KanbanBoardPage({
       <SdlcStudioPage
         locale={locale}
         sessions={sessions}
+        projects={projects}
         currentSessionId={currentSessionId}
         untitledLabel={untitledLabel}
+        generalWorkspacePath={generalWorkspacePath}
         onSelectSession={onOpenCard}
         onShowLive={() => setView("dashboard")}
       />

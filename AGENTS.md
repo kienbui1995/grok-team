@@ -7,7 +7,8 @@
    - [i18n.md](docs/llm-wiki/i18n.md) — all UI strings via `src/i18n/`  
    - [settings-ia.md](docs/llm-wiki/settings-ia.md) — **settings IA**: tabs, search registry (`settingsCatalog`), deep links; every new setting must be registered  
    - [dialogs.md](docs/llm-wiki/dialogs.md) — **no `window.confirm` / `prompt` / `alert`**; **no OS-default controls**; reuse `Select` / `ContextMenu` / panel CSS; **no transparent menus**; **no stacking bugs**
-   - [catalog.md](docs/llm-wiki/catalog.md) — models / effort / YOLO  
+   - [catalog.md](docs/llm-wiki/catalog.md) — models / effort / YOLO 
+ - [software-team-dlc.md](docs/llm-wiki/software-team-dlc.md) — **Software Works / SDLC Studio** (opt-in; Grok Build only; pack install + composer launch)  
    - [automations.md](docs/llm-wiki/automations.md) — automation design (Build `/loop` / scheduler; non-blocking)  
    - [account.md](docs/llm-wiki/account.md) — official login, membership, quota, heatmap  
    - [providers.md](docs/llm-wiki/providers.md) — custom relays, agent `GROK_HOME`, editors  

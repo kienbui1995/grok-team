@@ -3,17 +3,21 @@
  * Roster / board / handoff live in SDLC Studio (Agents pane), not here.
  */
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { createT, type Locale, type MessageKey } from "@/i18n";
 import { UiSwitch } from "@/components/settings/shared";
 import { useSettingsModel } from "@/providers/SettingsModelContext";
 import { useSoftwareTeamDlcPref } from "@/hooks/useSoftwareTeamDlc";
 import {
+  SOFTWARE_TEAM_DLC_INSTALL_TARGETS,
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGES,
+  installSoftwareTeamDlcPack,
   planSoftwareTeamDlcPackWrite,
   softwareTeamDlcPackManifest,
+  softwareTeamInstallFailMessageKey,
   softwareTeamRoleSlashHint,
+  type SoftwareTeamDlcInstallTarget,
 } from "@/lib/softwareTeamDlc";
 
 type TFn = (key: MessageKey, vars?: Record<string, string | number>) => string;
@@ -25,6 +29,12 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
   const settings = useSettingsModel();
   const sessionDataMode = String(settings.sessionDataMode ?? "shared");
   const projectPath = settings.projectPath ?? null;
+  const [installTarget, setInstallTarget] =
+    useState<SoftwareTeamDlcInstallTarget>(() =>
+      (projectPath ?? "").trim() ? "project" : "user",
+    );
+  const [installing, setInstalling] = useState(false);
+  const [installStatus, setInstallStatus] = useState<string | null>(null);
 
   const sharedUserPlan = planSoftwareTeamDlcPackWrite({
     sessionDataMode,
@@ -114,6 +124,69 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
           <p className="ext-ref-block__lead">
             {manifest.agents.join(" · ")} · {manifest.workflows.join(" · ")}
           </p>
+          <p className="ext-ref-block__lead">{t("softwareTeamDlc.slashAfterInstall")}</p>
+          <div className="sdlc-studio__chips" role="group" aria-label={t("softwareTeamDlc.install.chooseTarget")}>
+            {SOFTWARE_TEAM_DLC_INSTALL_TARGETS.map((target) => (
+              <button
+                key={target}
+                type="button"
+                className={
+                  "task-board__chip" + (installTarget === target ? " is-active" : "")
+                }
+                onClick={() => setInstallTarget(target)}
+              >
+                {t(
+                  target === "project"
+                    ? "softwareTeamDlc.install.targetProject"
+                    : "softwareTeamDlc.install.targetUser",
+                )}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            disabled={installing}
+            onClick={() => {
+              setInstalling(true);
+              void installSoftwareTeamDlcPack({
+                sessionDataMode,
+                target: installTarget,
+                projectPath,
+              })
+                .then((result) => {
+                  if (result.ok) {
+                    setInstallStatus(
+                      t("softwareTeamDlc.install.ok", {
+                        n: result.files.length,
+                        target: t(
+                          result.target === "project"
+                            ? "softwareTeamDlc.install.targetProject"
+                            : "softwareTeamDlc.install.targetUser",
+                        ),
+                      }),
+                    );
+                    return;
+                  }
+                  const key = softwareTeamInstallFailMessageKey(result.reason);
+                  setInstallStatus(
+                    result.reason === "host_error"
+                      ? t(key, { error: result.error ?? "" })
+                      : t(key),
+                  );
+                })
+                .finally(() => setInstalling(false));
+            }}
+          >
+            {installing
+              ? t("softwareTeamDlc.install.installing")
+              : t("softwareTeamDlc.install.action")}
+          </button>
+          {installStatus ? (
+            <p className="ext-ref-block__lead" role="status">
+              {installStatus}
+            </p>
+          ) : null}
         </>
       ) : null}
     </section>

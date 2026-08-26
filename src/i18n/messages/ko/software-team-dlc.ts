@@ -13,7 +13,7 @@ export const koSoftwareTeamDlc = {
     "공유 세션 데이터(GROK_HOME=~/.grok)는 다시 쓰지 않습니다. 프리셋은 앱 안에 있고, 프로젝트나 독립 agent-home에 설치할 때만 디스크에 나갑니다.",
   "softwareTeamDlc.rosterTitle": "팀 로스터",
   "softwareTeamDlc.rosterHint":
-    "역할마다 Grok Build 세션 하나. 스튜디오 보드에서 세션을 묶습니다. 핸드오프는 다음 역할로 넘기고 스타터를 복사합니다.",
+    "역할마다 Grok Build 세션 하나. 카드를 열면 역할 스타터가 입력창에 들어갑니다. 핸드오프는 다음 역할로 넘기고 그 스타터를 입력창에 넣습니다.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "범위, 수락, 백로그. 출고 가능한 한 조각을 넘깁니다.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "세션 연결 해제",
   "softwareTeamDlc.packTitle": "역할 템플릿",
   "softwareTeamDlc.packHint":
-    "에이전트·스킬·워크플로 프리셋이 앱에 들어 있습니다. Software Works를 켜면 바로 쓸 수 있습니다.",
+    "프리셋은 앱에 들어 있습니다. 설치는 에이전트 6개, 스킬 6개, team-handoff.rhai를 프로젝트 .grok 또는 독립 agent-home에 쓰며 공유 ~/.grok는 건드리지 않습니다.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "병렬 CLI 에이전트를 시작하지 않습니다. 팀 = 묶인 세션 + attach-chat + 핸드오프 스타터.",
   "softwareTeamDlc.honesty.grokBuildOnly": "워크벤치와 Remote IM은 여전히 Grok Build만 제어합니다.",
@@ -59,9 +59,18 @@ export const koSoftwareTeamDlc = {
     "해당 프로젝트의 .grok에 템플릿을 넣으려면 프로젝트 폴더를 선택하세요.",
   "softwareTeamDlc.install.independentOk":
     "독립 모드는 앱 agent-home에 쓸 수 있습니다(~/.grok 아님).",
+  "softwareTeamDlc.install.action": "역할 팩 설치",
+  "softwareTeamDlc.install.installing": "팩 설치 중…",
+  "softwareTeamDlc.install.ok": "팩 파일 {n}개를 설치했습니다({target}).",
+  "softwareTeamDlc.install.targetProject": "프로젝트 .grok",
+  "softwareTeamDlc.install.targetUser": "독립 agent-home",
+  "softwareTeamDlc.install.needHost":
+    "설치에는 데스크톱 Host가 필요합니다. 이 미리보기는 파일을 쓰지 않으며 성공한 척하지 않습니다.",
+  "softwareTeamDlc.install.hostError": "설치 실패: {error}",
+  "softwareTeamDlc.install.chooseTarget": "설치 대상",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "하나의 파이프라인: 세션을 묶고, 단계를 옮기고, 다음 역할로 넘깁니다.",
+    "세션을 묶거나 만들고, 역할 스타터를 입력창에 넣고, 단계를 옮기고, 다음 역할로 넘깁니다.",
   "softwareTeamDlc.pipelineTitle": "파이프라인",
   "softwareTeamDlc.liveAgents": "실시간 에이전트",
   "softwareTeamDlc.addItem": "작업 항목 추가",
@@ -81,6 +90,19 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "{role}에게 넘기기",
   "softwareTeamDlc.handoffDone": "파이프라인 완료 — Tech Writer가 Ship 단계입니다.",
   "softwareTeamDlc.handoffCopied": "다음 역할 스타터를 복사했습니다",
+  "softwareTeamDlc.handoffLoaded": "다음 역할 스타터가 입력창에 있습니다.",
+  "softwareTeamDlc.openInComposer": "입력창에서 열기",
+  "softwareTeamDlc.createAndOpen": "세션을 만들고 열기",
+  "softwareTeamDlc.saveAndOpen": "저장하고 열기",
+  "softwareTeamDlc.starterLoaded": "역할 스타터가 입력창에 있습니다.",
+  "softwareTeamDlc.needHostCreate":
+    "Host 없이는 세션을 만들 수 없습니다. 기존 세션을 묶거나 데스크톱 앱을 여세요.",
+  "softwareTeamDlc.createFailed": "세션을 만들지 못했습니다: {error}",
+  "softwareTeamDlc.planChromeSet": "이 세션에 계획 메모를 붙였습니다.",
+  "softwareTeamDlc.planChromeSkipped":
+    "계획 필드는 카드에 남습니다. Host가 계획 표시줄을 쓰지 않았습니다.",
+  "softwareTeamDlc.slashAfterInstall":
+    "팩 설치 후 /team-* 는 스킬 칩을 넣습니다. 그전에는 보드에서 세션을 여세요.",
   "softwareTeamDlc.noNextRole": "이 역할에는 더 이상 핸드오프가 없습니다.",
   "softwareTeamDlc.moveStage": "{stage}(으)로 이동",
   "softwareTeamDlc.removeItem": "보드에서 제거",

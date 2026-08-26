@@ -43,12 +43,25 @@ import {
   softwareTeamDlcPackFiles,
   softwareTeamDlcPackManifest,
   softwareTeamDlcWouldRewriteSharedGrokHome,
+  softwareTeamInstallFailMessageKey,
   softwareTeamRoleById,
   softwareTeamRoleSlashHint,
   softwareTeamRoleStarterPrompt,
+  softwareTeamSlashSkillInfos,
   stageFromSessionKanbanColumn,
   upsertSoftwareTeamSessionTag,
+  attachSoftwareTeamPlanChrome,
+  composeRoleSessionStarter,
+  decideSoftwareTeamComposerNav,
+  installSoftwareTeamDlcPack,
+  launchSoftwareTeamWorkItem,
+  pickSoftwareTeamInstallTarget,
+  resolveSoftwareTeamWorkspace,
+  seedSoftwareTeamComposerDraft,
+  type SoftwareTeamLaunchHost,
+  type SoftwareTeamPackWriteHost,
 } from "./index";
+import { buildSlashCatalog } from "@/lib/slashCatalog";
 
 function memoryStore(initial?: Record<string, string>) {
   const map = new Map<string, string>(Object.entries(initial ?? {}));
@@ -429,5 +442,354 @@ describe("Software Team DLC pack + install plan", () => {
         projectPath: "  ",
       }).reason,
     ).toBe("need_project");
+  });
+});
+
+function fakePackHost(
+  overrides?: Partial<SoftwareTeamPackWriteHost> & {
+    failOn?: string;
+  },
+): SoftwareTeamPackWriteHost & { calls: string[] } {
+  const calls: string[] = [];
+  const host: SoftwareTeamPackWriteHost & { calls: string[] } = {
+    calls,
+    isDesktopHost: () => true,
+    agentsScaffold: async (opts) => {
+      calls.push(`scaffold:${opts.name}:${opts.scope}`);
+      if (overrides?.failOn === opts.name) throw new Error("scaffold boom");
+      return {
+        name: opts.name,
+        path: `/tmp/agents/${opts.name}.md`,
+        created: true,
+        overwritten: false,
+      };
+    },
+    skillCreate: async (opts) => {
+      calls.push(`skillCreate:${opts.name}:${opts.scope}`);
+      if (overrides?.failOn === opts.name) throw new Error("skill boom");
+      return {
+        path: `/tmp/skills/${opts.name}/SKILL.md`,
+        name: opts.name,
+        created: true,
+        alreadyExisted: false,
+      };
+    },
+    skillWrite: async (path, _content) => {
+      calls.push(`skillWrite:${path}`);
+    },
+    workflowsCreate: async (opts) => {
+      calls.push(`workflow:${opts.name}:${opts.scope}`);
+      if (overrides?.failOn === opts.name) throw new Error("workflow boom");
+      return {
+        name: opts.name,
+        path: `/tmp/workflows/${opts.name}.rhai`,
+        created: true,
+        overwritten: false,
+      };
+    },
+    writeAbsolute: async (path) => {
+      calls.push(`write:${path}`);
+    },
+    ...overrides,
+  };
+  return host;
+}
+
+describe("Software Team DLC pack install", () => {
+  it("picks project when a path exists unless user is preferred", () => {
+    expect(
+      pickSoftwareTeamInstallTarget({ projectPath: "/repo" }),
+    ).toBe("project");
+    expect(
+      pickSoftwareTeamInstallTarget({
+        projectPath: "/repo",
+        preferred: "user",
+      }),
+    ).toBe("user");
+    expect(pickSoftwareTeamInstallTarget({})).toBe("user");
+  });
+
+  it("maps fail reasons exhaustively to i18n keys", () => {
+    expect(softwareTeamInstallFailMessageKey("blocked_shared_user")).toBe(
+      "softwareTeamDlc.install.blockedShared",
+    );
+    expect(softwareTeamInstallFailMessageKey("need_project")).toBe(
+      "softwareTeamDlc.install.needProject",
+    );
+    expect(softwareTeamInstallFailMessageKey("need_host")).toBe(
+      "softwareTeamDlc.install.needHost",
+    );
+    expect(softwareTeamInstallFailMessageKey("host_error")).toBe(
+      "softwareTeamDlc.install.hostError",
+    );
+  });
+
+  it("refuses shared user writes without calling Host", async () => {
+    const host = fakePackHost();
+    const result = await installSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "user",
+      host,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.reason).toBe("blocked_shared_user");
+    expect(host.calls).toEqual([]);
+  });
+
+  it("refuses project install without a path and does not fake success", async () => {
+    const host = fakePackHost();
+    const result = await installSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "  ",
+      host,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "need_project" });
+    expect(host.calls).toEqual([]);
+  });
+
+  it("refuses when desktop Host is missing", async () => {
+    const host = fakePackHost({ isDesktopHost: () => false });
+    const result = await installSoftwareTeamDlcPack({
+      sessionDataMode: "independent",
+      target: "user",
+      host,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "need_host" });
+    expect(host.calls).toEqual([]);
+  });
+
+  it("writes all pack files and is idempotent", async () => {
+    const host = fakePackHost();
+    const first = await installSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      host,
+    });
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+    expect(first.files).toHaveLength(13);
+    expect(first.files.filter((f) => f.kind === "agent")).toHaveLength(6);
+    expect(first.files.filter((f) => f.kind === "skill")).toHaveLength(6);
+    expect(first.files.map((f) => f.name)).toContain("team-handoff");
+    expect(host.calls.some((c) => c.startsWith("write:"))).toBe(true);
+    expect(host.calls.some((c) => c.startsWith("skillWrite:"))).toBe(true);
+
+    const again = await installSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      host,
+    });
+    expect(again.ok).toBe(true);
+    if (!again.ok) return;
+    expect(again.files).toHaveLength(13);
+  });
+
+  it("surfaces host errors without claiming success", async () => {
+    const host = fakePackHost({ failOn: "team-product" });
+    const result = await installSoftwareTeamDlcPack({
+      sessionDataMode: "independent",
+      target: "user",
+      host,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.reason).toBe("host_error");
+    expect(result.error).toMatch(/boom/);
+  });
+});
+
+describe("Software Team DLC session launch + composer seed", () => {
+  it("composes a role starter with artifact refs", () => {
+    const text = composeRoleSessionStarter({
+      roleId: "engineer",
+      title: "Auth slice",
+      planRef: "plan://auth",
+      goalRef: "login works",
+      artifactRef: "src/auth.ts",
+    });
+    expect(text).toMatch(/Engineer/);
+    expect(text).toMatch(/Grok Build/);
+    expect(text).toContain("Auth slice");
+    expect(text).toContain("plan://auth");
+    expect(text).toContain("login works");
+    expect(text).toContain("src/auth.ts");
+    expect(text).not.toMatch(/Claude|Codex/i);
+  });
+
+  it("does not reopen the current session (stash would wipe the starter)", () => {
+    expect(
+      decideSoftwareTeamComposerNav({
+        targetSessionId: "s1",
+        currentSessionId: "s1",
+      }),
+    ).toBe("apply_live");
+    expect(
+      decideSoftwareTeamComposerNav({
+        targetSessionId: "s2",
+        currentSessionId: "s1",
+      }),
+    ).toBe("open_session");
+    expect(
+      decideSoftwareTeamComposerNav({
+        targetSessionId: "",
+        currentSessionId: "s1",
+      }),
+    ).toBe("need_session");
+  });
+
+  it("seeds the session draft and optionally the live composer", () => {
+    const storage = memoryStore();
+    const live: string[] = [];
+    seedSoftwareTeamComposerDraft({
+      sessionId: "sess-a",
+      text: "hello starter",
+      applyLive: true,
+      setDraft: (t) => live.push(t),
+      storage,
+    });
+    expect(live).toEqual(["hello starter"]);
+    expect(storage.getItem("grok.composerSessionDrafts")).toContain(
+      "hello starter",
+    );
+  });
+
+  it("resolves project path from the current session, then first project", () => {
+    expect(
+      resolveSoftwareTeamWorkspace({
+        projects: [
+          { id: "p1", path: "/one" },
+          { id: "p2", path: "/two" },
+        ],
+        sessions: [{ id: "s2", projectId: "p2" }],
+        currentSessionId: "s2",
+      }),
+    ).toEqual({ projectId: "p2", projectPath: "/two" });
+    expect(
+      resolveSoftwareTeamWorkspace({
+        projects: [{ id: "p1", path: "/one" }],
+        generalWorkspacePath: "/gw",
+      }),
+    ).toEqual({ projectId: "p1", projectPath: "/one" });
+    expect(
+      resolveSoftwareTeamWorkspace({ generalWorkspacePath: "/gw" }),
+    ).toEqual({ projectId: null, projectPath: "/gw" });
+  });
+
+  it("creates a session when Host exists and skips plan chrome without Host write", async () => {
+    const created: string[] = [];
+    const drafts: string[] = [];
+    const host: SoftwareTeamLaunchHost = {
+      hasHost: () => true,
+      sessionCreate: async (_projectId, title) => {
+        created.push(title ?? "");
+        return { id: "new-sess" };
+      },
+      canWritePlanChrome: () => false,
+      sessionPlanChromeSet: async () => {
+        throw new Error("should not write");
+      },
+      setDraft: (t) => drafts.push(t),
+    };
+    const result = await launchSoftwareTeamWorkItem({
+      item: {
+        roleId: "product",
+        title: "Billing",
+        planRef: "/plan billing",
+        sessionId: "",
+      },
+      createIfMissing: true,
+      currentSessionId: "other",
+      projectId: "p1",
+      titleHint: "Billing",
+      host,
+      storage: memoryStore(),
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.sessionId).toBe("new-sess");
+    expect(result.createdSession).toBe(true);
+    expect(result.nav).toBe("open_session");
+    expect(result.planChrome).toBe("skipped");
+    expect(created).toEqual(["Billing"]);
+    expect(drafts).toEqual([]);
+  });
+
+  it("applies live draft when already on the session and can persist plan chrome", async () => {
+    const drafts: string[] = [];
+    const chrome: Array<{ id: string; body?: string }> = [];
+    const host: SoftwareTeamLaunchHost = {
+      hasHost: () => true,
+      sessionCreate: async () => ({ id: "nope" }),
+      canWritePlanChrome: () => true,
+      sessionPlanChromeSet: async (id, stored) => {
+        chrome.push({ id, body: stored.body });
+      },
+      setDraft: (t) => drafts.push(t),
+    };
+    const result = await launchSoftwareTeamWorkItem({
+      item: {
+        roleId: "architect",
+        sessionId: "sess-live",
+        planRef: "design.md",
+        title: "API",
+      },
+      currentSessionId: "sess-live",
+      host,
+      storage: memoryStore(),
+    });
+    expect(result).toMatchObject({
+      ok: true,
+      nav: "apply_live",
+      createdSession: false,
+      planChrome: "set",
+    });
+    expect(drafts[0]).toMatch(/Architect/);
+    expect(chrome).toEqual([{ id: "sess-live", body: "design.md" }]);
+  });
+
+  it("does not invent a session when Host is missing", async () => {
+    const host: SoftwareTeamLaunchHost = {
+      hasHost: () => false,
+      sessionCreate: async () => ({ id: "nope" }),
+      canWritePlanChrome: () => false,
+      sessionPlanChromeSet: async () => {},
+    };
+    const result = await launchSoftwareTeamWorkItem({
+      item: { roleId: "qa", sessionId: "" },
+      createIfMissing: true,
+      host,
+    });
+    expect(result).toEqual({ ok: false, reason: "need_host" });
+    const chrome = await attachSoftwareTeamPlanChrome({
+      host,
+      sessionId: "s",
+      planRef: "x",
+    });
+    expect(chrome).toBe("skipped");
+  });
+});
+
+describe("Software Team DLC slash extras", () => {
+  it("exposes six /team-* skill rows", () => {
+    const rows = softwareTeamSlashSkillInfos();
+    expect(rows.map((r) => r.name)).toEqual(
+      SOFTWARE_TEAM_ROLE_IDS.map((id) => `team-${id}`),
+    );
+    expect(rows.every((r) => r.userInvocable && r.enabled)).toBe(true);
+  });
+
+  it("merges into the slash catalog only when asked", () => {
+    const off = buildSlashCatalog([]);
+    expect(off.skills.some((s) => s.name === "team-product")).toBe(false);
+    const on = buildSlashCatalog([], { includeSoftwareTeamSkills: true });
+    expect(on.commands).toEqual(off.commands);
+    expect(on.skills.some((s) => s.name === "team-product")).toBe(true);
+    expect(on.skills.find((s) => s.name === "team-product")?.kind).toBe(
+      "skill",
+    );
   });
 });

@@ -699,6 +699,18 @@ html[data-theme="dark"][data-wallpaper="1"]
   gap: 6px;
 }
 
+.sdlc-studio__toolbar {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.sdlc-studio__slash-note {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--text-tertiary, var(--text-secondary));
+}
+
 .sdlc-studio__columns {
   grid-template-columns: repeat(5, minmax(140px, 1fr));
 }

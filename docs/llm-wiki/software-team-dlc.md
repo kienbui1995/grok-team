@@ -1,6 +1,6 @@
 # Software Works / SDLC Studio
 
-Opt-in **software-delivery edition** for Grok App. When on, the Agents pane **is** the product for making software: roster, pipeline board, and role handoff. When off, ordinary Grok App is unchanged.
+Opt-in **software-delivery edition** for Grok App. When on, the Agents pane **is** the product for making software: roster, pipeline board, role handoff, pack install, and opening a Grok Build session with the role starter already in the composer. When off, ordinary Grok App is unchanged.
 
 Internal pref key stays `grok.softwareTeamDlc.*` (stable). UI says **Software Works** / **SDLC Studio**.
 
@@ -10,9 +10,10 @@ This is **not** a rebrand of the whole app, and **not** a second agent runtime (
 
 A single pipeline for a slice of software:
 
-1. Bind a Grok Build session to a role.
-2. Move the item on the SDLC board (Backlog → Design → Build → Review → Ship).
-3. Hand off Product → Architect → Engineer → Reviewer → QA → Writer. The item’s stage updates and the next-role starter is copied (no new CLI process).
+1. Install the role pack (optional, honest Host write) into **project `.grok/`** or **Independent** agent-home.
+2. Add a work item or click a card: **open or create** a Grok Build session and put the role starter **in the composer** (not clipboard-only).
+3. Move the item on the SDLC board (Backlog → Design → Build → Review → Ship).
+4. Hand off Product → Architect → Engineer → Reviewer → QA → Writer. The item’s stage updates and the next-role starter is loaded into that session’s composer (or a new session if Host `sessionCreate` is available).
 
 Plan / goal / artifact fields live on the work item so the next role sees the same slice.
 
@@ -44,15 +45,62 @@ Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRe
 |-------|--------|
 | Board stage change | Updates the item (`stageSource: board`) and **rewrites** session tags from the store. |
 | Live session `working` / `done` | Maps to Build / Ship (`stageSource: session`). `needs_you` / `idle` do **not** overwrite Design / Review / Backlog. |
-| Handoff | Next role + that role’s default stage (`stageSource: handoff`) + starter text. |
+| Handoff | Next role + that role’s default stage (`stageSource: handoff`) + starter text into the composer. |
 | Session tags | Projection only (`grok.softwareTeamDlc.sessionTags`). Never a second dead overlay. Legacy tags hydrate into items on first load. |
 
 Does not change Host session schema. Does not spawn CLI processes.
 
+## Open session + composer (not copy-paste)
+
+Helpers: `src/lib/softwareTeamDlc/sessionLaunch.ts`.
+
+| Step | API / store | Honesty |
+|------|-------------|---------|
+| Create session | `api.sessionCreate` when `api.hasHost()` | Browser preview without Host → refuse (`need_host`). Does not fake an id. |
+| Seed composer | `saveComposerSessionDraft` + live `setDraft` when already on that session | Same-session **must not** call `openSession` — `stashLeaving` would overwrite the starter. |
+| Switch session | existing `onSelectSession` / `openSessionById` | Stash the *other* session, restore ours (draft already saved). |
+| Go to chat (same session) | `window.location.hash = "#/workbench"` | `resolveWorkbenchHash` → chat pane. No AppWorkbench growth. |
+| Plan attach | `api.sessionPlanChromeSet` when Tauri/mirror | If Host cannot write, keep `planRef` on the card. Do not invent a Host plan document. |
+| Goal | session draft `goalMode: true` when `goalRef` is set | No Host “create goal” API. Field + starter line stay honest. |
+| Artifact | field + starter line | No fake Host write. |
+
+Handoff uses the same launch path with the next-role starter. No second CLI process.
+
+## Install pack (honesty)
+
+Helpers: `src/lib/softwareTeamDlc/install.ts` + planner `planSoftwareTeamDlcPackWrite`.
+
+Button: SDLC Studio toolbar and Settings → Extensions → Agents (when the edition is on).
+
+Sequence (desktop Host only — `api.isDesktopHost()`):
+
+1. Planner gate (shared + `user` → `blocked_shared_user`; project without path → `need_project`).
+2. `agentsScaffold` (force) then `fsWriteAbsolute` with pack body (file must already exist).
+3. `skillCreate` (idempotent) then `skillWrite` with pack `SKILL.md`.
+4. `workflowsCreate` (force) then `fsWriteAbsolute` for `team-handoff.rhai`.
+
+| Result | Meaning |
+|--------|---------|
+| `ok` | All 13 files written through Host APIs. |
+| `need_host` | Not desktop Tauri. **Never** reports success. |
+| `blocked_shared_user` / `need_project` | Planner refuse; no Host calls. |
+| `host_error` | A Host call threw; partial file list is returned, success is **false**. |
+
+Do **not** call `agentsScaffold` / `skillCreate` with `scope: "user"` while session data is **shared**.
+
+## Slash `/team-*`
+
+`buildSlashCatalog` (domain module, **not** `AppWorkbench.applySlashItem`) merges six skill rows when the edition is on (`src/lib/softwareTeamDlc/slash.ts`). Existing `applySlashItem` `kind: "skill"` inserts `[[skill:team-product]]`.
+
+- After pack install, Grok Build can resolve the skill from disk.
+- Before install, the chip is a palette hint only. First-class entry is **Open in composer** on the board.
+- `builtinSlashItems()` is unchanged (growth freeze + catalog tests).
+- `AppWorkbench.tsx` is not extended.
+
 ## Roles
 
-| Role | Pack / slash hint | Default stage | Next handoff |
-|------|-------------------|---------------|--------------|
+| Role | Pack / slash | Default stage | Next handoff |
+|------|--------------|---------------|--------------|
 | Product | `team-product` · `/team-product` | Backlog | Architect |
 | Architect | `team-architect` · `/team-architect` | Design | Engineer |
 | Engineer | `team-engineer` · `/team-engineer` | Build | Reviewer |
@@ -60,30 +108,15 @@ Does not change Host session schema. Does not spawn CLI processes.
 | QA | `team-qa` · `/team-qa` | Review | Writer |
 | Tech Writer | `team-writer` · `/team-writer` | Ship | (done) |
 
-Slash names are **hints on the roster**. First-class entry is the studio (copy starter / handoff). `AppWorkbench.applySlashItem` is not extended (growth freeze).
-
 **Team = bound Grok Build sessions** plus existing **attach-chat**. Do not spawn parallel CLI processes.
 
 ## UI
 
-- Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty).
+- Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install).
 - Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab.
 - Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
-- Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`.
+- Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
 - Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).
-
-## Pack files
-
-Helpers: `src/lib/softwareTeamDlc/`. Manifest is idempotent (`softwareTeamDlcPackManifest`).
-
-Write planner: `planSoftwareTeamDlcPackWrite`.
-
-| Target | Shared `~/.grok` | Independent agent-home | Project `.grok/` |
-|--------|------------------|------------------------|------------------|
-| `user` | **refused** (`blocked_shared_user`) | allowed | — |
-| `project` | n/a (not GROK_HOME) | n/a | allowed if a project path is set |
-
-Disk install is planned only; do not call Host scaffold APIs that write user GROK_HOME while shared.
 
 ## Forbidden
 
@@ -91,6 +124,7 @@ Disk install is planned only; do not call Host scaffold APIs that write user GRO
 - Auto-apply `.grokskin`.
 - Claude / Codex runtime, Remote IM, Session API scope creep.
 - Claiming parallel multi-agent execution that the Host does not provide.
+- Faking Host install or session-create success in the browser preview.
 - Full-repo rebrand while the edition is off.
 
 ## Related

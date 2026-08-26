@@ -13,7 +13,7 @@ export const deSoftwareTeamDlc = {
     "Geteilte Sitzungsdaten (GROK_HOME=~/.grok) werden nie umgeschrieben. Vorgaben bleiben in der App, bis Sie sie in ein Projekt oder das unabhängige Agent-Home installieren.",
   "softwareTeamDlc.rosterTitle": "Team-Besetzung",
   "softwareTeamDlc.rosterHint":
-    "Eine Grok-Build-Sitzung pro Rolle. Sitzung auf dem Studio-Board binden. Übergabe rückt die nächste Rolle vor und kopiert den Starter.",
+    "Eine Grok-Build-Sitzung pro Rolle. Karte öffnen, damit der Rollenstarter im Composer liegt. Übergabe rückt die nächste Rolle vor und lädt deren Starter dort.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Umfang, Abnahme und Backlog. Übergibt eine lieferbare Scheibe.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "Sitzung lösen",
   "softwareTeamDlc.packTitle": "Rollenvorlagen",
   "softwareTeamDlc.packHint":
-    "Agent-, Skill- und Workflow-Vorgaben sind in der App gebündelt. Sie gelten, sobald Software Works an ist.",
+    "Vorgaben sind in der App gebündelt. Installieren schreibt 6 Agents, 6 Skills und team-handoff.rhai ins Projekt-.grok oder das unabhängige Agent-Home — nie ins geteilte ~/.grok.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "Startet keine parallelen CLI-Agenten. Team = gebundene Sitzungen + attach-chat + Übergabe-Starter.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Workbench und Remote IM steuern weiter nur Grok Build.",
@@ -59,9 +59,18 @@ export const deSoftwareTeamDlc = {
     "Wählen Sie einen Projektordner, um Vorlagen unter dessen .grok-Verzeichnis zu installieren.",
   "softwareTeamDlc.install.independentOk":
     "Der unabhängige Modus darf Vorlagen ins App-Agent-Home schreiben (nicht ~/.grok).",
+  "softwareTeamDlc.install.action": "Rollenpaket installieren",
+  "softwareTeamDlc.install.installing": "Paket wird installiert…",
+  "softwareTeamDlc.install.ok": "{n} Paketdateien installiert ({target}).",
+  "softwareTeamDlc.install.targetProject": "Projekt-.grok",
+  "softwareTeamDlc.install.targetUser": "Unabhängiges Agent-Home",
+  "softwareTeamDlc.install.needHost":
+    "Installieren braucht den Desktop-Host. Diese Vorschau kann keine Dateien schreiben — sie täuscht keinen Erfolg vor.",
+  "softwareTeamDlc.install.hostError": "Installation fehlgeschlagen: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Installationsziel",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "Eine Pipeline: Sitzung binden, Stufe verschieben, nächste Rolle übergeben.",
+    "Sitzung binden oder anlegen, Rollenstarter in den Composer laden, Stufe verschieben, nächste Rolle übergeben.",
   "softwareTeamDlc.pipelineTitle": "Pipeline",
   "softwareTeamDlc.liveAgents": "Live-Agenten",
   "softwareTeamDlc.addItem": "Arbeitselement hinzufügen",
@@ -81,6 +90,19 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "Übergeben an {role}",
   "softwareTeamDlc.handoffDone": "Pipeline fertig — Tech Writer hat die Ship-Stufe.",
   "softwareTeamDlc.handoffCopied": "Starter der nächsten Rolle kopiert",
+  "softwareTeamDlc.handoffLoaded": "Starter der nächsten Rolle liegt im Composer.",
+  "softwareTeamDlc.openInComposer": "Im Composer öffnen",
+  "softwareTeamDlc.createAndOpen": "Sitzung anlegen und öffnen",
+  "softwareTeamDlc.saveAndOpen": "Speichern und öffnen",
+  "softwareTeamDlc.starterLoaded": "Rollenstarter liegt im Composer.",
+  "softwareTeamDlc.needHostCreate":
+    "Ohne Host kann keine Sitzung angelegt werden. Binden Sie eine vorhandene Sitzung oder öffnen Sie die Desktop-App.",
+  "softwareTeamDlc.createFailed": "Sitzung konnte nicht angelegt werden: {error}",
+  "softwareTeamDlc.planChromeSet": "Plannotiz an dieser Sitzung angehängt.",
+  "softwareTeamDlc.planChromeSkipped":
+    "Planfeld bleibt auf der Karte. Der Host hat kein Plan-Chrome geschrieben.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Nach der Paketinstallation fügt /team-* den Skill-Chip ein. Davor Sitzung vom Board öffnen.",
   "softwareTeamDlc.noNextRole": "Diese Rolle hat keine weitere Übergabe.",
   "softwareTeamDlc.moveStage": "Nach {stage} verschieben",
   "softwareTeamDlc.removeItem": "Vom Board entfernen",

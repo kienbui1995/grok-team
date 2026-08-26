@@ -9,11 +9,21 @@ import { createT } from "@/i18n";
 import { ContextMenu, type ContextMenuItem } from "@/components/ContextMenu";
 import { GlassModal } from "@/components/GlassModal";
 import { useSoftwareTeamPipeline } from "@/hooks/useSoftwareTeamDlc";
-import type { AgentDashboardSessionInput } from "@/lib/agentDashboard";
 import {
+  itemToStarterFields,
+  studioWorkspaceFromInputs,
+  useSoftwareTeamStudioActions,
+} from "@/hooks/useSoftwareTeamStudioActions";
+import type {
+  AgentDashboardProjectInput,
+  AgentDashboardSessionInput,
+} from "@/lib/agentDashboard";
+import {
+  SOFTWARE_TEAM_DLC_INSTALL_TARGETS,
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGES,
   nextSoftwareTeamRole,
+  planSoftwareTeamDlcPackWrite,
   softwareTeamRoleById,
   softwareTeamRoleSlashHint,
   softwareTeamRoleStarterPrompt,
@@ -110,8 +120,10 @@ function stageToneClass(stage: SoftwareTeamSdlcStageId): string {
 export type SdlcStudioPageProps = {
   locale: Locale;
   sessions: AgentDashboardSessionInput[];
+  projects?: AgentDashboardProjectInput[];
   currentSessionId?: string | null;
   untitledLabel?: string;
+  generalWorkspacePath?: string | null;
   onSelectSession?: (sessionId: string) => void;
   onShowLive?: () => void;
 };
@@ -119,14 +131,33 @@ export type SdlcStudioPageProps = {
 export function SdlcStudioPage({
   locale,
   sessions,
+  projects,
   currentSessionId,
   untitledLabel,
+  generalWorkspacePath,
   onSelectSession,
   onShowLive,
 }: SdlcStudioPageProps) {
   const tr = useMemo(() => createT(locale), [locale]);
   const t: TFn = (k, vars) => tr(k, vars);
   const pipeline = useSoftwareTeamPipeline();
+  const workspace = useMemo(
+    () =>
+      studioWorkspaceFromInputs({
+        projects,
+        sessions,
+        currentSessionId,
+        generalWorkspacePath,
+      }),
+    [projects, sessions, currentSessionId, generalWorkspacePath],
+  );
+  const actions = useSoftwareTeamStudioActions({
+    t,
+    currentSessionId,
+    workspace,
+    bindSession: pipeline.bindSession,
+    onSelectSession,
+  });
   const [query, setQuery] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
   const [copyError, setCopyError] = useState(false);
@@ -195,16 +226,45 @@ export function SdlcStudioPage({
         setStatus(t("softwareTeamDlc.handoffDone"));
         return;
       }
+      const launched = await actions.launchItem(
+        {
+          ...itemToStarterFields(result.item),
+          sessionId: result.item.sessionId,
+        },
+        { starter: result.starter, createIfMissing: true },
+      );
+      if (launched.ok) {
+        setCopyError(false);
+        setStatus(t("softwareTeamDlc.handoffLoaded"));
+        actions.applyLaunchNav(launched);
+        return;
+      }
       const ok = await copyText(result.starter);
       setCopyError(!ok);
       setCopied(ok ? `handoff:${itemId}` : null);
       setStatus(
-        ok
-          ? t("softwareTeamDlc.handoffCopied")
+        launched.ok === false
+          ? `${actions.describeLaunch(launched)} ${
+              ok ? t("softwareTeamDlc.handoffCopied") : t("softwareTeamDlc.copyFailed")
+            }`
           : t("softwareTeamDlc.copyFailed"),
       );
     },
-    [pipeline, t],
+    [actions, pipeline, t],
+  );
+
+  const onOpenInComposer = useCallback(
+    async (
+      item: SoftwareTeamPipelineItem,
+      createIfMissing = true,
+    ) => {
+      const launched = await actions.launchItem(itemToStarterFields(item), {
+        createIfMissing,
+      });
+      setStatus(actions.describeLaunch(launched));
+      if (launched.ok) actions.applyLaunchNav(launched);
+    },
+    [actions],
   );
 
   const openCreate = (roleId?: SoftwareTeamRoleId) => {
@@ -213,8 +273,8 @@ export function SdlcStudioPage({
     );
   };
 
-  const saveEditor = () => {
-    if (!editor) return;
+  const persistEditor = () => {
+    if (!editor) return null;
     if (editor.id) {
       pipeline.updateItem(editor.id, {
         title: editor.title,
@@ -226,19 +286,45 @@ export function SdlcStudioPage({
         artifactRef: editor.artifactRef,
         stageSource: "board",
       });
-    } else {
-      pipeline.addItem({
-        title: editor.title,
-        roleId: editor.roleId,
-        stageId: editor.stageId,
-        sessionId: editor.sessionId,
-        planRef: editor.planRef,
-        goalRef: editor.goalRef,
-        artifactRef: editor.artifactRef,
-        stageSource: "board",
-      });
+      return editor.id;
     }
+    const created = pipeline.addItem({
+      title: editor.title,
+      roleId: editor.roleId,
+      stageId: editor.stageId,
+      sessionId: editor.sessionId,
+      planRef: editor.planRef,
+      goalRef: editor.goalRef,
+      artifactRef: editor.artifactRef,
+      stageSource: "board",
+    });
+    return created?.id ?? null;
+  };
+
+  const saveEditor = () => {
+    persistEditor();
     setEditor(null);
+  };
+
+  const saveAndOpenEditor = async () => {
+    if (!editor) return;
+    const id = persistEditor();
+    const draft = { ...editor, id: id ?? editor.id };
+    setEditor(null);
+    const launched = await actions.launchItem(
+      {
+        id: draft.id,
+        sessionId: draft.sessionId,
+        roleId: draft.roleId,
+        title: draft.title,
+        planRef: draft.planRef,
+        goalRef: draft.goalRef,
+        artifactRef: draft.artifactRef,
+      },
+      { createIfMissing: true },
+    );
+    setStatus(actions.describeLaunch(launched));
+    if (launched.ok) actions.applyLaunchNav(launched);
   };
 
   const menuItem = menu ? pipeline.items.find((i) => i.id === menu.itemId) : null;
@@ -275,6 +361,10 @@ export function SdlcStudioPage({
         disabled: true,
       });
     }
+    items.push({
+      label: t("softwareTeamDlc.openInComposer"),
+      onClick: () => void onOpenInComposer(menuItem),
+    });
     if (menuItem.sessionId) {
       items.push({
         label: t("dashboard.openSession"),
@@ -292,7 +382,7 @@ export function SdlcStudioPage({
       onClick: () => pipeline.removeItem(menuItem.id),
     });
     return items;
-  }, [menu, menuItem, onHandoff, onSelectSession, pipeline, t]);
+  }, [menu, menuItem, onHandoff, onOpenInComposer, onSelectSession, pipeline, t]);
 
   return (
     <div className="auto-page agent-kanban-page sdlc-studio" data-testid="sdlc-studio">
@@ -353,6 +443,30 @@ export function SdlcStudioPage({
                     : t("softwareTeamDlc.unbound")}
                 </p>
                 <div className="sdlc-studio__role-actions">
+                  {bound ? (
+                    <button
+                      type="button"
+                      className="btn btn--ghost btn--sm"
+                      onClick={() => void onOpenInComposer(bound)}
+                    >
+                      {t("softwareTeamDlc.openInComposer")}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn--ghost btn--sm"
+                      onClick={() => {
+                        const created = pipeline.addItem({
+                          roleId: role.id,
+                          sessionId: currentSessionId ?? "",
+                          stageSource: "board",
+                        });
+                        if (created) void onOpenInComposer(created);
+                      }}
+                    >
+                      {t("softwareTeamDlc.createAndOpen")}
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="btn btn--ghost btn--sm"
@@ -384,7 +498,7 @@ export function SdlcStudioPage({
           })}
         </div>
 
-        <div className="agent-kanban__toolbar">
+        <div className="agent-kanban__toolbar sdlc-studio__toolbar">
           <input
             type="search"
             className="settings-input agent-kanban__search"
@@ -395,6 +509,43 @@ export function SdlcStudioPage({
             spellCheck={false}
             aria-label={t("kanban.searchPlaceholder")}
           />
+          <div
+            className="sdlc-studio__chips"
+            role="group"
+            aria-label={t("softwareTeamDlc.install.chooseTarget")}
+          >
+            {SOFTWARE_TEAM_DLC_INSTALL_TARGETS.map((target) => (
+              <button
+                key={target}
+                type="button"
+                className={
+                  "task-board__chip" +
+                  (actions.installTarget === target ? " is-active" : "")
+                }
+                onClick={() => actions.setInstallTarget(target)}
+              >
+                {t(
+                  target === "project"
+                    ? "softwareTeamDlc.install.targetProject"
+                    : "softwareTeamDlc.install.targetUser",
+                )}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            disabled={actions.installing}
+            onClick={() => {
+              void actions.installPack().then((result) => {
+                setStatus(actions.describeInstall(result));
+              });
+            }}
+          >
+            {actions.installing
+              ? t("softwareTeamDlc.install.installing")
+              : t("softwareTeamDlc.install.action")}
+          </button>
           <button
             type="button"
             className="btn btn--ghost btn--sm"
@@ -403,6 +554,30 @@ export function SdlcStudioPage({
             {t("softwareTeamDlc.addItem")}
           </button>
         </div>
+        {(() => {
+          const plan = planSoftwareTeamDlcPackWrite({
+            sessionDataMode: actions.sessionDataMode,
+            target: actions.installTarget,
+            projectPath: workspace.projectPath,
+          });
+          if (plan.allowed) return null;
+          if (plan.reason === "blocked_shared_user") {
+            return (
+              <p className="sdlc-studio__slash-note" role="note">
+                {t("softwareTeamDlc.install.blockedShared")}
+              </p>
+            );
+          }
+          if (plan.reason === "need_project") {
+            return (
+              <p className="sdlc-studio__slash-note" role="note">
+                {t("softwareTeamDlc.install.needProject")}
+              </p>
+            );
+          }
+          return null;
+        })()}
+        <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.slashAfterInstall")}</p>
 
         {status ? (
           <p className="sdlc-studio__status" role="status">
@@ -457,7 +632,7 @@ export function SdlcStudioPage({
                             type="button"
                             className="agent-kanban__card-btn"
                             onClick={() => {
-                              if (item.sessionId) onSelectSession?.(item.sessionId);
+                              if (item.sessionId) void onOpenInComposer(item);
                               else setEditor(draftFromItem(item));
                             }}
                             onContextMenu={(e) => {
@@ -518,8 +693,16 @@ export function SdlcStudioPage({
             <button type="button" className="btn btn--ghost" onClick={() => setEditor(null)}>
               {t("common.cancel")}
             </button>
-            <button type="button" className="btn" onClick={saveEditor}>
+            <button type="button" className="btn btn--ghost" onClick={saveEditor}>
               {t("common.save")}
+            </button>
+            <button
+              type="button"
+              className="btn"
+              disabled={actions.launching}
+              onClick={() => void saveAndOpenEditor()}
+            >
+              {t("softwareTeamDlc.saveAndOpen")}
             </button>
           </>
         }

@@ -13,7 +13,7 @@ export const ruSoftwareTeamDlc = {
     "Общие данные сессий (GROK_HOME=~/.grok) никогда не перезаписываются. Заготовки остаются в приложении, пока вы не установите их в проект или независимое agent-home.",
   "softwareTeamDlc.rosterTitle": "Состав команды",
   "softwareTeamDlc.rosterHint":
-    "Одна сессия Grok Build на роль. Привяжите сессию на доске студии. Передача двигает следующую роль и копирует стартер.",
+    "Одна сессия Grok Build на роль. Откройте карточку — стартер роли попадёт в поле ввода. Передача двигает следующую роль и загружает её стартер туда же.",
   "softwareTeamDlc.role.product": "Product",
   "softwareTeamDlc.role.product.desc": "Объём, приёмка и бэклог. Передаёт один отгружаемый срез.",
   "softwareTeamDlc.role.architect": "Architect",
@@ -47,7 +47,7 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.clearTag": "Отвязать сессию",
   "softwareTeamDlc.packTitle": "Шаблоны ролей",
   "softwareTeamDlc.packHint":
-    "Заготовки агента, навыка и workflow входят в приложение. Они доступны сразу после включения Software Works.",
+    "Заготовки в приложении. Установка пишет 6 агентов, 6 навыков и team-handoff.rhai в .grok проекта или независимый agent-home — общий ~/.grok не трогает.",
   "softwareTeamDlc.honesty.noParallelAgents":
     "Не запускает параллельные CLI-агенты. Команда = привязанные сессии + attach-chat + стартеры передачи.",
   "softwareTeamDlc.honesty.grokBuildOnly": "Верстак и Remote IM по-прежнему управляют только Grok Build.",
@@ -59,9 +59,18 @@ export const ruSoftwareTeamDlc = {
     "Выберите папку проекта, чтобы установить шаблоны в его каталог .grok.",
   "softwareTeamDlc.install.independentOk":
     "Независимый режим может писать шаблоны в agent-home приложения (не ~/.grok).",
+  "softwareTeamDlc.install.action": "Установить пакет ролей",
+  "softwareTeamDlc.install.installing": "Установка пакета…",
+  "softwareTeamDlc.install.ok": "Установлено файлов пакета: {n} ({target}).",
+  "softwareTeamDlc.install.targetProject": ".grok проекта",
+  "softwareTeamDlc.install.targetUser": "независимый agent-home",
+  "softwareTeamDlc.install.needHost":
+    "Установка нужна настольному Host. Этот предпросмотр не пишет файлы и не притворяется успехом.",
+  "softwareTeamDlc.install.hostError": "Установка не удалась: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Куда ставить",
   "softwareTeamDlc.studioTitle": "SDLC Studio",
   "softwareTeamDlc.studioHint":
-    "Один конвейер: привяжите сессию, сдвиньте этап, передайте следующую роль.",
+    "Привяжите или создайте сессию, загрузите стартер в поле ввода, сдвиньте этап, передайте следующую роль.",
   "softwareTeamDlc.pipelineTitle": "Конвейер",
   "softwareTeamDlc.liveAgents": "Живые агенты",
   "softwareTeamDlc.addItem": "Добавить элемент",
@@ -81,6 +90,19 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.handoffTo": "Передать {role}",
   "softwareTeamDlc.handoffDone": "Конвейер завершён — Tech Writer на этапе Ship.",
   "softwareTeamDlc.handoffCopied": "Стартер следующей роли скопирован",
+  "softwareTeamDlc.handoffLoaded": "Стартер следующей роли в поле ввода.",
+  "softwareTeamDlc.openInComposer": "Открыть в поле ввода",
+  "softwareTeamDlc.createAndOpen": "Создать сессию и открыть",
+  "softwareTeamDlc.saveAndOpen": "Сохранить и открыть",
+  "softwareTeamDlc.starterLoaded": "Стартер роли в поле ввода.",
+  "softwareTeamDlc.needHostCreate":
+    "Без Host сессию не создать. Привяжите существующую или откройте настольное приложение.",
+  "softwareTeamDlc.createFailed": "Не удалось создать сессию: {error}",
+  "softwareTeamDlc.planChromeSet": "Заметка плана прикреплена к этой сессии.",
+  "softwareTeamDlc.planChromeSkipped":
+    "Поле плана остаётся на карточке. Host не записал план-хром.",
+  "softwareTeamDlc.slashAfterInstall":
+    "После установки пакета /team-* вставляет чип навыка. До этого откройте сессию с доски.",
   "softwareTeamDlc.noNextRole": "У этой роли нет дальнейшей передачи.",
   "softwareTeamDlc.moveStage": "Переместить в {stage}",
   "softwareTeamDlc.removeItem": "Убрать с доски",
