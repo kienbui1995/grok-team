@@ -720,6 +720,13 @@ html[data-theme="dark"][data-wallpaper="1"]
   color: var(--text-tertiary);
 }
 
+.sdlc-studio__card-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 10px 10px;
+}
+
 .sdlc-studio__status {
   margin: 0;
   font-size: 12.5px;

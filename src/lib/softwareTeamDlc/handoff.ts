@@ -178,6 +178,7 @@ export function applySoftwareTeamHandoff(
   const next: SoftwareTeamPipelineItem = {
     ...nextDraft,
     stageId: toStage,
+    sessionDonePending: false,
   };
   return {
     kind: "advanced",
@@ -209,6 +210,7 @@ export function applySoftwareTeamHandoffToStore(
         roleHistory: result.item.roleHistory,
         reviewNote: result.item.reviewNote,
         qaNote: result.item.qaNote,
+        sessionDonePending: false,
         stageSource: "handoff",
       },
       now,

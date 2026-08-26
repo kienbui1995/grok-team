@@ -13,9 +13,11 @@ import {
   type ComposerSessionDraftStorage,
 } from "@/lib/composerSessionDraft";
 import type { PlanChromeStored } from "@/lib/planSession";
+import type { ChatRef } from "@/lib/chatAttach";
 import { softwareTeamRoleStarterPrompt } from "./pack";
 import type { SoftwareTeamRoleId } from "./roles";
 import { softwareTeamRoleChecklist } from "./shipGate";
+import { seedSoftwareTeamAttachStarter } from "./deliveryAttach";
 
 export const SOFTWARE_TEAM_CHAT_HASH = "#/workbench";
 
@@ -60,7 +62,11 @@ export type SoftwareTeamLaunchHost = {
   setDraft?: (text: string) => void;
   saveDraft?: (
     sessionId: string,
-    draft: { text: string; goalMode?: boolean },
+    draft: {
+      text: string;
+      goalMode?: boolean;
+      chatAttachments?: ChatRef[];
+    },
     storage?: ComposerSessionDraftStorage,
   ) => void;
 };
@@ -80,6 +86,7 @@ export type SoftwareTeamLaunchResult =
       hostPlanId: string | null;
       /** Host goal entity id, only when `createGoalEntity` returned one. */
       hostGoalId: string | null;
+      attachCount: number;
     }
   | {
       ok: false;
@@ -129,6 +136,7 @@ export function seedSoftwareTeamComposerDraft(input: {
   sessionId: string;
   text: string;
   goalMode?: boolean;
+  chatAttachments?: ChatRef[];
   applyLive?: boolean;
   setDraft?: (text: string) => void;
   saveDraft?: SoftwareTeamLaunchHost["saveDraft"];
@@ -138,7 +146,15 @@ export function seedSoftwareTeamComposerDraft(input: {
   const text = input.text;
   if (!sessionId) return;
   const save = input.saveDraft ?? saveComposerSessionDraft;
-  save(sessionId, { text, goalMode: !!input.goalMode }, input.storage);
+  save(
+    sessionId,
+    {
+      text,
+      goalMode: !!input.goalMode,
+      chatAttachments: input.chatAttachments,
+    },
+    input.storage,
+  );
   if (input.applyLive) {
     const apply = input.setDraft ?? setDraft;
     apply(text);
@@ -271,6 +287,7 @@ export async function launchSoftwareTeamWorkItem(input: {
   titleHint?: string | null;
   starter?: string | null;
   createIfMissing?: boolean;
+  chatAttachments?: ChatRef[];
   host: SoftwareTeamLaunchHost;
   storage?: ComposerSessionDraftStorage;
 }): Promise<SoftwareTeamLaunchResult> {
@@ -302,12 +319,18 @@ export async function launchSoftwareTeamWorkItem(input: {
   if (nav === "need_session" || !sessionId) {
     return { ok: false, reason: "need_session" };
   }
-  const starter =
-    (input.starter ?? "").trim() || composeRoleSessionStarter(input.item);
+  const chatAttachments = (input.chatAttachments ?? []).filter((ref) =>
+    (ref.sessionId ?? "").trim(),
+  );
+  const starter = seedSoftwareTeamAttachStarter(
+    (input.starter ?? "").trim() || composeRoleSessionStarter(input.item),
+    chatAttachments,
+  );
   seedSoftwareTeamComposerDraft({
     sessionId,
     text: starter,
     goalMode: !!(input.item.goalRef ?? "").trim(),
+    chatAttachments,
     applyLive: nav === "apply_live",
     setDraft: input.host.setDraft,
     saveDraft: input.host.saveDraft,
@@ -343,5 +366,6 @@ export async function launchSoftwareTeamWorkItem(input: {
     goalRef,
     hostPlanId: planAttach.hostPlanId,
     hostGoalId,
+    attachCount: chatAttachments.length,
   };
 }

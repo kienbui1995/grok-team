@@ -139,4 +139,31 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Kasus, perintah, lulus/gagal.",
   "softwareTeamDlc.notesSaved":
     "Catatan tersimpan. Ship terbuka jika catatan Reviewer dan QA keduanya ada.",
+  "softwareTeamDlc.startDelivery": "Mulai pengiriman",
+  "softwareTeamDlc.startDeliveryHint":
+    "Membuat item pipeline dan membuka sesi Grok Build dengan starter peran. Placeholder docs/sdlc hanya di folder proyek ini — bukan ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Judul irisan",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "Apa yang kita kirim?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Beri nama irisan sebelum mulai.",
+  "softwareTeamDlc.startDeliveryRole": "Peran pertama",
+  "softwareTeamDlc.startDeliveryBootstrap": "Tambah placeholder docs/sdlc",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Menulis spec.md, design.md, dan review.md di docs/sdlc proyek ini jika belum ada. Butuh Host desktop dan folder proyek.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Pilih folder proyek untuk menulis docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Placeholder ruang kerja butuh Host desktop. Pratinjau ini tidak berpura-pura sudah menulis.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Tidak bisa bootstrap ke ~/.grok bersama. Pilih folder proyek.",
+  "softwareTeamDlc.startDeliveryHostError": "Tidak bisa menulis placeholder: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "Menulis {n} berkas docs/sdlc di proyek.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Placeholder ruang kerja dilewati.",
+  "softwareTeamDlc.startDeliveryStarted": "Pengiriman dimulai.",
+  "softwareTeamDlc.handoffCta": "Serahkan ke {role}",
+  "softwareTeamDlc.shipCta": "Ship · starter Writer",
+  "softwareTeamDlc.sessionDoneHint":
+    "Sesi selesai. Serahkan atau Ship — papan tidak maju sendiri.",
+  "softwareTeamDlc.attachSeeded":
+    "{n} sesi attach-chat disemai di draf (maks. 3).",
 } as const;

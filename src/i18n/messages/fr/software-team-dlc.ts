@@ -139,4 +139,31 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Cas, commandes, succès/échec.",
   "softwareTeamDlc.notesSaved":
     "Notes enregistrées. Ship s’ouvre quand les notes Reviewer et QA sont toutes deux présentes.",
+  "softwareTeamDlc.startDelivery": "Démarrer une livraison",
+  "softwareTeamDlc.startDeliveryHint":
+    "Crée un élément de pipeline et ouvre une session Grok Build avec le starter du rôle. Les espaces docs/sdlc restent dans ce dossier projet — jamais ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Titre de la tranche",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "Que livrons-nous ?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Nommez la tranche avant de commencer.",
+  "softwareTeamDlc.startDeliveryRole": "Premier rôle",
+  "softwareTeamDlc.startDeliveryBootstrap": "Ajouter les fichiers docs/sdlc",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Écrit spec.md, design.md et review.md sous docs/sdlc de ce projet s’ils manquent. Nécessite l’hôte bureau et un dossier projet.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Choisissez un dossier projet pour écrire les fichiers docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Les fichiers d’espace de travail nécessitent l’hôte bureau. Cet aperçu ne prétend pas les avoir écrits.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Impossible d’écrire dans ~/.grok partagé. Choisissez un dossier projet.",
+  "softwareTeamDlc.startDeliveryHostError": "Impossible d’écrire les fichiers : {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "{n} fichiers docs/sdlc écrits dans le projet.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Fichiers d’espace de travail ignorés.",
+  "softwareTeamDlc.startDeliveryStarted": "Livraison démarrée.",
+  "softwareTeamDlc.handoffCta": "Passer à {role}",
+  "softwareTeamDlc.shipCta": "Ship · starter Rédacteur",
+  "softwareTeamDlc.sessionDoneHint":
+    "Session terminée. Passez ou Ship — le tableau n’avance pas tout seul.",
+  "softwareTeamDlc.attachSeeded":
+    "{n} sessions attach-chat semées dans le brouillon (max. 3).",
 } as const;

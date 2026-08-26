@@ -125,6 +125,7 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "softwareTeamDlc.shipLocked",
       "softwareTeamDlc.markReviewNote",
       "softwareTeamDlc.markQaNote",
+      "softwareTeamDlc.startDelivery",
     ],
     keywords: [
       "software works",
@@ -149,6 +150,9 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "ship gate",
       "review notes",
       "qa notes",
+      "start a delivery",
+      "docs/sdlc",
+      "handoff cta",
       "软件团队",
       "软件团队 dlc",
       "软件工坊",

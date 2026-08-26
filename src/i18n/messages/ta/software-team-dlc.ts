@@ -139,4 +139,31 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "வழக்குகள், கட்டளைகள், வெற்றி/தோல்வி.",
   "softwareTeamDlc.notesSaved":
     "குறிப்புகள் சேமிக்கப்பட்டன. Reviewer மற்றும் QA குறிப்புகள் இரண்டும் இருந்தால் Ship திறக்கும்.",
+  "softwareTeamDlc.startDelivery": "ஒரு விநியோகத்தை தொடங்கு",
+  "softwareTeamDlc.startDeliveryHint":
+    "பைப்லைன் உருப்படியை உருவாக்கி, பங்கு தொடக்கத்துடன் Grok Build அமர்வை திறக்கும். docs/sdlc இடம்பிடிப்பான்கள் இந்த திட்டக் கோப்புறையில் மட்டும் — ~/.grok அல்ல.",
+  "softwareTeamDlc.startDeliveryTitle": "துண்டு தலைப்பு",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "எதை அனுப்புகிறோம்?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "தொடங்குவதற்கு முன் துண்டுக்கு பெயரிடுங்கள்.",
+  "softwareTeamDlc.startDeliveryRole": "முதல் பங்கு",
+  "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc இடம்பிடிப்பான்களை சேர்",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "இல்லையென்றால் இந்த திட்டத்தின் docs/sdlc இல் spec.md, design.md, review.md எழுதும். டெஸ்க்டாப் Host மற்றும் திட்டக் கோப்புறை தேவை.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "docs/sdlc எழுத ஒரு திட்டக் கோப்புறையை தேர்ந்தெடுக்கவும்.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "பணியிட இடம்பிடிப்பான்களுக்கு டெஸ்க்டாப் Host தேவை. இந்த முன்னோட்டம் எழுதியதாக பாசாங்கு செய்யாது.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "பகிர்ந்த ~/.grok இல் தொடங்க முடியாது. ஒரு திட்டக் கோப்புறையை தேர்ந்தெடுக்கவும்.",
+  "softwareTeamDlc.startDeliveryHostError": "இடம்பிடிப்பான்களை எழுத முடியவில்லை: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "திட்டத்தில் {n} docs/sdlc இடம்பிடிப்பான்கள் எழுதப்பட்டன.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "பணியிட இடம்பிடிப்பான்கள் தவிர்க்கப்பட்டன.",
+  "softwareTeamDlc.startDeliveryStarted": "விநியோகம் தொடங்கியது.",
+  "softwareTeamDlc.handoffCta": "{role}க்கு ஒப்படை",
+  "softwareTeamDlc.shipCta": "Ship · Writer தொடக்கம்",
+  "softwareTeamDlc.sessionDoneHint":
+    "அமர்வு முடிந்தது. ஒப்படைக்கவும் அல்லது Ship — பலகை தானாக முன்னேறாது.",
+  "softwareTeamDlc.attachSeeded":
+    "வரைவில் {n} attach-chat அமர்வுகள் விதைக்கப்பட்டன (அதிகபட்சம் 3).",
 } as const;

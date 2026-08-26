@@ -550,6 +550,8 @@ describe("settingsCatalog", () => {
     expect(ship.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const notes = searchSettingsEntries("review notes", tZh, tEn);
     expect(notes.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const start = searchSettingsEntries("start a delivery", tZh, tEn);
+    expect(start.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const zhHits = searchSettingsEntries("软件团队", tZh, tEn);
     expect(zhHits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(

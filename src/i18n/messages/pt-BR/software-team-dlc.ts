@@ -139,4 +139,31 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Casos, comandos, passou/falhou.",
   "softwareTeamDlc.notesSaved":
     "Notas salvas. Ship destrava quando houver notas de Reviewer e de QA.",
+  "softwareTeamDlc.startDelivery": "Começar uma entrega",
+  "softwareTeamDlc.startDeliveryHint":
+    "Cria um item do pipeline e abre uma sessão Grok Build com o starter do papel. Placeholders de docs/sdlc ficam nesta pasta do projeto — nunca ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Título da fatia",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "O que vamos entregar?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Dê um nome à fatia antes de começar.",
+  "softwareTeamDlc.startDeliveryRole": "Primeiro papel",
+  "softwareTeamDlc.startDeliveryBootstrap": "Adicionar placeholders docs/sdlc",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Grava spec.md, design.md e review.md em docs/sdlc deste projeto se faltarem. Precisa do Host desktop e de uma pasta de projeto.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Escolha uma pasta de projeto para gravar docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Os placeholders precisam do Host desktop. Esta prévia não finge tê-los gravado.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Não é possível iniciar em ~/.grok compartilhado. Escolha uma pasta de projeto.",
+  "softwareTeamDlc.startDeliveryHostError": "Não foi possível gravar os placeholders: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "Foram gravados {n} arquivos docs/sdlc no projeto.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Placeholders do workspace ignorados.",
+  "softwareTeamDlc.startDeliveryStarted": "Entrega iniciada.",
+  "softwareTeamDlc.handoffCta": "Passar para {role}",
+  "softwareTeamDlc.shipCta": "Ship · starter de Writer",
+  "softwareTeamDlc.sessionDoneHint":
+    "Sessão concluída. Passe ou Ship — o quadro não avança sozinho.",
+  "softwareTeamDlc.attachSeeded":
+    "{n} sessões attach-chat semeadas no rascunho (máx. 3).",
 } as const;

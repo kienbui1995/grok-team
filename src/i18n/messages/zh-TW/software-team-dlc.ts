@@ -131,4 +131,27 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff、必改與吹毛求疵、風險。",
   "softwareTeamDlc.qaNotePlaceholder": "用例、命令、通過/失敗。",
   "softwareTeamDlc.notesSaved": "備註已儲存。評審與測試備註都齊後才能發布。",
+  "softwareTeamDlc.startDelivery": "開始一次交付",
+  "softwareTeamDlc.startDeliveryHint":
+    "建立流水線項並開啟 Grok Build 工作階段，寫入角色開場。可選的 docs/sdlc 佔位只寫在本專案資料夾，絕不寫 ~/.grok。",
+  "softwareTeamDlc.startDeliveryTitle": "切片標題",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "這次要交付什麼？",
+  "softwareTeamDlc.startDeliveryNeedTitle": "開始前請先幫切片命名。",
+  "softwareTeamDlc.startDeliveryRole": "起始角色",
+  "softwareTeamDlc.startDeliveryBootstrap": "新增 docs/sdlc 佔位檔",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "若缺失則在本專案 docs/sdlc 寫入 spec.md、design.md、review.md。需要桌面 Host 與專案資料夾。",
+  "softwareTeamDlc.startDeliveryNeedProject": "請先選專案資料夾，才能寫 docs/sdlc 佔位。",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "工作區佔位需要桌面 Host。此預覽不會假裝已經寫入。",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "不能把佔位寫進共用 ~/.grok。請選一個專案資料夾。",
+  "softwareTeamDlc.startDeliveryHostError": "無法寫入佔位檔：{error}",
+  "softwareTeamDlc.startDeliveryBootstrapped": "已在專案中寫入 {n} 個 docs/sdlc 佔位檔。",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "已略過工作區佔位。",
+  "softwareTeamDlc.startDeliveryStarted": "交付已開始。",
+  "softwareTeamDlc.handoffCta": "交接給 {role}",
+  "softwareTeamDlc.shipCta": "發布 · 技術寫作開場",
+  "softwareTeamDlc.sessionDoneHint": "工作階段已結束。請交接或發布 — 看板不會自動推進。",
+  "softwareTeamDlc.attachSeeded": "已在輸入草稿種下 {n} 個 attach-chat 工作階段（最多 3 個）。",
 } as const;

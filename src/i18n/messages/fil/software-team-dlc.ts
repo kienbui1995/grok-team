@@ -139,4 +139,31 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Mga case, command, pass/fail.",
   "softwareTeamDlc.notesSaved":
     "Nai-save ang notes. Mag-unlock ang Ship kapag may notes na ng Reviewer at QA.",
+  "softwareTeamDlc.startDelivery": "Magsimula ng delivery",
+  "softwareTeamDlc.startDeliveryHint":
+    "Gumagawa ng pipeline item at magbubukas ng Grok Build session na may role starter. Ang docs/sdlc placeholders ay sa folder ng proyektong ito lang — hindi ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Pamagat ng slice",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "Ano ang isi-ship?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Bigyan muna ng pangalan ang slice.",
+  "softwareTeamDlc.startDeliveryRole": "Unang role",
+  "softwareTeamDlc.startDeliveryBootstrap": "Magdagdag ng docs/sdlc placeholders",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Sumusulat ng spec.md, design.md, at review.md sa docs/sdlc ng proyektong ito kung wala pa. Kailangan ang desktop Host at folder ng proyekto.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Pumili ng folder ng proyekto para isulat ang docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Kailangan ng desktop Host ang mga placeholder. Hindi magpapanggap ang preview na naisulat na.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Hindi pwedeng i-bootstrap sa shared ~/.grok. Pumili ng folder ng proyekto.",
+  "softwareTeamDlc.startDeliveryHostError": "Hindi maisulat ang mga placeholder: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "Naisulat ang {n} docs/sdlc placeholder sa proyekto.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Nilaktawan ang mga placeholder.",
+  "softwareTeamDlc.startDeliveryStarted": "Nagsimula na ang delivery.",
+  "softwareTeamDlc.handoffCta": "I-handoff kay {role}",
+  "softwareTeamDlc.shipCta": "Ship · starter ng Writer",
+  "softwareTeamDlc.sessionDoneHint":
+    "Tapos na ang session. Mag-handoff o Ship — hindi kusa ang board.",
+  "softwareTeamDlc.attachSeeded":
+    "May {n} attach-chat session sa draft (max 3).",
 } as const;

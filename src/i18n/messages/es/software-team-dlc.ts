@@ -139,4 +139,31 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Casos, comandos, aprobado/fallo.",
   "softwareTeamDlc.notesSaved":
     "Notas guardadas. Ship se desbloquea cuando hay notas de Reviewer y de QA.",
+  "softwareTeamDlc.startDelivery": "Empezar una entrega",
+  "softwareTeamDlc.startDeliveryHint":
+    "Crea un elemento de pipeline y abre una sesión Grok Build con el starter del rol. Los placeholders de docs/sdlc quedan en esta carpeta de proyecto — nunca ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Título de la rodaja",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "¿Qué vamos a entregar?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Ponle nombre a la rodaja antes de empezar.",
+  "softwareTeamDlc.startDeliveryRole": "Primer rol",
+  "softwareTeamDlc.startDeliveryBootstrap": "Añadir placeholders docs/sdlc",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Escribe spec.md, design.md y review.md bajo docs/sdlc de este proyecto si faltan. Necesita Host de escritorio y una carpeta de proyecto.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Elige una carpeta de proyecto para escribir docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Los placeholders necesitan el Host de escritorio. Esta vista previa no fingirá haberlos escrito.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "No se puede arrancar en ~/.grok compartido. Elige una carpeta de proyecto.",
+  "softwareTeamDlc.startDeliveryHostError": "No se pudieron escribir los placeholders: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "Se escribieron {n} archivos docs/sdlc en el proyecto.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Se omitieron los placeholders.",
+  "softwareTeamDlc.startDeliveryStarted": "Entrega iniciada.",
+  "softwareTeamDlc.handoffCta": "Pasar a {role}",
+  "softwareTeamDlc.shipCta": "Ship · starter de Writer",
+  "softwareTeamDlc.sessionDoneHint":
+    "Sesión terminada. Pasa o Ship — el tablero no avanza solo.",
+  "softwareTeamDlc.attachSeeded":
+    "Se sembraron {n} sesiones attach-chat en el borrador (máx. 3).",
 } as const;

@@ -44,7 +44,7 @@ Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRe
 | Write | Effect |
 |-------|--------|
 | Board stage change | Updates the item (`stageSource: board`) and **rewrites** session tags from the store. |
-| Live session `working` / `done` | Maps to Build / Ship (`stageSource: session`). `needs_you` / `idle` do **not** overwrite Design / Review / Backlog. |
+| Live session `working` / `done` | `working` → Build. `done` **never auto-Ships** — sets `sessionDonePending` and shows a Handoff / Ship CTA. `needs_you` / `idle` do **not** overwrite Design / Review / Backlog. |
 | Handoff | Next role + that role’s default stage (`stageSource: handoff`) + starter text into the composer. |
 | Session tags | Projection only (`grok.softwareTeamDlc.sessionTags`). Never a second dead overlay. Legacy tags hydrate into items on first load. |
 
@@ -118,6 +118,28 @@ Legacy items already stored as `ship` stay there. New writes and handoff to Writ
 
 Reviewer / QA starters (open + handoff) include an English checklist: **diff / test / risk**. Notes are edited in `GlassModal` (Mark Reviewer notes / Mark QA notes) — no `window.prompt`.
 
+Live `done` + gate fail → CTA **Handoff to {next role}**. Live `done` + gate ok → CTA **Ship · Writer starter** (user click only). Ship seeds the Writer starter in the composer. It does **not** write this app’s `CHANGELOG.md` or any file.
+
+## Start a delivery
+
+Helpers: `src/lib/softwareTeamDlc/delivery.ts`.
+
+Empty board or toolbar **Start a delivery** (`GlassModal`): slice title, first role (default Product), optional `docs/sdlc/{spec,design,review}.md` placeholders.
+
+| Rule | Honesty |
+|------|---------|
+| Writes | Project folder only (`fsWriteFile` relative). Skip files that already exist. |
+| Refuse | No project path (`need_project`), path *is* `~/.grok` (`blocked_shared_home`), no desktop Host (`need_host`). |
+| Never | Shared GROK_HOME, fake success in the browser preview. |
+
+Then: create a pipeline item (`deliveryId`) + existing session launch (starter in composer).
+
+## Attach-chat (max 3)
+
+Existing domain: `src/lib/chatAttach.ts` (`MAX_ATTACHED_CHATS = 3`). Workbench chips live in `useAttachChat` / composer restore — **not** extended in AppWorkbench.
+
+Studio helper `deliveryAttach.ts` picks up to 3 **other** bound session UUIDs on the same `deliveryId` (prefer Product / Engineer / Reviewer) and seeds `composerSessionDraft.chatAttachments` plus `[[chat:]]` tokens on launch. Non-UUID ids are skipped. There is **no** Host “attach team sessions” RPC. Live chips appear when Workbench restores that session draft.
+
 ## Slash `/team-*`
 
 `buildSlashCatalog` (domain module, **not** `AppWorkbench.applySlashItem`) merges six skill rows when the edition is on (`src/lib/softwareTeamDlc/slash.ts`). Existing `applySlashItem` `kind: "skill"` inserts `[[skill:team-product]]`.
@@ -143,7 +165,7 @@ Reviewer / QA starters (open + handoff) include an English checklist: **diff / t
 ## UI
 
 - Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install + status/repair).
-- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Reviewer/QA notes via `GlassModal`.
+- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card.
 - Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
 - Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
 - Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).

@@ -22,13 +22,19 @@ import {
   SOFTWARE_TEAM_DLC_INSTALL_TARGETS,
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGES,
+  applySoftwareTeamShipChoice,
+  decideSoftwareTeamDoneCta,
   nextSoftwareTeamRole,
   planSoftwareTeamDlcPackWrite,
+  planSoftwareTeamWorkspaceBootstrap,
+  softwareTeamBootstrapMessageKey,
+  softwareTeamDeliveryItemDraft,
   softwareTeamRoleById,
   softwareTeamRoleSlashHint,
   softwareTeamRoleStarterPrompt,
   softwareTeamShipBlockMessageKey,
   softwareTeamShipGate,
+  writeSoftwareTeamWorkspaceBootstrap,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamRoleId,
   type SoftwareTeamSdlcStageId,
@@ -159,6 +165,7 @@ export function SdlcStudioPage({
     workspace,
     bindSession: pipeline.bindSession,
     patchItem: (itemId, patch) => pipeline.updateItem(itemId, patch),
+    pipelineItems: pipeline.items,
     onSelectSession,
   });
   const [query, setQuery] = useState("");
@@ -166,6 +173,11 @@ export function SdlcStudioPage({
   const [copyError, setCopyError] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [editor, setEditor] = useState<ItemDraft | null>(null);
+  const [wizard, setWizard] = useState<{
+    title: string;
+    roleId: SoftwareTeamRoleId;
+    bootstrap: boolean;
+  } | null>(null);
   const [notesEditor, setNotesEditor] = useState<{
     itemId: string;
     kind: "review" | "qa";
@@ -274,6 +286,95 @@ export function SdlcStudioPage({
     },
     [actions],
   );
+
+  const onShipChoice = useCallback(
+    async (item: SoftwareTeamPipelineItem) => {
+      const choice = applySoftwareTeamShipChoice(item);
+      if (!choice.ok) {
+        setStatus(t("softwareTeamDlc.shipLocked"));
+        return;
+      }
+      pipeline.updateItem(item.id, {
+        roleId: choice.item.roleId,
+        stageId: choice.item.stageId,
+        roleHistory: choice.item.roleHistory,
+        sessionDonePending: false,
+        stageSource: "board",
+      });
+      const launched = await actions.launchItem(
+        {
+          ...itemToStarterFields({ ...item, ...choice.item }),
+          roleId: "writer",
+        },
+        { starter: choice.starter, createIfMissing: true },
+      );
+      setStatus(actions.describeLaunch(launched));
+      if (launched.ok) actions.applyLaunchNav(launched);
+    },
+    [actions, pipeline, t],
+  );
+
+  const onStartDelivery = useCallback(async () => {
+    if (!wizard) return;
+    const title = wizard.title.trim();
+    if (!title) {
+      setStatus(t("softwareTeamDlc.startDeliveryNeedTitle"));
+      return;
+    }
+    let planRef = "";
+    let artifactRef = "";
+    if (wizard.bootstrap) {
+      const boot = await writeSoftwareTeamWorkspaceBootstrap({
+        projectPath: workspace.projectPath,
+        title,
+        bootstrap: true,
+      });
+      if (!boot.ok) {
+        setStatus(
+          boot.reason === "host_error"
+            ? t(softwareTeamBootstrapMessageKey(boot.reason), {
+                error: boot.error ?? "",
+              })
+            : t(softwareTeamBootstrapMessageKey(boot.reason)),
+        );
+        return;
+      }
+      const created = boot.files.filter((file) => file.action === "created");
+      planRef = "docs/sdlc/spec.md";
+      artifactRef = "docs/sdlc";
+      if (created.length) {
+        setStatus(
+          t("softwareTeamDlc.startDeliveryBootstrapped", {
+            n: created.length,
+          }),
+        );
+      }
+    }
+    const draft = softwareTeamDeliveryItemDraft({
+      title,
+      roleId: wizard.roleId,
+      sessionId: currentSessionId ?? "",
+      planRef,
+      artifactRef,
+    });
+    const created = pipeline.addItem(draft);
+    setWizard(null);
+    if (!created) return;
+    const launched = await actions.launchItem(itemToStarterFields(created), {
+      createIfMissing: true,
+    });
+    setStatus(
+      `${t("softwareTeamDlc.startDeliveryStarted")} ${actions.describeLaunch(launched)}`,
+    );
+    if (launched.ok) actions.applyLaunchNav(launched);
+  }, [
+    actions,
+    currentSessionId,
+    pipeline,
+    t,
+    wizard,
+    workspace.projectPath,
+  ]);
 
   const openCreate = (roleId?: SoftwareTeamRoleId) => {
     setEditor(
@@ -610,6 +711,15 @@ export function SdlcStudioPage({
           <button
             type="button"
             className="btn btn--ghost btn--sm"
+            onClick={() =>
+              setWizard({ title: "", roleId: "product", bootstrap: false })
+            }
+          >
+            {t("softwareTeamDlc.startDelivery")}
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
             onClick={() => openCreate()}
           >
             {t("softwareTeamDlc.addItem")}
@@ -665,6 +775,15 @@ export function SdlcStudioPage({
         {filtered.length === 0 ? (
           <div className="task-board__empty">
             <p className="task-board__empty-title">{t("softwareTeamDlc.emptyBoard")}</p>
+            <button
+              type="button"
+              className="btn"
+              onClick={() =>
+                setWizard({ title: "", roleId: "product", bootstrap: false })
+              }
+            >
+              {t("softwareTeamDlc.startDelivery")}
+            </button>
           </div>
         ) : (
           <div
@@ -752,7 +871,46 @@ export function SdlcStudioPage({
                                 </span>
                               );
                             })()}
+                            {item.sessionDonePending ? (
+                              <span className="sdlc-studio__refs">
+                                {t("softwareTeamDlc.sessionDoneHint")}
+                              </span>
+                            ) : null}
                           </button>
+                          {(() => {
+                            const cta = decideSoftwareTeamDoneCta(item);
+                            if (cta.kind === "none") return null;
+                            if (cta.kind === "ship") {
+                              return (
+                                <div className="sdlc-studio__card-cta">
+                                  <button
+                                    type="button"
+                                    className="btn btn--ghost btn--sm"
+                                    onClick={() => void onShipChoice(item)}
+                                  >
+                                    {t("softwareTeamDlc.shipCta")}
+                                  </button>
+                                </div>
+                              );
+                            }
+                            const roleTitle = t(
+                              softwareTeamRoleById(cta.nextRole)?.titleKey ??
+                                "softwareTeamDlc.handoff",
+                            );
+                            return (
+                              <div className="sdlc-studio__card-cta">
+                                <button
+                                  type="button"
+                                  className="btn btn--ghost btn--sm"
+                                  onClick={() => void onHandoff(item.id)}
+                                >
+                                  {t("softwareTeamDlc.handoffCta", {
+                                    role: roleTitle,
+                                  })}
+                                </button>
+                              </div>
+                            );
+                          })()}
                         </li>
                       ))}
                     </ul>
@@ -982,6 +1140,109 @@ export function SdlcStudioPage({
               }
             />
           </label>
+        ) : null}
+      </GlassModal>
+
+      <GlassModal
+        open={!!wizard}
+        onClose={() => setWizard(null)}
+        title={t("softwareTeamDlc.startDelivery")}
+        closeLabel={t("window.close")}
+        wrapBody
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={() => setWizard(null)}
+            >
+              {t("common.cancel")}
+            </button>
+            <button
+              type="button"
+              className="btn"
+              disabled={actions.launching || !(wizard?.title ?? "").trim()}
+              onClick={() => void onStartDelivery()}
+            >
+              {t("softwareTeamDlc.startDelivery")}
+            </button>
+          </>
+        }
+      >
+        {wizard ? (
+          <div className="sdlc-studio__form">
+            <p className="sdlc-studio__slash-note">
+              {t("softwareTeamDlc.startDeliveryHint")}
+            </p>
+            <label className="sdlc-studio__field">
+              <span>{t("softwareTeamDlc.startDeliveryTitle")}</span>
+              <input
+                className="settings-input"
+                value={wizard.title}
+                onChange={(e) =>
+                  setWizard({ ...wizard, title: e.target.value })
+                }
+                placeholder={t("softwareTeamDlc.startDeliveryTitlePlaceholder")}
+              />
+            </label>
+            <div className="sdlc-studio__field">
+              <span>{t("softwareTeamDlc.startDeliveryRole")}</span>
+              <div className="sdlc-studio__chips" role="group">
+                {SOFTWARE_TEAM_ROLES.map((role) => (
+                  <button
+                    key={role.id}
+                    type="button"
+                    className={
+                      "task-board__chip" +
+                      (wizard.roleId === role.id ? " is-active" : "")
+                    }
+                    onClick={() => setWizard({ ...wizard, roleId: role.id })}
+                  >
+                    {t(role.titleKey)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {(() => {
+              const bootPlan = planSoftwareTeamWorkspaceBootstrap({
+                projectPath: workspace.projectPath,
+                bootstrap: true,
+              });
+              return (
+                <>
+                  <div className="sdlc-studio__field">
+                    <span>{t("softwareTeamDlc.startDeliveryBootstrap")}</span>
+                    <div className="sdlc-studio__chips" role="group">
+                      <button
+                        type="button"
+                        className={
+                          "task-board__chip" +
+                          (wizard.bootstrap ? " is-active" : "")
+                        }
+                        disabled={!bootPlan.allowed}
+                        onClick={() =>
+                          setWizard({
+                            ...wizard,
+                            bootstrap: !wizard.bootstrap,
+                          })
+                        }
+                      >
+                        {t("softwareTeamDlc.startDeliveryBootstrap")}
+                      </button>
+                    </div>
+                    <p className="sdlc-studio__slash-note">
+                      {t("softwareTeamDlc.startDeliveryBootstrapHint")}
+                    </p>
+                  </div>
+                  {!bootPlan.allowed && bootPlan.reason !== "skipped" ? (
+                    <p className="sdlc-studio__slash-note" role="note">
+                      {t(softwareTeamBootstrapMessageKey(bootPlan.reason))}
+                    </p>
+                  ) : null}
+                </>
+              );
+            })()}
+          </div>
         ) : null}
       </GlassModal>
     </div>

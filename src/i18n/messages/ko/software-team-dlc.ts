@@ -139,4 +139,31 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "케이스, 명령, 합격/불합격.",
   "softwareTeamDlc.notesSaved":
     "메모를 저장했습니다. Reviewer와 QA 메모가 모두 있으면 Ship이 열립니다.",
+  "softwareTeamDlc.startDelivery": "딜리버리 시작",
+  "softwareTeamDlc.startDeliveryHint":
+    "파이프라인 항목을 만들고 역할 스타터와 함께 Grok Build 세션을 엽니다. docs/sdlc 자리 표시자는 이 프로젝트 폴더에만 쓰며 ~/.grok 에는 쓰지 않습니다.",
+  "softwareTeamDlc.startDeliveryTitle": "슬라이스 제목",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "무엇을 출시할까요?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "시작하기 전에 슬라이스 이름을 넣으세요.",
+  "softwareTeamDlc.startDeliveryRole": "첫 역할",
+  "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc 자리 표시자 추가",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "없으면 이 프로젝트의 docs/sdlc 에 spec.md, design.md, review.md 를 씁니다. 데스크톱 Host 와 프로젝트 폴더가 필요합니다.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "docs/sdlc 를 쓰려면 프로젝트 폴더를 고르세요.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "워크스페이스 자리 표시자는 데스크톱 Host 가 필요합니다. 이 미리보기는 쓴 척하지 않습니다.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "공유 ~/.grok 에는 부트스트랩할 수 없습니다. 프로젝트 폴더를 고르세요.",
+  "softwareTeamDlc.startDeliveryHostError": "자리 표시자를 쓰지 못했습니다: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "프로젝트에 docs/sdlc 자리 표시자 {n}개를 썼습니다.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "워크스페이스 자리 표시자를 건너뛰었습니다.",
+  "softwareTeamDlc.startDeliveryStarted": "딜리버리를 시작했습니다.",
+  "softwareTeamDlc.handoffCta": "{role}에게 넘기기",
+  "softwareTeamDlc.shipCta": "Ship · Writer 스타터",
+  "softwareTeamDlc.sessionDoneHint":
+    "세션이 끝났습니다. 넘기거나 Ship — 보드는 자동으로 진행하지 않습니다.",
+  "softwareTeamDlc.attachSeeded":
+    "초안에 attach-chat 세션 {n}개를 심었습니다(최대 3).",
 } as const;

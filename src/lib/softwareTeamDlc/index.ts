@@ -172,3 +172,38 @@ export {
   type SoftwareTeamPlanChromeOutcome,
   type SoftwareTeamStarterFields,
 } from "./sessionLaunch";
+
+export {
+  SOFTWARE_TEAM_BOOTSTRAP_REASONS,
+  SOFTWARE_TEAM_BOOTSTRAP_RELATIVE,
+  defaultSoftwareTeamBootstrapHost,
+  isSoftwareTeamSharedHomePath,
+  newSoftwareTeamDeliveryId,
+  planSoftwareTeamWorkspaceBootstrap,
+  softwareTeamBootstrapMessageKey,
+  softwareTeamDeliveryItemDraft,
+  writeSoftwareTeamWorkspaceBootstrap,
+  type SoftwareTeamBootstrapFileResult,
+  type SoftwareTeamBootstrapHost,
+  type SoftwareTeamBootstrapReason,
+  type SoftwareTeamBootstrapResult,
+} from "./delivery";
+
+export {
+  SOFTWARE_TEAM_DONE_CTA_KINDS,
+  applySoftwareTeamShipChoice,
+  composeWriterShipStarter,
+  decideSoftwareTeamDoneCta,
+  softwareTeamWriterShipWritesFiles,
+  type SoftwareTeamDoneCta,
+  type SoftwareTeamDoneCtaKind,
+} from "./doneCta";
+
+export {
+  SOFTWARE_TEAM_ATTACH_MAX,
+  SOFTWARE_TEAM_ATTACH_PREFER,
+  pickSoftwareTeamAttachSessions,
+  seedSoftwareTeamAttachStarter,
+  softwareTeamAttachRefs,
+  type SoftwareTeamAttachPick,
+} from "./deliveryAttach";

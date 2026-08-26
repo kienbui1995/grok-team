@@ -139,4 +139,31 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Випадки, команди, успіх/провал.",
   "softwareTeamDlc.notesSaved":
     "Нотатки збережено. Ship відкриється, коли будуть і Reviewer, і QA.",
+  "softwareTeamDlc.startDelivery": "Почати поставку",
+  "softwareTeamDlc.startDeliveryHint":
+    "Створює елемент конвеєра й відкриває сесію Grok Build зі стартером ролі. Заготовки docs/sdlc лише в теці цього проєкту — не в ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Назва зрізу",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "Що постачаємо?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Спочатку назвіть зріз.",
+  "softwareTeamDlc.startDeliveryRole": "Перша роль",
+  "softwareTeamDlc.startDeliveryBootstrap": "Додати заготовки docs/sdlc",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Пише spec.md, design.md і review.md в docs/sdlc цього проєкту, якщо їх немає. Потрібні десктопний Host і тека проєкту.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Оберіть теку проєкту, щоб писати docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Заготовки робочої області потребують десктопний Host. Цей попередній перегляд не вдає, що записав їх.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Не можна писати в спільний ~/.grok. Оберіть теку проєкту.",
+  "softwareTeamDlc.startDeliveryHostError": "Не вдалося записати заготовки: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "У проєкті записано {n} файлів docs/sdlc.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Заготовки робочої області пропущено.",
+  "softwareTeamDlc.startDeliveryStarted": "Поставку розпочато.",
+  "softwareTeamDlc.handoffCta": "Передати {role}",
+  "softwareTeamDlc.shipCta": "Ship · стартер Writer",
+  "softwareTeamDlc.sessionDoneHint":
+    "Сесію завершено. Передайте або Ship — дошка сама не рухається.",
+  "softwareTeamDlc.attachSeeded":
+    "У чернетку додано {n} сесій attach-chat (макс. 3).",
 } as const;

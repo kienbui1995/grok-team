@@ -131,4 +131,27 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff、必改与吹毛求疵、风险。",
   "softwareTeamDlc.qaNotePlaceholder": "用例、命令、通过/失败。",
   "softwareTeamDlc.notesSaved": "备注已保存。评审与测试备注都齐后才能发布。",
+  "softwareTeamDlc.startDelivery": "开始一次交付",
+  "softwareTeamDlc.startDeliveryHint":
+    "创建流水线项并打开 Grok Build 会话，写入角色开场。可选的 docs/sdlc 占位只写在本项目文件夹，绝不写 ~/.grok。",
+  "softwareTeamDlc.startDeliveryTitle": "切片标题",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "这次要交付什么？",
+  "softwareTeamDlc.startDeliveryNeedTitle": "开始前请先给切片起名。",
+  "softwareTeamDlc.startDeliveryRole": "起始角色",
+  "softwareTeamDlc.startDeliveryBootstrap": "添加 docs/sdlc 占位文件",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "若缺失则在本项目 docs/sdlc 写入 spec.md、design.md、review.md。需要桌面 Host 和项目文件夹。",
+  "softwareTeamDlc.startDeliveryNeedProject": "请先选项目文件夹，才能写 docs/sdlc 占位。",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "工作区占位需要桌面 Host。此预览不会假装已经写入。",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "不能把占位写进共享 ~/.grok。请选一个项目文件夹。",
+  "softwareTeamDlc.startDeliveryHostError": "无法写入占位文件：{error}",
+  "softwareTeamDlc.startDeliveryBootstrapped": "已在项目中写入 {n} 个 docs/sdlc 占位文件。",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "已跳过工作区占位。",
+  "softwareTeamDlc.startDeliveryStarted": "交付已开始。",
+  "softwareTeamDlc.handoffCta": "交接给 {role}",
+  "softwareTeamDlc.shipCta": "发布 · 技术写作开场",
+  "softwareTeamDlc.sessionDoneHint": "会话已结束。请交接或发布 — 看板不会自动推进。",
+  "softwareTeamDlc.attachSeeded": "已在输入草稿种下 {n} 个 attach-chat 会话（最多 3 个）。",
 } as const;

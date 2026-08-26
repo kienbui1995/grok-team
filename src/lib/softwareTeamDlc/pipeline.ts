@@ -57,6 +57,10 @@ export type SoftwareTeamPipelineItem = {
   roleHistory: SoftwareTeamRoleId[];
   reviewNote: string;
   qaNote: string;
+  /** Groups items that belong to one Start-a-delivery slice. */
+  deliveryId: string;
+  /** Live Kanban `done` while Ship is blocked or waiting for a Ship click. */
+  sessionDonePending: boolean;
   updatedAt: number;
   stageSource: SoftwareTeamStageSource;
 };
@@ -77,6 +81,8 @@ export type SoftwareTeamPipelineItemDraft = {
   roleHistory?: SoftwareTeamRoleId[];
   reviewNote?: string;
   qaNote?: string;
+  deliveryId?: string;
+  sessionDonePending?: boolean;
   updatedAt?: number;
   stageSource?: SoftwareTeamStageSource;
 };
@@ -133,6 +139,8 @@ export function createSoftwareTeamPipelineItem(
     ),
     reviewNote: (draft.reviewNote ?? "").trim(),
     qaNote: (draft.qaNote ?? "").trim(),
+    deliveryId: (draft.deliveryId ?? "").trim(),
+    sessionDonePending: draft.sessionDonePending === true,
     updatedAt:
       typeof draft.updatedAt === "number" && Number.isFinite(draft.updatedAt)
         ? draft.updatedAt
@@ -166,6 +174,8 @@ export function parseSoftwareTeamPipelineItem(
       : undefined,
     reviewNote: typeof rec.reviewNote === "string" ? rec.reviewNote : "",
     qaNote: typeof rec.qaNote === "string" ? rec.qaNote : "",
+    deliveryId: typeof rec.deliveryId === "string" ? rec.deliveryId : "",
+    sessionDonePending: rec.sessionDonePending === true,
     updatedAt: typeof rec.updatedAt === "number" ? rec.updatedAt : undefined,
     stageSource: isSoftwareTeamStageSource(sourceRaw) ? sourceRaw : undefined,
   });
@@ -422,6 +432,9 @@ export function updateSoftwareTeamPipelineItem(
     ),
     reviewNote: patch.reviewNote ?? prev.reviewNote,
     qaNote: patch.qaNote ?? prev.qaNote,
+    deliveryId: patch.deliveryId ?? prev.deliveryId,
+    sessionDonePending:
+      patch.sessionDonePending ?? prev.sessionDonePending,
     updatedAt: now,
     stageSource: patch.stageSource ?? prev.stageSource,
   });
@@ -436,6 +449,8 @@ export function updateSoftwareTeamPipelineItem(
     next.artifactRef === prev.artifactRef &&
     next.reviewNote === prev.reviewNote &&
     next.qaNote === prev.qaNote &&
+    next.deliveryId === prev.deliveryId &&
+    next.sessionDonePending === prev.sessionDonePending &&
     next.roleHistory.join(",") === prev.roleHistory.join(",") &&
     next.stageSource === prev.stageSource
   ) {
@@ -463,7 +478,11 @@ export function setPipelineItemStage(
   return updateSoftwareTeamPipelineItem(
     store,
     itemId,
-    { stageId, stageSource: "board" },
+    {
+      stageId,
+      stageSource: "board",
+      sessionDonePending: stageId === "ship" ? false : prev.sessionDonePending,
+    },
     now,
   );
 }
@@ -537,14 +556,26 @@ export function applySessionKanbanToItem(
   column: AgentKanbanColumnId,
   now = Date.now(),
 ): SoftwareTeamPipelineItem {
+  if (column === "done") {
+    if (item.stageId === "ship") {
+      return item.sessionDonePending
+        ? { ...item, sessionDonePending: false, updatedAt: now }
+        : item;
+    }
+    if (item.sessionDonePending) return item;
+    return {
+      ...item,
+      sessionDonePending: true,
+      stageSource: "session",
+      updatedAt: now,
+    };
+  }
   const stageId = stageFromSessionKanbanColumn(column);
   if (!stageId || item.stageId === stageId) return item;
-  if (stageId === "ship" && !softwareTeamShipGate(item).ok) {
-    return item;
-  }
   return {
     ...item,
     stageId,
+    sessionDonePending: false,
     stageSource: "session",
     updatedAt: now,
   };

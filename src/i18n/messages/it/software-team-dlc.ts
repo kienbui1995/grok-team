@@ -139,4 +139,31 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Casi, comandi, esito.",
   "softwareTeamDlc.notesSaved":
     "Note salvate. Ship si sblocca quando ci sono sia le note Reviewer sia QA.",
+  "softwareTeamDlc.startDelivery": "Avvia una consegna",
+  "softwareTeamDlc.startDeliveryHint":
+    "Crea un elemento pipeline e apre una sessione Grok Build con lo starter del ruolo. I placeholder docs/sdlc restano in questa cartella progetto — mai ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Titolo della fetta",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "Cosa consegniamo?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Dai un nome alla fetta prima di iniziare.",
+  "softwareTeamDlc.startDeliveryRole": "Primo ruolo",
+  "softwareTeamDlc.startDeliveryBootstrap": "Aggiungi placeholder docs/sdlc",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Scrive spec.md, design.md e review.md sotto docs/sdlc di questo progetto se mancano. Serve l’Host desktop e una cartella progetto.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Scegli una cartella progetto per scrivere docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "I placeholder richiedono l’Host desktop. Questa anteprima non finge di averli scritti.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Impossibile avviare in ~/.grok condiviso. Scegli una cartella progetto.",
+  "softwareTeamDlc.startDeliveryHostError": "Impossibile scrivere i placeholder: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "Scritti {n} file docs/sdlc nel progetto.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Placeholder di workspace saltati.",
+  "softwareTeamDlc.startDeliveryStarted": "Consegna avviata.",
+  "softwareTeamDlc.handoffCta": "Passa a {role}",
+  "softwareTeamDlc.shipCta": "Ship · starter Writer",
+  "softwareTeamDlc.sessionDoneHint":
+    "Sessione finita. Passa o Ship — la bacheca non avanza da sola.",
+  "softwareTeamDlc.attachSeeded":
+    "Inserite {n} sessioni attach-chat nella bozza (max 3).",
 } as const;

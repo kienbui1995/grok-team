@@ -17,6 +17,8 @@ import {
   resolveSoftwareTeamWorkspace,
   softwareTeamInstallFailMessageKey,
   softwareTeamLaunchItemPatch,
+  pickSoftwareTeamAttachSessions,
+  softwareTeamAttachRefs,
   softwareTeamPackStatusMessageKey,
   type SoftwareTeamDlcInstallTarget,
   type SoftwareTeamLaunchResult,
@@ -42,6 +44,7 @@ export function useSoftwareTeamStudioActions(input: {
     itemId: string,
     patch: { planRef?: string; goalRef?: string },
   ) => void;
+  pipelineItems?: readonly SoftwareTeamPipelineItem[];
   onSelectSession?: (sessionId: string) => void;
 }): {
   sessionDataMode: string;
@@ -60,6 +63,7 @@ export function useSoftwareTeamStudioActions(input: {
     item: SoftwareTeamStarterFields & {
       id?: string;
       sessionId?: string | null;
+      deliveryId?: string | null;
     },
     opts?: { starter?: string | null; createIfMissing?: boolean },
   ) => Promise<SoftwareTeamLaunchResult>;
@@ -73,6 +77,7 @@ export function useSoftwareTeamStudioActions(input: {
     workspace,
     bindSession,
     patchItem,
+    pipelineItems,
     onSelectSession,
   } = input;
   const [sessionDataMode, setSessionDataMode] = useState("shared");
@@ -209,6 +214,9 @@ export function useSoftwareTeamStudioActions(input: {
       } else if (result.goalRef) {
         parts.push(t("softwareTeamDlc.goalModeSkipped"));
       }
+      if (result.attachCount > 0) {
+        parts.push(t("softwareTeamDlc.attachSeeded", { n: result.attachCount }));
+      }
       return parts.join(" ");
     },
     [t],
@@ -219,11 +227,19 @@ export function useSoftwareTeamStudioActions(input: {
       item: SoftwareTeamStarterFields & {
         id?: string;
         sessionId?: string | null;
+        deliveryId?: string | null;
       },
       opts?: { starter?: string | null; createIfMissing?: boolean },
     ) => {
       setLaunching(true);
       try {
+        const sibling = item.id
+          ? pickSoftwareTeamAttachSessions(pipelineItems ?? [], {
+              id: item.id,
+              sessionId: item.sessionId ?? "",
+              deliveryId: item.deliveryId ?? "",
+            })
+          : [];
         const result = await launchSoftwareTeamWorkItem({
           item,
           currentSessionId,
@@ -231,6 +247,7 @@ export function useSoftwareTeamStudioActions(input: {
           titleHint: item.title,
           starter: opts?.starter,
           createIfMissing: opts?.createIfMissing ?? true,
+          chatAttachments: softwareTeamAttachRefs(sibling, item.sessionId),
           host: defaultSoftwareTeamLaunchHost(),
         });
         if (result.ok && item.id) {
@@ -245,7 +262,13 @@ export function useSoftwareTeamStudioActions(input: {
         setLaunching(false);
       }
     },
-    [bindSession, currentSessionId, patchItem, workspace.projectId],
+    [
+      bindSession,
+      currentSessionId,
+      patchItem,
+      pipelineItems,
+      workspace.projectId,
+    ],
   );
 
   const installPack = useCallback(async () => {
@@ -317,12 +340,24 @@ export function studioWorkspaceFromInputs(input: {
 export function itemToStarterFields(
   item: Pick<
     SoftwareTeamPipelineItem,
-    "roleId" | "title" | "planRef" | "goalRef" | "artifactRef" | "sessionId" | "id"
+    | "roleId"
+    | "title"
+    | "planRef"
+    | "goalRef"
+    | "artifactRef"
+    | "sessionId"
+    | "id"
+    | "deliveryId"
   >,
-): SoftwareTeamStarterFields & { id: string; sessionId: string } {
+): SoftwareTeamStarterFields & {
+  id: string;
+  sessionId: string;
+  deliveryId: string;
+} {
   return {
     id: item.id,
     sessionId: item.sessionId,
+    deliveryId: item.deliveryId,
     roleId: item.roleId,
     title: item.title,
     planRef: item.planRef,

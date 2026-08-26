@@ -139,4 +139,31 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "ケース、コマンド、合否。",
   "softwareTeamDlc.notesSaved":
     "メモを保存しました。Reviewer と QA のメモが揃うと Ship が開きます。",
+  "softwareTeamDlc.startDelivery": "デリバリーを開始",
+  "softwareTeamDlc.startDeliveryHint":
+    "パイプライン項目を作り、役割スターター付きで Grok Build セッションを開きます。docs/sdlc のプレースホルダはこのプロジェクト内だけ — ~/.grok には書きません。",
+  "softwareTeamDlc.startDeliveryTitle": "スライス名",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "何を出荷しますか？",
+  "softwareTeamDlc.startDeliveryNeedTitle": "開始前にスライス名を入れてください。",
+  "softwareTeamDlc.startDeliveryRole": "最初の役割",
+  "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc プレースホルダを追加",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "無い場合、このプロジェクトの docs/sdlc に spec.md / design.md / review.md を書きます。デスクトップ Host とプロジェクトフォルダが必要です。",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "docs/sdlc を書くにはプロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "ワークスペースのプレースホルダにはデスクトップ Host が必要です。このプレビューは書いたふりをしません。",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "共有 ~/.grok にはブートストラップできません。プロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.startDeliveryHostError": "プレースホルダを書けませんでした: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "プロジェクトに docs/sdlc プレースホルダを {n} 件書きました。",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "ワークスペースのプレースホルダをスキップしました。",
+  "softwareTeamDlc.startDeliveryStarted": "デリバリーを開始しました。",
+  "softwareTeamDlc.handoffCta": "{role} へ渡す",
+  "softwareTeamDlc.shipCta": "Ship · Writer スターター",
+  "softwareTeamDlc.sessionDoneHint":
+    "セッション終了。受け渡すか Ship — 盤は自動では進みません。",
+  "softwareTeamDlc.attachSeeded":
+    "下書きに attach-chat セッションを {n} 件載せました（最大 3）。",
 } as const;

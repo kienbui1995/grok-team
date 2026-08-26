@@ -69,6 +69,10 @@ describe("i18n catalog", () => {
     expect(t("zh", "softwareTeamDlc.install.status.missing", { n: 3 })).toContain(
       "3",
     );
+    expect(
+      t("en", "softwareTeamDlc.startDeliveryBootstrapped", { n: 3 }),
+    ).toContain("3");
+    expect(t("en", "softwareTeamDlc.handoffCta", { role: "QA" })).toContain("QA");
   });
 
   it("createT binds locale (English is the product default)", () => {

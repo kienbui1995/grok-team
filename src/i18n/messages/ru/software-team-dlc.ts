@@ -139,4 +139,31 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Случаи, команды, успех/провал.",
   "softwareTeamDlc.notesSaved":
     "Заметки сохранены. Ship откроется, когда будут и Reviewer, и QA.",
+  "softwareTeamDlc.startDelivery": "Начать поставку",
+  "softwareTeamDlc.startDeliveryHint":
+    "Создаёт элемент конвейера и открывает сессию Grok Build со стартером роли. Заготовки docs/sdlc только в папке этого проекта — не в ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Название среза",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "Что поставляем?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Сначала назовите срез.",
+  "softwareTeamDlc.startDeliveryRole": "Первая роль",
+  "softwareTeamDlc.startDeliveryBootstrap": "Добавить заготовки docs/sdlc",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Пишет spec.md, design.md и review.md в docs/sdlc этого проекта, если их нет. Нужны десктопный Host и папка проекта.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Выберите папку проекта, чтобы писать docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Заготовки рабочей области требуют десктопный Host. Этот предпросмотр не притворяется, что записал их.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Нельзя писать в общий ~/.grok. Выберите папку проекта.",
+  "softwareTeamDlc.startDeliveryHostError": "Не удалось записать заготовки: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "В проекте записано {n} файлов docs/sdlc.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Заготовки рабочей области пропущены.",
+  "softwareTeamDlc.startDeliveryStarted": "Поставка начата.",
+  "softwareTeamDlc.handoffCta": "Передать {role}",
+  "softwareTeamDlc.shipCta": "Ship · стартер Writer",
+  "softwareTeamDlc.sessionDoneHint":
+    "Сессия завершена. Передайте или Ship — доска сама не двигается.",
+  "softwareTeamDlc.attachSeeded":
+    "В черновик добавлено {n} сессий attach-chat (макс. 3).",
 } as const;

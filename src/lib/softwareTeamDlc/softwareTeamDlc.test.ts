@@ -52,19 +52,32 @@ import {
   softwareTeamSlashSkillInfos,
   stageFromSessionKanbanColumn,
   upsertSoftwareTeamSessionTag,
+  applySoftwareTeamShipChoice,
   attachSoftwareTeamPlanChrome,
   composeHandoffStarter,
   composeRoleSessionStarter,
+  composeWriterShipStarter,
+  decideSoftwareTeamDoneCta,
   decideSoftwareTeamComposerNav,
   hostEntityIdFromUnknown,
   installSoftwareTeamDlcPack,
+  isSoftwareTeamSharedHomePath,
   launchSoftwareTeamWorkItem,
+  pickSoftwareTeamAttachSessions,
   pickSoftwareTeamInstallTarget,
+  planSoftwareTeamWorkspaceBootstrap,
   probeSoftwareTeamDlcPack,
   repairSoftwareTeamDlcPack,
   resolveSoftwareTeamWorkspace,
+  seedSoftwareTeamAttachStarter,
   seedSoftwareTeamComposerDraft,
+  softwareTeamAttachRefs,
+  softwareTeamDeliveryItemDraft,
   softwareTeamLaunchItemPatch,
+  softwareTeamWriterShipWritesFiles,
+  writeSoftwareTeamWorkspaceBootstrap,
+  SOFTWARE_TEAM_ATTACH_MAX,
+  SOFTWARE_TEAM_BOOTSTRAP_RELATIVE,
   softwareTeamRoleChecklist,
   softwareTeamShipBlockMessageKey,
   softwareTeamShipGate,
@@ -275,7 +288,10 @@ describe("Software Works pipeline board ↔ session ↔ handoff", () => {
       stageSource: "session",
     });
     store = applySessionKanbanToPipeline(store, "sess-2", "done", 5);
-    expect(pipelineItemForSession(store, "sess-2")?.stageId).toBe("build");
+    expect(pipelineItemForSession(store, "sess-2")).toMatchObject({
+      stageId: "build",
+      sessionDonePending: true,
+    });
   });
 
   it("handoff walks Product→…→Writer and copies the next starter with artifacts", () => {
@@ -1032,13 +1048,19 @@ describe("Software Team DLC Review → QA → Ship gate", () => {
       "review",
     );
     store = applySessionKanbanToPipeline(store, "s-gate", "done", 9);
-    expect(pipelineItemForSession(store, "s-gate")?.stageId).toBe("review");
+    expect(pipelineItemForSession(store, "s-gate")).toMatchObject({
+      stageId: "review",
+      sessionDonePending: true,
+    });
     store = updateSoftwareTeamPipelineItem(store, "gate-3", {
       reviewNote: "looks good",
       qaNote: "tests green",
     });
     store = setPipelineItemStage(store, "gate-3", "ship", 10);
-    expect(pipelineItemForSession(store, "s-gate")?.stageId).toBe("ship");
+    expect(pipelineItemForSession(store, "s-gate")).toMatchObject({
+      stageId: "ship",
+      sessionDonePending: false,
+    });
     persistSoftwareTeamPipeline(store, memoryStore());
   });
 
@@ -1185,6 +1207,207 @@ describe("Software Team DLC plan / goal launch honesty", () => {
     expect(result.goalMode).toBe("set");
     expect(result.hostGoalId).toBe("goal-77");
     expect(softwareTeamLaunchItemPatch(result)).toEqual({ goalRef: "goal-77" });
+  });
+});
+
+describe("Software Works start a delivery + workspace bootstrap", () => {
+  it("refuses shared ~/.grok and does not write", async () => {
+    expect(isSoftwareTeamSharedHomePath("~/.grok")).toBe(true);
+    expect(isSoftwareTeamSharedHomePath("/home/u/.grok")).toBe(true);
+    expect(isSoftwareTeamSharedHomePath("C:\\Users\\u\\.grok")).toBe(true);
+    expect(isSoftwareTeamSharedHomePath("/repo")).toBe(false);
+    expect(
+      planSoftwareTeamWorkspaceBootstrap({
+        projectPath: "/home/u/.grok",
+        bootstrap: true,
+        host: { isDesktopHost: () => true },
+      }).reason,
+    ).toBe("blocked_shared_home");
+    const writes: string[] = [];
+    const result = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: "~/.grok",
+      title: "Auth",
+      bootstrap: true,
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ text: null, error: "missing" }),
+        writeFile: async (_p, relative) => {
+          writes.push(relative);
+        },
+      },
+    });
+    expect(result).toMatchObject({ ok: false, reason: "blocked_shared_home" });
+    expect(writes).toEqual([]);
+  });
+
+  it("refuses bootstrap without Host or project and skips when unchecked", async () => {
+    expect(
+      planSoftwareTeamWorkspaceBootstrap({
+        projectPath: "/repo",
+        bootstrap: true,
+        host: { isDesktopHost: () => false },
+      }).reason,
+    ).toBe("need_host");
+    expect(
+      planSoftwareTeamWorkspaceBootstrap({
+        projectPath: "  ",
+        bootstrap: true,
+        host: { isDesktopHost: () => true },
+      }).reason,
+    ).toBe("need_project");
+    const skip = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: "/repo",
+      bootstrap: false,
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ text: "x" }),
+        writeFile: async () => {
+          throw new Error("should not write");
+        },
+      },
+    });
+    expect(skip).toEqual({ ok: true, reason: "skipped", files: [] });
+  });
+
+  it("writes only missing docs/sdlc placeholders under the project", async () => {
+    const writes: string[] = [];
+    const result = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: "/repo",
+      title: "Billing",
+      bootstrap: true,
+      host: {
+        isDesktopHost: () => true,
+        readFile: async (_p, relative) =>
+          relative.endsWith("spec.md")
+            ? { text: "# existing" }
+            : { error: "missing" },
+        writeFile: async (_p, relative, content) => {
+          writes.push(relative);
+          expect(content).toContain("Billing");
+          expect(relative.startsWith("docs/sdlc/")).toBe(true);
+        },
+      },
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(writes.sort()).toEqual([
+      "docs/sdlc/design.md",
+      "docs/sdlc/review.md",
+    ]);
+    expect([...SOFTWARE_TEAM_BOOTSTRAP_RELATIVE]).toHaveLength(3);
+    const draft = softwareTeamDeliveryItemDraft({
+      title: "Billing",
+      roleId: "product",
+    });
+    expect(draft.roleId).toBe("product");
+    expect(draft.deliveryId).toBeTruthy();
+  });
+});
+
+describe("Software Works done CTA + Writer ship starter", () => {
+  it("does not auto-Ship on live done — CTA is handoff until the gate passes", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "cta-1",
+      sessionId: "s-done",
+      roleId: "engineer",
+      stageId: "build",
+      sessionDonePending: true,
+    })!;
+    expect(decideSoftwareTeamDoneCta(item)).toEqual({
+      kind: "handoff",
+      nextRole: "reviewer",
+    });
+    let store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      item,
+    );
+    store = applySessionKanbanToPipeline(store, "s-done", "done", 2);
+    expect(pipelineItemForSession(store, "s-done")?.stageId).toBe("build");
+    expect(pipelineItemForSession(store, "s-done")?.sessionDonePending).toBe(
+      true,
+    );
+  });
+
+  it("shows Ship CTA when the gate is ready and does not write app files", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "cta-2",
+      roleId: "qa",
+      stageId: "review",
+      title: "Auth",
+      reviewNote: "nits",
+      qaNote: "vitest",
+      roleHistory: ["reviewer", "qa"],
+      sessionDonePending: true,
+    })!;
+    expect(decideSoftwareTeamDoneCta(item)).toEqual({ kind: "ship" });
+    expect(softwareTeamWriterShipWritesFiles()).toBe(false);
+    const starter = composeWriterShipStarter(item);
+    expect(starter).toMatch(/Tech Writer/);
+    expect(starter).toMatch(/composer/);
+    expect(starter).toMatch(/this project workspace/);
+    expect(starter).not.toMatch(/edit this app's CHANGELOG/i);
+    const ship = applySoftwareTeamShipChoice(item, 9);
+    expect(ship.ok).toBe(true);
+    if (!ship.ok) return;
+    expect(ship.item.stageId).toBe("ship");
+    expect(ship.item.roleId).toBe("writer");
+    expect(ship.item.sessionDonePending).toBe(false);
+    expect(ship.starter).toBe(composeWriterShipStarter(ship.item));
+    expect(applySoftwareTeamShipChoice({ ...item, reviewNote: "" }).ok).toBe(
+      false,
+    );
+  });
+});
+
+describe("Software Works attach-chat seed (max 3)", () => {
+  const uuid = (n: number) =>
+    `aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa${n}`;
+
+  it("picks up to 3 UUID siblings and prefers Product/Engineer/Reviewer", () => {
+    expect(SOFTWARE_TEAM_ATTACH_MAX).toBe(3);
+    const items = [
+      createSoftwareTeamPipelineItem({
+        id: "a",
+        sessionId: uuid(1),
+        roleId: "product",
+        deliveryId: "d1",
+      })!,
+      createSoftwareTeamPipelineItem({
+        id: "b",
+        sessionId: uuid(2),
+        roleId: "engineer",
+        deliveryId: "d1",
+      })!,
+      createSoftwareTeamPipelineItem({
+        id: "c",
+        sessionId: uuid(3),
+        roleId: "reviewer",
+        deliveryId: "d1",
+      })!,
+      createSoftwareTeamPipelineItem({
+        id: "d",
+        sessionId: uuid(4),
+        roleId: "qa",
+        deliveryId: "d1",
+      })!,
+      createSoftwareTeamPipelineItem({
+        id: "e",
+        sessionId: "not-a-uuid",
+        roleId: "architect",
+        deliveryId: "d1",
+      })!,
+    ];
+    const picks = pickSoftwareTeamAttachSessions(items, items[3]!);
+    expect(picks.map((row) => row.roleId)).toEqual([
+      "product",
+      "engineer",
+      "reviewer",
+    ]);
+    const refs = softwareTeamAttachRefs(picks, items[3]!.sessionId);
+    expect(refs).toHaveLength(3);
+    const text = seedSoftwareTeamAttachStarter("hello starter", refs);
+    expect(text).toMatch(/\[\[chat:/);
+    expect(text).toContain("hello starter");
   });
 });
 

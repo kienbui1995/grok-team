@@ -139,4 +139,31 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Fälle, Befehle, Bestanden/Fehlschlag.",
   "softwareTeamDlc.notesSaved":
     "Notizen gespeichert. Ship öffnet, wenn Reviewer- und QA-Notizen beide da sind.",
+  "softwareTeamDlc.startDelivery": "Lieferung starten",
+  "softwareTeamDlc.startDeliveryHint":
+    "Legt ein Pipeline-Element an und öffnet eine Grok-Build-Sitzung mit dem Rollenstarter. Optionale docs/sdlc-Platzhalter bleiben in diesem Projektordner — nie ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Scheiben-Titel",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "Was liefern wir?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Bitte zuerst die Scheibe benennen.",
+  "softwareTeamDlc.startDeliveryRole": "Erste Rolle",
+  "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc-Platzhalter anlegen",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Schreibt spec.md, design.md und review.md unter docs/sdlc dieses Projekts, wenn sie fehlen. Braucht Desktop-Host und Projektordner.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Projektordner wählen, um docs/sdlc-Platzhalter zu schreiben.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Arbeitsplatzhalter brauchen den Desktop-Host. Diese Vorschau tut nicht so, als hätte sie geschrieben.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Kein Bootstrap in gemeinsames ~/.grok. Bitte einen Projektordner wählen.",
+  "softwareTeamDlc.startDeliveryHostError": "Platzhalter nicht geschrieben: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "{n} docs/sdlc-Platzhalter im Projekt geschrieben.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Arbeitsplatzhalter übersprungen.",
+  "softwareTeamDlc.startDeliveryStarted": "Lieferung gestartet.",
+  "softwareTeamDlc.handoffCta": "Übergeben an {role}",
+  "softwareTeamDlc.shipCta": "Ship · Writer-Starter",
+  "softwareTeamDlc.sessionDoneHint":
+    "Sitzung fertig. Übergeben oder Ship — das Board rückt nicht von selbst vor.",
+  "softwareTeamDlc.attachSeeded":
+    "{n} attach-chat-Sitzungen im Composer-Entwurf vorgemerkt (max. 3).",
 } as const;

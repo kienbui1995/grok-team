@@ -146,4 +146,32 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.qaNotePlaceholder": "Cases, commands, pass/fail.",
   "softwareTeamDlc.notesSaved":
     "Notes saved. Ship unlocks when Reviewer and QA notes are both present.",
+  "softwareTeamDlc.startDelivery": "Start a delivery",
+  "softwareTeamDlc.startDeliveryHint":
+    "Create a pipeline item and open a Grok Build session with the role starter. Optional docs/sdlc placeholders stay in this project folder — never ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Slice title",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "What are we shipping?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Name the slice before starting.",
+  "softwareTeamDlc.startDeliveryRole": "First role",
+  "softwareTeamDlc.startDeliveryBootstrap": "Add docs/sdlc placeholders",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Writes spec.md, design.md, and review.md under this project’s docs/sdlc if they are missing. Needs the desktop Host and a project folder.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Select a project folder to write docs/sdlc placeholders.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Workspace placeholders need the desktop Host. This preview will not pretend to write them.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Cannot bootstrap into shared ~/.grok. Choose a project folder.",
+  "softwareTeamDlc.startDeliveryHostError": "Could not write placeholders: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "Wrote {n} docs/sdlc placeholder files in the project.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip":
+    "Skipped workspace placeholders.",
+  "softwareTeamDlc.startDeliveryStarted": "Delivery started.",
+  "softwareTeamDlc.handoffCta": "Handoff to {role}",
+  "softwareTeamDlc.shipCta": "Ship · Writer starter",
+  "softwareTeamDlc.sessionDoneHint":
+    "Session finished. Hand off or Ship — the board does not auto-advance.",
+  "softwareTeamDlc.attachSeeded":
+    "Seeded {n} attach-chat sessions on the composer draft (max 3).",
 } as const;
