@@ -217,4 +217,28 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "Файл пайплайна проекта новее — доска обновлена.",
   "softwareTeamDlc.notesEmpty": "Пока нет",
+  "softwareTeamDlc.searchTitle": "Поиск по названию",
+  "softwareTeamDlc.stageFilter": "Этап",
+  "softwareTeamDlc.stageFilterAll": "Все этапы",
+  "softwareTeamDlc.roleFilter": "Роль",
+  "softwareTeamDlc.roleFilterAll": "Все роли",
+  "softwareTeamDlc.showArchived": "Показать архив",
+  "softwareTeamDlc.archiveDelivery": "Архивировать поставку",
+  "softwareTeamDlc.unarchiveDelivery": "Вернуть из архива",
+  "softwareTeamDlc.archived": "В архиве. Скрыто с обычной доски.",
+  "softwareTeamDlc.unarchived": "Поставка снова на доске.",
+  "softwareTeamDlc.activity.archived": "В архиве",
+  "softwareTeamDlc.activity.unarchived": "Из архива",
+  "softwareTeamDlc.exportSummary": "Экспорт сводки",
+  "softwareTeamDlc.exportOk": "Записан {file} в этом проекте.",
+  "softwareTeamDlc.exportNeedHost":
+    "Экспорт требует настольный Host. Этот предпросмотр не будет притворяться, что записал.",
+  "softwareTeamDlc.exportNeedProject":
+    "Выберите папку проекта, чтобы экспортировать docs/sdlc.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Нельзя экспортировать сводку в общий ~/.grok.",
+  "softwareTeamDlc.exportBadSlug": "Это название нельзя сделать именем файла.",
+  "softwareTeamDlc.exportHostError": "Не удалось экспортировать сводку: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Файл пайплайна изменился в другом месте. Не тронут (копия {file}). Доска остаётся в приложении.",
 } as const;

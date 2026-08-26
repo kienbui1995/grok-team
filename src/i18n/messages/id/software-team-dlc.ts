@@ -217,4 +217,28 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "Berkas pipeline proyek lebih baru — papan diperbarui.",
   "softwareTeamDlc.notesEmpty": "Belum ada",
+  "softwareTeamDlc.searchTitle": "Cari menurut judul",
+  "softwareTeamDlc.stageFilter": "Tahap",
+  "softwareTeamDlc.stageFilterAll": "Semua tahap",
+  "softwareTeamDlc.roleFilter": "Peran",
+  "softwareTeamDlc.roleFilterAll": "Semua peran",
+  "softwareTeamDlc.showArchived": "Tampilkan yang diarsipkan",
+  "softwareTeamDlc.archiveDelivery": "Arsipkan pengiriman",
+  "softwareTeamDlc.unarchiveDelivery": "Batalkan arsip",
+  "softwareTeamDlc.archived": "Diarsipkan. Tersembunyi dari papan default.",
+  "softwareTeamDlc.unarchived": "Pengiriman kembali ke papan.",
+  "softwareTeamDlc.activity.archived": "Diarsipkan",
+  "softwareTeamDlc.activity.unarchived": "Batal diarsipkan",
+  "softwareTeamDlc.exportSummary": "Ekspor ringkasan",
+  "softwareTeamDlc.exportOk": "Menulis {file} di proyek ini.",
+  "softwareTeamDlc.exportNeedHost":
+    "Ekspor membutuhkan Host desktop. Pratinjau ini tidak akan berpura-pura menulis.",
+  "softwareTeamDlc.exportNeedProject":
+    "Pilih folder proyek untuk mengekspor docs/sdlc.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Tidak dapat mengekspor ringkasan ke ~/.grok bersama.",
+  "softwareTeamDlc.exportBadSlug": "Judul itu tidak bisa menjadi nama berkas.",
+  "softwareTeamDlc.exportHostError": "Tidak dapat mengekspor ringkasan: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Berkas pipeline berubah di tempat lain. Dibiarkan utuh (cadangan {file}). Papan tetap di aplikasi.",
 } as const;

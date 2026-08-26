@@ -225,4 +225,28 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "Project pipeline file is newer — board updated.",
   "softwareTeamDlc.notesEmpty": "None yet",
+  "softwareTeamDlc.searchTitle": "Search by title",
+  "softwareTeamDlc.stageFilter": "Stage",
+  "softwareTeamDlc.stageFilterAll": "All stages",
+  "softwareTeamDlc.roleFilter": "Role",
+  "softwareTeamDlc.roleFilterAll": "All roles",
+  "softwareTeamDlc.showArchived": "Show archived",
+  "softwareTeamDlc.archiveDelivery": "Archive delivery",
+  "softwareTeamDlc.unarchiveDelivery": "Unarchive delivery",
+  "softwareTeamDlc.archived": "Archived. Hidden from the default board.",
+  "softwareTeamDlc.unarchived": "Delivery is on the board again.",
+  "softwareTeamDlc.activity.archived": "Archived",
+  "softwareTeamDlc.activity.unarchived": "Unarchived",
+  "softwareTeamDlc.exportSummary": "Export summary",
+  "softwareTeamDlc.exportOk": "Wrote {file} in this project.",
+  "softwareTeamDlc.exportNeedHost":
+    "Export needs the desktop Host. This preview will not pretend to write it.",
+  "softwareTeamDlc.exportNeedProject":
+    "Select a project folder to export docs/sdlc.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Cannot export a delivery summary into shared ~/.grok.",
+  "softwareTeamDlc.exportBadSlug": "That delivery title cannot become a file name.",
+  "softwareTeamDlc.exportHostError": "Could not export the summary: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Project pipeline file changed elsewhere. Left it untouched (backup {file}). Your board stays in the app.",
 } as const;

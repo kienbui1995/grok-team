@@ -96,7 +96,16 @@ import {
   softwareTeamRoleHistoryIds,
   writeSoftwareTeamPipelineFile,
   buildSoftwareTeamDeliveryDetail,
+  composeSoftwareTeamDeliveryMarkdown,
   decideSoftwareTeamDeliveryNextCta,
+  exportSoftwareTeamDeliverySummary,
+  filterSoftwareTeamStudioItems,
+  isSoftwareTeamItemArchived,
+  isSoftwareTeamSdlcDeliverySummaryRelative,
+  planSoftwareTeamDeliveryExport,
+  setSoftwareTeamDeliveryArchived,
+  SOFTWARE_TEAM_ROLE_FILTER_ALL,
+  SOFTWARE_TEAM_STAGE_FILTER_ALL,
   softwareTeamLaunchItemPatch,
   softwareTeamWriterShipWritesFiles,
   writeSoftwareTeamWorkspaceBootstrap,
@@ -1976,5 +1985,253 @@ describe("Software Works activity + delivery detail + reload", () => {
     });
     expect(result).toMatchObject({ ok: false, kind: "blocked_shared_home" });
     expect(writes).toEqual([]);
+  });
+});
+
+describe("Software Works archive, studio filter, export, conflict", () => {
+  afterEach(() => {
+    resetSoftwareTeamPipelineFileSeenState();
+  });
+
+  it("hides archived deliveries until Show archived, and unarchives", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "arc-1",
+      roleId: "product",
+      title: "Billing",
+      deliveryId: "d-bill",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "arc-2",
+      roleId: "engineer",
+      title: "Auth",
+      deliveryId: "d-auth",
+    });
+    store = setSoftwareTeamDeliveryArchived(store, "d-bill", true, 20);
+    expect(store.archivedDeliveryIds).toEqual(["d-bill"]);
+    expect(isSoftwareTeamItemArchived(store.items[0]!, store.archivedDeliveryIds)).toBe(
+      true,
+    );
+    expect(store.activity.some((e) => e.type === "archived")).toBe(true);
+    const hidden = filterSoftwareTeamStudioItems({
+      items: store.items,
+      archivedDeliveryIds: store.archivedDeliveryIds,
+      showArchived: false,
+    });
+    expect(hidden.map((i) => i.id)).toEqual(["arc-2"]);
+    const shown = filterSoftwareTeamStudioItems({
+      items: store.items,
+      archivedDeliveryIds: store.archivedDeliveryIds,
+      showArchived: true,
+    });
+    expect(shown.map((i) => i.id).sort()).toEqual(["arc-1", "arc-2"]);
+    store = setSoftwareTeamDeliveryArchived(store, "d-bill", false, 21);
+    expect(store.archivedDeliveryIds).toEqual([]);
+    expect(store.activity.some((e) => e.type === "unarchived")).toBe(true);
+    expect(
+      filterSoftwareTeamStudioItems({
+        items: store.items,
+        archivedDeliveryIds: store.archivedDeliveryIds,
+      }).map((i) => i.id).sort(),
+    ).toEqual(["arc-1", "arc-2"]);
+  });
+
+  it("searches title and chips filter stage/role with the delivery filter", () => {
+    const a = createSoftwareTeamPipelineItem({
+      id: "f-a",
+      roleId: "reviewer",
+      stageId: "review",
+      title: "Billing slice",
+      deliveryId: "d-bill",
+    })!;
+    const b = createSoftwareTeamPipelineItem({
+      id: "f-b",
+      roleId: "engineer",
+      stageId: "build",
+      title: "Auth slice",
+      deliveryId: "d-auth",
+    })!;
+    const c = createSoftwareTeamPipelineItem({
+      id: "f-c",
+      roleId: "reviewer",
+      stageId: "review",
+      title: "Billing QA follow-up",
+      deliveryId: "d-bill",
+    })!;
+    expect(
+      filterSoftwareTeamStudioItems({
+        items: [a, b, c],
+        query: "billing",
+      }).map((i) => i.id),
+    ).toEqual(["f-a", "f-c"]);
+    expect(
+      filterSoftwareTeamStudioItems({
+        items: [a, b, c],
+        deliveryFilter: "d-bill",
+        stageId: "review",
+        roleId: "reviewer",
+      }).map((i) => i.id),
+    ).toEqual(["f-a", "f-c"]);
+    expect(
+      filterSoftwareTeamStudioItems({
+        items: [a, b, c],
+        stageId: "build",
+        roleId: SOFTWARE_TEAM_ROLE_FILTER_ALL,
+      }).map((i) => i.id),
+    ).toEqual(["f-b"]);
+    expect(
+      filterSoftwareTeamStudioItems({
+        items: [a, b, c],
+        stageId: SOFTWARE_TEAM_STAGE_FILTER_ALL,
+        query: "nope",
+      }),
+    ).toEqual([]);
+  });
+
+  it("loads v2 files without archive fields", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "v2-1",
+      roleId: "product",
+      title: "Legacy",
+    })!;
+    const parsed = parseSoftwareTeamPipelineFileDoc({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: 2,
+      updatedAt: 1,
+      items: [item],
+      activity: [],
+    });
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.store.archivedDeliveryIds).toEqual([]);
+    expect(parsed.store.items[0]?.archived).toBe(false);
+  });
+
+  it("exports a markdown summary and refuses ~/.grok", async () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "ex-1",
+      roleId: "product",
+      title: "Billing",
+      deliveryId: "d-bill",
+      reviewNote: "nits",
+    })!;
+    const detail = buildSoftwareTeamDeliveryDetail({
+      items: [item],
+      target: { kind: "delivery", deliveryId: "d-bill" },
+    })!;
+    const md = composeSoftwareTeamDeliveryMarkdown(detail, 1);
+    expect(md).toContain("# Billing");
+    expect(md).toContain("nits");
+    expect(isSoftwareTeamSdlcDeliverySummaryRelative("docs/sdlc/billing-delivery.md")).toBe(
+      true,
+    );
+    expect(isSoftwareTeamSdlcDeliverySummaryRelative("docs/sdlc/../x-delivery.md")).toBe(
+      false,
+    );
+    expect(
+      planSoftwareTeamDeliveryExport({
+        projectPath: "~/.grok",
+        relative: "docs/sdlc/billing-delivery.md",
+        host: { isDesktopHost: () => true },
+      }).reason,
+    ).toBe("blocked_shared_home");
+    const writes: string[] = [];
+    const ok = await exportSoftwareTeamDeliverySummary({
+      projectPath: "/repo",
+      detail,
+      host: {
+        isDesktopHost: () => true,
+        writeFile: async (_p, relative) => {
+          writes.push(relative);
+        },
+      },
+    });
+    expect(ok).toMatchObject({
+      ok: true,
+      relative: "docs/sdlc/billing-delivery.md",
+    });
+    expect(writes).toEqual(["docs/sdlc/billing-delivery.md"]);
+    const blocked = await exportSoftwareTeamDeliverySummary({
+      projectPath: "/home/u/.grok",
+      detail,
+      host: {
+        isDesktopHost: () => true,
+        writeFile: async () => {
+          throw new Error("should not write");
+        },
+      },
+    });
+    expect(blocked).toMatchObject({ ok: false, reason: "blocked_shared_home" });
+  });
+
+  it("does not clobber dirty local when the project file is newer", async () => {
+    const first = createSoftwareTeamPipelineItem({
+      id: "cf-1",
+      roleId: "product",
+      title: "Local",
+      deliveryId: "d-cf",
+    })!;
+    const { host, files, mtimes } = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: JSON.stringify({
+          schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+          version: 2,
+          updatedAt: 1,
+          items: [first],
+          activity: [],
+        }),
+      },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: 10 },
+    });
+    const storage = memoryStore();
+    const loaded = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(loaded).toMatchObject({ ok: true, kind: "replaced" });
+    if (!loaded.ok || loaded.kind !== "replaced") return;
+    const dirty = addSoftwareTeamPipelineItem(loaded.store, {
+      id: "cf-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-cf",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = JSON.stringify({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: 3,
+      updatedAt: 2,
+      items: [
+        createSoftwareTeamPipelineItem({
+          id: "cf-1",
+          roleId: "product",
+          title: "Foreign",
+          deliveryId: "d-cf",
+        }),
+      ],
+      activity: [],
+      archivedDeliveryIds: [],
+    });
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    const conflict = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    expect(conflict).toMatchObject({ ok: false, kind: "conflict" });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Local", "Unsaved"],
+    );
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
+
+    const save = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+    });
+    expect(save).toMatchObject({ ok: false, reason: "conflict" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
+    expect(files[".grok/software-works.json.bak"]).toContain("Foreign");
   });
 });

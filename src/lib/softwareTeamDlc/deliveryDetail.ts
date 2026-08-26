@@ -15,6 +15,7 @@ import {
   softwareTeamActivityForDelivery,
   type SoftwareTeamActivityEvent,
 } from "./activity";
+import { isSoftwareTeamItemArchived } from "./archive";
 import {
   softwareTeamDeliveryTitle,
   softwareTeamRoleHistoryIds,
@@ -50,6 +51,7 @@ export type SoftwareTeamDeliveryDetail = {
   cta: SoftwareTeamDoneCta;
   sessions: SoftwareTeamDeliverySessionRef[];
   activity: SoftwareTeamActivityEvent[];
+  archived: boolean;
 };
 
 export function softwareTeamSessionsForDelivery(
@@ -128,6 +130,7 @@ export function buildSoftwareTeamDeliveryDetail(input: {
   activity?: readonly SoftwareTeamActivityEvent[];
   sessions?: ReadonlyArray<{ id: string; title?: string | null }>;
   untitledLabel?: string;
+  archivedDeliveryIds?: readonly string[];
   target: SoftwareTeamDeliveryDetailTarget;
 }): SoftwareTeamDeliveryDetail | null {
   const members = softwareTeamDeliveryDetailItems(input.items, input.target);
@@ -175,5 +178,9 @@ export function buildSoftwareTeamDeliveryDetail(input: {
       deliveryId,
       itemIds,
     ),
+    archived: focusItem
+      ? isSoftwareTeamItemArchived(focusItem, input.archivedDeliveryIds)
+      : Boolean(deliveryId) &&
+        (input.archivedDeliveryIds ?? []).includes(deliveryId),
   };
 }

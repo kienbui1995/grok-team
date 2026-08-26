@@ -70,12 +70,16 @@ export type SoftwareTeamPipelineItem = {
   sessionDonePending: boolean;
   updatedAt: number;
   stageSource: SoftwareTeamStageSource;
+  /** SoT v3. Missing on v1–v2 items = false. */
+  archived: boolean;
 };
 
 export type SoftwareTeamPipelineStore = {
   items: SoftwareTeamPipelineItem[];
   /** SoT v2. Empty on v1 files and legacy localStorage caches. */
   activity: SoftwareTeamActivityEvent[];
+  /** SoT v3. Missing on v1–v2 files = []. */
+  archivedDeliveryIds: string[];
 };
 
 export type SoftwareTeamPipelineItemDraft = {
@@ -94,6 +98,7 @@ export type SoftwareTeamPipelineItemDraft = {
   sessionDonePending?: boolean;
   updatedAt?: number;
   stageSource?: SoftwareTeamStageSource;
+  archived?: boolean;
 };
 
 function defaultStorage(): SoftwareTeamDlcStorage {
@@ -111,7 +116,7 @@ export function isSoftwareTeamStageSource(
 }
 
 export function createEmptySoftwareTeamPipelineStore(): SoftwareTeamPipelineStore {
-  return { items: [], activity: [] };
+  return { items: [], activity: [], archivedDeliveryIds: [] };
 }
 
 export function softwareTeamPipelineActivity(
@@ -120,11 +125,39 @@ export function softwareTeamPipelineActivity(
   return Array.isArray(store.activity) ? store.activity : [];
 }
 
+export function parseSoftwareTeamArchivedDeliveryIds(
+  raw: unknown,
+): string[] {
+  if (!Array.isArray(raw)) return [];
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const entry of raw) {
+    if (typeof entry !== "string") continue;
+    const id = entry.trim();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    out.push(id);
+  }
+  return out;
+}
+
+export function softwareTeamArchivedDeliveryIds(
+  store: Pick<SoftwareTeamPipelineStore, "archivedDeliveryIds"> | undefined,
+): string[] {
+  return Array.isArray(store?.archivedDeliveryIds)
+    ? store.archivedDeliveryIds
+    : [];
+}
+
 function withItems(
   store: SoftwareTeamPipelineStore,
   items: SoftwareTeamPipelineItem[],
 ): SoftwareTeamPipelineStore {
-  return { items, activity: softwareTeamPipelineActivity(store) };
+  return {
+    items,
+    activity: softwareTeamPipelineActivity(store),
+    archivedDeliveryIds: softwareTeamArchivedDeliveryIds(store),
+  };
 }
 
 export function appendSoftwareTeamPipelineActivity(
@@ -137,6 +170,7 @@ export function appendSoftwareTeamPipelineActivity(
       softwareTeamPipelineActivity(store),
       event,
     ),
+    archivedDeliveryIds: softwareTeamArchivedDeliveryIds(store),
   };
 }
 
@@ -199,6 +233,7 @@ export function createSoftwareTeamPipelineItem(
     qaNote: (draft.qaNote ?? "").trim(),
     deliveryId: (draft.deliveryId ?? "").trim(),
     sessionDonePending: draft.sessionDonePending === true,
+    archived: draft.archived === true,
     updatedAt:
       typeof draft.updatedAt === "number" && Number.isFinite(draft.updatedAt)
         ? draft.updatedAt
@@ -234,6 +269,7 @@ export function parseSoftwareTeamPipelineItem(
     qaNote: typeof rec.qaNote === "string" ? rec.qaNote : "",
     deliveryId: typeof rec.deliveryId === "string" ? rec.deliveryId : "",
     sessionDonePending: rec.sessionDonePending === true,
+    archived: rec.archived === true,
     updatedAt: typeof rec.updatedAt === "number" ? rec.updatedAt : undefined,
     stageSource: isSoftwareTeamStageSource(sourceRaw) ? sourceRaw : undefined,
   });
@@ -265,9 +301,18 @@ export function parseSoftwareTeamPipelineStore(
     seen.add(item.id);
     items.push(item);
   }
+  const archivedDeliveryIds = parseSoftwareTeamArchivedDeliveryIds(
+    rec.archivedDeliveryIds,
+  );
+  for (const item of items) {
+    if (item.archived && item.deliveryId && !archivedDeliveryIds.includes(item.deliveryId)) {
+      archivedDeliveryIds.push(item.deliveryId);
+    }
+  }
   return {
     items,
     activity: parseSoftwareTeamActivityList(rec.activity),
+    archivedDeliveryIds,
   };
 }
 
@@ -277,6 +322,7 @@ export function serializeSoftwareTeamPipelineStore(
   return JSON.stringify({
     items: store.items,
     activity: softwareTeamPipelineActivity(store),
+    archivedDeliveryIds: softwareTeamArchivedDeliveryIds(store),
   });
 }
 
@@ -298,7 +344,7 @@ export function hydratePipelineFromSessionTags(
     });
     if (item) items.push(item);
   }
-  return { items, activity: [] };
+  return { items, activity: [], archivedDeliveryIds: [] };
 }
 
 export function loadSoftwareTeamPipelineStore(
@@ -517,6 +563,7 @@ export function updateSoftwareTeamPipelineItem(
     deliveryId: patch.deliveryId ?? prev.deliveryId,
     sessionDonePending:
       patch.sessionDonePending ?? prev.sessionDonePending,
+    archived: patch.archived ?? prev.archived,
     updatedAt: now,
     stageSource: patch.stageSource ?? prev.stageSource,
   });
@@ -533,6 +580,7 @@ export function updateSoftwareTeamPipelineItem(
     next.qaNote === prev.qaNote &&
     next.deliveryId === prev.deliveryId &&
     next.sessionDonePending === prev.sessionDonePending &&
+    next.archived === prev.archived &&
     next.roleHistory.join(",") === prev.roleHistory.join(",") &&
     next.stageSource === prev.stageSource
   ) {

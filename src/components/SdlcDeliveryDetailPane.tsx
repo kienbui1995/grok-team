@@ -26,6 +26,8 @@ export type SdlcDeliveryDetailPaneProps = {
   onShip: (item: SoftwareTeamPipelineItem) => void;
   onOpenSdlcDoc: (relative: string) => void;
   onSelectSession?: (sessionId: string) => void;
+  onExport?: () => void;
+  onToggleArchive?: (archived: boolean) => void;
 };
 
 function formatActivityAt(locale: Locale, at: number): string {
@@ -49,6 +51,8 @@ export function SdlcDeliveryDetailPane({
   onShip,
   onOpenSdlcDoc,
   onSelectSession,
+  onExport,
+  onToggleArchive,
 }: SdlcDeliveryDetailPaneProps) {
   const tr = useMemo(() => createT(locale), [locale]);
   const t: TFn = (k, vars) => tr(k, vars);
@@ -94,6 +98,22 @@ export function SdlcDeliveryDetailPane({
               })}
             </button>
           ) : null}
+          {onExport ? (
+            <button type="button" className="btn btn--ghost" onClick={onExport}>
+              {t("softwareTeamDlc.exportSummary")}
+            </button>
+          ) : null}
+          {onToggleArchive ? (
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={() => onToggleArchive(!detail?.archived)}
+            >
+              {detail?.archived
+                ? t("softwareTeamDlc.unarchiveDelivery")
+                : t("softwareTeamDlc.archiveDelivery")}
+            </button>
+          ) : null}
           <button type="button" className="btn btn--ghost" onClick={onClose}>
             {t("window.close")}
           </button>
@@ -105,6 +125,11 @@ export function SdlcDeliveryDetailPane({
           <p className="sdlc-studio__slash-note">
             {t("softwareTeamDlc.deliveryDetailHint")}
           </p>
+          {detail.archived ? (
+            <p className="sdlc-studio__slash-note" role="status">
+              {t("softwareTeamDlc.archived")}
+            </p>
+          ) : null}
           <div className="sdlc-studio__field">
             <span>{t("softwareTeamDlc.roleHistory", {
               roles: detail.roleHistory

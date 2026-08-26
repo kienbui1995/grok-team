@@ -5,9 +5,12 @@
  * reads/writes this file. Never writes shared `~/.grok`. Parse failure
  * refuses overwrite (optional `.bak`) so unknown items are not wiped.
  *
- * Schema v1 is still readable (no `activity`). Writes are v2. There is no Host
- * fs-watch API — Studio reloads on open / window focus / visibility using
- * `mtimeMs` from `fsReadFile`.
+ * Schema v1–v2 are still readable (no `activity` / no archive map). Writes are
+ * v3. There is no Host fs-watch API — Studio reloads on open / window focus /
+ * visibility using `mtimeMs` from `fsReadFile`.
+ *
+ * Dirty local + newer foreign file = conflict: keep memory, do not clobber
+ * the file. The next save backs up the foreign file to `.bak` and refuses.
  */
 
 import * as api from "@/lib/api";
@@ -20,8 +23,10 @@ import {
 import {
   createEmptySoftwareTeamPipelineStore,
   loadSoftwareTeamPipelineStore,
+  parseSoftwareTeamArchivedDeliveryIds,
   parseSoftwareTeamPipelineItem,
   persistSoftwareTeamPipeline,
+  softwareTeamArchivedDeliveryIds,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamPipelineStore,
 } from "./pipeline";
@@ -31,7 +36,7 @@ export const SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE =
 export const SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE =
   ".grok/software-works.json.bak";
 export const SOFTWARE_TEAM_PIPELINE_SCHEMA = "software-works.pipeline";
-export const SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION = 2;
+export const SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION = 3;
 /** Oldest file version this reader still hydrates. */
 export const SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION_MIN = 1;
 
@@ -43,6 +48,7 @@ export const SOFTWARE_TEAM_PIPELINE_FILE_REASONS = [
   "need_project",
   "blocked_shared_home",
   "parse_fail",
+  "conflict",
   "host_error",
 ] as const;
 
@@ -72,6 +78,7 @@ export type SoftwareTeamPipelineFileDoc = {
   updatedAt: number;
   items: SoftwareTeamPipelineItem[];
   activity: SoftwareTeamActivityEvent[];
+  archivedDeliveryIds: string[];
 };
 
 export type SoftwareTeamPipelineFileParse =
@@ -149,11 +156,25 @@ export function resetSoftwareTeamPipelineFileSeenState(): void {
   lastSeenFingerprint = null;
 }
 
-function storeFingerprint(store: SoftwareTeamPipelineStore): string {
+export function softwareTeamPipelineStoreFingerprint(
+  store: SoftwareTeamPipelineStore,
+): string {
   return JSON.stringify({
     items: store.items,
     activity: store.activity ?? [],
+    archivedDeliveryIds: softwareTeamArchivedDeliveryIds(store),
   });
+}
+
+function storeFingerprint(store: SoftwareTeamPipelineStore): string {
+  return softwareTeamPipelineStoreFingerprint(store);
+}
+
+export function isSoftwareTeamPipelineLocalDirty(
+  cached: SoftwareTeamPipelineStore,
+): boolean {
+  if (lastSeenFingerprint == null) return false;
+  return storeFingerprint(cached) !== lastSeenFingerprint;
 }
 
 function rememberSeen(
@@ -234,6 +255,8 @@ export function softwareTeamPipelineFileMessageKey(
       return "softwareTeamDlc.pipelineFileBlockedHome";
     case "parse_fail":
       return "softwareTeamDlc.pipelineFileParseFail";
+    case "conflict":
+      return "softwareTeamDlc.pipelineFileConflict";
     case "host_error":
       return "softwareTeamDlc.pipelineFileHostError";
     default: {
@@ -253,6 +276,7 @@ export function serializeSoftwareTeamPipelineFile(
     updatedAt: now,
     items: store.items,
     activity: store.activity ?? [],
+    archivedDeliveryIds: softwareTeamArchivedDeliveryIds(store),
   };
   return `${JSON.stringify(doc, null, 2)}\n`;
 }
@@ -304,11 +328,24 @@ export function parseSoftwareTeamPipelineFileDoc(
     seen.add(item.id);
     items.push(item);
   }
+  const archivedDeliveryIds = parseSoftwareTeamArchivedDeliveryIds(
+    rec.archivedDeliveryIds,
+  );
+  for (const item of items) {
+    if (
+      item.archived &&
+      item.deliveryId &&
+      !archivedDeliveryIds.includes(item.deliveryId)
+    ) {
+      archivedDeliveryIds.push(item.deliveryId);
+    }
+  }
   return {
     ok: true,
     store: {
       items,
       activity: parseSoftwareTeamActivityList(rec.activity),
+      archivedDeliveryIds,
     },
     version,
   };
@@ -430,7 +467,6 @@ export async function readSoftwareTeamPipelineFile(input: {
     raw: raw.text,
     mtimeMs: raw.mtimeMs ?? null,
   };
-  rememberSeen(parsed.store, raw.mtimeMs);
   emitFileStatus(result);
   return result;
 }
@@ -482,6 +518,31 @@ export async function writeSoftwareTeamPipelineFile(input: {
       emitFileStatus(skip);
       return skip;
     }
+    const foreign =
+      lastSeenFingerprint != null &&
+      storeFingerprint(parsed.store) !== lastSeenFingerprint;
+    if (foreign) {
+      let backedUp = false;
+      try {
+        await host.writeFile(
+          plan.projectPath,
+          SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+          existing.text,
+        );
+        backedUp = true;
+      } catch {
+        backedUp = false;
+      }
+      const fail: SoftwareTeamPipelineFileWrite = {
+        ok: false,
+        reason: "conflict",
+        error: backedUp
+          ? SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE
+          : "foreign file unchanged",
+      };
+      emitFileStatus(fail);
+      return fail;
+    }
   }
   try {
     await host.writeFile(
@@ -516,6 +577,7 @@ export async function hydrateSoftwareTeamPipelineFromProject(input: {
   const loaded = await readSoftwareTeamPipelineFile(input);
   if (loaded.ok && loaded.store) {
     persistSoftwareTeamPipeline(loaded.store, input.storage);
+    rememberSeen(loaded.store, loaded.mtimeMs);
   }
   return loaded;
 }
@@ -540,6 +602,7 @@ export const SOFTWARE_TEAM_PIPELINE_RELOAD_KINDS = [
   "need_host",
   "need_project",
   "blocked_shared_home",
+  "conflict",
   "host_error",
 ] as const;
 
@@ -635,9 +698,20 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
     mtimeMs != null
       ? prevMtime == null || mtimeMs > prevMtime
       : !sameAsCache && !sameAsSeen;
+  const dirty =
+    prevFingerprint != null && storeFingerprint(cached) !== prevFingerprint;
   if (!newer || sameAsCache || sameAsSeen) {
-    rememberSeen(loaded.store, mtimeMs);
+    if (!dirty) rememberSeen(loaded.store, mtimeMs);
     return { ok: true, kind: "unchanged", mtimeMs };
+  }
+  if (dirty) {
+    const fail: SoftwareTeamPipelineReload = { ok: false, kind: "conflict" };
+    emitFileStatus({
+      ok: false,
+      reason: "conflict",
+      error: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+    });
+    return fail;
   }
   persistSoftwareTeamPipeline(loaded.store, input.storage);
   rememberSeen(loaded.store, mtimeMs);

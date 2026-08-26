@@ -48,11 +48,15 @@ Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) i
 | Parse fail / newer schema | **Refuse overwrite.** Copy raw text to `.grok/software-works.json.bak` when possible. Keep the cache. |
 | No Host / no project / path *is* `~/.grok` | Cache only + honesty. Never rewrite shared GROK_HOME. |
 
-Schema: `{ schema: "software-works.pipeline", version: 2, updatedAt, items, activity }`. **v1 files still load** (`activity` hydrates to `[]`). Writes are v2. Host `fs_write_file` may **create** this allowlisted path (and docs/sdlc placeholders) when missing. Parse failure still refuses overwrite and may write `.grok/software-works.json.bak`.
+Schema: `{ schema: "software-works.pipeline", version: 3, updatedAt, items, activity, archivedDeliveryIds }`. **v1–v2 still load** (`activity` / `archivedDeliveryIds` hydrate to `[]`; item `archived` missing = false). Writes are v3. Host `fs_write_file` may **create** this allowlisted path, docs/sdlc placeholders, and `docs/sdlc/<slug>-delivery.md` when missing. Parse failure still refuses overwrite and may write `.grok/software-works.json.bak`.
 
-`activity[]` events: `{ at, type, deliveryId, itemId, … }` for add, stage, handoff, notes, start delivery. Unknown types are skipped. Cap 200. Old items without activity still hydrate.
+`activity[]` events: `{ at, type, deliveryId, itemId, … }` for add, stage, handoff, notes, start delivery, archive, unarchive. Unknown types are skipped. Cap 200. Old items without activity still hydrate.
 
-**Reload:** there is **no** Host fs-watch / `watch_path` API. `fsReadFile` returns `mtimeMs`. Studio re-reads on open, window focus, and `visibilitychange` (coalesced, not polled). Newer file replaces the cache; parse fail keeps the cache + honesty.
+**Archive:** `archivedDeliveryIds` plus item `archived`. Does not delete items or activity. Default Studio filter hides archived deliveries; **Show archived** reveals them. Unarchive is the same field flipped.
+
+**Export:** detail pane writes project `docs/sdlc/<slug>-delivery.md` (title, stages, notes, roleHistory, recent activity). Host + project required. Shared `~/.grok` refused. Never writes this app’s `CHANGELOG.md`. Never fakes success.
+
+**Reload:** there is **no** Host fs-watch / `watch_path` API. `fsReadFile` returns `mtimeMs`. Studio re-reads on open, window focus, and `visibilitychange` (coalesced, not polled). Newer file + **clean** local cache replaces items. **Dirty** local (mutated since last accepted file) **and** a newer/different file → **conflict**: keep memory, do not hydrate over it, honesty string. The next save backs up the foreign file to `.bak` and **refuses overwrite**. Parse fail keeps the cache + honesty.
 
 Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef` + `roleHistory` + `reviewNote` / `qaNote`.
 
@@ -184,7 +188,7 @@ Context menu **Add team session** creates an unbound sibling card (same slice re
 ## UI
 
 - Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install + status/repair).
-- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board; cards show `roleHistory`. Click a delivery chip or card to open `SdlcDeliveryDetailPane` (title, role history, Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions, activity). Existing `docs/sdlc` files open via Host `openInEditor` or a copied path.
+- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board; title search + stage/role chips combine with that filter; archived deliveries are hidden unless **Show archived**. Click a delivery chip or card to open `SdlcDeliveryDetailPane` (title, role history, Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions, activity, archive, export summary). Existing `docs/sdlc` files open via Host `openInEditor` or a copied path.
 - Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
 - Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
 - Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).

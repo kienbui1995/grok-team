@@ -19,6 +19,7 @@ See `docs/llm-wiki/release.md`.
 - **Software Works team sessions on a delivery**: Start a delivery always creates a **new** session (does not steal the open chat). Empty Studio offers the wizard once. Context menu can add a Product / Engineer / Reviewer sibling session on the same `deliveryId`; attach-chat stays same-delivery only (max 3). New board items inherit that delivery id.
 - **Software Works project pipeline SoT**: With Host + a project folder, the board reads/writes `.grok/software-works.json` (versioned; parse fail leaves the file and writes `.bak`). Shared `~/.grok` is refused; browser preview stays on the localStorage cache. Studio filters cards by delivery and shows role history; existing `docs/sdlc/{spec,design,review}.md` can open in the editor (or copy the path).
 - **Software Works delivery detail + activity + reload**: Click a delivery chip or card for a `GlassModal` pane (title, `roleHistory`, Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions). Project SoT is schema **v2** (`activity[]`); v1 files still load. Meaningful mutates append an event. Studio re-reads the file on open/focus/visibility via `mtimeMs` (no Host watch API, no dense poll). Newer file replaces the cache; parse fail keeps the cache.
+- **Software Works archive, search/filter, export, conflict honesty**: Archive a delivery without deleting history (hidden unless Show archived). Title search plus stage/role chips combine with the delivery filter. Detail pane can export `docs/sdlc/<slug>-delivery.md` in the project (Host + project; refuses `~/.grok`; no app CHANGELOG write). SoT writes are schema **v3**; v1–v2 still load. If the local board is dirty and the project file is newer, reload keeps memory and the next save backs up the foreign file to `.bak` instead of overwriting it.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
@@ -29,6 +30,7 @@ See `docs/llm-wiki/release.md`.
 - **Software Works 同一交付的团队会话**：开始交付总是新建会话（不占用当前聊天）。空工坊会弹出一次向导。右键可在同一 `deliveryId` 上补 Product / Engineer / Reviewer 会话；attach-chat 只挂同一交付（最多 3）。新卡片继承该交付 id。
 - **Software Works 项目流水线 SoT**：有 Host + 项目文件夹时，看板读写 `.grok/software-works.json`（带版本；解析失败不覆盖，另写 `.bak`）。拒绝共享 `~/.grok`；预览只留应用缓存。工坊按交付筛选并显示角色历程；已有 `docs/sdlc/{spec,design,review}.md` 可在编辑器打开（或复制路径）。
 - **Software Works 交付详情 + 活动日志 + 重载**：点击交付芯片或卡片打开 `GlassModal`（标题、角色历程、评审/测试备注、下一步交接/发布、`docs/sdlc`、同一 `deliveryId` 会话）。项目 SoT 为 **v2**（`activity[]`）；v1 仍可读。有意义的变更会追加事件。工坊在打开/聚焦/可见时用 `mtimeMs` 重读（无 Host watch，不密轮询）。文件更新则替换缓存；解析失败保留缓存。
+- **Software Works 归档、搜索筛选、导出、冲突诚实**：归档交付不删历史（默认隐藏，可显示已归档）。标题搜索 + 阶段/角色芯片与交付筛选叠加。详情可导出项目内 `docs/sdlc/<slug>-delivery.md`（需要 Host + 项目；拒绝 `~/.grok`；不写应用 CHANGELOG）。SoT 写 **v3**；v1–v2 仍可读。本地未保存且文件更新时，重载不覆盖内存；下次保存把外来文件备份为 `.bak` 并拒绝覆盖。
 - **自定义外观**：设置 → 外观 → 主题可改文字颜色（默认跟随浅/深色近黑/近白）和字体阴影（默认关）。「恢复默认」需二次确认，会把这两项恢复出厂。这两项会随 `.grokskin` 导入导出。
 
 ### Changed

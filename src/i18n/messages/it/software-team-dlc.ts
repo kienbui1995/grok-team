@@ -217,4 +217,28 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "Il file pipeline del progetto è più recente — lavagna aggiornata.",
   "softwareTeamDlc.notesEmpty": "Ancora nessuna",
+  "softwareTeamDlc.searchTitle": "Cerca per titolo",
+  "softwareTeamDlc.stageFilter": "Fase",
+  "softwareTeamDlc.stageFilterAll": "Tutte le fasi",
+  "softwareTeamDlc.roleFilter": "Ruolo",
+  "softwareTeamDlc.roleFilterAll": "Tutti i ruoli",
+  "softwareTeamDlc.showArchived": "Mostra archiviate",
+  "softwareTeamDlc.archiveDelivery": "Archivia consegna",
+  "softwareTeamDlc.unarchiveDelivery": "Ripristina consegna",
+  "softwareTeamDlc.archived": "Archiviata. Nascosta dalla lavagna predefinita.",
+  "softwareTeamDlc.unarchived": "La consegna è di nuovo sulla lavagna.",
+  "softwareTeamDlc.activity.archived": "Archiviata",
+  "softwareTeamDlc.activity.unarchived": "Ripristinata",
+  "softwareTeamDlc.exportSummary": "Esporta riepilogo",
+  "softwareTeamDlc.exportOk": "Scritto {file} in questo progetto.",
+  "softwareTeamDlc.exportNeedHost":
+    "L’esportazione richiede l’Host desktop. Questa anteprima non finge di aver scritto.",
+  "softwareTeamDlc.exportNeedProject":
+    "Scegli una cartella progetto per esportare docs/sdlc.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Impossibile esportare il riepilogo in ~/.grok condiviso.",
+  "softwareTeamDlc.exportBadSlug": "Quel titolo non può diventare un nome file.",
+  "softwareTeamDlc.exportHostError": "Impossibile esportare il riepilogo: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Il file pipeline è cambiato altrove. Lasciato intatto (backup {file}). La lavagna resta nell’app.",
 } as const;

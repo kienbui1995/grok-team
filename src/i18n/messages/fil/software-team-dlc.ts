@@ -217,4 +217,28 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "Mas bago ang pipeline file ng proyekto — na-update ang board.",
   "softwareTeamDlc.notesEmpty": "Wala pa",
+  "softwareTeamDlc.searchTitle": "Maghanap ayon sa pamagat",
+  "softwareTeamDlc.stageFilter": "Stage",
+  "softwareTeamDlc.stageFilterAll": "Lahat ng stage",
+  "softwareTeamDlc.roleFilter": "Role",
+  "softwareTeamDlc.roleFilterAll": "Lahat ng role",
+  "softwareTeamDlc.showArchived": "Ipakita ang naka-archive",
+  "softwareTeamDlc.archiveDelivery": "I-archive ang delivery",
+  "softwareTeamDlc.unarchiveDelivery": "I-unarchive ang delivery",
+  "softwareTeamDlc.archived": "Naka-archive. Nakatago sa default na board.",
+  "softwareTeamDlc.unarchived": "Bumalik ang delivery sa board.",
+  "softwareTeamDlc.activity.archived": "Na-archive",
+  "softwareTeamDlc.activity.unarchived": "Na-unarchive",
+  "softwareTeamDlc.exportSummary": "I-export ang buod",
+  "softwareTeamDlc.exportOk": "Isinulat ang {file} sa proyektong ito.",
+  "softwareTeamDlc.exportNeedHost":
+    "Kailangan ng desktop Host ang export. Hindi magpapanggap ang preview na naisulat ito.",
+  "softwareTeamDlc.exportNeedProject":
+    "Pumili ng folder ng proyekto para mag-export ng docs/sdlc.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Hindi ma-export ang buod sa shared ~/.grok.",
+  "softwareTeamDlc.exportBadSlug": "Hindi magiging file name ang pamagat na iyon.",
+  "softwareTeamDlc.exportHostError": "Hindi na-export ang buod: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Nagbago ang pipeline file sa ibang lugar. Hindi ginagalaw (backup {file}). Nanatili ang board sa app.",
 } as const;

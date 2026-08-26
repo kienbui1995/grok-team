@@ -33,6 +33,8 @@ import {
   addSoftwareTeamPipelineItem,
   boundSoftwareTeamPipelineProjectPath,
   reloadSoftwareTeamPipelineIfNewer,
+  setSoftwareTeamDeliveryArchived,
+  setSoftwareTeamItemArchived,
   updateSoftwareTeamPipelineItem,
   type SoftwareTeamPipelineReload,
 } from "@/lib/softwareTeamDlc";
@@ -98,6 +100,8 @@ export function useSoftwareTeamPipeline(): {
     placements: ReadonlyArray<{ sessionId: string; column: AgentKanbanColumnId }>,
   ) => void;
   reloadFromProject: (projectPath?: string | null) => Promise<SoftwareTeamPipelineReload>;
+  setDeliveryArchived: (deliveryId: string, archived: boolean) => void;
+  setItemArchived: (itemId: string, archived: boolean) => void;
 } {
   const [store, setStore] = useState(loadSoftwareTeamPipelineStore);
 
@@ -192,6 +196,33 @@ export function useSoftwareTeamPipeline(): {
     [],
   );
 
+  const setDeliveryArchived = useCallback(
+    (deliveryId: string, archived: boolean) => {
+      setStore(
+        commit(
+          setSoftwareTeamDeliveryArchived(
+            loadSoftwareTeamPipelineStore(),
+            deliveryId,
+            archived,
+          ),
+        ),
+      );
+    },
+    [],
+  );
+
+  const setItemArchived = useCallback((itemId: string, archived: boolean) => {
+    setStore(
+      commit(
+        setSoftwareTeamItemArchived(
+          loadSoftwareTeamPipelineStore(),
+          itemId,
+          archived,
+        ),
+      ),
+    );
+  }, []);
+
   const reloadFromProject = useCallback(async (projectPath?: string | null) => {
     const result = await reloadSoftwareTeamPipelineIfNewer({
       projectPath: projectPath ?? boundSoftwareTeamPipelineProjectPath(),
@@ -233,6 +264,8 @@ export function useSoftwareTeamPipeline(): {
     applySessionKanban,
     applySessionKanbanBoard,
     reloadFromProject,
+    setDeliveryArchived,
+    setItemArchived,
   };
 }
 

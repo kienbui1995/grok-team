@@ -217,4 +217,28 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "திட்டப் பைப்லைன் கோப்பு புதியது — பலகை புதுப்பிக்கப்பட்டது.",
   "softwareTeamDlc.notesEmpty": "இன்னும் இல்லை",
+  "softwareTeamDlc.searchTitle": "தலைப்பால் தேடு",
+  "softwareTeamDlc.stageFilter": "நிலை",
+  "softwareTeamDlc.stageFilterAll": "அனைத்து நிலைகள்",
+  "softwareTeamDlc.roleFilter": "பங்கு",
+  "softwareTeamDlc.roleFilterAll": "அனைத்து பங்குகள்",
+  "softwareTeamDlc.showArchived": "காப்பகத்தை காட்டு",
+  "softwareTeamDlc.archiveDelivery": "விநியோகத்தை காப்பகப்படுத்து",
+  "softwareTeamDlc.unarchiveDelivery": "காப்பகத்திலிருந்து மீட்டெடு",
+  "softwareTeamDlc.archived": "காப்பகத்தில். இயல்பு பலகையில் மறைக்கப்பட்டுள்ளது.",
+  "softwareTeamDlc.unarchived": "விநியோகம் மீண்டும் பலகையில் உள்ளது.",
+  "softwareTeamDlc.activity.archived": "காப்பகப்படுத்தப்பட்டது",
+  "softwareTeamDlc.activity.unarchived": "காப்பகத்திலிருந்து மீட்கப்பட்டது",
+  "softwareTeamDlc.exportSummary": "சுருக்கத்தை ஏற்றுமதி செய்",
+  "softwareTeamDlc.exportOk": "இந்த திட்டத்தில் {file} எழுதப்பட்டது.",
+  "softwareTeamDlc.exportNeedHost":
+    "ஏற்றுமதிக்கு desktop Host தேவை. இந்த முன்னோட்டம் எழுதியதாக பாசாங்கு செய்யாது.",
+  "softwareTeamDlc.exportNeedProject":
+    "docs/sdlc ஏற்றுமதி செய்ய திட்டக் கோப்புறையை தேர்ந்தெடுக்கவும்.",
+  "softwareTeamDlc.exportBlockedHome":
+    "பகிரப்பட்ட ~/.grok இல் சுருக்கத்தை ஏற்றுமதி செய்ய முடியாது.",
+  "softwareTeamDlc.exportBadSlug": "அந்த தலைப்பை கோப்பு பெயராக ஆக்க முடியாது.",
+  "softwareTeamDlc.exportHostError": "சுருக்கத்தை ஏற்றுமதி செய்ய முடியவில்லை: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "திட்டப் பைப்லைன் கோப்பு வேறு இடத்தில் மாறியது. தொடப்படவில்லை (காப்பு {file}). பலகை பயன்பாட்டில் உள்ளது.",
 } as const;

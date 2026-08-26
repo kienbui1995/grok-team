@@ -64,6 +64,7 @@ export {
   loadSoftwareTeamPipelineStore,
   newSoftwareTeamPipelineItemId,
   parseSoftwareTeamPipelineItem,
+  parseSoftwareTeamArchivedDeliveryIds,
   parseSoftwareTeamPipelineStore,
   persistSoftwareTeamPipeline,
   pipelineItemById,
@@ -76,6 +77,7 @@ export {
   serializeSoftwareTeamPipelineStore,
   setPipelineItemRole,
   setPipelineItemStage,
+  softwareTeamArchivedDeliveryIds,
   softwareTeamPipelineActivity,
   stageFromSessionKanbanColumn,
   updateSoftwareTeamPipelineItem,
@@ -244,6 +246,7 @@ export {
   boundSoftwareTeamPipelineProjectPath,
   defaultSoftwareTeamPipelineFileHost,
   hydrateSoftwareTeamPipelineFromProject,
+  isSoftwareTeamPipelineLocalDirty,
   lastSoftwareTeamPipelineFileMtimeMs,
   lastSoftwareTeamPipelineFileStatus,
   parseSoftwareTeamPipelineFileDoc,
@@ -255,6 +258,7 @@ export {
   resetSoftwareTeamPipelineFileSeenState,
   serializeSoftwareTeamPipelineFile,
   softwareTeamPipelineFileMessageKey,
+  softwareTeamPipelineStoreFingerprint,
   writeSoftwareTeamPipelineFile,
   type SoftwareTeamPipelineFileDoc,
   type SoftwareTeamPipelineFileHost,
@@ -302,3 +306,35 @@ export {
   type SoftwareTeamSdlcDocOpenReason,
   type SoftwareTeamSdlcDocProbe,
 } from "./sdlcDocs";
+
+export {
+  isSoftwareTeamItemArchived,
+  setSoftwareTeamDeliveryArchived,
+  setSoftwareTeamItemArchived,
+} from "./archive";
+
+export {
+  SOFTWARE_TEAM_ROLE_FILTER_ALL,
+  SOFTWARE_TEAM_STAGE_FILTER_ALL,
+  filterSoftwareTeamStudioItems,
+  isSoftwareTeamRoleFilterId,
+  isSoftwareTeamStageFilterId,
+  softwareTeamItemTitleMatches,
+  type SoftwareTeamRoleFilterId,
+  type SoftwareTeamStageFilterId,
+} from "./studioFilter";
+
+export {
+  SOFTWARE_TEAM_EXPORT_REASONS,
+  composeSoftwareTeamDeliveryMarkdown,
+  defaultSoftwareTeamExportHost,
+  exportSoftwareTeamDeliverySummary,
+  isSoftwareTeamSdlcDeliverySummaryRelative,
+  planSoftwareTeamDeliveryExport,
+  softwareTeamDeliveryExportRelative,
+  softwareTeamDeliverySlug,
+  softwareTeamExportMessageKey,
+  type SoftwareTeamExportHost,
+  type SoftwareTeamExportReason,
+  type SoftwareTeamExportResult,
+} from "./exportDelivery";

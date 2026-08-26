@@ -217,4 +217,28 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "프로젝트 파이프라인 파일이 더 최신입니다 — 보드를 갱신했습니다.",
   "softwareTeamDlc.notesEmpty": "아직 없음",
+  "softwareTeamDlc.searchTitle": "제목으로 검색",
+  "softwareTeamDlc.stageFilter": "단계",
+  "softwareTeamDlc.stageFilterAll": "모든 단계",
+  "softwareTeamDlc.roleFilter": "역할",
+  "softwareTeamDlc.roleFilterAll": "모든 역할",
+  "softwareTeamDlc.showArchived": "보관됨 표시",
+  "softwareTeamDlc.archiveDelivery": "딜리버리 보관",
+  "softwareTeamDlc.unarchiveDelivery": "보관 해제",
+  "softwareTeamDlc.archived": "보관됨. 기본 보드에서는 숨깁니다.",
+  "softwareTeamDlc.unarchived": "딜리버리가 보드에 다시 있습니다.",
+  "softwareTeamDlc.activity.archived": "보관함",
+  "softwareTeamDlc.activity.unarchived": "보관 해제함",
+  "softwareTeamDlc.exportSummary": "요약 내보내기",
+  "softwareTeamDlc.exportOk": "이 프로젝트에 {file} 을(를) 썼습니다.",
+  "softwareTeamDlc.exportNeedHost":
+    "내보내기는 데스크톱 Host 가 필요합니다. 이 미리보기는 쓴 척하지 않습니다.",
+  "softwareTeamDlc.exportNeedProject":
+    "docs/sdlc 를 내보내려면 프로젝트 폴더를 고르세요.",
+  "softwareTeamDlc.exportBlockedHome":
+    "공유 ~/.grok 로는 요약을 내보낼 수 없습니다.",
+  "softwareTeamDlc.exportBadSlug": "그 제목은 파일 이름이 될 수 없습니다.",
+  "softwareTeamDlc.exportHostError": "요약을 내보내지 못했습니다: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "프로젝트 파이프라인 파일이 다른 곳에서 바뀌었습니다. 그대로 두었습니다(백업 {file}). 보드는 앱에 유지됩니다.",
 } as const;

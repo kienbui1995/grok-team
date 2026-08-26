@@ -217,4 +217,28 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "Файл пайплайна проєкту новіший — дошку оновлено.",
   "softwareTeamDlc.notesEmpty": "Ще немає",
+  "softwareTeamDlc.searchTitle": "Пошук за назвою",
+  "softwareTeamDlc.stageFilter": "Етап",
+  "softwareTeamDlc.stageFilterAll": "Усі етапи",
+  "softwareTeamDlc.roleFilter": "Роль",
+  "softwareTeamDlc.roleFilterAll": "Усі ролі",
+  "softwareTeamDlc.showArchived": "Показати архів",
+  "softwareTeamDlc.archiveDelivery": "Архівувати поставку",
+  "softwareTeamDlc.unarchiveDelivery": "Повернути з архіву",
+  "softwareTeamDlc.archived": "В архіві. Приховано зі звичайної дошки.",
+  "softwareTeamDlc.unarchived": "Поставка знову на дошці.",
+  "softwareTeamDlc.activity.archived": "В архіві",
+  "softwareTeamDlc.activity.unarchived": "З архіву",
+  "softwareTeamDlc.exportSummary": "Експорт підсумку",
+  "softwareTeamDlc.exportOk": "Записано {file} у цьому проєкті.",
+  "softwareTeamDlc.exportNeedHost":
+    "Експорт потребує настільний Host. Цей попередній перегляд не вдаватиме, що записав.",
+  "softwareTeamDlc.exportNeedProject":
+    "Оберіть теку проєкту, щоб експортувати docs/sdlc.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Не можна експортувати підсумок у спільний ~/.grok.",
+  "softwareTeamDlc.exportBadSlug": "Цю назву не можна зробити іменем файлу.",
+  "softwareTeamDlc.exportHostError": "Не вдалося експортувати підсумок: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Файл пайплайна змінився деінде. Не змінено (копія {file}). Дошка лишається в застосунку.",
 } as const;

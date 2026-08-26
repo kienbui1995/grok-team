@@ -217,4 +217,28 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "Die Projekt-Pipeline-Datei ist neuer — Board aktualisiert.",
   "softwareTeamDlc.notesEmpty": "Noch keine",
+  "softwareTeamDlc.searchTitle": "Nach Titel suchen",
+  "softwareTeamDlc.stageFilter": "Stufe",
+  "softwareTeamDlc.stageFilterAll": "Alle Stufen",
+  "softwareTeamDlc.roleFilter": "Rolle",
+  "softwareTeamDlc.roleFilterAll": "Alle Rollen",
+  "softwareTeamDlc.showArchived": "Archivierte zeigen",
+  "softwareTeamDlc.archiveDelivery": "Lieferung archivieren",
+  "softwareTeamDlc.unarchiveDelivery": "Archivierung aufheben",
+  "softwareTeamDlc.archived": "Archiviert. Auf dem Standardboard ausgeblendet.",
+  "softwareTeamDlc.unarchived": "Die Lieferung ist wieder auf dem Board.",
+  "softwareTeamDlc.activity.archived": "Archiviert",
+  "softwareTeamDlc.activity.unarchived": "Archivierung aufgehoben",
+  "softwareTeamDlc.exportSummary": "Kurzfassung exportieren",
+  "softwareTeamDlc.exportOk": "{file} ins Projekt geschrieben.",
+  "softwareTeamDlc.exportNeedHost":
+    "Export braucht den Desktop-Host. Diese Vorschau tut nicht so, als hätte sie geschrieben.",
+  "softwareTeamDlc.exportNeedProject":
+    "Projektordner wählen, um docs/sdlc zu exportieren.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Kurzfassung nicht ins gemeinsame ~/.grok exportieren.",
+  "softwareTeamDlc.exportBadSlug": "Dieser Titel wird kein gültiger Dateiname.",
+  "softwareTeamDlc.exportHostError": "Kurzfassung nicht exportiert: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Projekt-Pipeline wurde anderswo geändert. Datei unangetastet (Sicherung {file}). Board bleibt im App-Cache.",
 } as const;

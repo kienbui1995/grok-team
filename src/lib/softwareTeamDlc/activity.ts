@@ -18,6 +18,8 @@ export const SOFTWARE_TEAM_ACTIVITY_TYPES = [
   "handoff",
   "notes",
   "delivery_started",
+  "archived",
+  "unarchived",
 ] as const;
 
 export type SoftwareTeamActivityType =
@@ -133,6 +135,10 @@ export function softwareTeamActivityMessageKey(
       return "softwareTeamDlc.activity.notes";
     case "delivery_started":
       return "softwareTeamDlc.activity.delivery_started";
+    case "archived":
+      return "softwareTeamDlc.activity.archived";
+    case "unarchived":
+      return "softwareTeamDlc.activity.unarchived";
     default: {
       const _never: never = type;
       return _never;

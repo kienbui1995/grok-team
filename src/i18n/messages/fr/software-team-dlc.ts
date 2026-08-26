@@ -217,4 +217,28 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "Le fichier pipeline du projet est plus récent — tableau mis à jour.",
   "softwareTeamDlc.notesEmpty": "Pas encore",
+  "softwareTeamDlc.searchTitle": "Rechercher par titre",
+  "softwareTeamDlc.stageFilter": "Étape",
+  "softwareTeamDlc.stageFilterAll": "Toutes les étapes",
+  "softwareTeamDlc.roleFilter": "Rôle",
+  "softwareTeamDlc.roleFilterAll": "Tous les rôles",
+  "softwareTeamDlc.showArchived": "Afficher les archives",
+  "softwareTeamDlc.archiveDelivery": "Archiver la livraison",
+  "softwareTeamDlc.unarchiveDelivery": "Désarchiver la livraison",
+  "softwareTeamDlc.archived": "Archivée. Masquée du tableau par défaut.",
+  "softwareTeamDlc.unarchived": "La livraison est de nouveau sur le tableau.",
+  "softwareTeamDlc.activity.archived": "Archivée",
+  "softwareTeamDlc.activity.unarchived": "Désarchivée",
+  "softwareTeamDlc.exportSummary": "Exporter le résumé",
+  "softwareTeamDlc.exportOk": "{file} écrit dans ce projet.",
+  "softwareTeamDlc.exportNeedHost":
+    "L’export a besoin du Host bureau. Cet aperçu ne fera pas semblant d’avoir écrit.",
+  "softwareTeamDlc.exportNeedProject":
+    "Choisissez un dossier projet pour exporter docs/sdlc.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Impossible d’exporter le résumé vers ~/.grok partagé.",
+  "softwareTeamDlc.exportBadSlug": "Ce titre ne peut pas devenir un nom de fichier.",
+  "softwareTeamDlc.exportHostError": "Impossible d’exporter le résumé : {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Le fichier pipeline a changé ailleurs. Laissé intact (sauvegarde {file}). Le tableau reste dans l’app.",
 } as const;

@@ -131,6 +131,9 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "softwareTeamDlc.deliveryFilter",
       "softwareTeamDlc.deliveryDetail",
       "softwareTeamDlc.activityLog",
+      "softwareTeamDlc.archiveDelivery",
+      "softwareTeamDlc.exportSummary",
+      "softwareTeamDlc.searchTitle",
     ],
     keywords: [
       "software works",

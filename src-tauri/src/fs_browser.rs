@@ -507,7 +507,31 @@ fn allow_create_missing_rel(rel: &str) -> bool {
             | "docs/sdlc/spec.md"
             | "docs/sdlc/design.md"
             | "docs/sdlc/review.md"
-    )
+    ) || is_sdlc_delivery_summary_rel(rel)
+}
+
+/// `docs/sdlc/<slug>-delivery.md` — slug is `[a-z0-9][a-z0-9-]{0,80}` plus the suffix.
+fn is_sdlc_delivery_summary_rel(rel: &str) -> bool {
+    let Some(name) = rel.strip_prefix("docs/sdlc/") else {
+        return false;
+    };
+    if name.is_empty() || name.contains('/') || name.contains('\\') || name.contains("..") {
+        return false;
+    }
+    let Some(stem) = name.strip_suffix("-delivery.md") else {
+        return false;
+    };
+    if stem.is_empty() || stem.len() > 81 {
+        return false;
+    }
+    let mut chars = stem.chars();
+    let Some(first) = chars.next() else {
+        return false;
+    };
+    if !first.is_ascii_lowercase() && !first.is_ascii_digit() {
+        return false;
+    }
+    chars.all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
 }
 
 fn ensure_allowlisted_create(path: &Path, rel: &str) -> Result<(), String> {
@@ -1795,6 +1819,25 @@ mod tests {
         );
         let denied = write_text_file(dir.to_str().unwrap(), "new.txt", "nope", None).unwrap_err();
         assert!(denied.contains("not a file"), "{denied}");
+        write_text_file(
+            dir.to_str().unwrap(),
+            "docs/sdlc/billing-delivery.md",
+            "# Billing\n",
+            None,
+        )
+        .unwrap();
+        assert_eq!(
+            fs::read_to_string(dir.join("docs/sdlc/billing-delivery.md")).unwrap(),
+            "# Billing\n"
+        );
+        let escaped = write_text_file(
+            dir.to_str().unwrap(),
+            "docs/sdlc/../secret-delivery.md",
+            "nope",
+            None,
+        )
+        .unwrap_err();
+        assert!(escaped.contains("escape") || escaped.contains("not a file"), "{escaped}");
         let _ = fs::remove_dir_all(&dir);
     }
 

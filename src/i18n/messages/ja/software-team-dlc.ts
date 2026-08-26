@@ -217,4 +217,28 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.pipelineFileReloaded":
     "プロジェクトのパイプラインファイルが新しいため、ボードを更新しました。",
   "softwareTeamDlc.notesEmpty": "まだありません",
+  "softwareTeamDlc.searchTitle": "タイトルで検索",
+  "softwareTeamDlc.stageFilter": "ステージ",
+  "softwareTeamDlc.stageFilterAll": "すべてのステージ",
+  "softwareTeamDlc.roleFilter": "役割",
+  "softwareTeamDlc.roleFilterAll": "すべての役割",
+  "softwareTeamDlc.showArchived": "アーカイブを表示",
+  "softwareTeamDlc.archiveDelivery": "デリバリーをアーカイブ",
+  "softwareTeamDlc.unarchiveDelivery": "アーカイブを解除",
+  "softwareTeamDlc.archived": "アーカイブ済み。既定のボードでは非表示です。",
+  "softwareTeamDlc.unarchived": "デリバリーがボードに戻りました。",
+  "softwareTeamDlc.activity.archived": "アーカイブしました",
+  "softwareTeamDlc.activity.unarchived": "アーカイブを解除しました",
+  "softwareTeamDlc.exportSummary": "要約を書き出す",
+  "softwareTeamDlc.exportOk": "このプロジェクトに {file} を書きました。",
+  "softwareTeamDlc.exportNeedHost":
+    "書き出しにはデスクトップ Host が必要です。このプレビューは書いたふりをしません。",
+  "softwareTeamDlc.exportNeedProject":
+    "docs/sdlc を書き出すにはプロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.exportBlockedHome":
+    "共有の ~/.grok に要約は書き出せません。",
+  "softwareTeamDlc.exportBadSlug": "このタイトルはファイル名にできません。",
+  "softwareTeamDlc.exportHostError": "要約を書き出せませんでした: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "プロジェクトのパイプラインが他で変わりました。ファイルはそのまま（バックアップ {file}）。ボードはアプリ内に残します。",
 } as const;

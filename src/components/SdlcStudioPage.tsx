@@ -26,11 +26,15 @@ import {
   SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
   SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
   SOFTWARE_TEAM_PIPELINE_FILE_EVENT,
+  SOFTWARE_TEAM_ROLE_FILTER_ALL,
+  SOFTWARE_TEAM_STAGE_FILTER_ALL,
   applySoftwareTeamShipChoice,
   buildSoftwareTeamDeliveryDetail,
   decideSoftwareTeamDoneCta,
   ensureSoftwareTeamItemDeliveryId,
-  filterSoftwareTeamItemsByDelivery,
+  exportSoftwareTeamDeliverySummary,
+  filterSoftwareTeamStudioItems,
+  isSoftwareTeamItemArchived,
   lastSoftwareTeamPipelineFileStatus,
   listSoftwareTeamDeliveryGroups,
   missingSoftwareTeamDeliveryRoles,
@@ -44,6 +48,7 @@ import {
   softwareTeamBootstrapMessageKey,
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
+  softwareTeamExportMessageKey,
   softwareTeamPipelineFileMessageKey,
   softwareTeamRoleById,
   softwareTeamRoleHistoryIds,
@@ -55,6 +60,8 @@ import {
   writeSoftwareTeamWorkspaceBootstrap,
   type SoftwareTeamDeliveryDetailTarget,
   type SoftwareTeamDeliveryFilterId,
+  type SoftwareTeamRoleFilterId,
+  type SoftwareTeamStageFilterId,
   type SoftwareTeamPipelineFileRead,
   type SoftwareTeamPipelineFileWrite,
   type SoftwareTeamPipelineItem,
@@ -191,6 +198,11 @@ export function SdlcStudioPage({
   const [query, setQuery] = useState("");
   const [deliveryFilter, setDeliveryFilter] =
     useState<SoftwareTeamDeliveryFilterId>(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
+  const [showArchived, setShowArchived] = useState(false);
+  const [stageFilter, setStageFilter] =
+    useState<SoftwareTeamStageFilterId>(SOFTWARE_TEAM_STAGE_FILTER_ALL);
+  const [roleFilter, setRoleFilter] =
+    useState<SoftwareTeamRoleFilterId>(SOFTWARE_TEAM_ROLE_FILTER_ALL);
   const [detailTarget, setDetailTarget] =
     useState<SoftwareTeamDeliveryDetailTarget | null>(null);
   const [sdlcDocs, setSdlcDocs] = useState<SoftwareTeamSdlcDocProbe[]>([]);
@@ -224,6 +236,8 @@ export function SdlcStudioPage({
       void pipeline.reloadFromProject(workspace.projectPath).then((result) => {
         if (result.ok && result.kind === "replaced") {
           setStatus(t("softwareTeamDlc.pipelineFileReloaded"));
+        } else if (!result.ok && result.kind === "conflict") {
+          setStatus(t("softwareTeamDlc.pipelineFileConflict"));
         }
       });
     };
@@ -316,6 +330,7 @@ export function SdlcStudioPage({
     return buildSoftwareTeamDeliveryDetail({
       items: pipeline.items,
       activity: pipeline.store.activity,
+      archivedDeliveryIds: pipeline.store.archivedDeliveryIds,
       sessions,
       untitledLabel,
       target: detailTarget,
@@ -332,39 +347,45 @@ export function SdlcStudioPage({
     if (detailTarget && !deliveryDetail) setDetailTarget(null);
   }, [detailTarget, deliveryDetail]);
 
-  const deliveryGroups = useMemo(
-    () => listSoftwareTeamDeliveryGroups(pipeline.items),
-    [pipeline.items],
-  );
+  const deliveryGroups = useMemo(() => {
+    const groups = listSoftwareTeamDeliveryGroups(pipeline.items);
+    if (showArchived) return groups;
+    const archivedIds = pipeline.store.archivedDeliveryIds ?? [];
+    return groups.filter((group) => !archivedIds.includes(group.id));
+  }, [pipeline.items, pipeline.store.archivedDeliveryIds, showArchived]);
   const unscopedCount = useMemo(
-    () => pipeline.items.filter((item) => !item.deliveryId.trim()).length,
-    [pipeline.items],
+    () =>
+      pipeline.items.filter((item) => {
+        if (item.deliveryId.trim()) return false;
+        if (!showArchived && isSoftwareTeamItemArchived(item, [])) return false;
+        return true;
+      }).length,
+    [pipeline.items, showArchived],
   );
 
-  const filtered = useMemo(() => {
-    const scoped = filterSoftwareTeamItemsByDelivery(
-      pipeline.items,
+  const filtered = useMemo(
+    () =>
+      filterSoftwareTeamStudioItems({
+        items: pipeline.items,
+        deliveryFilter,
+        query,
+        stageId: stageFilter,
+        roleId: roleFilter,
+        showArchived,
+        archivedDeliveryIds: pipeline.store.archivedDeliveryIds,
+        titleOf: displayTitle,
+      }),
+    [
       deliveryFilter,
-    );
-    const q = query.trim().toLowerCase();
-    if (!q) return scoped;
-    return scoped.filter((item) => {
-      const hay = [
-        item.title,
-        item.planRef,
-        item.goalRef,
-        item.artifactRef,
-        item.sessionId,
-        item.roleId,
-        item.stageId,
-        item.deliveryId,
-        item.sessionId ? sessionTitle(item.sessionId) : "",
-      ]
-        .join(" ")
-        .toLowerCase();
-      return hay.includes(q);
-    });
-  }, [deliveryFilter, pipeline.items, query, sessionTitle]);
+      displayTitle,
+      pipeline.items,
+      pipeline.store.archivedDeliveryIds,
+      query,
+      roleFilter,
+      showArchived,
+      stageFilter,
+    ],
+  );
 
   const onOpenSdlcDoc = useCallback(
     async (relative: string) => {
@@ -390,6 +411,45 @@ export function SdlcStudioPage({
       );
     },
     [t, workspace.projectPath],
+  );
+
+  const onExportDelivery = useCallback(
+    async (detail: NonNullable<typeof deliveryDetail>) => {
+      const result = await exportSoftwareTeamDeliverySummary({
+        projectPath: workspace.projectPath,
+        detail,
+      });
+      if (result.ok) {
+        setStatus(
+          t("softwareTeamDlc.exportOk", { file: result.relative }),
+        );
+        return;
+      }
+      setStatus(
+        result.reason === "host_error"
+          ? t(softwareTeamExportMessageKey(result.reason), {
+              error: result.error ?? "",
+            })
+          : t(softwareTeamExportMessageKey(result.reason)),
+      );
+    },
+    [t, workspace.projectPath],
+  );
+
+  const onToggleArchive = useCallback(
+    (item: SoftwareTeamPipelineItem, archived: boolean) => {
+      if (item.deliveryId.trim()) {
+        pipeline.setDeliveryArchived(item.deliveryId, archived);
+      } else {
+        pipeline.setItemArchived(item.id, archived);
+      }
+      setStatus(
+        archived
+          ? t("softwareTeamDlc.archived")
+          : t("softwareTeamDlc.unarchived"),
+      );
+    },
+    [pipeline, t],
   );
 
   const onCopyStarter = useCallback(
@@ -693,6 +753,16 @@ export function SdlcStudioPage({
           text: menuItem.qaNote,
         }),
     });
+    const archived = isSoftwareTeamItemArchived(
+      menuItem,
+      pipeline.store.archivedDeliveryIds,
+    );
+    items.push({
+      label: archived
+        ? t("softwareTeamDlc.unarchiveDelivery")
+        : t("softwareTeamDlc.archiveDelivery"),
+      onClick: () => onToggleArchive(menuItem, !archived),
+    });
     items.push({
       label: t("softwareTeamDlc.openDelivery"),
       onClick: () => openDetail(menuItem),
@@ -755,6 +825,7 @@ export function SdlcStudioPage({
     onAddTeammate,
     onHandoff,
     onOpenInComposer,
+    onToggleArchive,
     openDetail,
     onOpenSdlcDoc,
     onSelectSession,
@@ -884,10 +955,10 @@ export function SdlcStudioPage({
             className="settings-input agent-kanban__search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("kanban.searchPlaceholder")}
+            placeholder={t("softwareTeamDlc.searchTitle")}
             autoComplete="off"
             spellCheck={false}
-            aria-label={t("kanban.searchPlaceholder")}
+            aria-label={t("softwareTeamDlc.searchTitle")}
           />
           <div
             className="sdlc-studio__chips"
@@ -1023,6 +1094,71 @@ export function SdlcStudioPage({
             ) : null}
           </div>
         ) : null}
+        <div
+          className="sdlc-studio__chips"
+          role="group"
+          aria-label={t("softwareTeamDlc.stageFilter")}
+        >
+          <button
+            type="button"
+            className={
+              "task-board__chip" +
+              (stageFilter === SOFTWARE_TEAM_STAGE_FILTER_ALL ? " is-active" : "")
+            }
+            onClick={() => setStageFilter(SOFTWARE_TEAM_STAGE_FILTER_ALL)}
+          >
+            {t("softwareTeamDlc.stageFilterAll")}
+          </button>
+          {SOFTWARE_TEAM_SDLC_STAGES.map((stage) => (
+            <button
+              key={stage.id}
+              type="button"
+              className={
+                "task-board__chip" + (stageFilter === stage.id ? " is-active" : "")
+              }
+              onClick={() => setStageFilter(stage.id)}
+            >
+              {t(stage.titleKey)}
+            </button>
+          ))}
+        </div>
+        <div
+          className="sdlc-studio__chips"
+          role="group"
+          aria-label={t("softwareTeamDlc.roleFilter")}
+        >
+          <button
+            type="button"
+            className={
+              "task-board__chip" +
+              (roleFilter === SOFTWARE_TEAM_ROLE_FILTER_ALL ? " is-active" : "")
+            }
+            onClick={() => setRoleFilter(SOFTWARE_TEAM_ROLE_FILTER_ALL)}
+          >
+            {t("softwareTeamDlc.roleFilterAll")}
+          </button>
+          {SOFTWARE_TEAM_ROLES.map((role) => (
+            <button
+              key={role.id}
+              type="button"
+              className={
+                "task-board__chip" + (roleFilter === role.id ? " is-active" : "")
+              }
+              onClick={() => setRoleFilter(role.id)}
+            >
+              {t(role.titleKey)}
+            </button>
+          ))}
+        </div>
+        <div className="sdlc-studio__chips" role="group" aria-label={t("softwareTeamDlc.showArchived")}>
+          <button
+            type="button"
+            className={"task-board__chip" + (showArchived ? " is-active" : "")}
+            onClick={() => setShowArchived((prev) => !prev)}
+          >
+            {t("softwareTeamDlc.showArchived")}
+          </button>
+        </div>
         {sdlcDocs.some((row) => row.exists) ? (
           <div
             className="sdlc-studio__chips"
@@ -1086,7 +1222,9 @@ export function SdlcStudioPage({
               ? t(softwareTeamPipelineFileMessageKey(fileStatus.reason), {
                   error: fileStatus.error ?? "",
                 })
-              : fileStatus.ok === false && fileStatus.reason === "parse_fail"
+              : fileStatus.ok === false &&
+                  (fileStatus.reason === "parse_fail" ||
+                    fileStatus.reason === "conflict")
                 ? t(softwareTeamPipelineFileMessageKey(fileStatus.reason), {
                     file: ".grok/software-works.json.bak",
                   })
@@ -1294,6 +1432,14 @@ export function SdlcStudioPage({
         onShip={(item) => void onShipChoice(item)}
         onOpenSdlcDoc={(relative) => void onOpenSdlcDoc(relative)}
         onSelectSession={onSelectSession}
+        onExport={() => {
+          if (deliveryDetail) void onExportDelivery(deliveryDetail);
+        }}
+        onToggleArchive={(archived) => {
+          const focus = deliveryDetail?.focusItem;
+          if (!focus) return;
+          onToggleArchive(focus, archived);
+        }}
       />
 
       <GlassModal
