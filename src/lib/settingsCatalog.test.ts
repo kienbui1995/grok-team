@@ -528,4 +528,22 @@ describe("settingsCatalog", () => {
       importZh.some((h) => h.entry.id === "account.callLogs"),
     ).toBe(true);
   });
+
+  it("registers Software Team DLC on extensions / agents", () => {
+    const entry = SETTINGS_ENTRIES.find((e) => e.id === "ext.softwareTeamDlc");
+    expect(entry?.section).toBe("extensions");
+    expect(entry?.tab).toBe("agents");
+    expect(entry?.anchorId).toBe("settings-anchor-software-team-dlc");
+    const tZh = createT("zh");
+    const tEn = createT("en");
+    const hits = searchSettingsEntries("software team", tZh, tEn);
+    expect(hits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const dlc = searchSettingsEntries("dlc", tZh, tEn);
+    expect(dlc.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const zhHits = searchSettingsEntries("软件团队", tZh, tEn);
+    expect(zhHits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(
+      "#/settings/extensions/agents",
+    );
+  });
 });

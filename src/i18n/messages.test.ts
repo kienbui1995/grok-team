@@ -213,6 +213,7 @@ describe("i18n catalog", () => {
       ["app.quitBusy.message", ["{n}"]],
       ["fileCard.code", ["{ext}"]],
       ["settings.autoUpdateConfirm.message", ["{version}"]],
+      ["softwareTeamDlc.slashHint", ["{slash}"]],
     ];
     for (const loc of LOCALES) {
       for (const [key, vars] of cases) {

@@ -12,9 +12,11 @@ See `docs/llm-wiki/release.md`.
 ## [Unreleased]
 
 ### Added
+- **Software Team DLC (opt-in)**: Settings → Extensions → Agents can enable an optional AI Software workspace pack (roles + SDLC aliases on the existing Agent Kanban). Off by default; never rewrites shared `~/.grok`; never auto-applies a skin.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
+- **Software Team DLC（可选）**：设置 → 扩展 → 代理可开启 AI Software 工作区包（角色 + 现有 Agent 看板的 SDLC 别名）。默认关；不改写共享 `~/.grok`；不自动套皮肤。
 - **自定义外观**：设置 → 外观 → 主题可改文字颜色（默认跟随浅/深色近黑/近白）和字体阴影（默认关）。「恢复默认」需二次确认，会把这两项恢复出厂。这两项会随 `.grokskin` 导入导出。
 
 ### Changed

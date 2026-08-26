@@ -37,6 +37,7 @@ Agent / 贡献者维护设置 UI 时**必读**。目标：层次清晰、可搜�
 ```
 #/settings/general                  → general/composer
 #/settings/extensions/mcp           → 扩展 · MCP
+#/settings/extensions/agents        → 扩展 · 代理（含 Software Team DLC：`settings-anchor-software-team-dlc`）
 #/settings/runtime/tools            → CLI · 诊断
 #/settings/runtime/tools?pr=42      → 诊断 · PR hub（可选高亮 PR #42；ship 成功「在 PR 中心打开」）
 #/settings/runtime/privacy          → CLI · 隐私中心
