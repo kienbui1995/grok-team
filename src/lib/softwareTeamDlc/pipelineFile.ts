@@ -605,6 +605,7 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
   const cached =
     input.cached ?? loadSoftwareTeamPipelineStore(input.storage);
   const prevMtime = lastSeenMtimeMs;
+  const prevFingerprint = lastSeenFingerprint;
   const loaded = await readSoftwareTeamPipelineFile({
     projectPath: plan.projectPath,
     host,
@@ -627,12 +628,14 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
     return { ok: true, kind: "missing", mtimeMs: loaded.mtimeMs ?? null };
   }
   const mtimeMs = loaded.mtimeMs ?? null;
+  const fingerprint = storeFingerprint(loaded.store);
   const sameAsCache = pipelineFileItemsEqual(loaded.store, cached);
+  const sameAsSeen = prevFingerprint != null && prevFingerprint === fingerprint;
   const newer =
     mtimeMs != null
       ? prevMtime == null || mtimeMs > prevMtime
-      : !sameAsCache;
-  if (!newer || sameAsCache) {
+      : !sameAsCache && !sameAsSeen;
+  if (!newer || sameAsCache || sameAsSeen) {
     rememberSeen(loaded.store, mtimeMs);
     return { ok: true, kind: "unchanged", mtimeMs };
   }
