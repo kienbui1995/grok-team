@@ -170,4 +170,35 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Додати сесію {role}",
   "softwareTeamDlc.attachedHint":
     "{n} командних чатів у цій поставці (attach-chat, макс. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Конвеєр збережено в цьому проєкті (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Файла конвеєра ще немає. Наступна зміна запише .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Немає запису Host у проєкт — конвеєр лише в кеші застосунку.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "Конвеєр проєкту потребує настільний Host. Цей попередній перегляд не вдає, що зберіг його.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Оберіть теку проєкту, щоб зберегти конвеєр у репозиторії.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Не можна писати конвеєр у спільний ~/.grok.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Файл конвеєра не читається. Залишено як є (копія {file}). Використовується кеш застосунку.",
+  "softwareTeamDlc.pipelineFileHostError": "Не вдалося зберегти конвеєр: {error}",
+  "softwareTeamDlc.deliveryFilter": "Поставка",
+  "softwareTeamDlc.deliveryFilterAll": "Усі поставки",
+  "softwareTeamDlc.deliveryUnscoped": "Без групи",
+  "softwareTeamDlc.roleHistory": "Ролі: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Відкрити docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Відкрити {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Файл відкрито в редакторі.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Шлях скопійовано. Host не відкрив редактор для цього файлу.",
+  "softwareTeamDlc.openSdlcDocMissing": "Цього файлу docs/sdlc немає в проєкті.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Відкриття в редакторі потребує настільний Host.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Оберіть теку проєкту, щоб відкрити docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Не можна відкрити docs/sdlc зі спільного ~/.grok.",
+  "softwareTeamDlc.openSdlcDocHostError": "Не вдалося відкрити файл: {error}",
 } as const;

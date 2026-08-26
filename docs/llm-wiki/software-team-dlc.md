@@ -37,7 +37,18 @@ No Host `AppSettings` field — same pattern as Developer mode. Changing the tog
 
 ## Pipeline (source of truth)
 
-Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`).
+Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) is the **in-app cache**.
+
+**Project SoT:** `.grok/software-works.json` (`src/lib/softwareTeamDlc/pipelineFile.ts`). Chosen over `docs/sdlc/pipeline.json` so human spec/design/review stay separate from machine board state. Project `.grok/` already holds agents/skills/workflows; this JSON is a sibling, not inside those folders.
+
+| Host + project folder | Effect |
+|-----------------------|--------|
+| Load Studio | Read the file. Valid doc replaces the cache. Missing file keeps the cache (next mutate creates the file). |
+| Mutate (add / stage / handoff / notes / deliveryId) | Cache write **and** project file when allowed. |
+| Parse fail / newer schema | **Refuse overwrite.** Copy raw text to `.grok/software-works.json.bak` when possible. Keep the cache. |
+| No Host / no project / path *is* `~/.grok` | Cache only + honesty. Never rewrite shared GROK_HOME. |
+
+Schema: `{ schema: "software-works.pipeline", version: 1, updatedAt, items }`. Host `fs_write_file` may **create** this allowlisted path (and docs/sdlc placeholders) when missing.
 
 Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef` + `roleHistory` + `reviewNote` / `qaNote`.
 
@@ -169,7 +180,7 @@ Context menu **Add team session** creates an unbound sibling card (same slice re
 ## UI
 
 - Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install + status/repair).
-- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card.
+- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board; cards show `roleHistory`. Existing `docs/sdlc` files open via Host `openInEditor` or a copied path.
 - Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
 - Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
 - Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).

@@ -74,9 +74,22 @@ import {
   seedSoftwareTeamAttachStarter,
   seedSoftwareTeamComposerDraft,
   softwareTeamAttachRefs,
+  SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
+  SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+  SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
+  SOFTWARE_TEAM_PIPELINE_SCHEMA,
+  filterSoftwareTeamItemsByDelivery,
+  listSoftwareTeamDeliveryGroups,
+  openSoftwareTeamSdlcDoc,
+  parseSoftwareTeamPipelineFileDoc,
+  planSoftwareTeamPipelineFileWrite,
+  readSoftwareTeamPipelineFile,
   resolveSoftwareTeamDeliveryId,
+  serializeSoftwareTeamPipelineFile,
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
+  softwareTeamRoleHistoryIds,
+  writeSoftwareTeamPipelineFile,
   softwareTeamLaunchItemPatch,
   softwareTeamWriterShipWritesFiles,
   writeSoftwareTeamWorkspaceBootstrap,
@@ -1490,6 +1503,211 @@ describe("Software Works attach-chat seed (max 3)", () => {
     expect(missingSoftwareTeamDeliveryRoles([a, b], "del-9")).toEqual([
       "reviewer",
     ]);
+  });
+});
+
+describe("Software Works project pipeline file SoT", () => {
+  function fileHost(opts?: {
+    desktop?: boolean;
+    files?: Record<string, string>;
+    failWrite?: string;
+  }) {
+    const files = { ...(opts?.files ?? {}) };
+    const writes: string[] = [];
+    return {
+      writes,
+      files,
+      host: {
+        isDesktopHost: () => opts?.desktop !== false,
+        readFile: async (_p: string, relative: string) => {
+          if (relative in files) return { text: files[relative] };
+          return { error: `not a file: ${relative}` };
+        },
+        writeFile: async (_p: string, relative: string, content: string) => {
+          writes.push(relative);
+          if (opts?.failWrite === relative) throw new Error("write boom");
+          files[relative] = content;
+        },
+      },
+    };
+  }
+
+  it("refuses shared ~/.grok and does not write", async () => {
+    const { host, writes } = fileHost();
+    expect(
+      planSoftwareTeamPipelineFileWrite({
+        projectPath: "~/.grok",
+        host,
+      }).reason,
+    ).toBe("blocked_shared_home");
+    const result = await writeSoftwareTeamPipelineFile({
+      projectPath: "/home/u/.grok",
+      store: createEmptySoftwareTeamPipelineStore(),
+      host,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "blocked_shared_home" });
+    expect(writes).toEqual([]);
+  });
+
+  it("round-trips versioned JSON and is idempotent", async () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "p1",
+      roleId: "product",
+      title: "Auth",
+      deliveryId: "d1",
+    })!;
+    const store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      item,
+    );
+    const text = serializeSoftwareTeamPipelineFile(store, 99);
+    expect(text).toContain(SOFTWARE_TEAM_PIPELINE_SCHEMA);
+    expect(text).toContain('"version": 1');
+    const parsed = parseSoftwareTeamPipelineFileDoc(text);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.store.items[0]?.title).toBe("Auth");
+    const { host, writes, files } = fileHost();
+    const first = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store,
+      host,
+      now: 99,
+    });
+    expect(first).toMatchObject({ ok: true, reason: "ok_project" });
+    const again = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store,
+      host,
+      now: 100,
+    });
+    expect(again).toMatchObject({ ok: true, skipped: true });
+    expect(writes).toEqual([SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]);
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Auth");
+  });
+
+  it("does not wipe a corrupt project file", async () => {
+    const { host, writes, files } = fileHost({
+      files: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: "{not-json" },
+    });
+    const original = files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE];
+    const read = await readSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      host,
+    });
+    expect(read).toMatchObject({ ok: false, reason: "parse_fail", backedUp: true });
+    const write = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+        id: "x",
+        roleId: "engineer",
+      }),
+      host,
+    });
+    expect(write).toMatchObject({ ok: false, reason: "parse_fail" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toBe(original);
+    expect(writes).toContain(".grok/software-works.json.bak");
+    expect(
+      writes.filter((w) => w === SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE),
+    ).toHaveLength(0);
+  });
+
+  it("stays cache-only without Host or project", async () => {
+    expect(
+      planSoftwareTeamPipelineFileWrite({
+        projectPath: "/repo",
+        host: { isDesktopHost: () => false },
+      }).reason,
+    ).toBe("need_host");
+    expect(
+      planSoftwareTeamPipelineFileWrite({
+        projectPath: "  ",
+        host: { isDesktopHost: () => true },
+      }).reason,
+    ).toBe("need_project");
+  });
+});
+
+describe("Software Works delivery filter + docs open", () => {
+  it("groups and filters cards by deliveryId", () => {
+    const a = createSoftwareTeamPipelineItem({
+      id: "a",
+      roleId: "product",
+      title: "Billing",
+      deliveryId: "d-bill",
+      roleHistory: ["product", "architect"],
+      updatedAt: 2,
+    })!;
+    const b = createSoftwareTeamPipelineItem({
+      id: "b",
+      roleId: "engineer",
+      title: "Auth",
+      deliveryId: "d-auth",
+      updatedAt: 3,
+    })!;
+    const c = createSoftwareTeamPipelineItem({
+      id: "c",
+      roleId: "qa",
+      deliveryId: "",
+    })!;
+    const groups = listSoftwareTeamDeliveryGroups([a, b, c]);
+    expect(groups.map((g) => g.id)).toEqual(["d-auth", "d-bill"]);
+    expect(
+      filterSoftwareTeamItemsByDelivery([a, b, c], SOFTWARE_TEAM_DELIVERY_FILTER_ALL),
+    ).toHaveLength(3);
+    expect(
+      filterSoftwareTeamItemsByDelivery([a, b, c], "d-bill").map((i) => i.id),
+    ).toEqual(["a"]);
+    expect(
+      filterSoftwareTeamItemsByDelivery(
+        [a, b, c],
+        SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+      ).map((i) => i.id),
+    ).toEqual(["c"]);
+    expect(softwareTeamRoleHistoryIds(a)).toEqual(["product", "architect"]);
+  });
+
+  it("opens docs via editor when Host has it, else copies the path", async () => {
+    const opened: string[] = [];
+    const ok = await openSoftwareTeamSdlcDoc({
+      projectPath: "/repo",
+      relative: "docs/sdlc/spec.md",
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ text: "# spec" }),
+        resolvePath: async () => ({ absolutePath: "/repo/docs/sdlc/spec.md" }),
+        openInEditor: async (path) => {
+          opened.push(path);
+        },
+      },
+    });
+    expect(ok).toEqual({
+      ok: true,
+      reason: "opened_editor",
+      path: "/repo/docs/sdlc/spec.md",
+    });
+    expect(opened).toEqual(["/repo/docs/sdlc/spec.md"]);
+    const copied = await openSoftwareTeamSdlcDoc({
+      projectPath: "/repo",
+      relative: "docs/sdlc/design.md",
+      copyText: async () => true,
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ text: "# design" }),
+        resolvePath: async () => ({ absolutePath: "/repo/docs/sdlc/design.md" }),
+      },
+    });
+    expect(copied).toMatchObject({ ok: true, reason: "copied_path" });
+    const blocked = await openSoftwareTeamSdlcDoc({
+      projectPath: "~/.grok",
+      relative: "docs/sdlc/spec.md",
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ text: "x" }),
+        resolvePath: async () => ({ absolutePath: "/x" }),
+      },
+    });
+    expect(blocked).toMatchObject({ ok: false, reason: "blocked_shared_home" });
   });
 });
 

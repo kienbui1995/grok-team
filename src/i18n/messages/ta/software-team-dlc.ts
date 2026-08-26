@@ -170,4 +170,35 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "{role} அமர்வை சேர்",
   "softwareTeamDlc.attachedHint":
     "இந்த விநியோகத்தில் {n} குழு அரட்டைகள் (attach-chat, அதிகபட்சம் 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "பைப்லைன் இந்த திட்டத்தில் சேமிக்கப்பட்டது (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "இன்னும் பைப்லைன் கோப்பு இல்லை. அடுத்த மாற்றம் .grok/software-works.json எழுதும்.",
+  "softwareTeamDlc.pipelineFileCache":
+    "திட்டத்திற்கு Host எழுத்து இல்லை — பைப்லைன் செயலி தற்காலிக நினைவில் மட்டும்.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "திட்டப் பைப்லைனுக்கு டெஸ்க்டாப் Host தேவை. இந்த முன்னோட்டம் சேமித்ததாக பாசாங்கு செய்யாது.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "களஞ்சியத்தில் பைப்லைனை சேமிக்க திட்டக் கோப்புறையை தேர்ந்தெடுக்கவும்.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "பகிரப்பட்ட ~/.grok இல் பைப்லைனை எழுத முடியாது.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "பைப்லைன் கோப்பை படிக்க முடியவில்லை. அப்படியே விடப்பட்டது (காப்பு {file}). செயலி தற்காலிகம் பயன்படும்.",
+  "softwareTeamDlc.pipelineFileHostError": "பைப்லைனை சேமிக்க முடியவில்லை: {error}",
+  "softwareTeamDlc.deliveryFilter": "விநியோகம்",
+  "softwareTeamDlc.deliveryFilterAll": "அனைத்து விநியோகங்கள்",
+  "softwareTeamDlc.deliveryUnscoped": "குழு இல்லை",
+  "softwareTeamDlc.roleHistory": "பங்குகள்: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "docs/sdlc திற",
+  "softwareTeamDlc.openSdlcDoc": "{file} திற",
+  "softwareTeamDlc.openSdlcDocOpened": "கோப்பு தொகுப்பியில் திறக்கப்பட்டது.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "பாதை நகலெடுக்கப்பட்டது. இந்த கோப்புக்கு Host தொகுப்பியை திறக்கவில்லை.",
+  "softwareTeamDlc.openSdlcDocMissing": "அந்த docs/sdlc கோப்பு இந்த திட்டத்தில் இல்லை.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "தொகுப்பியில் திறக்க டெஸ்க்டாப் Host தேவை.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "docs/sdlc திறக்க திட்டக் கோப்புறையை தேர்ந்தெடுக்கவும்.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "பகிரப்பட்ட ~/.grok இலிருந்து docs/sdlc திறக்க முடியாது.",
+  "softwareTeamDlc.openSdlcDocHostError": "கோப்பை திறக்க முடியவில்லை: {error}",
 } as const;

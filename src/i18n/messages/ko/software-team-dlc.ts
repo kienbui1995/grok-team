@@ -170,4 +170,35 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "{role} 세션 추가",
   "softwareTeamDlc.attachedHint":
     "이 딜리버리에 팀 채팅 {n}개(attach-chat, 최대 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "파이프라인을 이 프로젝트에 저장했습니다(.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "아직 프로젝트 파이프라인 파일이 없습니다. 다음 변경에서 .grok/software-works.json 을 씁니다.",
+  "softwareTeamDlc.pipelineFileCache":
+    "프로젝트 Host 쓰기 없음 — 파이프라인은 앱 캐시에만 있습니다.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "프로젝트 파이프라인에는 데스크톱 Host 가 필요합니다. 이 미리보기는 저장한 척하지 않습니다.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "저장소에 파이프라인을 쓰려면 프로젝트 폴더를 고르세요.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "공유 ~/.grok 에는 파이프라인을 쓸 수 없습니다.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "파이프라인 파일을 읽을 수 없습니다. 원본은 그대로 두었습니다(백업 {file}). 앱 캐시를 씁니다.",
+  "softwareTeamDlc.pipelineFileHostError": "파이프라인을 저장하지 못했습니다: {error}",
+  "softwareTeamDlc.deliveryFilter": "딜리버리",
+  "softwareTeamDlc.deliveryFilterAll": "모든 딜리버리",
+  "softwareTeamDlc.deliveryUnscoped": "그룹 없음",
+  "softwareTeamDlc.roleHistory": "역할: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "docs/sdlc 열기",
+  "softwareTeamDlc.openSdlcDoc": "{file} 열기",
+  "softwareTeamDlc.openSdlcDocOpened": "편집기에서 파일을 열었습니다.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "경로를 복사했습니다. Host 가 이 파일용 편집기를 열지 않았습니다.",
+  "softwareTeamDlc.openSdlcDocMissing": "해당 docs/sdlc 파일이 이 프로젝트에 없습니다.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "편집기에서 열려면 데스크톱 Host 가 필요합니다.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "docs/sdlc 를 열려면 프로젝트 폴더를 고르세요.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "공유 ~/.grok 에서 docs/sdlc 를 열 수 없습니다.",
+  "softwareTeamDlc.openSdlcDocHostError": "파일을 열지 못했습니다: {error}",
 } as const;

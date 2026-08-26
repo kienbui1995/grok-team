@@ -22,26 +22,41 @@ import {
   SOFTWARE_TEAM_DLC_INSTALL_TARGETS,
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGES,
+  SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
+  SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+  SOFTWARE_TEAM_PIPELINE_FILE_EVENT,
   applySoftwareTeamShipChoice,
   decideSoftwareTeamDoneCta,
   ensureSoftwareTeamItemDeliveryId,
+  filterSoftwareTeamItemsByDelivery,
+  lastSoftwareTeamPipelineFileStatus,
+  listSoftwareTeamDeliveryGroups,
   missingSoftwareTeamDeliveryRoles,
   nextSoftwareTeamRole,
+  openSoftwareTeamSdlcDoc,
   pickSoftwareTeamAttachSessions,
   planSoftwareTeamDlcPackWrite,
   planSoftwareTeamWorkspaceBootstrap,
+  probeSoftwareTeamSdlcDocs,
   resolveSoftwareTeamDeliveryId,
   softwareTeamBootstrapMessageKey,
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
+  softwareTeamPipelineFileMessageKey,
   softwareTeamRoleById,
+  softwareTeamRoleHistoryIds,
+  softwareTeamSdlcDocOpenMessageKey,
   softwareTeamRoleSlashHint,
   softwareTeamRoleStarterPrompt,
   softwareTeamShipBlockMessageKey,
   softwareTeamShipGate,
   writeSoftwareTeamWorkspaceBootstrap,
+  type SoftwareTeamDeliveryFilterId,
+  type SoftwareTeamPipelineFileRead,
+  type SoftwareTeamPipelineFileWrite,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamRoleId,
+  type SoftwareTeamSdlcDocProbe,
   type SoftwareTeamSdlcStageId,
 } from "@/lib/softwareTeamDlc";
 
@@ -171,6 +186,12 @@ export function SdlcStudioPage({
     onSelectSession,
   });
   const [query, setQuery] = useState("");
+  const [deliveryFilter, setDeliveryFilter] =
+    useState<SoftwareTeamDeliveryFilterId>(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
+  const [sdlcDocs, setSdlcDocs] = useState<SoftwareTeamSdlcDocProbe[]>([]);
+  const [fileStatus, setFileStatus] = useState<
+    SoftwareTeamPipelineFileRead | SoftwareTeamPipelineFileWrite | null
+  >(lastSoftwareTeamPipelineFileStatus);
   const [copied, setCopied] = useState<string | null>(null);
   const [copyError, setCopyError] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -202,6 +223,30 @@ export function SdlcStudioPage({
     setWizard({ title: "", roleId: "product", bootstrap: false });
   }, [pipeline.items.length]);
 
+  useEffect(() => {
+    const sync = (ev: Event) => {
+      const detail = (ev as CustomEvent).detail as
+        | SoftwareTeamPipelineFileRead
+        | SoftwareTeamPipelineFileWrite
+        | undefined;
+      setFileStatus(detail ?? lastSoftwareTeamPipelineFileStatus());
+    };
+    window.addEventListener(SOFTWARE_TEAM_PIPELINE_FILE_EVENT, sync);
+    return () => window.removeEventListener(SOFTWARE_TEAM_PIPELINE_FILE_EVENT, sync);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void probeSoftwareTeamSdlcDocs({ projectPath: workspace.projectPath }).then(
+      (rows) => {
+        if (!cancelled) setSdlcDocs(rows);
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [workspace.projectPath, pipeline.items.length]);
+
   const sessionTitle = useCallback(
     (sessionId: string) => {
       const row = sessions.find((s) => s.id === sessionId);
@@ -221,10 +266,23 @@ export function SdlcStudioPage({
     [sessionTitle, t],
   );
 
+  const deliveryGroups = useMemo(
+    () => listSoftwareTeamDeliveryGroups(pipeline.items),
+    [pipeline.items],
+  );
+  const unscopedCount = useMemo(
+    () => pipeline.items.filter((item) => !item.deliveryId.trim()).length,
+    [pipeline.items],
+  );
+
   const filtered = useMemo(() => {
+    const scoped = filterSoftwareTeamItemsByDelivery(
+      pipeline.items,
+      deliveryFilter,
+    );
     const q = query.trim().toLowerCase();
-    if (!q) return pipeline.items;
-    return pipeline.items.filter((item) => {
+    if (!q) return scoped;
+    return scoped.filter((item) => {
       const hay = [
         item.title,
         item.planRef,
@@ -233,13 +291,40 @@ export function SdlcStudioPage({
         item.sessionId,
         item.roleId,
         item.stageId,
+        item.deliveryId,
         item.sessionId ? sessionTitle(item.sessionId) : "",
       ]
         .join(" ")
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [pipeline.items, query, sessionTitle]);
+  }, [deliveryFilter, pipeline.items, query, sessionTitle]);
+
+  const onOpenSdlcDoc = useCallback(
+    async (relative: string) => {
+      const result = await openSoftwareTeamSdlcDoc({
+        projectPath: workspace.projectPath,
+        relative,
+        copyText,
+      });
+      if (result.ok) {
+        setStatus(
+          result.reason === "copied_path"
+            ? t("softwareTeamDlc.openSdlcDocCopied")
+            : t("softwareTeamDlc.openSdlcDocOpened"),
+        );
+        return;
+      }
+      setStatus(
+        result.reason === "host_error"
+          ? t(softwareTeamSdlcDocOpenMessageKey(result.reason), {
+              error: result.error ?? "",
+            })
+          : t(softwareTeamSdlcDocOpenMessageKey(result.reason)),
+      );
+    },
+    [t, workspace.projectPath],
+  );
 
   const onCopyStarter = useCallback(
     async (roleId: SoftwareTeamRoleId) => {
@@ -546,6 +631,19 @@ export function SdlcStudioPage({
       label: t("softwareTeamDlc.openInComposer"),
       onClick: () => void onOpenInComposer(menuItem),
     });
+    const presentDocs = sdlcDocs.filter((row) => row.exists);
+    if (presentDocs.length) {
+      items.push({
+        label: t("softwareTeamDlc.openSdlcDocs"),
+        children: presentDocs.map((row) => ({
+          id: `sdlc-doc-${row.relative}`,
+          label: t("softwareTeamDlc.openSdlcDoc", {
+            file: row.relative.split("/").pop() ?? row.relative,
+          }),
+          onClick: () => void onOpenSdlcDoc(row.relative),
+        })),
+      });
+    }
     const teammateRoles = missingSoftwareTeamDeliveryRoles(
       pipeline.items,
       menuItem.deliveryId,
@@ -587,7 +685,9 @@ export function SdlcStudioPage({
     onAddTeammate,
     onHandoff,
     onOpenInComposer,
+    onOpenSdlcDoc,
     onSelectSession,
+    sdlcDocs,
     pipeline,
     t,
   ]);
@@ -796,6 +896,77 @@ export function SdlcStudioPage({
             {t("softwareTeamDlc.addItem")}
           </button>
         </div>
+        {deliveryGroups.length > 0 || unscopedCount > 0 ? (
+          <div
+            className="sdlc-studio__chips"
+            role="group"
+            aria-label={t("softwareTeamDlc.deliveryFilter")}
+          >
+            <button
+              type="button"
+              className={
+                "task-board__chip" +
+                (deliveryFilter === SOFTWARE_TEAM_DELIVERY_FILTER_ALL
+                  ? " is-active"
+                  : "")
+              }
+              onClick={() => setDeliveryFilter(SOFTWARE_TEAM_DELIVERY_FILTER_ALL)}
+            >
+              {t("softwareTeamDlc.deliveryFilterAll")}
+            </button>
+            {deliveryGroups.map((group) => (
+              <button
+                key={group.id}
+                type="button"
+                className={
+                  "task-board__chip" +
+                  (deliveryFilter === group.id ? " is-active" : "")
+                }
+                onClick={() => setDeliveryFilter(group.id)}
+              >
+                {group.title}
+              </button>
+            ))}
+            {unscopedCount > 0 ? (
+              <button
+                type="button"
+                className={
+                  "task-board__chip" +
+                  (deliveryFilter === SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED
+                    ? " is-active"
+                    : "")
+                }
+                onClick={() =>
+                  setDeliveryFilter(SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED)
+                }
+              >
+                {t("softwareTeamDlc.deliveryUnscoped")}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+        {sdlcDocs.some((row) => row.exists) ? (
+          <div
+            className="sdlc-studio__chips"
+            role="group"
+            aria-label={t("softwareTeamDlc.openSdlcDocs")}
+          >
+            {sdlcDocs
+              .filter((row) => row.exists)
+              .map((row) => (
+                <button
+                  key={row.relative}
+                  type="button"
+                  className="btn btn--ghost btn--sm"
+                  onClick={() => void onOpenSdlcDoc(row.relative)}
+                >
+                  {t("softwareTeamDlc.openSdlcDoc", {
+                    file: row.relative.split("/").pop() ?? row.relative,
+                  })}
+                </button>
+              ))}
+          </div>
+        ) : null}
         {(() => {
           const plan = planSoftwareTeamDlcPackWrite({
             sessionDataMode: actions.sessionDataMode,
@@ -831,6 +1002,19 @@ export function SdlcStudioPage({
           </p>
         ) : null}
         <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.slashAfterInstall")}</p>
+        {fileStatus ? (
+          <p className="sdlc-studio__slash-note" role="status">
+            {fileStatus.ok === false && fileStatus.reason === "host_error"
+              ? t(softwareTeamPipelineFileMessageKey(fileStatus.reason), {
+                  error: fileStatus.error ?? "",
+                })
+              : fileStatus.ok === false && fileStatus.reason === "parse_fail"
+                ? t(softwareTeamPipelineFileMessageKey(fileStatus.reason), {
+                    file: ".grok/software-works.json.bak",
+                  })
+                : t(softwareTeamPipelineFileMessageKey(fileStatus.reason))}
+          </p>
+        ) : null}
 
         {status ? (
           <p className="sdlc-studio__status" role="status">
@@ -907,6 +1091,18 @@ export function SdlcStudioPage({
                             </span>
                             <span className="agent-kanban__card-team">
                               {t(softwareTeamRoleById(item.roleId)?.titleKey ?? "softwareTeamDlc.rosterTitle")}
+                            </span>
+                            <span className="sdlc-studio__refs">
+                              {t("softwareTeamDlc.roleHistory", {
+                                roles: softwareTeamRoleHistoryIds(item)
+                                  .map((roleId) =>
+                                    t(
+                                      softwareTeamRoleById(roleId)?.titleKey ??
+                                        "softwareTeamDlc.rosterTitle",
+                                    ),
+                                  )
+                                  .join(" → "),
+                              })}
                             </span>
                             <span className="agent-kanban__card-meta">
                               {item.sessionId

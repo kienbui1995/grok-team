@@ -170,4 +170,35 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Tambah sesi {role}",
   "softwareTeamDlc.attachedHint":
     "{n} obrolan tim pada pengiriman ini (attach-chat, maks. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline disimpan di proyek ini (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Belum ada berkas pipeline. Perubahan berikutnya menulis .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Tidak ada tulis Host ke proyek — pipeline hanya di cache aplikasi.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "Pipeline proyek membutuhkan Host desktop. Pratinjau ini tidak berpura-pura menyimpan.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Pilih folder proyek untuk menyimpan pipeline di repositori.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Tidak dapat menulis pipeline ke ~/.grok bersama.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Berkas pipeline tidak terbaca. Dibiarkan utuh (cadangan {file}). Cache aplikasi dipakai.",
+  "softwareTeamDlc.pipelineFileHostError": "Tidak dapat menyimpan pipeline: {error}",
+  "softwareTeamDlc.deliveryFilter": "Pengiriman",
+  "softwareTeamDlc.deliveryFilterAll": "Semua pengiriman",
+  "softwareTeamDlc.deliveryUnscoped": "Tanpa grup",
+  "softwareTeamDlc.roleHistory": "Peran: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Buka docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Buka {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Berkas dibuka di editor.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Jalur disalin. Host tidak membuka editor untuk berkas ini.",
+  "softwareTeamDlc.openSdlcDocMissing": "Berkas docs/sdlc itu tidak ada di proyek ini.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Buka di editor membutuhkan Host desktop.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Pilih folder proyek untuk membuka docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Tidak dapat membuka docs/sdlc dari ~/.grok bersama.",
+  "softwareTeamDlc.openSdlcDocHostError": "Tidak dapat membuka berkas: {error}",
 } as const;

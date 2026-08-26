@@ -170,4 +170,35 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Magdagdag ng session para kay {role}",
   "softwareTeamDlc.attachedHint":
     "{n} team chat sa delivery na ito (attach-chat, max 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Nai-save ang pipeline sa proyektong ito (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Wala pang pipeline file. Ang susunod na pagbabago ay susulat ng .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Walang Host write sa proyekto — cache lang ng app ang pipeline.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "Kailangan ng desktop Host ang project pipeline. Hindi magpapanggap ang preview na nai-save ito.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Pumili ng folder ng proyekto para i-save ang pipeline sa repo.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Hindi maisulat ang pipeline sa shared ~/.grok.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Hindi mabasa ang pipeline file. Hindi ginalaw (backup {file}). Cache ng app ang gamit.",
+  "softwareTeamDlc.pipelineFileHostError": "Hindi nai-save ang pipeline: {error}",
+  "softwareTeamDlc.deliveryFilter": "Delivery",
+  "softwareTeamDlc.deliveryFilterAll": "Lahat ng delivery",
+  "softwareTeamDlc.deliveryUnscoped": "Walang grupo",
+  "softwareTeamDlc.roleHistory": "Mga role: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Buksan ang docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Buksan ang {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Binuksan ang file sa editor.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Nakopya ang path. Hindi nagbukas ng editor ang Host.",
+  "softwareTeamDlc.openSdlcDocMissing": "Wala ang docs/sdlc file na iyon sa proyekto.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Kailangan ng desktop Host para buksan sa editor.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Pumili ng folder ng proyekto para buksan ang docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Hindi mabuksan ang docs/sdlc mula sa shared ~/.grok.",
+  "softwareTeamDlc.openSdlcDocHostError": "Hindi mabuksan ang file: {error}",
 } as const;

@@ -17,6 +17,7 @@ See `docs/llm-wiki/release.md`.
 - **Software Works Review → QA → Ship gate**: Ship is blocked until the item has visited Reviewer and QA and both notes are saved (persisted on the pipeline item). Reviewer/QA handoff starters include a diff / test / risk checklist. Notes are edited in a `GlassModal`. Plan chrome uses `sessionPlanChromeSet` when available; goal mode is the composer draft flag. Host plan/goal entity ids are written onto the card only when those APIs return an id — never invented.
 - **Software Works start a delivery + done CTA**: Empty Studio / toolbar opens a GlassModal to name a slice, pick the first role (default Product), and optionally write `docs/sdlc/{spec,design,review}.md` in the **project** folder (Host + project path required; shared `~/.grok` refused; never faked). Live Kanban `done` no longer auto-Ships — the card shows Handoff to the next role, or Ship (Writer starter in the composer only; no app `CHANGELOG.md` write). Attach-chat seeds up to 3 sibling session UUIDs on the composer draft when those ids exist; there is no Host team-attach RPC.
 - **Software Works team sessions on a delivery**: Start a delivery always creates a **new** session (does not steal the open chat). Empty Studio offers the wizard once. Context menu can add a Product / Engineer / Reviewer sibling session on the same `deliveryId`; attach-chat stays same-delivery only (max 3). New board items inherit that delivery id.
+- **Software Works project pipeline SoT**: With Host + a project folder, the board reads/writes `.grok/software-works.json` (versioned; parse fail leaves the file and writes `.bak`). Shared `~/.grok` is refused; browser preview stays on the localStorage cache. Studio filters cards by delivery and shows role history; existing `docs/sdlc/{spec,design,review}.md` can open in the editor (or copy the path).
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
@@ -25,6 +26,7 @@ See `docs/llm-wiki/release.md`.
 - **Software Works 评审→测试→发布门槛**：工作项须经过评审与测试并保存双方备注后才能发布（备注落在流水线项上）。交接开场含 diff / 测试 / 风险清单。备注用 `GlassModal`。计划条走 `sessionPlanChromeSet`（若有）；目标模式是输入草稿开关。只有 Host 返回实体 id 才写回卡片，绝不编造。
 - **Software Works 开始交付 + 完成 CTA**：空工坊 / 工具栏用 GlassModal 命名切片、选起始角色（默认产品），可选在**项目**目录写 `docs/sdlc/{spec,design,review}.md`（需要 Host + 项目路径；拒绝共享 `~/.grok`；不假装成功）。实况看板 `done` 不再自动发布 — 卡片显示交接下一角色，或发布（只把 Writer 开场写入输入框，不改应用 `CHANGELOG.md`）。若有 UUID，会在草稿种最多 3 个 attach-chat 会话；没有 Host「团队挂接」RPC。
 - **Software Works 同一交付的团队会话**：开始交付总是新建会话（不占用当前聊天）。空工坊会弹出一次向导。右键可在同一 `deliveryId` 上补 Product / Engineer / Reviewer 会话；attach-chat 只挂同一交付（最多 3）。新卡片继承该交付 id。
+- **Software Works 项目流水线 SoT**：有 Host + 项目文件夹时，看板读写 `.grok/software-works.json`（带版本；解析失败不覆盖，另写 `.bak`）。拒绝共享 `~/.grok`；预览只留应用缓存。工坊按交付筛选并显示角色历程；已有 `docs/sdlc/{spec,design,review}.md` 可在编辑器打开（或复制路径）。
 - **自定义外观**：设置 → 外观 → 主题可改文字颜色（默认跟随浅/深色近黑/近白）和字体阴影（默认关）。「恢复默认」需二次确认，会把这两项恢复出厂。这两项会随 `.grokskin` 导入导出。
 
 ### Changed

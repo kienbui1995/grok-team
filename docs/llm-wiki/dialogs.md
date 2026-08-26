@@ -163,6 +163,7 @@ setAppDialog({
 | Compact keep-note / Doctor / Status / MCP | `setAppDialog` prompt · `.modal` · `GlassModal` · `DoctorModal` |
 | SDLC Studio item editor + Reviewer/QA notes + Start a delivery | `GlassModal` on `SdlcStudioPage` (no `window.prompt`) |
 | SDLC Studio add team session | `ContextMenu` submenu (no native `<select>`) |
+| SDLC Studio delivery filter + open docs/sdlc | chips + `ContextMenu` (Host `openInEditor` or copy path) |
 | 文件详情 | `.modal.file-path-details` |
 | 搜索面板 | `.search-panel` |
 | 模型 / 权限 / 项目 / 用户 / 斜杠 / + | `.cmm__pop` · `.menu-panel` · `.slash-palette` · `.composer-plus` |

@@ -170,4 +170,35 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "{role} セッションを追加",
   "softwareTeamDlc.attachedHint":
     "このデリバリーにチームチャット {n} 件（attach-chat、最大 3）",
+  "softwareTeamDlc.pipelineFileOk":
+    "パイプラインをこのプロジェクトに保存しました（.grok/software-works.json）。",
+  "softwareTeamDlc.pipelineFileMissing":
+    "まだプロジェクトのパイプラインファイルはありません。次の変更で .grok/software-works.json を書きます。",
+  "softwareTeamDlc.pipelineFileCache":
+    "プロジェクトへの Host 書き込みなし — パイプラインはこのアプリのキャッシュだけです。",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "プロジェクトのパイプラインにはデスクトップ Host が必要です。このプレビューは保存したふりをしません。",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "リポジトリにパイプラインを保存するにはプロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "共有の ~/.grok にパイプラインは書けません。",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "パイプラインファイルが読めません。元ファイルはそのまま（バックアップ {file}）。アプリのキャッシュを使います。",
+  "softwareTeamDlc.pipelineFileHostError": "パイプラインを保存できませんでした: {error}",
+  "softwareTeamDlc.deliveryFilter": "デリバリー",
+  "softwareTeamDlc.deliveryFilterAll": "すべてのデリバリー",
+  "softwareTeamDlc.deliveryUnscoped": "未グループ",
+  "softwareTeamDlc.roleHistory": "役割: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "docs/sdlc を開く",
+  "softwareTeamDlc.openSdlcDoc": "{file} を開く",
+  "softwareTeamDlc.openSdlcDocOpened": "エディタでファイルを開きました。",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "パスをコピーしました。Host はこのファイル用のエディタを開きませんでした。",
+  "softwareTeamDlc.openSdlcDocMissing": "その docs/sdlc ファイルはこのプロジェクトにありません。",
+  "softwareTeamDlc.openSdlcDocNeedHost": "エディタで開くにはデスクトップ Host が必要です。",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "docs/sdlc を開くにはプロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "共有の ~/.grok から docs/sdlc は開けません。",
+  "softwareTeamDlc.openSdlcDocHostError": "ファイルを開けませんでした: {error}",
 } as const;

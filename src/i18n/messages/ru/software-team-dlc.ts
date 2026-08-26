@@ -170,4 +170,35 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Добавить сессию {role}",
   "softwareTeamDlc.attachedHint":
     "{n} командных чатов в этой поставке (attach-chat, макс. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Конвейер сохранён в этом проекте (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Файла конвейера ещё нет. Следующее изменение запишет .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Нет записи Host в проект — конвейер только в кэше приложения.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "Конвейер проекта требует настольный Host. Этот предпросмотр не притворяется, что сохранил его.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Выберите папку проекта, чтобы сохранить конвейер в репозитории.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Нельзя писать конвейер в общий ~/.grok.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Файл конвейера не читается. Оставлен как есть (копия {file}). Используется кэш приложения.",
+  "softwareTeamDlc.pipelineFileHostError": "Не удалось сохранить конвейер: {error}",
+  "softwareTeamDlc.deliveryFilter": "Поставка",
+  "softwareTeamDlc.deliveryFilterAll": "Все поставки",
+  "softwareTeamDlc.deliveryUnscoped": "Без группы",
+  "softwareTeamDlc.roleHistory": "Роли: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Открыть docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Открыть {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Файл открыт в редакторе.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Путь скопирован. Host не открыл редактор для этого файла.",
+  "softwareTeamDlc.openSdlcDocMissing": "Этого файла docs/sdlc нет в проекте.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Открытие в редакторе требует настольный Host.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Выберите папку проекта, чтобы открыть docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Нельзя открыть docs/sdlc из общего ~/.grok.",
+  "softwareTeamDlc.openSdlcDocHostError": "Не удалось открыть файл: {error}",
 } as const;

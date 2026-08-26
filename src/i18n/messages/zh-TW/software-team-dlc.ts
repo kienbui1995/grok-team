@@ -158,4 +158,28 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "新增{role}工作階段",
   "softwareTeamDlc.attachedHint":
     "此交付有 {n} 個團隊對話（attach-chat，最多 3 個）",
+  "softwareTeamDlc.pipelineFileOk": "流水線已寫入本專案（.grok/software-works.json）。",
+  "softwareTeamDlc.pipelineFileMissing":
+    "還沒有專案流水線檔。下一次變更會寫入 .grok/software-works.json。",
+  "softwareTeamDlc.pipelineFileCache": "沒有向專案寫 Host — 流水線只留在應用快取。",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "專案流水線需要桌面 Host。此預覽不會假裝已經儲存。",
+  "softwareTeamDlc.pipelineFileNeedProject": "請先選專案資料夾，才能把流水線寫進倉庫。",
+  "softwareTeamDlc.pipelineFileBlockedHome": "不能把流水線寫進共用 ~/.grok。",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "專案流水線檔無法讀取。原檔未改（備份 {file}）。先用應用快取。",
+  "softwareTeamDlc.pipelineFileHostError": "無法儲存專案流水線：{error}",
+  "softwareTeamDlc.deliveryFilter": "交付",
+  "softwareTeamDlc.deliveryFilterAll": "全部交付",
+  "softwareTeamDlc.deliveryUnscoped": "未分組",
+  "softwareTeamDlc.roleHistory": "角色：{roles}",
+  "softwareTeamDlc.openSdlcDocs": "開啟 docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "開啟 {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "已在編輯器中開啟檔案。",
+  "softwareTeamDlc.openSdlcDocCopied": "已複製路徑。Host 沒有為此檔開啟編輯器。",
+  "softwareTeamDlc.openSdlcDocMissing": "專案裡沒有這個 docs/sdlc 檔。",
+  "softwareTeamDlc.openSdlcDocNeedHost": "用編輯器開啟需要桌面 Host。",
+  "softwareTeamDlc.openSdlcDocNeedProject": "請先選專案資料夾，才能開啟 docs/sdlc。",
+  "softwareTeamDlc.openSdlcDocBlockedHome": "不能從共用 ~/.grok 開啟 docs/sdlc。",
+  "softwareTeamDlc.openSdlcDocHostError": "無法開啟檔案：{error}",
 } as const;

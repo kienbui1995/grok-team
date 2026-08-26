@@ -77,6 +77,12 @@ describe("i18n catalog", () => {
       "Engineer",
     );
     expect(t("en", "softwareTeamDlc.attachedHint", { n: 2 })).toContain("2");
+    expect(t("en", "softwareTeamDlc.roleHistory", { roles: "QA" })).toContain("QA");
+    expect(
+      t("en", "softwareTeamDlc.pipelineFileParseFail", {
+        file: ".grok/software-works.json.bak",
+      }),
+    ).toContain(".grok/software-works.json.bak");
   });
 
   it("createT binds locale (English is the product default)", () => {

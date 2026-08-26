@@ -170,4 +170,35 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "{role}-Sitzung hinzufügen",
   "softwareTeamDlc.attachedHint":
     "{n} Team-Chats in dieser Lieferung (attach-chat, max. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline im Projekt gespeichert (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Noch keine Projekt-Pipeline. Die nächste Änderung schreibt .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Kein Host-Schreiben ins Projekt — Pipeline bleibt nur im App-Cache.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "Projekt-Pipeline braucht den Desktop-Host. Diese Vorschau tut nicht so, als hätte sie gespeichert.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Projektordner wählen, um die Pipeline im Repo zu speichern.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Pipeline nicht ins gemeinsame ~/.grok schreiben.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Projekt-Pipeline unlesbar. Datei unangetastet (Sicherung {file}). App-Cache wird genutzt.",
+  "softwareTeamDlc.pipelineFileHostError": "Projekt-Pipeline nicht gespeichert: {error}",
+  "softwareTeamDlc.deliveryFilter": "Lieferung",
+  "softwareTeamDlc.deliveryFilterAll": "Alle Lieferungen",
+  "softwareTeamDlc.deliveryUnscoped": "Ohne Gruppe",
+  "softwareTeamDlc.roleHistory": "Rollen: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "docs/sdlc öffnen",
+  "softwareTeamDlc.openSdlcDoc": "{file} öffnen",
+  "softwareTeamDlc.openSdlcDocOpened": "Datei im Editor geöffnet.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Pfad kopiert. Host hat keinen Editor für diese Datei geöffnet.",
+  "softwareTeamDlc.openSdlcDocMissing": "Diese docs/sdlc-Datei ist nicht im Projekt.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Im Editor öffnen braucht den Desktop-Host.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Projektordner wählen, um docs/sdlc-Dateien zu öffnen.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "docs/sdlc nicht aus gemeinsamem ~/.grok öffnen.",
+  "softwareTeamDlc.openSdlcDocHostError": "Datei nicht geöffnet: {error}",
 } as const;

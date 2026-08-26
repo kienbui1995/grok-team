@@ -178,4 +178,35 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Add {role} session",
   "softwareTeamDlc.attachedHint":
     "{n} team chats on this delivery (attach-chat, max 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline saved in this project (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "No project pipeline file yet. The next change writes .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "No project Host write — pipeline stays in this app cache only.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "Project pipeline needs the desktop Host. This preview will not pretend to save it.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Select a project folder to save the pipeline in the repo.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Cannot write the pipeline into shared ~/.grok.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Project pipeline file is unreadable. Left it untouched (backup {file}). Using the app cache.",
+  "softwareTeamDlc.pipelineFileHostError": "Could not save project pipeline: {error}",
+  "softwareTeamDlc.deliveryFilter": "Delivery",
+  "softwareTeamDlc.deliveryFilterAll": "All deliveries",
+  "softwareTeamDlc.deliveryUnscoped": "Ungrouped",
+  "softwareTeamDlc.roleHistory": "Roles: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Open docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Open {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Opened the file in the editor.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Path copied. Host did not open an editor for this file.",
+  "softwareTeamDlc.openSdlcDocMissing": "That docs/sdlc file is not in this project.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Open in editor needs the desktop Host.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Select a project folder to open docs/sdlc files.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Cannot open docs/sdlc from shared ~/.grok.",
+  "softwareTeamDlc.openSdlcDocHostError": "Could not open the file: {error}",
 } as const;

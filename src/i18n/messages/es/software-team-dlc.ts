@@ -170,4 +170,35 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Añadir sesión de {role}",
   "softwareTeamDlc.attachedHint":
     "{n} chats de equipo en esta entrega (attach-chat, máx. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline guardado en este proyecto (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Aún no hay archivo de pipeline. El próximo cambio escribe .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Sin escritura Host al proyecto — el pipeline queda solo en la caché de la app.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "El pipeline del proyecto necesita el Host de escritorio. Esta vista no finge guardarlo.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Elige una carpeta de proyecto para guardar el pipeline en el repo.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "No se puede escribir el pipeline en el ~/.grok compartido.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "El archivo de pipeline no se puede leer. Se dejó intacto (copia {file}). Se usa la caché.",
+  "softwareTeamDlc.pipelineFileHostError": "No se pudo guardar el pipeline: {error}",
+  "softwareTeamDlc.deliveryFilter": "Entrega",
+  "softwareTeamDlc.deliveryFilterAll": "Todas las entregas",
+  "softwareTeamDlc.deliveryUnscoped": "Sin grupo",
+  "softwareTeamDlc.roleHistory": "Roles: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Abrir docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Abrir {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Archivo abierto en el editor.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Ruta copiada. El Host no abrió un editor para este archivo.",
+  "softwareTeamDlc.openSdlcDocMissing": "Ese archivo docs/sdlc no está en este proyecto.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Abrir en el editor necesita el Host de escritorio.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Elige una carpeta de proyecto para abrir docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "No se puede abrir docs/sdlc desde el ~/.grok compartido.",
+  "softwareTeamDlc.openSdlcDocHostError": "No se pudo abrir el archivo: {error}",
 } as const;

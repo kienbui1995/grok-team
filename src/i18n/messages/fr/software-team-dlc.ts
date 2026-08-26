@@ -170,4 +170,35 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Ajouter une session {role}",
   "softwareTeamDlc.attachedHint":
     "{n} chats d’équipe sur cette livraison (attach-chat, max. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline enregistré dans ce projet (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Pas encore de fichier pipeline. Le prochain changement écrit .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Pas d’écriture Host vers le projet — le pipeline reste dans le cache de l’app.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "Le pipeline projet nécessite l’Host bureau. Cet aperçu ne prétend pas l’avoir enregistré.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Choisissez un dossier projet pour enregistrer le pipeline dans le dépôt.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Impossible d’écrire le pipeline dans ~/.grok partagé.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Fichier pipeline illisible. Laissé intact (sauvegarde {file}). Cache de l’app utilisé.",
+  "softwareTeamDlc.pipelineFileHostError": "Impossible d’enregistrer le pipeline : {error}",
+  "softwareTeamDlc.deliveryFilter": "Livraison",
+  "softwareTeamDlc.deliveryFilterAll": "Toutes les livraisons",
+  "softwareTeamDlc.deliveryUnscoped": "Sans groupe",
+  "softwareTeamDlc.roleHistory": "Rôles : {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Ouvrir docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Ouvrir {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Fichier ouvert dans l’éditeur.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Chemin copié. L’Host n’a pas ouvert d’éditeur pour ce fichier.",
+  "softwareTeamDlc.openSdlcDocMissing": "Ce fichier docs/sdlc n’est pas dans ce projet.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Ouvrir dans l’éditeur nécessite l’Host bureau.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Choisissez un dossier projet pour ouvrir docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Impossible d’ouvrir docs/sdlc depuis ~/.grok partagé.",
+  "softwareTeamDlc.openSdlcDocHostError": "Impossible d’ouvrir le fichier : {error}",
 } as const;

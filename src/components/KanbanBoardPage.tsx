@@ -41,7 +41,10 @@ import {
 import {
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGES,
+  bindSoftwareTeamPipelineProjectPath,
+  hydrateSoftwareTeamPipelineFromProject,
   kanbanColumnSdlcAliasKey,
+  resolveSoftwareTeamWorkspace,
   softwareTeamRoleById,
   type SoftwareTeamSessionTag,
 } from "@/lib/softwareTeamDlc";
@@ -205,10 +208,28 @@ export function KanbanBoardPage({
     x: number;
     y: number;
   } | null>(null);
+  const pipelineWorkspace = useMemo(
+    () =>
+      resolveSoftwareTeamWorkspace({
+        projects,
+        sessions,
+        currentSessionId,
+        generalWorkspacePath,
+      }),
+    [projects, sessions, currentSessionId, generalWorkspacePath],
+  );
 
   useEffect(() => {
     setPrefs(loadAgentKanbanPrefs(storage));
   }, [storage]);
+
+  useEffect(() => {
+    bindSoftwareTeamPipelineProjectPath(pipelineWorkspace.projectPath);
+    if (!teamEnabled) return;
+    void hydrateSoftwareTeamPipelineFromProject({
+      projectPath: pipelineWorkspace.projectPath,
+    });
+  }, [pipelineWorkspace.projectPath, teamEnabled]);
 
   const commitPrefs = (next: AgentKanbanPrefs) => {
     saveAgentKanbanPrefs(next, storage);

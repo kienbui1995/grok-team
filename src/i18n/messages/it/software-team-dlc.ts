@@ -170,4 +170,35 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Aggiungi sessione {role}",
   "softwareTeamDlc.attachedHint":
     "{n} chat di team in questa consegna (attach-chat, max 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline salvata in questo progetto (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Nessun file pipeline. La prossima modifica scrive .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Nessuna scrittura Host sul progetto — la pipeline resta nella cache dell’app.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "La pipeline di progetto richiede l’Host desktop. Questa anteprima non finge di salvarla.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Scegli una cartella progetto per salvare la pipeline nel repo.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Impossibile scrivere la pipeline in ~/.grok condiviso.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "File pipeline illeggibile. Lasciato intatto (backup {file}). Si usa la cache.",
+  "softwareTeamDlc.pipelineFileHostError": "Impossibile salvare la pipeline: {error}",
+  "softwareTeamDlc.deliveryFilter": "Consegna",
+  "softwareTeamDlc.deliveryFilterAll": "Tutte le consegne",
+  "softwareTeamDlc.deliveryUnscoped": "Senza gruppo",
+  "softwareTeamDlc.roleHistory": "Ruoli: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Apri docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Apri {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "File aperto nell’editor.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Percorso copiato. L’Host non ha aperto un editor per questo file.",
+  "softwareTeamDlc.openSdlcDocMissing": "Quel file docs/sdlc non è in questo progetto.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Aprire nell’editor richiede l’Host desktop.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Scegli una cartella progetto per aprire docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Impossibile aprire docs/sdlc da ~/.grok condiviso.",
+  "softwareTeamDlc.openSdlcDocHostError": "Impossibile aprire il file: {error}",
 } as const;

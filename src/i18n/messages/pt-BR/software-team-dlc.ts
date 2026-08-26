@@ -170,4 +170,35 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.addTeammate": "Adicionar sessão de {role}",
   "softwareTeamDlc.attachedHint":
     "{n} chats da equipe nesta entrega (attach-chat, máx. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline salvo neste projeto (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Ainda sem arquivo de pipeline. A próxima mudança grava .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Sem escrita Host no projeto — o pipeline fica só no cache do app.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "O pipeline do projeto precisa do Host desktop. Esta prévia não finge ter salvo.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Escolha uma pasta de projeto para salvar o pipeline no repositório.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Não é possível gravar o pipeline no ~/.grok compartilhado.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Arquivo de pipeline ilegível. Mantido intacto (backup {file}). Usando o cache do app.",
+  "softwareTeamDlc.pipelineFileHostError": "Não foi possível salvar o pipeline: {error}",
+  "softwareTeamDlc.deliveryFilter": "Entrega",
+  "softwareTeamDlc.deliveryFilterAll": "Todas as entregas",
+  "softwareTeamDlc.deliveryUnscoped": "Sem grupo",
+  "softwareTeamDlc.roleHistory": "Papéis: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Abrir docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Abrir {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Arquivo aberto no editor.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Caminho copiado. O Host não abriu um editor para este arquivo.",
+  "softwareTeamDlc.openSdlcDocMissing": "Esse arquivo docs/sdlc não está neste projeto.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Abrir no editor precisa do Host desktop.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Escolha uma pasta de projeto para abrir docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Não é possível abrir docs/sdlc a partir do ~/.grok compartilhado.",
+  "softwareTeamDlc.openSdlcDocHostError": "Não foi possível abrir o arquivo: {error}",
 } as const;

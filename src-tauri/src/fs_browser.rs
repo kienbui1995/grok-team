@@ -493,7 +493,37 @@ pub fn write_text_file(
         return Err("empty relative path".into());
     }
     let path = lexical_join(&root, &rel_in)?;
+    ensure_allowlisted_create(&path, &rel_in)?;
     write_text_at_path(path, rel_in, content, expected_mtime_ms)
+}
+
+/// `fs_write_file` only updates existing files. Software Works may create a
+/// small allowlist under a trusted project (pipeline SoT + docs/sdlc placeholders).
+fn allow_create_missing_rel(rel: &str) -> bool {
+    matches!(
+        rel,
+        ".grok/software-works.json"
+            | ".grok/software-works.json.bak"
+            | "docs/sdlc/spec.md"
+            | "docs/sdlc/design.md"
+            | "docs/sdlc/review.md"
+    )
+}
+
+fn ensure_allowlisted_create(path: &Path, rel: &str) -> Result<(), String> {
+    if path.is_file() || !allow_create_missing_rel(rel) {
+        return Ok(());
+    }
+    if path.exists() && !path.is_file() {
+        return Err(format!("not a file: {rel}"));
+    }
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|e| format!("create dir: {e}"))?;
+    }
+    if !path.exists() {
+        fs::write(path, b"").map_err(|e| format!("create file: {e}"))?;
+    }
+    Ok(())
 }
 
 /// Write UTF-8 text to an absolute path opened in the resource pane.
@@ -1751,6 +1781,20 @@ mod tests {
         let dir = tempfile_dir();
         let err = write_text_file(dir.to_str().unwrap(), "../x.txt", "nope", None).unwrap_err();
         assert!(err.contains("escape") || err.contains("absolute"), "{err}");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn write_text_creates_allowlisted_software_works_file() {
+        let dir = tempfile_dir();
+        let rel = ".grok/software-works.json";
+        write_text_file(dir.to_str().unwrap(), rel, "{\"ok\":true}\n", None).unwrap();
+        assert_eq!(
+            fs::read_to_string(dir.join(rel)).unwrap(),
+            "{\"ok\":true}\n"
+        );
+        let denied = write_text_file(dir.to_str().unwrap(), "new.txt", "nope", None).unwrap_err();
+        assert!(denied.contains("not a file"), "{denied}");
         let _ = fs::remove_dir_all(&dir);
     }
 

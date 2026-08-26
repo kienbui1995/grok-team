@@ -127,6 +127,8 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "softwareTeamDlc.markQaNote",
       "softwareTeamDlc.startDelivery",
       "softwareTeamDlc.addTeammateGroup",
+      "softwareTeamDlc.pipelineFileOk",
+      "softwareTeamDlc.deliveryFilter",
     ],
     keywords: [
       "software works",
@@ -156,6 +158,8 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "handoff cta",
       "attach-chat",
       "team session",
+      "software-works.json",
+      "project pipeline",
       "软件团队",
       "软件团队 dlc",
       "软件工坊",

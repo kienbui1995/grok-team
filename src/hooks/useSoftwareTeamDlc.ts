@@ -16,6 +16,7 @@ import {
   loadSoftwareTeamPipelineStore,
   persistSoftwareTeamPipeline,
   pipelineItemForSession,
+  queueSoftwareTeamPipelineProjectPersist,
   projectSessionTagsFromPipeline,
   removeSoftwareTeamPipelineItem,
   saveSoftwareTeamDlcEnabled,
@@ -44,6 +45,7 @@ function emitPipelineUi(): void {
 
 function commit(store: SoftwareTeamPipelineStore): SoftwareTeamPipelineStore {
   persistSoftwareTeamPipeline(store);
+  queueSoftwareTeamPipelineProjectPersist(store);
   emitPipelineUi();
   return store;
 }
