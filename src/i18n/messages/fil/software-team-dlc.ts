@@ -201,4 +201,20 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocBlockedHome":
     "Hindi mabuksan ang docs/sdlc mula sa shared ~/.grok.",
   "softwareTeamDlc.openSdlcDocHostError": "Hindi mabuksan ang file: {error}",
+  "softwareTeamDlc.deliveryDetail": "Delivery",
+  "softwareTeamDlc.deliveryDetailHint":
+    "Pamagat, history ng role, note ng Review/QA, susunod na hakbang, docs/sdlc, at session sa slice na ito.",
+  "softwareTeamDlc.openDelivery": "Buksan ang delivery",
+  "softwareTeamDlc.deliverySessions": "Mga session sa delivery na ito",
+  "softwareTeamDlc.deliveryNoSessions": "Wala pang naka-bind na session.",
+  "softwareTeamDlc.activityLog": "Aktibidad",
+  "softwareTeamDlc.activityEmpty": "Wala pang aktibidad.",
+  "softwareTeamDlc.activity.item_added": "Nagdagdag ng work item",
+  "softwareTeamDlc.activity.stage_changed": "Inilipat ang stage",
+  "softwareTeamDlc.activity.handoff": "Ipinasa",
+  "softwareTeamDlc.activity.notes": "Na-update ang mga note",
+  "softwareTeamDlc.activity.delivery_started": "Sinimulan ang delivery na ito",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "Mas bago ang pipeline file ng proyekto — na-update ang board.",
+  "softwareTeamDlc.notesEmpty": "Wala pa",
 } as const;

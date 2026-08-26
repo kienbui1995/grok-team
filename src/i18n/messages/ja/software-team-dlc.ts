@@ -201,4 +201,20 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocBlockedHome":
     "共有の ~/.grok から docs/sdlc は開けません。",
   "softwareTeamDlc.openSdlcDocHostError": "ファイルを開けませんでした: {error}",
+  "softwareTeamDlc.deliveryDetail": "デリバリー",
+  "softwareTeamDlc.deliveryDetailHint":
+    "タイトル、役割履歴、レビュー/QA メモ、次の手順、docs/sdlc、このスライスのセッション。",
+  "softwareTeamDlc.openDelivery": "デリバリーを開く",
+  "softwareTeamDlc.deliverySessions": "このデリバリーのセッション",
+  "softwareTeamDlc.deliveryNoSessions": "まだ紐づくセッションはありません。",
+  "softwareTeamDlc.activityLog": "アクティビティ",
+  "softwareTeamDlc.activityEmpty": "まだ記録がありません。",
+  "softwareTeamDlc.activity.item_added": "作業項目を追加しました",
+  "softwareTeamDlc.activity.stage_changed": "ステージを移動しました",
+  "softwareTeamDlc.activity.handoff": "引き継ぎました",
+  "softwareTeamDlc.activity.notes": "メモを更新しました",
+  "softwareTeamDlc.activity.delivery_started": "このデリバリーを開始しました",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "プロジェクトのパイプラインファイルが新しいため、ボードを更新しました。",
+  "softwareTeamDlc.notesEmpty": "まだありません",
 } as const;

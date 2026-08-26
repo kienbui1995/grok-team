@@ -31,7 +31,10 @@ import {
   type SoftwareTeamSessionTag,
   type SoftwareTeamSessionTagMap,
   addSoftwareTeamPipelineItem,
+  boundSoftwareTeamPipelineProjectPath,
+  reloadSoftwareTeamPipelineIfNewer,
   updateSoftwareTeamPipelineItem,
+  type SoftwareTeamPipelineReload,
 } from "@/lib/softwareTeamDlc";
 import type { AgentKanbanColumnId } from "@/lib/kanbanBoard";
 
@@ -94,6 +97,7 @@ export function useSoftwareTeamPipeline(): {
   applySessionKanbanBoard: (
     placements: ReadonlyArray<{ sessionId: string; column: AgentKanbanColumnId }>,
   ) => void;
+  reloadFromProject: (projectPath?: string | null) => Promise<SoftwareTeamPipelineReload>;
 } {
   const [store, setStore] = useState(loadSoftwareTeamPipelineStore);
 
@@ -188,6 +192,16 @@ export function useSoftwareTeamPipeline(): {
     [],
   );
 
+  const reloadFromProject = useCallback(async (projectPath?: string | null) => {
+    const result = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: projectPath ?? boundSoftwareTeamPipelineProjectPath(),
+    });
+    if (result.ok && result.kind === "replaced") {
+      setStore(result.store);
+    }
+    return result;
+  }, []);
+
   const applySessionKanbanBoard = useCallback(
     (
       placements: ReadonlyArray<{
@@ -218,6 +232,7 @@ export function useSoftwareTeamPipeline(): {
     handoff,
     applySessionKanban,
     applySessionKanbanBoard,
+    reloadFromProject,
   };
 }
 

@@ -201,4 +201,20 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocBlockedHome":
     "Tidak dapat membuka docs/sdlc dari ~/.grok bersama.",
   "softwareTeamDlc.openSdlcDocHostError": "Tidak dapat membuka berkas: {error}",
+  "softwareTeamDlc.deliveryDetail": "Pengiriman",
+  "softwareTeamDlc.deliveryDetailHint":
+    "Judul, riwayat peran, catatan Review/QA, langkah berikutnya, docs/sdlc, dan sesi pada irisan ini.",
+  "softwareTeamDlc.openDelivery": "Buka pengiriman",
+  "softwareTeamDlc.deliverySessions": "Sesi pada pengiriman ini",
+  "softwareTeamDlc.deliveryNoSessions": "Belum ada sesi terikat.",
+  "softwareTeamDlc.activityLog": "Aktivitas",
+  "softwareTeamDlc.activityEmpty": "Belum ada aktivitas.",
+  "softwareTeamDlc.activity.item_added": "Item kerja ditambahkan",
+  "softwareTeamDlc.activity.stage_changed": "Tahap dipindah",
+  "softwareTeamDlc.activity.handoff": "Diserahkan",
+  "softwareTeamDlc.activity.notes": "Catatan diperbarui",
+  "softwareTeamDlc.activity.delivery_started": "Pengiriman ini dimulai",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "Berkas pipeline proyek lebih baru — papan diperbarui.",
+  "softwareTeamDlc.notesEmpty": "Belum ada",
 } as const;

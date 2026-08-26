@@ -201,4 +201,20 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocBlockedHome":
     "Impossible d’ouvrir docs/sdlc depuis ~/.grok partagé.",
   "softwareTeamDlc.openSdlcDocHostError": "Impossible d’ouvrir le fichier : {error}",
+  "softwareTeamDlc.deliveryDetail": "Livraison",
+  "softwareTeamDlc.deliveryDetailHint":
+    "Titre, historique des rôles, notes Revue/QA, prochaine étape, docs/sdlc et sessions de cette tranche.",
+  "softwareTeamDlc.openDelivery": "Ouvrir la livraison",
+  "softwareTeamDlc.deliverySessions": "Sessions de cette livraison",
+  "softwareTeamDlc.deliveryNoSessions": "Aucune session liée pour l’instant.",
+  "softwareTeamDlc.activityLog": "Activité",
+  "softwareTeamDlc.activityEmpty": "Aucune activité pour l’instant.",
+  "softwareTeamDlc.activity.item_added": "Élément ajouté",
+  "softwareTeamDlc.activity.stage_changed": "Étape déplacée",
+  "softwareTeamDlc.activity.handoff": "Passé au rôle suivant",
+  "softwareTeamDlc.activity.notes": "Notes mises à jour",
+  "softwareTeamDlc.activity.delivery_started": "Livraison démarrée",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "Le fichier pipeline du projet est plus récent — tableau mis à jour.",
+  "softwareTeamDlc.notesEmpty": "Pas encore",
 } as const;

@@ -786,6 +786,22 @@ html[data-theme="dark"][data-wallpaper="1"]
   color: var(--text-primary);
 }
 
+.sdlc-studio__activity {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sdlc-studio__activity-item {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
 @media (max-width: 900px) {
   .sdlc-studio__columns {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

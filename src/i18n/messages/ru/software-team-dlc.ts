@@ -201,4 +201,20 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocBlockedHome":
     "Нельзя открыть docs/sdlc из общего ~/.grok.",
   "softwareTeamDlc.openSdlcDocHostError": "Не удалось открыть файл: {error}",
+  "softwareTeamDlc.deliveryDetail": "Поставка",
+  "softwareTeamDlc.deliveryDetailHint":
+    "Название, история ролей, заметки Review/QA, следующий шаг, docs/sdlc и сессии этого среза.",
+  "softwareTeamDlc.openDelivery": "Открыть поставку",
+  "softwareTeamDlc.deliverySessions": "Сессии этой поставки",
+  "softwareTeamDlc.deliveryNoSessions": "Пока нет привязанных сессий.",
+  "softwareTeamDlc.activityLog": "Активность",
+  "softwareTeamDlc.activityEmpty": "Пока нет записей.",
+  "softwareTeamDlc.activity.item_added": "Добавлен элемент",
+  "softwareTeamDlc.activity.stage_changed": "Этап изменён",
+  "softwareTeamDlc.activity.handoff": "Передано дальше",
+  "softwareTeamDlc.activity.notes": "Заметки обновлены",
+  "softwareTeamDlc.activity.delivery_started": "Эта поставка начата",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "Файл пайплайна проекта новее — доска обновлена.",
+  "softwareTeamDlc.notesEmpty": "Пока нет",
 } as const;

@@ -201,4 +201,20 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocBlockedHome":
     "பகிரப்பட்ட ~/.grok இலிருந்து docs/sdlc திறக்க முடியாது.",
   "softwareTeamDlc.openSdlcDocHostError": "கோப்பை திறக்க முடியவில்லை: {error}",
+  "softwareTeamDlc.deliveryDetail": "விநியோகம்",
+  "softwareTeamDlc.deliveryDetailHint":
+    "தலைப்பு, பங்கு வரலாறு, Review/QA குறிப்புகள், அடுத்த படி, docs/sdlc, இந்த துண்டின் அமர்வுகள்.",
+  "softwareTeamDlc.openDelivery": "விநியோகத்தை திற",
+  "softwareTeamDlc.deliverySessions": "இந்த விநியோகத்தின் அமர்வுகள்",
+  "softwareTeamDlc.deliveryNoSessions": "இணைக்கப்பட்ட அமர்வுகள் இல்லை.",
+  "softwareTeamDlc.activityLog": "செயல்பாடு",
+  "softwareTeamDlc.activityEmpty": "இன்னும் செயல்பாடு இல்லை.",
+  "softwareTeamDlc.activity.item_added": "பணி உருப்படி சேர்க்கப்பட்டது",
+  "softwareTeamDlc.activity.stage_changed": "நிலை மாற்றப்பட்டது",
+  "softwareTeamDlc.activity.handoff": "ஒப்படைக்கப்பட்டது",
+  "softwareTeamDlc.activity.notes": "குறிப்புகள் புதுப்பிக்கப்பட்டன",
+  "softwareTeamDlc.activity.delivery_started": "இந்த விநியோகம் தொடங்கப்பட்டது",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "திட்டப் பைப்லைன் கோப்பு புதியது — பலகை புதுப்பிக்கப்பட்டது.",
+  "softwareTeamDlc.notesEmpty": "இன்னும் இல்லை",
 } as const;

@@ -27,6 +27,13 @@ import {
   recordSoftwareTeamRoleVisit,
   softwareTeamShipGate,
 } from "./shipGate";
+import {
+  appendSoftwareTeamActivity,
+  parseSoftwareTeamActivityList,
+  type SoftwareTeamActivityEvent,
+  type SoftwareTeamActivityNoteKind,
+  type SoftwareTeamActivityType,
+} from "./activity";
 
 export const SOFTWARE_TEAM_DLC_PIPELINE_KEY = "grok.softwareTeamDlc.pipeline";
 
@@ -67,6 +74,8 @@ export type SoftwareTeamPipelineItem = {
 
 export type SoftwareTeamPipelineStore = {
   items: SoftwareTeamPipelineItem[];
+  /** SoT v2. Empty on v1 files and legacy localStorage caches. */
+  activity: SoftwareTeamActivityEvent[];
 };
 
 export type SoftwareTeamPipelineItemDraft = {
@@ -102,7 +111,56 @@ export function isSoftwareTeamStageSource(
 }
 
 export function createEmptySoftwareTeamPipelineStore(): SoftwareTeamPipelineStore {
-  return { items: [] };
+  return { items: [], activity: [] };
+}
+
+export function softwareTeamPipelineActivity(
+  store: SoftwareTeamPipelineStore,
+): SoftwareTeamActivityEvent[] {
+  return Array.isArray(store.activity) ? store.activity : [];
+}
+
+function withItems(
+  store: SoftwareTeamPipelineStore,
+  items: SoftwareTeamPipelineItem[],
+): SoftwareTeamPipelineStore {
+  return { items, activity: softwareTeamPipelineActivity(store) };
+}
+
+export function appendSoftwareTeamPipelineActivity(
+  store: SoftwareTeamPipelineStore,
+  event: SoftwareTeamActivityEvent,
+): SoftwareTeamPipelineStore {
+  return {
+    items: store.items,
+    activity: appendSoftwareTeamActivity(
+      softwareTeamPipelineActivity(store),
+      event,
+    ),
+  };
+}
+
+function activityDraft(
+  type: SoftwareTeamActivityType,
+  item: Pick<
+    SoftwareTeamPipelineItem,
+    "id" | "deliveryId" | "roleId" | "stageId"
+  >,
+  extra?: {
+    at?: number;
+    noteKind?: SoftwareTeamActivityNoteKind;
+  },
+): SoftwareTeamActivityEvent {
+  const event: SoftwareTeamActivityEvent = {
+    at: extra?.at ?? Date.now(),
+    type,
+    deliveryId: item.deliveryId,
+    itemId: item.id,
+    roleId: item.roleId,
+    stageId: item.stageId,
+  };
+  if (extra?.noteKind) event.noteKind = extra.noteKind;
+  return event;
 }
 
 export function newSoftwareTeamPipelineItemId(): string {
@@ -207,13 +265,19 @@ export function parseSoftwareTeamPipelineStore(
     seen.add(item.id);
     items.push(item);
   }
-  return { items };
+  return {
+    items,
+    activity: parseSoftwareTeamActivityList(rec.activity),
+  };
 }
 
 export function serializeSoftwareTeamPipelineStore(
   store: SoftwareTeamPipelineStore,
 ): string {
-  return JSON.stringify({ items: store.items });
+  return JSON.stringify({
+    items: store.items,
+    activity: softwareTeamPipelineActivity(store),
+  });
 }
 
 export function hydratePipelineFromSessionTags(
@@ -234,7 +298,7 @@ export function hydratePipelineFromSessionTags(
     });
     if (item) items.push(item);
   }
-  return { items };
+  return { items, activity: [] };
 }
 
 export function loadSoftwareTeamPipelineStore(
@@ -341,11 +405,11 @@ function replaceItem(
   next: SoftwareTeamPipelineItem,
 ): SoftwareTeamPipelineStore {
   const idx = store.items.findIndex((item) => item.id === next.id);
-  if (idx < 0) return { items: [...store.items, next] };
+  if (idx < 0) return withItems(store, [...store.items, next]);
   if (store.items[idx] === next) return store;
   const items = store.items.slice();
   items[idx] = next;
-  return { items };
+  return withItems(store, items);
 }
 
 export function addSoftwareTeamPipelineItem(
@@ -358,13 +422,31 @@ export function addSoftwareTeamPipelineItem(
     created.stageId === "ship" && !softwareTeamShipGate(created).ok
       ? { ...created, stageId: "review" as const }
       : created;
-  let next: SoftwareTeamPipelineStore = {
-    items: store.items.filter((existing) => existing.id !== item.id),
-  };
+  const isNewDelivery =
+    Boolean(item.deliveryId) &&
+    !store.items.some(
+      (existing) =>
+        existing.id !== item.id && existing.deliveryId === item.deliveryId,
+    );
+  let next = withItems(
+    store,
+    store.items.filter((existing) => existing.id !== item.id),
+  );
   if (item.sessionId) {
     next = unbindOtherSessions(next, item.id, item.sessionId);
   }
-  return { items: [...next.items, item] };
+  next = withItems(next, [...next.items, item]);
+  next = appendSoftwareTeamPipelineActivity(
+    next,
+    activityDraft("item_added", item, { at: item.updatedAt }),
+  );
+  if (isNewDelivery) {
+    next = appendSoftwareTeamPipelineActivity(
+      next,
+      activityDraft("delivery_started", item, { at: item.updatedAt }),
+    );
+  }
+  return next;
 }
 
 function unbindOtherSessions(
@@ -380,7 +462,7 @@ function unbindOtherSessions(
     changed = true;
     return { ...item, sessionId: "", updatedAt: Date.now() };
   });
-  return changed ? { items } : store;
+  return changed ? withItems(store, items) : store;
 }
 
 export function updateSoftwareTeamPipelineItem(
@@ -460,6 +542,22 @@ export function updateSoftwareTeamPipelineItem(
   if (next.sessionId) {
     out = unbindOtherSessions(out, next.id, next.sessionId);
   }
+  if (next.stageId !== prev.stageId && next.stageSource !== "handoff") {
+    out = appendSoftwareTeamPipelineActivity(
+      out,
+      activityDraft("stage_changed", next, { at: now }),
+    );
+  }
+  if (next.reviewNote !== prev.reviewNote || next.qaNote !== prev.qaNote) {
+    const noteKind: SoftwareTeamActivityNoteKind =
+      next.qaNote !== prev.qaNote && next.reviewNote === prev.reviewNote
+        ? "qa"
+        : "review";
+    out = appendSoftwareTeamPipelineActivity(
+      out,
+      activityDraft("notes", next, { at: now, noteKind }),
+    );
+  }
   return out;
 }
 
@@ -526,7 +624,10 @@ export function removeSoftwareTeamPipelineItem(
 ): SoftwareTeamPipelineStore {
   const id = itemId.trim();
   if (!id || !store.items.some((item) => item.id === id)) return store;
-  return { items: store.items.filter((item) => item.id !== id) };
+  return withItems(
+    store,
+    store.items.filter((item) => item.id !== id),
+  );
 }
 
 /**
@@ -591,7 +692,14 @@ export function applySessionKanbanToPipeline(
   if (!item) return store;
   const next = applySessionKanbanToItem(item, column, now);
   if (next === item) return store;
-  return replaceItem(store, next);
+  let out = replaceItem(store, next);
+  if (next.stageId !== item.stageId) {
+    out = appendSoftwareTeamPipelineActivity(
+      out,
+      activityDraft("stage_changed", next, { at: now }),
+    );
+  }
+  return out;
 }
 
 export function applySessionKanbanBoardToPipeline(

@@ -50,6 +50,7 @@ export {
   SOFTWARE_TEAM_DLC_PIPELINE_KEY,
   SOFTWARE_TEAM_STAGE_SOURCES,
   addSoftwareTeamPipelineItem,
+  appendSoftwareTeamPipelineActivity,
   applySessionKanbanBoardToPipeline,
   applySessionKanbanToItem,
   applySessionKanbanToPipeline,
@@ -75,6 +76,7 @@ export {
   serializeSoftwareTeamPipelineStore,
   setPipelineItemRole,
   setPipelineItemStage,
+  softwareTeamPipelineActivity,
   stageFromSessionKanbanColumn,
   updateSoftwareTeamPipelineItem,
   type SoftwareTeamPipelineItem,
@@ -82,6 +84,22 @@ export {
   type SoftwareTeamPipelineStore,
   type SoftwareTeamStageSource,
 } from "./pipeline";
+
+export {
+  SOFTWARE_TEAM_ACTIVITY_MAX,
+  SOFTWARE_TEAM_ACTIVITY_NOTE_KINDS,
+  SOFTWARE_TEAM_ACTIVITY_TYPES,
+  appendSoftwareTeamActivity,
+  isSoftwareTeamActivityNoteKind,
+  isSoftwareTeamActivityType,
+  parseSoftwareTeamActivityEvent,
+  parseSoftwareTeamActivityList,
+  softwareTeamActivityForDelivery,
+  softwareTeamActivityMessageKey,
+  type SoftwareTeamActivityEvent,
+  type SoftwareTeamActivityNoteKind,
+  type SoftwareTeamActivityType,
+} from "./activity";
 
 export {
   SOFTWARE_TEAM_HANDOFF_CHAIN,
@@ -218,18 +236,23 @@ export {
   SOFTWARE_TEAM_PIPELINE_FILE_EVENT,
   SOFTWARE_TEAM_PIPELINE_FILE_REASONS,
   SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
+  SOFTWARE_TEAM_PIPELINE_RELOAD_KINDS,
   SOFTWARE_TEAM_PIPELINE_SCHEMA,
   SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION,
+  SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION_MIN,
   bindSoftwareTeamPipelineProjectPath,
   boundSoftwareTeamPipelineProjectPath,
   defaultSoftwareTeamPipelineFileHost,
   hydrateSoftwareTeamPipelineFromProject,
+  lastSoftwareTeamPipelineFileMtimeMs,
   lastSoftwareTeamPipelineFileStatus,
   parseSoftwareTeamPipelineFileDoc,
   pipelineFileItemsEqual,
   planSoftwareTeamPipelineFileWrite,
   queueSoftwareTeamPipelineProjectPersist,
   readSoftwareTeamPipelineFile,
+  reloadSoftwareTeamPipelineIfNewer,
+  resetSoftwareTeamPipelineFileSeenState,
   serializeSoftwareTeamPipelineFile,
   softwareTeamPipelineFileMessageKey,
   writeSoftwareTeamPipelineFile,
@@ -239,6 +262,8 @@ export {
   type SoftwareTeamPipelineFileRead,
   type SoftwareTeamPipelineFileReason,
   type SoftwareTeamPipelineFileWrite,
+  type SoftwareTeamPipelineReload,
+  type SoftwareTeamPipelineReloadKind,
 } from "./pipelineFile";
 
 export {
@@ -251,6 +276,18 @@ export {
   type SoftwareTeamDeliveryFilterId,
   type SoftwareTeamDeliveryGroup,
 } from "./deliveryFilter";
+
+export {
+  buildSoftwareTeamDeliveryDetail,
+  decideSoftwareTeamDeliveryNextCta,
+  softwareTeamDeliveryDetailItems,
+  softwareTeamSessionsForDelivery,
+  unionSoftwareTeamDeliveryRoleHistory,
+  type SoftwareTeamDeliveryDetail,
+  type SoftwareTeamDeliveryDetailTarget,
+  type SoftwareTeamDeliveryNote,
+  type SoftwareTeamDeliverySessionRef,
+} from "./deliveryDetail";
 
 export {
   SOFTWARE_TEAM_SDLC_DOC_OPEN_REASONS,

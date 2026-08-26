@@ -78,18 +78,25 @@ import {
   SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
   SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
   SOFTWARE_TEAM_PIPELINE_SCHEMA,
+  SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION,
   filterSoftwareTeamItemsByDelivery,
   listSoftwareTeamDeliveryGroups,
   openSoftwareTeamSdlcDoc,
+  parseSoftwareTeamActivityList,
   parseSoftwareTeamPipelineFileDoc,
+  parseSoftwareTeamPipelineStore,
   planSoftwareTeamPipelineFileWrite,
   readSoftwareTeamPipelineFile,
+  reloadSoftwareTeamPipelineIfNewer,
+  resetSoftwareTeamPipelineFileSeenState,
   resolveSoftwareTeamDeliveryId,
   serializeSoftwareTeamPipelineFile,
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
   softwareTeamRoleHistoryIds,
   writeSoftwareTeamPipelineFile,
+  buildSoftwareTeamDeliveryDetail,
+  decideSoftwareTeamDeliveryNextCta,
   softwareTeamLaunchItemPatch,
   softwareTeamWriterShipWritesFiles,
   writeSoftwareTeamWorkspaceBootstrap,
@@ -112,6 +119,40 @@ function memoryStore(initial?: Record<string, string>) {
       map.set(k, String(v));
     },
     dump: () => map,
+  };
+}
+
+function fileHost(opts?: {
+  desktop?: boolean;
+  files?: Record<string, string>;
+  mtimes?: Record<string, number>;
+  failWrite?: string;
+}) {
+  const files = { ...(opts?.files ?? {}) };
+  const mtimes = { ...(opts?.mtimes ?? {}) };
+  const writes: string[] = [];
+  return {
+    writes,
+    files,
+    mtimes,
+    host: {
+      isDesktopHost: () => opts?.desktop !== false,
+      readFile: async (_p: string, relative: string) => {
+        if (relative in files) {
+          return {
+            text: files[relative],
+            mtimeMs: mtimes[relative] ?? 1,
+          };
+        }
+        return { error: `not a file: ${relative}` };
+      },
+      writeFile: async (_p: string, relative: string, content: string) => {
+        writes.push(relative);
+        if (opts?.failWrite === relative) throw new Error("write boom");
+        files[relative] = content;
+        mtimes[relative] = (mtimes[relative] ?? 0) + 10;
+      },
+    },
   };
 }
 
@@ -1507,30 +1548,9 @@ describe("Software Works attach-chat seed (max 3)", () => {
 });
 
 describe("Software Works project pipeline file SoT", () => {
-  function fileHost(opts?: {
-    desktop?: boolean;
-    files?: Record<string, string>;
-    failWrite?: string;
-  }) {
-    const files = { ...(opts?.files ?? {}) };
-    const writes: string[] = [];
-    return {
-      writes,
-      files,
-      host: {
-        isDesktopHost: () => opts?.desktop !== false,
-        readFile: async (_p: string, relative: string) => {
-          if (relative in files) return { text: files[relative] };
-          return { error: `not a file: ${relative}` };
-        },
-        writeFile: async (_p: string, relative: string, content: string) => {
-          writes.push(relative);
-          if (opts?.failWrite === relative) throw new Error("write boom");
-          files[relative] = content;
-        },
-      },
-    };
-  }
+  afterEach(() => {
+    resetSoftwareTeamPipelineFileSeenState();
+  });
 
   it("refuses shared ~/.grok and does not write", async () => {
     const { host, writes } = fileHost();
@@ -1562,7 +1582,8 @@ describe("Software Works project pipeline file SoT", () => {
     );
     const text = serializeSoftwareTeamPipelineFile(store, 99);
     expect(text).toContain(SOFTWARE_TEAM_PIPELINE_SCHEMA);
-    expect(text).toContain('"version": 1');
+    expect(text).toContain(`"version": ${SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION}`);
+    expect(text).toContain("activity");
     const parsed = parseSoftwareTeamPipelineFileDoc(text);
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) return;
@@ -1729,5 +1750,231 @@ describe("Software Team DLC slash extras", () => {
     expect(on.skills.find((s) => s.name === "team-product")?.kind).toBe(
       "skill",
     );
+  });
+});
+
+describe("Software Works activity + delivery detail + reload", () => {
+  afterEach(() => {
+    resetSoftwareTeamPipelineFileSeenState();
+  });
+
+  it("appends activity on add, stage, notes, handoff, and start delivery", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "act-1",
+      roleId: "product",
+      title: "Billing",
+      deliveryId: "del-act",
+      updatedAt: 10,
+    });
+    expect(store.activity.map((e) => e.type)).toEqual([
+      "item_added",
+      "delivery_started",
+    ]);
+    store = setPipelineItemStage(store, "act-1", "design", 11);
+    expect(store.activity.map((e) => e.type)).toContain("stage_changed");
+    store = updateSoftwareTeamPipelineItem(
+      store,
+      "act-1",
+      { reviewNote: "nits only" },
+      12,
+    );
+    expect(store.activity.some((e) => e.type === "notes" && e.noteKind === "review")).toBe(
+      true,
+    );
+    const handed = applySoftwareTeamHandoffToStore(store, "act-1", 13);
+    expect(handed.result?.kind).toBe("advanced");
+    expect(handed.store.activity.some((e) => e.type === "handoff")).toBe(true);
+    expect(handed.store.activity.every((e) => e.deliveryId === "del-act")).toBe(
+      true,
+    );
+  });
+
+  it("hydrates v1 files and caches without activity; skips unknown types", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "legacy-1",
+      roleId: "engineer",
+      title: "Auth",
+      deliveryId: "d-legacy",
+    })!;
+    const v1 = parseSoftwareTeamPipelineFileDoc({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: 1,
+      updatedAt: 1,
+      items: [item],
+    });
+    expect(v1.ok).toBe(true);
+    if (!v1.ok) return;
+    expect(v1.version).toBe(1);
+    expect(v1.store.items[0]?.title).toBe("Auth");
+    expect(v1.store.activity).toEqual([]);
+    const cache = parseSoftwareTeamPipelineStore(
+      JSON.stringify({ items: [item] }),
+    );
+    expect(cache.activity).toEqual([]);
+    expect(cache.items[0]?.id).toBe("legacy-1");
+    expect(
+      parseSoftwareTeamActivityList([
+        { at: 1, type: "item_added", deliveryId: "d", itemId: "legacy-1" },
+        { at: 2, type: "future_kind", deliveryId: "d", itemId: "legacy-1" },
+        { at: "bad", type: "notes" },
+      ]).map((e) => e.type),
+    ).toEqual(["item_added"]);
+  });
+
+  it("builds a delivery detail from filter, notes, sessions, and next CTA", () => {
+    const a = createSoftwareTeamPipelineItem({
+      id: "det-a",
+      roleId: "reviewer",
+      title: "Billing",
+      deliveryId: "d-bill",
+      sessionId: "sess-prod",
+      reviewNote: "must-fix auth",
+      roleHistory: ["product", "engineer", "reviewer"],
+      sessionDonePending: true,
+    })!;
+    const b = createSoftwareTeamPipelineItem({
+      id: "det-b",
+      roleId: "qa",
+      title: "Billing",
+      deliveryId: "d-bill",
+      sessionId: "sess-qa",
+      qaNote: "login passes",
+      roleHistory: ["qa"],
+    })!;
+    const other = createSoftwareTeamPipelineItem({
+      id: "det-c",
+      roleId: "product",
+      title: "Other",
+      deliveryId: "d-other",
+      sessionId: "sess-other",
+    })!;
+    const detail = buildSoftwareTeamDeliveryDetail({
+      items: [a, b, other],
+      activity: [
+        {
+          at: 1,
+          type: "delivery_started",
+          deliveryId: "d-bill",
+          itemId: "det-a",
+        },
+      ],
+      sessions: [
+        { id: "sess-prod", title: "Product chat" },
+        { id: "sess-qa", title: "QA chat" },
+        { id: "sess-other", title: "Ignore me" },
+      ],
+      target: { kind: "delivery", deliveryId: "d-bill", focusItemId: "det-a" },
+    });
+    expect(detail?.title).toBe("Billing");
+    expect(detail?.items.map((i) => i.id)).toEqual(["det-a", "det-b"]);
+    expect(detail?.roleHistory).toEqual(["product", "engineer", "reviewer", "qa"]);
+    expect(detail?.reviewNotes.map((n) => n.text)).toEqual(["must-fix auth"]);
+    expect(detail?.qaNotes.map((n) => n.text)).toEqual(["login passes"]);
+    expect(detail?.sessions.map((s) => s.sessionId)).toEqual([
+      "sess-prod",
+      "sess-qa",
+    ]);
+    expect(detail?.activity).toHaveLength(1);
+    expect(detail?.cta.kind).toBe("handoff");
+    expect(decideSoftwareTeamDeliveryNextCta(a).kind).toBe("handoff");
+    expect(
+      buildSoftwareTeamDeliveryDetail({
+        items: [a, b, other],
+        target: { kind: "delivery", deliveryId: "missing" },
+      }),
+    ).toBeNull();
+  });
+
+  it("reloads when the project file is newer and keeps cache on parse fail", async () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "rel-1",
+      roleId: "product",
+      title: "First",
+      deliveryId: "d-rel",
+    })!;
+    const v1 = JSON.stringify({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: 1,
+      updatedAt: 1,
+      items: [item],
+    });
+    const { host, files, mtimes } = fileHost({
+      files: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: v1 },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: 10 },
+    });
+    const storage = memoryStore();
+    persistSoftwareTeamPipeline(createEmptySoftwareTeamPipelineStore(), storage);
+    const first = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(first).toMatchObject({ ok: true, kind: "replaced" });
+    if (!first.ok || first.kind !== "replaced") return;
+    expect(first.store.items[0]?.title).toBe("First");
+    expect(first.store.activity).toEqual([]);
+
+    const same = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: first.store,
+    });
+    expect(same).toMatchObject({ ok: true, kind: "unchanged" });
+
+    const newer = createSoftwareTeamPipelineItem({
+      id: "rel-1",
+      roleId: "product",
+      title: "Second",
+      deliveryId: "d-rel",
+    })!;
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = JSON.stringify({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: 2,
+      updatedAt: 2,
+      items: [newer],
+      activity: [
+        {
+          at: 2,
+          type: "item_added",
+          deliveryId: "d-rel",
+          itemId: "rel-1",
+        },
+      ],
+    });
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    const replaced = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: first.store,
+    });
+    expect(replaced).toMatchObject({ ok: true, kind: "replaced" });
+    if (!replaced.ok || replaced.kind !== "replaced") return;
+    expect(replaced.store.items[0]?.title).toBe("Second");
+    expect(replaced.store.activity[0]?.type).toBe("item_added");
+
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = "{not-json";
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 120;
+    const cacheBefore = loadSoftwareTeamPipelineStore(storage);
+    const failed = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: cacheBefore,
+    });
+    expect(failed).toMatchObject({ ok: false, kind: "parse_failed" });
+    expect(loadSoftwareTeamPipelineStore(storage).items[0]?.title).toBe("Second");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toBe("{not-json");
+  });
+
+  it("reload refuses shared ~/.grok", async () => {
+    const { host, writes } = fileHost();
+    const result = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/home/u/.grok",
+      host,
+    });
+    expect(result).toMatchObject({ ok: false, kind: "blocked_shared_home" });
+    expect(writes).toEqual([]);
   });
 });

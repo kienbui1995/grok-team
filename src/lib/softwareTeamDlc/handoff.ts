@@ -12,6 +12,7 @@ import {
 import type { SoftwareTeamSdlcStageId } from "./sdlc";
 import { softwareTeamRoleStarterPrompt } from "./pack";
 import {
+  appendSoftwareTeamPipelineActivity,
   pipelineItemById,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamPipelineStore,
@@ -200,21 +201,29 @@ export function applySoftwareTeamHandoffToStore(
   if (!prev) return { store, result: null };
   const result = applySoftwareTeamHandoff(prev, now);
   if (result.kind === "done") return { store, result };
+  const next = updateSoftwareTeamPipelineItem(
+    store,
+    itemId,
+    {
+      roleId: result.item.roleId,
+      stageId: result.item.stageId,
+      roleHistory: result.item.roleHistory,
+      reviewNote: result.item.reviewNote,
+      qaNote: result.item.qaNote,
+      sessionDonePending: false,
+      stageSource: "handoff",
+    },
+    now,
+  );
   return {
-    store: updateSoftwareTeamPipelineItem(
-      store,
-      itemId,
-      {
-        roleId: result.item.roleId,
-        stageId: result.item.stageId,
-        roleHistory: result.item.roleHistory,
-        reviewNote: result.item.reviewNote,
-        qaNote: result.item.qaNote,
-        sessionDonePending: false,
-        stageSource: "handoff",
-      },
-      now,
-    ),
+    store: appendSoftwareTeamPipelineActivity(next, {
+      at: now,
+      type: "handoff",
+      deliveryId: result.item.deliveryId,
+      itemId: result.item.id,
+      roleId: result.item.roleId,
+      stageId: result.item.stageId,
+    }),
     result,
   };
 }

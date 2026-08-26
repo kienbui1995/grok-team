@@ -4,13 +4,22 @@
  * localStorage remains a cache. With Host + a real project folder the board
  * reads/writes this file. Never writes shared `~/.grok`. Parse failure
  * refuses overwrite (optional `.bak`) so unknown items are not wiped.
+ *
+ * Schema v1 is still readable (no `activity`). Writes are v2. There is no Host
+ * fs-watch API — Studio reloads on open / window focus / visibility using
+ * `mtimeMs` from `fsReadFile`.
  */
 
 import * as api from "@/lib/api";
 import type { MessageKey } from "@/i18n";
 import { isSoftwareTeamSharedHomePath } from "./delivery";
 import {
+  parseSoftwareTeamActivityList,
+  type SoftwareTeamActivityEvent,
+} from "./activity";
+import {
   createEmptySoftwareTeamPipelineStore,
+  loadSoftwareTeamPipelineStore,
   parseSoftwareTeamPipelineItem,
   persistSoftwareTeamPipeline,
   type SoftwareTeamPipelineItem,
@@ -22,7 +31,9 @@ export const SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE =
 export const SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE =
   ".grok/software-works.json.bak";
 export const SOFTWARE_TEAM_PIPELINE_SCHEMA = "software-works.pipeline";
-export const SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION = 1;
+export const SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION = 2;
+/** Oldest file version this reader still hydrates. */
+export const SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION_MIN = 1;
 
 export const SOFTWARE_TEAM_PIPELINE_FILE_REASONS = [
   "ok_project",
@@ -43,7 +54,11 @@ export type SoftwareTeamPipelineFileHost = {
   readFile: (
     projectPath: string,
     relative: string,
-  ) => Promise<{ error?: string | null; text?: string | null }>;
+  ) => Promise<{
+    error?: string | null;
+    text?: string | null;
+    mtimeMs?: number | null;
+  }>;
   writeFile: (
     projectPath: string,
     relative: string,
@@ -56,6 +71,7 @@ export type SoftwareTeamPipelineFileDoc = {
   version: number;
   updatedAt: number;
   items: SoftwareTeamPipelineItem[];
+  activity: SoftwareTeamActivityEvent[];
 };
 
 export type SoftwareTeamPipelineFileParse =
@@ -68,6 +84,7 @@ export type SoftwareTeamPipelineFileRead =
       reason: Extract<SoftwareTeamPipelineFileReason, "ok_project" | "missing">;
       store: SoftwareTeamPipelineStore | null;
       raw: string;
+      mtimeMs?: number | null;
     }
   | {
       ok: false;
@@ -98,6 +115,8 @@ export type SoftwareTeamPipelineFileWrite =
 let boundProjectPath: string | null = null;
 let lastFileStatus: SoftwareTeamPipelineFileWrite | SoftwareTeamPipelineFileRead | null =
   null;
+let lastSeenMtimeMs: number | null = null;
+let lastSeenFingerprint: string | null = null;
 
 export const SOFTWARE_TEAM_PIPELINE_FILE_EVENT =
   "grok-software-team-dlc-pipeline-file";
@@ -119,6 +138,32 @@ export function lastSoftwareTeamPipelineFileStatus():
   | SoftwareTeamPipelineFileRead
   | null {
   return lastFileStatus;
+}
+
+export function lastSoftwareTeamPipelineFileMtimeMs(): number | null {
+  return lastSeenMtimeMs;
+}
+
+export function resetSoftwareTeamPipelineFileSeenState(): void {
+  lastSeenMtimeMs = null;
+  lastSeenFingerprint = null;
+}
+
+function storeFingerprint(store: SoftwareTeamPipelineStore): string {
+  return JSON.stringify({
+    items: store.items,
+    activity: store.activity ?? [],
+  });
+}
+
+function rememberSeen(
+  store: SoftwareTeamPipelineStore,
+  mtimeMs?: number | null,
+): void {
+  lastSeenFingerprint = storeFingerprint(store);
+  if (typeof mtimeMs === "number" && Number.isFinite(mtimeMs)) {
+    lastSeenMtimeMs = mtimeMs;
+  }
 }
 
 function emitFileStatus(
@@ -207,6 +252,7 @@ export function serializeSoftwareTeamPipelineFile(
     version: SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION,
     updatedAt: now,
     items: store.items,
+    activity: store.activity ?? [],
   };
   return `${JSON.stringify(doc, null, 2)}\n`;
 }
@@ -218,7 +264,11 @@ export function parseSoftwareTeamPipelineFileDoc(
   if (typeof raw === "string") {
     const text = raw.trim();
     if (!text) {
-      return { ok: true, store: createEmptySoftwareTeamPipelineStore(), version: 1 };
+      return {
+        ok: true,
+        store: createEmptySoftwareTeamPipelineStore(),
+        version: SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION_MIN,
+      };
     }
     try {
       data = JSON.parse(text) as unknown;
@@ -236,8 +286,11 @@ export function parseSoftwareTeamPipelineFileDoc(
   const version =
     typeof rec.version === "number" && Number.isFinite(rec.version)
       ? rec.version
-      : 1;
-  if (version > SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION) {
+      : SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION_MIN;
+  if (
+    version < SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION_MIN ||
+    version > SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION
+  ) {
     return { ok: false, reason: "parse_fail" };
   }
   if (!Array.isArray(rec.items)) {
@@ -251,33 +304,50 @@ export function parseSoftwareTeamPipelineFileDoc(
     seen.add(item.id);
     items.push(item);
   }
-  return { ok: true, store: { items }, version };
+  return {
+    ok: true,
+    store: {
+      items,
+      activity: parseSoftwareTeamActivityList(rec.activity),
+    },
+    version,
+  };
 }
 
 export function pipelineFileItemsEqual(
   a: SoftwareTeamPipelineStore,
   b: SoftwareTeamPipelineStore,
 ): boolean {
-  if (a.items.length !== b.items.length) return false;
-  return JSON.stringify(a.items) === JSON.stringify(b.items);
+  return storeFingerprint(a) === storeFingerprint(b);
 }
 
 async function readRaw(
   host: SoftwareTeamPipelineFileHost,
   projectPath: string,
   relative: string,
-): Promise<{ text: string | null; missing: boolean; error?: string }> {
+): Promise<{
+  text: string | null;
+  missing: boolean;
+  error?: string;
+  mtimeMs?: number | null;
+}> {
   try {
     const read = await host.readFile(projectPath, relative);
+    const mtimeMs =
+      typeof read.mtimeMs === "number" && Number.isFinite(read.mtimeMs)
+        ? read.mtimeMs
+        : null;
     if (read.error) {
       const err = read.error.trim();
       if (/not a file|no such|not found|missing/i.test(err)) {
-        return { text: null, missing: true };
+        return { text: null, missing: true, mtimeMs };
       }
-      return { text: null, missing: false, error: err };
+      return { text: null, missing: false, error: err, mtimeMs };
     }
-    if (typeof read.text === "string") return { text: read.text, missing: false };
-    return { text: null, missing: true };
+    if (typeof read.text === "string") {
+      return { text: read.text, missing: false, mtimeMs };
+    }
+    return { text: null, missing: true, mtimeMs };
   } catch (err) {
     const error =
       err instanceof Error && err.message.trim()
@@ -317,6 +387,7 @@ export async function readSoftwareTeamPipelineFile(input: {
       reason: "missing",
       store: null,
       raw: "",
+      mtimeMs: raw.mtimeMs ?? null,
     };
     emitFileStatus(result);
     return result;
@@ -357,7 +428,9 @@ export async function readSoftwareTeamPipelineFile(input: {
     reason: "ok_project",
     store: parsed.store,
     raw: raw.text,
+    mtimeMs: raw.mtimeMs ?? null,
   };
+  rememberSeen(parsed.store, raw.mtimeMs);
   emitFileStatus(result);
   return result;
 }
@@ -400,6 +473,7 @@ export async function writeSoftwareTeamPipelineFile(input: {
       return fail;
     }
     if (pipelineFileItemsEqual(parsed.store, input.store)) {
+      rememberSeen(input.store, existing.mtimeMs);
       const skip: SoftwareTeamPipelineFileWrite = {
         ok: true,
         reason: "ok_project",
@@ -415,6 +489,7 @@ export async function writeSoftwareTeamPipelineFile(input: {
       SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
       serializeSoftwareTeamPipelineFile(input.store, input.now),
     );
+    rememberSeen(input.store, input.now ?? Date.now());
     const ok: SoftwareTeamPipelineFileWrite = { ok: true, reason: "ok_project" };
     emitFileStatus(ok);
     return ok;
@@ -455,4 +530,118 @@ export function queueSoftwareTeamPipelineProjectPersist(
     return;
   }
   void writeSoftwareTeamPipelineFile({ projectPath, store, host });
+}
+
+export const SOFTWARE_TEAM_PIPELINE_RELOAD_KINDS = [
+  "replaced",
+  "unchanged",
+  "missing",
+  "parse_failed",
+  "need_host",
+  "need_project",
+  "blocked_shared_home",
+  "host_error",
+] as const;
+
+export type SoftwareTeamPipelineReloadKind =
+  (typeof SOFTWARE_TEAM_PIPELINE_RELOAD_KINDS)[number];
+
+export type SoftwareTeamPipelineReload =
+  | {
+      ok: true;
+      kind: Extract<SoftwareTeamPipelineReloadKind, "replaced">;
+      store: SoftwareTeamPipelineStore;
+      mtimeMs: number | null;
+    }
+  | {
+      ok: true;
+      kind: Extract<SoftwareTeamPipelineReloadKind, "unchanged" | "missing">;
+      mtimeMs?: number | null;
+    }
+  | {
+      ok: false;
+      kind: Exclude<
+        SoftwareTeamPipelineReloadKind,
+        "replaced" | "unchanged" | "missing"
+      >;
+      backedUp?: boolean;
+      error?: string;
+    };
+
+/**
+ * Re-read `.grok/software-works.json` when Host + project are available.
+ * Newer mtime (or unknown mtime with different contents) replaces the cache.
+ * Parse failure keeps the cache and writes `.bak`. No polling.
+ */
+export async function reloadSoftwareTeamPipelineIfNewer(input: {
+  projectPath?: string | null;
+  host?: SoftwareTeamPipelineFileHost;
+  storage?: {
+    getItem: (k: string) => string | null;
+    setItem: (k: string, v: string) => void;
+  };
+  cached?: SoftwareTeamPipelineStore;
+}): Promise<SoftwareTeamPipelineReload> {
+  const host = input.host ?? defaultSoftwareTeamPipelineFileHost();
+  const plan = planSoftwareTeamPipelineFileWrite({
+    projectPath: input.projectPath,
+    host,
+  });
+  if (!plan.allowed) {
+    const kind = plan.reason as Extract<
+      SoftwareTeamPipelineReloadKind,
+      "need_host" | "need_project" | "blocked_shared_home"
+    >;
+    const fail: SoftwareTeamPipelineReload = { ok: false, kind };
+    emitFileStatus({
+      ok: false,
+      reason: plan.reason as Exclude<
+        SoftwareTeamPipelineFileReason,
+        "ok_project" | "missing" | "cache_only"
+      >,
+    });
+    return fail;
+  }
+  const cached =
+    input.cached ?? loadSoftwareTeamPipelineStore(input.storage);
+  const prevMtime = lastSeenMtimeMs;
+  const loaded = await readSoftwareTeamPipelineFile({
+    projectPath: plan.projectPath,
+    host,
+  });
+  if (!loaded.ok) {
+    if (loaded.reason === "parse_fail") {
+      return {
+        ok: false,
+        kind: "parse_failed",
+        backedUp: loaded.backedUp,
+      };
+    }
+    return {
+      ok: false,
+      kind: "host_error",
+      error: loaded.error,
+    };
+  }
+  if (loaded.reason === "missing" || !loaded.store) {
+    return { ok: true, kind: "missing", mtimeMs: loaded.mtimeMs ?? null };
+  }
+  const mtimeMs = loaded.mtimeMs ?? null;
+  const sameAsCache = pipelineFileItemsEqual(loaded.store, cached);
+  const newer =
+    mtimeMs != null
+      ? prevMtime == null || mtimeMs > prevMtime
+      : !sameAsCache;
+  if (!newer || sameAsCache) {
+    rememberSeen(loaded.store, mtimeMs);
+    return { ok: true, kind: "unchanged", mtimeMs };
+  }
+  persistSoftwareTeamPipeline(loaded.store, input.storage);
+  rememberSeen(loaded.store, mtimeMs);
+  return {
+    ok: true,
+    kind: "replaced",
+    store: loaded.store,
+    mtimeMs,
+  };
 }

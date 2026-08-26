@@ -48,7 +48,11 @@ Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) i
 | Parse fail / newer schema | **Refuse overwrite.** Copy raw text to `.grok/software-works.json.bak` when possible. Keep the cache. |
 | No Host / no project / path *is* `~/.grok` | Cache only + honesty. Never rewrite shared GROK_HOME. |
 
-Schema: `{ schema: "software-works.pipeline", version: 1, updatedAt, items }`. Host `fs_write_file` may **create** this allowlisted path (and docs/sdlc placeholders) when missing.
+Schema: `{ schema: "software-works.pipeline", version: 2, updatedAt, items, activity }`. **v1 files still load** (`activity` hydrates to `[]`). Writes are v2. Host `fs_write_file` may **create** this allowlisted path (and docs/sdlc placeholders) when missing. Parse failure still refuses overwrite and may write `.grok/software-works.json.bak`.
+
+`activity[]` events: `{ at, type, deliveryId, itemId, … }` for add, stage, handoff, notes, start delivery. Unknown types are skipped. Cap 200. Old items without activity still hydrate.
+
+**Reload:** there is **no** Host fs-watch / `watch_path` API. `fsReadFile` returns `mtimeMs`. Studio re-reads on open, window focus, and `visibilitychange` (coalesced, not polled). Newer file replaces the cache; parse fail keeps the cache + honesty.
 
 Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef` + `roleHistory` + `reviewNote` / `qaNote`.
 
@@ -180,7 +184,7 @@ Context menu **Add team session** creates an unbound sibling card (same slice re
 ## UI
 
 - Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install + status/repair).
-- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board; cards show `roleHistory`. Existing `docs/sdlc` files open via Host `openInEditor` or a copied path.
+- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board; cards show `roleHistory`. Click a delivery chip or card to open `SdlcDeliveryDetailPane` (title, role history, Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions, activity). Existing `docs/sdlc` files open via Host `openInEditor` or a copied path.
 - Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
 - Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
 - Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).

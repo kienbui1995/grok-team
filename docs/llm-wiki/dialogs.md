@@ -211,6 +211,6 @@ setAppDialog({
 - `src/components/ComposerModelMenu.tsx` / `ComposerProjectMenu.tsx` — composer 芯片菜单范例  
 - `src/components/StatusModal.tsx` / `McpStatusModal.tsx` — GlassModal 范例（MCP 弹窗可跳转 Settings → Extensions）
 - `src/components/ExtensionsPanel.tsx` — Settings → Extensions 全页技能 / MCP 管理  
-- `src/components/SdlcStudioPage.tsx` / `SoftwareTeamDlcPanel.tsx` — Software Works：`GlassModal` + chips + `ContextMenu`（无原生 `<select>` / `window.confirm`）  
+- `src/components/SdlcStudioPage.tsx` / `SdlcDeliveryDetailPane.tsx` / `SoftwareTeamDlcPanel.tsx` — Software Works：`GlassModal` + chips + `ContextMenu`（无原生 `<select>` / `window.confirm`）  
 - `src/components/AutomationsPage.tsx` — 子页面自建删除确认范例  
 - `src/i18n/messages.ts` — `common.cancel` / `common.confirm` / `common.close` 等  

@@ -201,4 +201,20 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocBlockedHome":
     "공유 ~/.grok 에서 docs/sdlc 를 열 수 없습니다.",
   "softwareTeamDlc.openSdlcDocHostError": "파일을 열지 못했습니다: {error}",
+  "softwareTeamDlc.deliveryDetail": "딜리버리",
+  "softwareTeamDlc.deliveryDetailHint":
+    "제목, 역할 이력, Review/QA 메모, 다음 단계, docs/sdlc, 이 슬라이스의 세션.",
+  "softwareTeamDlc.openDelivery": "딜리버리 열기",
+  "softwareTeamDlc.deliverySessions": "이 딜리버리의 세션",
+  "softwareTeamDlc.deliveryNoSessions": "연결된 세션이 아직 없습니다.",
+  "softwareTeamDlc.activityLog": "활동",
+  "softwareTeamDlc.activityEmpty": "아직 활동이 없습니다.",
+  "softwareTeamDlc.activity.item_added": "작업 항목을 추가했습니다",
+  "softwareTeamDlc.activity.stage_changed": "단계를 옮겼습니다",
+  "softwareTeamDlc.activity.handoff": "인계했습니다",
+  "softwareTeamDlc.activity.notes": "메모를 업데이트했습니다",
+  "softwareTeamDlc.activity.delivery_started": "이 딜리버리를 시작했습니다",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "프로젝트 파이프라인 파일이 더 최신입니다 — 보드를 갱신했습니다.",
+  "softwareTeamDlc.notesEmpty": "아직 없음",
 } as const;

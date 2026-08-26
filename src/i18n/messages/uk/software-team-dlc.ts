@@ -201,4 +201,20 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocBlockedHome":
     "Не можна відкрити docs/sdlc зі спільного ~/.grok.",
   "softwareTeamDlc.openSdlcDocHostError": "Не вдалося відкрити файл: {error}",
+  "softwareTeamDlc.deliveryDetail": "Поставка",
+  "softwareTeamDlc.deliveryDetailHint":
+    "Назва, історія ролей, нотатки Review/QA, наступний крок, docs/sdlc і сесії цього зрізу.",
+  "softwareTeamDlc.openDelivery": "Відкрити поставку",
+  "softwareTeamDlc.deliverySessions": "Сесії цієї поставки",
+  "softwareTeamDlc.deliveryNoSessions": "Ще немає прив’язаних сесій.",
+  "softwareTeamDlc.activityLog": "Активність",
+  "softwareTeamDlc.activityEmpty": "Ще немає записів.",
+  "softwareTeamDlc.activity.item_added": "Додано елемент",
+  "softwareTeamDlc.activity.stage_changed": "Етап змінено",
+  "softwareTeamDlc.activity.handoff": "Передано далі",
+  "softwareTeamDlc.activity.notes": "Нотатки оновлено",
+  "softwareTeamDlc.activity.delivery_started": "Цю поставку розпочато",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "Файл пайплайна проєкту новіший — дошку оновлено.",
+  "softwareTeamDlc.notesEmpty": "Ще немає",
 } as const;

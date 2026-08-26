@@ -8,6 +8,7 @@ import type { Locale, MessageKey } from "@/i18n";
 import { createT } from "@/i18n";
 import { ContextMenu, type ContextMenuItem } from "@/components/ContextMenu";
 import { GlassModal } from "@/components/GlassModal";
+import { SdlcDeliveryDetailPane } from "@/components/SdlcDeliveryDetailPane";
 import { useSoftwareTeamPipeline } from "@/hooks/useSoftwareTeamDlc";
 import {
   itemToStarterFields,
@@ -26,6 +27,7 @@ import {
   SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
   SOFTWARE_TEAM_PIPELINE_FILE_EVENT,
   applySoftwareTeamShipChoice,
+  buildSoftwareTeamDeliveryDetail,
   decideSoftwareTeamDoneCta,
   ensureSoftwareTeamItemDeliveryId,
   filterSoftwareTeamItemsByDelivery,
@@ -51,6 +53,7 @@ import {
   softwareTeamShipBlockMessageKey,
   softwareTeamShipGate,
   writeSoftwareTeamWorkspaceBootstrap,
+  type SoftwareTeamDeliveryDetailTarget,
   type SoftwareTeamDeliveryFilterId,
   type SoftwareTeamPipelineFileRead,
   type SoftwareTeamPipelineFileWrite,
@@ -188,6 +191,8 @@ export function SdlcStudioPage({
   const [query, setQuery] = useState("");
   const [deliveryFilter, setDeliveryFilter] =
     useState<SoftwareTeamDeliveryFilterId>(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
+  const [detailTarget, setDetailTarget] =
+    useState<SoftwareTeamDeliveryDetailTarget | null>(null);
   const [sdlcDocs, setSdlcDocs] = useState<SoftwareTeamSdlcDocProbe[]>([]);
   const [fileStatus, setFileStatus] = useState<
     SoftwareTeamPipelineFileRead | SoftwareTeamPipelineFileWrite | null
@@ -212,6 +217,32 @@ export function SdlcStudioPage({
     y: number;
   } | null>(null);
   const emptyWizardOffered = useRef(false);
+
+  useEffect(() => {
+    let timer: number | null = null;
+    const run = () => {
+      void pipeline.reloadFromProject(workspace.projectPath).then((result) => {
+        if (result.ok && result.kind === "replaced") {
+          setStatus(t("softwareTeamDlc.pipelineFileReloaded"));
+        }
+      });
+    };
+    const schedule = () => {
+      if (timer != null) window.clearTimeout(timer);
+      timer = window.setTimeout(run, 250);
+    };
+    schedule();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") schedule();
+    };
+    window.addEventListener("focus", schedule);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      if (timer != null) window.clearTimeout(timer);
+      window.removeEventListener("focus", schedule);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [pipeline.reloadFromProject, t, workspace.projectPath]);
 
   useEffect(() => {
     if (emptyWizardOffered.current) return;
@@ -265,6 +296,41 @@ export function SdlcStudioPage({
     },
     [sessionTitle, t],
   );
+
+  const openDetail = useCallback((item: SoftwareTeamPipelineItem) => {
+    const deliveryId = item.deliveryId.trim();
+    if (deliveryId) {
+      setDeliveryFilter(deliveryId);
+      setDetailTarget({
+        kind: "delivery",
+        deliveryId,
+        focusItemId: item.id,
+      });
+      return;
+    }
+    setDetailTarget({ kind: "item", itemId: item.id });
+  }, []);
+
+  const deliveryDetail = useMemo(() => {
+    if (!detailTarget) return null;
+    return buildSoftwareTeamDeliveryDetail({
+      items: pipeline.items,
+      activity: pipeline.store.activity,
+      sessions,
+      untitledLabel,
+      target: detailTarget,
+    });
+  }, [
+    detailTarget,
+    pipeline.items,
+    pipeline.store.activity,
+    sessions,
+    untitledLabel,
+  ]);
+
+  useEffect(() => {
+    if (detailTarget && !deliveryDetail) setDetailTarget(null);
+  }, [detailTarget, deliveryDetail]);
 
   const deliveryGroups = useMemo(
     () => listSoftwareTeamDeliveryGroups(pipeline.items),
@@ -628,6 +694,10 @@ export function SdlcStudioPage({
         }),
     });
     items.push({
+      label: t("softwareTeamDlc.openDelivery"),
+      onClick: () => openDetail(menuItem),
+    });
+    items.push({
       label: t("softwareTeamDlc.openInComposer"),
       onClick: () => void onOpenInComposer(menuItem),
     });
@@ -685,6 +755,7 @@ export function SdlcStudioPage({
     onAddTeammate,
     onHandoff,
     onOpenInComposer,
+    openDetail,
     onOpenSdlcDoc,
     onSelectSession,
     sdlcDocs,
@@ -910,7 +981,10 @@ export function SdlcStudioPage({
                   ? " is-active"
                   : "")
               }
-              onClick={() => setDeliveryFilter(SOFTWARE_TEAM_DELIVERY_FILTER_ALL)}
+              onClick={() => {
+                setDeliveryFilter(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
+                setDetailTarget(null);
+              }}
             >
               {t("softwareTeamDlc.deliveryFilterAll")}
             </button>
@@ -922,7 +996,10 @@ export function SdlcStudioPage({
                   "task-board__chip" +
                   (deliveryFilter === group.id ? " is-active" : "")
                 }
-                onClick={() => setDeliveryFilter(group.id)}
+                onClick={() => {
+                  setDeliveryFilter(group.id);
+                  setDetailTarget({ kind: "delivery", deliveryId: group.id });
+                }}
               >
                 {group.title}
               </button>
@@ -936,9 +1013,10 @@ export function SdlcStudioPage({
                     ? " is-active"
                     : "")
                 }
-                onClick={() =>
-                  setDeliveryFilter(SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED)
-                }
+                onClick={() => {
+                  setDeliveryFilter(SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED);
+                  setDetailTarget(null);
+                }}
               >
                 {t("softwareTeamDlc.deliveryUnscoped")}
               </button>
@@ -1077,10 +1155,7 @@ export function SdlcStudioPage({
                           <button
                             type="button"
                             className="agent-kanban__card-btn"
-                            onClick={() => {
-                              if (item.sessionId) void onOpenInComposer(item);
-                              else setEditor(draftFromItem(item));
-                            }}
+                            onClick={() => openDetail(item)}
                             onContextMenu={(e) => {
                               e.preventDefault();
                               setMenu({ itemId: item.id, x: e.clientX, y: e.clientY });
@@ -1207,6 +1282,18 @@ export function SdlcStudioPage({
         y={menu?.y ?? 0}
         onClose={() => setMenu(null)}
         items={menuItems}
+      />
+
+      <SdlcDeliveryDetailPane
+        open={!!deliveryDetail}
+        locale={locale}
+        detail={deliveryDetail}
+        sdlcDocs={sdlcDocs}
+        onClose={() => setDetailTarget(null)}
+        onHandoff={(itemId) => void onHandoff(itemId)}
+        onShip={(item) => void onShipChoice(item)}
+        onOpenSdlcDoc={(relative) => void onOpenSdlcDoc(relative)}
+        onSelectSession={onSelectSession}
       />
 
       <GlassModal
