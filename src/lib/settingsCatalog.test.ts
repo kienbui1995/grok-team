@@ -544,6 +544,12 @@ describe("settingsCatalog", () => {
     expect(dlc.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const install = searchSettingsEntries("install pack", tZh, tEn);
     expect(install.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const repair = searchSettingsEntries("repair pack", tZh, tEn);
+    expect(repair.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const ship = searchSettingsEntries("ship gate", tZh, tEn);
+    expect(ship.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const notes = searchSettingsEntries("review notes", tZh, tEn);
+    expect(notes.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const zhHits = searchSettingsEntries("软件团队", tZh, tEn);
     expect(zhHits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(

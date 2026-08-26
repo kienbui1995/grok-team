@@ -88,7 +88,8 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "세션",
   "softwareTeamDlc.handoff": "넘기기",
   "softwareTeamDlc.handoffTo": "{role}에게 넘기기",
-  "softwareTeamDlc.handoffDone": "파이프라인 완료 — Tech Writer가 Ship 단계입니다.",
+  "softwareTeamDlc.handoffDone":
+    "파이프라인 완료 — Tech Writer가 마지막 역할입니다. Ship에는 Reviewer와 QA 메모가 필요합니다.",
   "softwareTeamDlc.handoffCopied": "다음 역할 스타터를 복사했습니다",
   "softwareTeamDlc.handoffLoaded": "다음 역할 스타터가 입력창에 있습니다.",
   "softwareTeamDlc.openInComposer": "입력창에서 열기",
@@ -110,4 +111,32 @@ export const koSoftwareTeamDlc = {
     "아직 작업 항목이 없습니다. 슬라이스를 추가하거나 세션을 역할에 묶으세요.",
   "softwareTeamDlc.openStudio": "사이드바(에이전트)에서 SDLC Studio를 여세요.",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "이 대상에 팩 파일이 {n} / {total}개 있습니다.",
+  "softwareTeamDlc.install.status.missing":
+    "이 대상에 팩 파일이 {n}개 없습니다.",
+  "softwareTeamDlc.install.status.checking":
+    "선택한 대상의 팩 파일을 확인하는 중…",
+  "softwareTeamDlc.install.repair": "빠진 파일 복구",
+  "softwareTeamDlc.install.repairing": "복구 중…",
+  "softwareTeamDlc.install.repaired": "빠진 팩 파일 {n}개를 썼습니다.",
+  "softwareTeamDlc.install.repairNone":
+    "복구할 항목 없음 — 팩 파일이 이미 있습니다.",
+  "softwareTeamDlc.goalModeSet": "이 초안에 Goal 모드를 켰습니다.",
+  "softwareTeamDlc.goalModeSkipped":
+    "Goal은 카드에 남습니다. Host에 Goal 생성 API가 없습니다.",
+  "softwareTeamDlc.shipLocked":
+    "Reviewer와 QA 메모를 저장하기 전까지 Ship이 잠깁니다.",
+  "softwareTeamDlc.shipNeedReviewer": "이 슬라이스는 Reviewer를 거치지 않았습니다.",
+  "softwareTeamDlc.shipNeedQa": "이 슬라이스는 QA를 거치지 않았습니다.",
+  "softwareTeamDlc.shipNeedReviewNote": "Ship 전에 Reviewer 메모를 저장하세요.",
+  "softwareTeamDlc.shipNeedQaNote": "Ship 전에 QA 메모를 저장하세요.",
+  "softwareTeamDlc.markReviewNote": "Reviewer 메모 작성",
+  "softwareTeamDlc.markQaNote": "QA 메모 작성",
+  "softwareTeamDlc.reviewNote": "Reviewer 메모",
+  "softwareTeamDlc.qaNote": "QA 메모",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, 필수 수정과 nits, 위험.",
+  "softwareTeamDlc.qaNotePlaceholder": "케이스, 명령, 합격/불합격.",
+  "softwareTeamDlc.notesSaved":
+    "메모를 저장했습니다. Reviewer와 QA 메모가 모두 있으면 Ship이 열립니다.",
 } as const;

@@ -33,6 +33,7 @@ import {
   parseSoftwareTeamDlcEnabled,
   parseSoftwareTeamSessionTagMap,
   persistSoftwareTeamPipeline,
+  pipelineItemById,
   pipelineItemForSession,
   planSoftwareTeamDlcPackWrite,
   projectSessionTagsFromPipeline,
@@ -40,6 +41,7 @@ import {
   saveSoftwareTeamSessionTagMap,
   sdlcStagesForKanbanColumn,
   setPipelineItemStage,
+  updateSoftwareTeamPipelineItem,
   softwareTeamDlcPackFiles,
   softwareTeamDlcPackManifest,
   softwareTeamDlcWouldRewriteSharedGrokHome,
@@ -51,14 +53,23 @@ import {
   stageFromSessionKanbanColumn,
   upsertSoftwareTeamSessionTag,
   attachSoftwareTeamPlanChrome,
+  composeHandoffStarter,
   composeRoleSessionStarter,
   decideSoftwareTeamComposerNav,
+  hostEntityIdFromUnknown,
   installSoftwareTeamDlcPack,
   launchSoftwareTeamWorkItem,
   pickSoftwareTeamInstallTarget,
+  probeSoftwareTeamDlcPack,
+  repairSoftwareTeamDlcPack,
   resolveSoftwareTeamWorkspace,
   seedSoftwareTeamComposerDraft,
+  softwareTeamLaunchItemPatch,
+  softwareTeamRoleChecklist,
+  softwareTeamShipBlockMessageKey,
+  softwareTeamShipGate,
   type SoftwareTeamLaunchHost,
+  type SoftwareTeamPackProbeHost,
   type SoftwareTeamPackWriteHost,
 } from "./index";
 import { buildSlashCatalog } from "@/lib/slashCatalog";
@@ -264,7 +275,7 @@ describe("Software Works pipeline board ↔ session ↔ handoff", () => {
       stageSource: "session",
     });
     store = applySessionKanbanToPipeline(store, "sess-2", "done", 5);
-    expect(pipelineItemForSession(store, "sess-2")?.stageId).toBe("ship");
+    expect(pipelineItemForSession(store, "sess-2")?.stageId).toBe("build");
   });
 
   it("handoff walks Product→…→Writer and copies the next starter with artifacts", () => {
@@ -322,7 +333,7 @@ describe("Software Works pipeline board ↔ session ↔ handoff", () => {
     }
     expect(walk).toEqual([...SOFTWARE_TEAM_HANDOFF_CHAIN]);
     expect(pipelineItemForSession(store, "sess-3")?.roleId).toBe("writer");
-    expect(pipelineItemForSession(store, "sess-3")?.stageId).toBe("ship");
+    expect(pipelineItemForSession(store, "sess-3")?.stageId).toBe("review");
   });
 
   it("persists pipeline as SoT and migrates leftover session tags", () => {
@@ -343,13 +354,16 @@ describe("Software Works pipeline board ↔ session ↔ handoff", () => {
       updatedAt: 1,
     });
     store = setPipelineItemStage(store, "w4", "ship", 2);
+    expect(pipelineItemById(store, "w4")?.stageId).toBe("review");
     persistSoftwareTeamPipeline(store, storage);
-    expect(storage.getItem(SOFTWARE_TEAM_DLC_PIPELINE_KEY)).toContain("ship");
+    expect(storage.getItem(SOFTWARE_TEAM_DLC_PIPELINE_KEY)).toContain("review");
     expect(loadSoftwareTeamSessionTagMap(storage)["sess-4"]).toEqual({
       roleId: "reviewer",
-      stageId: "ship",
+      stageId: "review",
     });
-    expect(loadSoftwareTeamPipelineStore(storage).items[0]?.stageId).toBe("ship");
+    expect(loadSoftwareTeamPipelineStore(storage).items[0]?.stageId).toBe(
+      "review",
+    );
   });
 
   it("assign/clear session keeps one session bound and drops empty tag-only items", () => {
@@ -769,7 +783,408 @@ describe("Software Team DLC session launch + composer seed", () => {
       sessionId: "s",
       planRef: "x",
     });
-    expect(chrome).toBe("skipped");
+    expect(chrome).toEqual({ outcome: "skipped", hostPlanId: null });
+  });
+});
+
+describe("Software Team DLC pack status + repair", () => {
+  function listedPack(scope: string) {
+    const files = softwareTeamDlcPackFiles();
+    return {
+      agents: files
+        .filter((file) => file.kind === "agent")
+        .map((file) => ({ name: file.name, scope })),
+      skills: files
+        .filter((file) => file.kind === "skill")
+        .map((file) => ({ name: file.name, source: scope })),
+      workflows: files
+        .filter((file) => file.kind === "workflow")
+        .map((file) => ({ name: file.name, scope })),
+    };
+  }
+
+  function fakeProbeHost(
+    lists?: ReturnType<typeof listedPack>,
+    extras?: { desktop?: boolean; fail?: boolean },
+  ): SoftwareTeamPackProbeHost {
+    return {
+      isDesktopHost: () => extras?.desktop !== false,
+      agentsList: async () => {
+        if (extras?.fail) throw new Error("list boom");
+        return { agents: lists?.agents ?? [] };
+      },
+      skillsList: async () => ({ skills: lists?.skills ?? [] }),
+      workflowsList: async () => ({ workflows: lists?.workflows ?? [] }),
+    };
+  }
+
+  it("does not claim installed without a matching Host listing", async () => {
+    const empty = await probeSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      host: fakeProbeHost(),
+    });
+    expect(empty.kind).toBe("missing");
+    expect(empty.missing).toHaveLength(13);
+    expect(empty.present).toHaveLength(0);
+  });
+
+  it("reports installed only when all 13 names match the target scope", async () => {
+    const status = await probeSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      host: fakeProbeHost(listedPack("project")),
+    });
+    expect(status.kind).toBe("installed");
+    expect(status.present).toHaveLength(13);
+    expect(status.missing).toHaveLength(0);
+  });
+
+  it("treats user-scoped listings as missing on a project target", async () => {
+    const status = await probeSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      host: fakeProbeHost(listedPack("user")),
+    });
+    expect(status.kind).toBe("missing");
+    expect(status.missing).toHaveLength(13);
+  });
+
+  it("refuses shared ~/.grok and need_host without faking success", async () => {
+    const shared = await probeSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "user",
+      host: fakeProbeHost(listedPack("user")),
+    });
+    expect(shared.kind).toBe("blocked_shared");
+    const noHost = await probeSoftwareTeamDlcPack({
+      sessionDataMode: "independent",
+      target: "user",
+      host: fakeProbeHost(listedPack("user"), { desktop: false }),
+    });
+    expect(noHost.kind).toBe("need_host");
+    const err = await probeSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      host: fakeProbeHost(undefined, { fail: true }),
+    });
+    expect(err.kind).toBe("host_error");
+    expect(err.error).toMatch(/boom/);
+  });
+
+  it("writes only the missing names on repair", async () => {
+    const present = listedPack("project");
+    present.agents = present.agents.filter((row) => row.name !== "team-qa");
+    present.skills = present.skills.filter((row) => row.name !== "team-writer");
+    present.workflows = [];
+    const write = fakePackHost();
+    const result = await repairSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      probeHost: fakeProbeHost(present),
+      writeHost: write,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(
+      result.files.map((file) => `${file.kind}:${file.name}`).sort(),
+    ).toEqual([
+      "agent:team-qa",
+      "skill:team-writer",
+      "workflow:team-handoff",
+    ]);
+    expect(write.calls.some((call) => call.includes("team-product"))).toBe(
+      false,
+    );
+  });
+
+  it("repair of a complete pack writes nothing", async () => {
+    const write = fakePackHost();
+    const result = await repairSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      probeHost: fakeProbeHost(listedPack("project")),
+      writeHost: write,
+    });
+    expect(result).toMatchObject({ ok: true, files: [] });
+    expect(write.calls).toEqual([]);
+  });
+
+  it("repair refuses shared user writes", async () => {
+    const write = fakePackHost();
+    const result = await repairSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "user",
+      writeHost: write,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "blocked_shared_user" });
+    expect(write.calls).toEqual([]);
+  });
+
+  it("install onlyNames writes a subset", async () => {
+    const host = fakePackHost();
+    const result = await installSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo",
+      host,
+      onlyNames: ["team-qa", "team-handoff"],
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.files.map((file) => `${file.kind}:${file.name}`).sort()).toEqual(
+      ["agent:team-qa", "skill:team-qa", "workflow:team-handoff"],
+    );
+  });
+});
+
+describe("Software Team DLC Review → QA → Ship gate", () => {
+  it("blocks ship until Reviewer + QA visits and notes", () => {
+    const empty = softwareTeamShipGate({
+      roleId: "engineer",
+      roleHistory: ["product", "architect", "engineer"],
+      reviewNote: "",
+      qaNote: "",
+    });
+    expect(empty.ok).toBe(false);
+    expect(empty.blocks).toEqual([
+      "need_reviewer",
+      "need_qa",
+      "need_review_note",
+      "need_qa_note",
+    ]);
+    expect(softwareTeamShipBlockMessageKey("need_reviewer")).toBe(
+      "softwareTeamDlc.shipNeedReviewer",
+    );
+    const ready = softwareTeamShipGate({
+      roleId: "writer",
+      roleHistory: ["reviewer", "qa", "writer"],
+      reviewNote: "must-fix auth",
+      qaNote: "pnpm test",
+    });
+    expect(ready.ok).toBe(true);
+    expect(ready.blocks).toEqual([]);
+  });
+
+  it("counts the current role as a visit", () => {
+    expect(
+      softwareTeamShipGate({
+        roleId: "reviewer",
+        roleHistory: [],
+        reviewNote: "ok",
+        qaNote: "ok",
+      }).blocks,
+    ).toEqual(["need_qa"]);
+  });
+
+  it("keeps handoff QA→Writer on review until notes exist", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "gate-1",
+      roleId: "qa",
+      stageId: "review",
+      reviewNote: "",
+      qaNote: "",
+      roleHistory: ["product", "architect", "engineer", "reviewer", "qa"],
+    });
+    expect(item).not.toBeNull();
+    const step = applySoftwareTeamHandoff(item!, 50);
+    expect(step.kind).toBe("advanced");
+    if (step.kind !== "advanced") return;
+    expect(step.toRole).toBe("writer");
+    expect(step.toStage).toBe("review");
+    expect(step.starter).toMatch(/Tech Writer/);
+    expect(step.starter).not.toMatch(/Claude|Codex/i);
+  });
+
+  it("lands Writer on ship when Reviewer and QA notes are saved", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "gate-2",
+      roleId: "qa",
+      stageId: "review",
+      reviewNote: "nits only",
+      qaNote: "vitest pass",
+      roleHistory: ["reviewer", "qa"],
+    });
+    const step = applySoftwareTeamHandoff(item!, 60);
+    expect(step.kind).toBe("advanced");
+    if (step.kind !== "advanced") return;
+    expect(step.toRole).toBe("writer");
+    expect(step.toStage).toBe("ship");
+  });
+
+  it("refuses board and live-kanban moves to ship without the gate", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "gate-3",
+      sessionId: "s-gate",
+      roleId: "writer",
+      stageId: "review",
+      roleHistory: ["reviewer", "qa", "writer"],
+      reviewNote: "",
+      qaNote: "",
+    });
+    expect(setPipelineItemStage(store, "gate-3", "ship").items[0]?.stageId).toBe(
+      "review",
+    );
+    store = applySessionKanbanToPipeline(store, "s-gate", "done", 9);
+    expect(pipelineItemForSession(store, "s-gate")?.stageId).toBe("review");
+    store = updateSoftwareTeamPipelineItem(store, "gate-3", {
+      reviewNote: "looks good",
+      qaNote: "tests green",
+    });
+    store = setPipelineItemStage(store, "gate-3", "ship", 10);
+    expect(pipelineItemForSession(store, "s-gate")?.stageId).toBe("ship");
+    persistSoftwareTeamPipeline(store, memoryStore());
+  });
+
+  it("persists review/qa notes on the pipeline item", () => {
+    const storage = memoryStore();
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "notes-1",
+      roleId: "reviewer",
+      reviewNote: "diff ok",
+      qaNote: "need cases",
+    });
+    persistSoftwareTeamPipeline(store, storage);
+    const loaded = loadSoftwareTeamPipelineStore(storage);
+    expect(pipelineItemById(loaded, "notes-1")).toMatchObject({
+      reviewNote: "diff ok",
+      qaNote: "need cases",
+      roleHistory: ["reviewer"],
+    });
+  });
+
+  it("puts diff / test / risk on Reviewer and QA starters", () => {
+    for (const roleId of ["reviewer", "qa"] as const) {
+      const lines = softwareTeamRoleChecklist(roleId);
+      expect(lines.join("\n")).toMatch(/Diff:/);
+      expect(lines.join("\n")).toMatch(/Test:/);
+      expect(lines.join("\n")).toMatch(/Risk:/);
+      const starter = composeRoleSessionStarter({ roleId, title: "Auth" });
+      expect(starter).toMatch(/Diff:/);
+      expect(starter).toMatch(/Test:/);
+      expect(starter).toMatch(/Risk:/);
+    }
+    const from = createSoftwareTeamPipelineItem({
+      id: "cl-1",
+      roleId: "engineer",
+      title: "Auth",
+    })!;
+    const to = createSoftwareTeamPipelineItem({
+      id: "cl-2",
+      roleId: "reviewer",
+      title: "Auth",
+    })!;
+    expect(composeHandoffStarter(from, to)).toMatch(/Reviewer checklist/);
+    expect(softwareTeamRoleChecklist("product")).toEqual([]);
+  });
+
+  it("does not create Writer items directly on ship without the gate", () => {
+    const store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      { id: "w-new", roleId: "writer" },
+    );
+    expect(pipelineItemById(store, "w-new")?.stageId).toBe("review");
+  });
+});
+
+describe("Software Team DLC plan / goal launch honesty", () => {
+  it("extracts Host ids only from id-shaped payloads", () => {
+    expect(hostEntityIdFromUnknown({ id: "plan-1" })).toBe("plan-1");
+    expect(hostEntityIdFromUnknown({ planId: "p2" })).toBe("p2");
+    expect(hostEntityIdFromUnknown({ title: "SDLC", body: "x" })).toBeNull();
+    expect(hostEntityIdFromUnknown(undefined)).toBeNull();
+    expect(softwareTeamLaunchItemPatch({ ok: false, reason: "need_host" })).toBeNull();
+  });
+
+  it("attaches a Host plan id when sessionPlanChromeSet returns one", async () => {
+    const host: SoftwareTeamLaunchHost = {
+      hasHost: () => true,
+      sessionCreate: async () => ({ id: "nope" }),
+      canWritePlanChrome: () => true,
+      sessionPlanChromeSet: async () => ({ id: "host-plan-9" }),
+      setDraft: () => {},
+    };
+    const result = await launchSoftwareTeamWorkItem({
+      item: {
+        roleId: "architect",
+        sessionId: "sess-live",
+        planRef: "design.md",
+        goalRef: "login works",
+        title: "API",
+      },
+      currentSessionId: "sess-live",
+      host,
+      storage: memoryStore(),
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.planChrome).toBe("set");
+    expect(result.goalMode).toBe("set");
+    expect(result.hostPlanId).toBe("host-plan-9");
+    expect(result.hostGoalId).toBeNull();
+    expect(softwareTeamLaunchItemPatch(result)).toEqual({
+      planRef: "host-plan-9",
+    });
+  });
+
+  it("does not invent plan or goal ids when Host returns no entity", async () => {
+    const host: SoftwareTeamLaunchHost = {
+      hasHost: () => true,
+      sessionCreate: async () => ({ id: "nope" }),
+      canWritePlanChrome: () => true,
+      sessionPlanChromeSet: async () => {},
+      setDraft: () => {},
+    };
+    const result = await launchSoftwareTeamWorkItem({
+      item: {
+        roleId: "product",
+        sessionId: "s1",
+        planRef: "/plan billing",
+        goalRef: "checkout",
+      },
+      currentSessionId: "s1",
+      host,
+      storage: memoryStore(),
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.hostPlanId).toBeNull();
+    expect(result.hostGoalId).toBeNull();
+    expect(softwareTeamLaunchItemPatch(result)).toBeNull();
+  });
+
+  it("writes a Host goal id only when createGoalEntity returns one", async () => {
+    const host: SoftwareTeamLaunchHost = {
+      hasHost: () => true,
+      sessionCreate: async () => ({ id: "nope" }),
+      canWritePlanChrome: () => false,
+      sessionPlanChromeSet: async () => {
+        throw new Error("should not write");
+      },
+      createGoalEntity: async () => ({ goalId: "goal-77" }),
+      setDraft: () => {},
+    };
+    const result = await launchSoftwareTeamWorkItem({
+      item: {
+        roleId: "product",
+        sessionId: "s1",
+        goalRef: "checkout",
+      },
+      currentSessionId: "s1",
+      host,
+      storage: memoryStore(),
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.goalMode).toBe("set");
+    expect(result.hostGoalId).toBe("goal-77");
+    expect(softwareTeamLaunchItemPatch(result)).toEqual({ goalRef: "goal-77" });
   });
 });
 

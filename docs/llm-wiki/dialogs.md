@@ -161,6 +161,7 @@ setAppDialog({
 |------|----------------|
 | App 确认/输入 | `.modal.app-dialog` · `setAppDialog` |
 | Compact keep-note / Doctor / Status / MCP | `setAppDialog` prompt · `.modal` · `GlassModal` · `DoctorModal` |
+| SDLC Studio item editor + Reviewer/QA notes | `GlassModal` on `SdlcStudioPage` (no `window.prompt`) |
 | 文件详情 | `.modal.file-path-details` |
 | 搜索面板 | `.search-panel` |
 | 模型 / 权限 / 项目 / 用户 / 斜杠 / + | `.cmm__pop` · `.menu-panel` · `.slash-palette` · `.composer-plus` |

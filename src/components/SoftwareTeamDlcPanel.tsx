@@ -3,7 +3,7 @@
  * Roster / board / handoff live in SDLC Studio (Agents pane), not here.
  */
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createT, type Locale, type MessageKey } from "@/i18n";
 import { UiSwitch } from "@/components/settings/shared";
 import { useSettingsModel } from "@/providers/SettingsModelContext";
@@ -14,10 +14,14 @@ import {
   SOFTWARE_TEAM_SDLC_STAGES,
   installSoftwareTeamDlcPack,
   planSoftwareTeamDlcPackWrite,
+  probeSoftwareTeamDlcPack,
+  repairSoftwareTeamDlcPack,
   softwareTeamDlcPackManifest,
   softwareTeamInstallFailMessageKey,
+  softwareTeamPackStatusMessageKey,
   softwareTeamRoleSlashHint,
   type SoftwareTeamDlcInstallTarget,
+  type SoftwareTeamPackStatus,
 } from "@/lib/softwareTeamDlc";
 
 type TFn = (key: MessageKey, vars?: Record<string, string | number>) => string;
@@ -34,7 +38,50 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
       (projectPath ?? "").trim() ? "project" : "user",
     );
   const [installing, setInstalling] = useState(false);
+  const [repairing, setRepairing] = useState(false);
+  const [probing, setProbing] = useState(false);
+  const [packStatus, setPackStatus] = useState<SoftwareTeamPackStatus | null>(
+    null,
+  );
   const [installStatus, setInstallStatus] = useState<string | null>(null);
+
+  const refreshPackStatus = useCallback(async () => {
+    setProbing(true);
+    try {
+      const status = await probeSoftwareTeamDlcPack({
+        sessionDataMode,
+        target: installTarget,
+        projectPath,
+      });
+      setPackStatus(status);
+      return status;
+    } finally {
+      setProbing(false);
+    }
+  }, [installTarget, projectPath, sessionDataMode]);
+
+  useEffect(() => {
+    if (!enabled) return;
+    void refreshPackStatus();
+  }, [enabled, refreshPackStatus]);
+
+  const describePackStatus = useCallback(
+    (status: SoftwareTeamPackStatus): string => {
+      const key = softwareTeamPackStatusMessageKey(status.kind);
+      if (status.kind === "installed") {
+        const total = status.present.length + status.missing.length;
+        return t(key, { n: status.present.length, total });
+      }
+      if (status.kind === "missing") {
+        return t(key, { n: status.missing.length });
+      }
+      if (status.kind === "host_error") {
+        return t(key, { error: status.error ?? "" });
+      }
+      return t(key);
+    },
+    [t],
+  );
 
   const sharedUserPlan = planSoftwareTeamDlcPackWrite({
     sessionDataMode,
@@ -154,7 +201,7 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
                 target: installTarget,
                 projectPath,
               })
-                .then((result) => {
+                .then(async (result) => {
                   if (result.ok) {
                     setInstallStatus(
                       t("softwareTeamDlc.install.ok", {
@@ -166,6 +213,7 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
                         ),
                       }),
                     );
+                    await refreshPackStatus();
                     return;
                   }
                   const key = softwareTeamInstallFailMessageKey(result.reason);
@@ -174,6 +222,7 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
                       ? t(key, { error: result.error ?? "" })
                       : t(key),
                   );
+                  await refreshPackStatus();
                 })
                 .finally(() => setInstalling(false));
             }}
@@ -182,6 +231,53 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
               ? t("softwareTeamDlc.install.installing")
               : t("softwareTeamDlc.install.action")}
           </button>
+          {packStatus?.kind === "missing" ? (
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              disabled={repairing}
+              onClick={() => {
+                setRepairing(true);
+                void repairSoftwareTeamDlcPack({
+                  sessionDataMode,
+                  target: installTarget,
+                  projectPath,
+                  status: packStatus,
+                })
+                  .then(async (result) => {
+                    setInstallStatus(
+                      result.ok && result.files.length === 0
+                        ? t("softwareTeamDlc.install.repairNone")
+                        : result.ok
+                          ? t("softwareTeamDlc.install.repaired", {
+                              n: result.files.length,
+                            })
+                          : result.reason === "host_error"
+                            ? t(
+                                softwareTeamInstallFailMessageKey(result.reason),
+                                { error: result.error ?? "" },
+                              )
+                            : t(softwareTeamInstallFailMessageKey(result.reason)),
+                    );
+                    await refreshPackStatus();
+                  })
+                  .finally(() => setRepairing(false));
+              }}
+            >
+              {repairing
+                ? t("softwareTeamDlc.install.repairing")
+                : t("softwareTeamDlc.install.repair")}
+            </button>
+          ) : null}
+          {probing || packStatus ? (
+            <p className="ext-ref-block__lead" role="status">
+              {probing
+                ? t("softwareTeamDlc.install.status.checking")
+                : packStatus
+                  ? describePackStatus(packStatus)
+                  : null}
+            </p>
+          ) : null}
           {installStatus ? (
             <p className="ext-ref-block__lead" role="status">
               {installStatus}

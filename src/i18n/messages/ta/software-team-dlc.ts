@@ -88,7 +88,8 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "அமர்வு",
   "softwareTeamDlc.handoff": "ஒப்படை",
   "softwareTeamDlc.handoffTo": "{role}க்கு ஒப்படை",
-  "softwareTeamDlc.handoffDone": "குழாய் முடிந்தது — Tech Writer Ship நிலையில் உள்ளார்.",
+  "softwareTeamDlc.handoffDone":
+    "குழாய் முடிந்தது — Tech Writer கடைசி பங்கு. Ship-க்கு Reviewer மற்றும் QA குறிப்புகள் இன்னும் தேவை.",
   "softwareTeamDlc.handoffCopied": "அடுத்த பங்கின் தொடக்க உரை நகலெடுக்கப்பட்டது",
   "softwareTeamDlc.handoffLoaded": "அடுத்த பங்கின் தொடக்க உரை உள்ளீட்டில் உள்ளது.",
   "softwareTeamDlc.openInComposer": "உள்ளீட்டில் திற",
@@ -110,4 +111,32 @@ export const taSoftwareTeamDlc = {
     "இன்னும் பணி உருப்படிகள் இல்லை. ஒரு துண்டைச் சேர்க்கவும் அல்லது அமர்வைப் பங்குடன் இணைக்கவும்.",
   "softwareTeamDlc.openStudio": "பக்கப்பட்டியில் (முகவர்கள்) இருந்து SDLC Studio-ஐத் திறக்கவும்.",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "இந்த இலக்கில் {total}-ல் {n} தொகுப்பு கோப்புகள் உள்ளன.",
+  "softwareTeamDlc.install.status.missing":
+    "இந்த இலக்கில் {n} தொகுப்பு கோப்புகள் இல்லை.",
+  "softwareTeamDlc.install.status.checking":
+    "தேர்ந்த இலக்கில் தொகுப்பு கோப்புகளை சரிபார்க்கிறோம்…",
+  "softwareTeamDlc.install.repair": "விடுபட்ட கோப்புகளை சரிசெய்",
+  "softwareTeamDlc.install.repairing": "தொகுப்பை சரிசெய்கிறோம்…",
+  "softwareTeamDlc.install.repaired": "விடுபட்ட {n} தொகுப்பு கோப்புகள் எழுதப்பட்டன.",
+  "softwareTeamDlc.install.repairNone":
+    "சரிசெய்ய எதுவும் இல்லை — தொகுப்பு கோப்புகள் ஏற்கனவே உள்ளன.",
+  "softwareTeamDlc.goalModeSet": "இந்த வரைவில் இலக்கு பயன்முறை இயக்கப்பட்டுள்ளது.",
+  "softwareTeamDlc.goalModeSkipped":
+    "இலக்கு அட்டையில் இருக்கும். Host-இல் இலக்கு உருவாக்க API இல்லை.",
+  "softwareTeamDlc.shipLocked":
+    "Reviewer மற்றும் QA குறிப்புகள் சேமிக்கும் வரை Ship பூட்டப்பட்டிருக்கும்.",
+  "softwareTeamDlc.shipNeedReviewer": "இந்த துண்டு Reviewer வழியாக செல்லவில்லை.",
+  "softwareTeamDlc.shipNeedQa": "இந்த துண்டு QA வழியாக செல்லவில்லை.",
+  "softwareTeamDlc.shipNeedReviewNote": "Ship-க்கு முன் Reviewer குறிப்புகளை சேமிக்கவும்.",
+  "softwareTeamDlc.shipNeedQaNote": "Ship-க்கு முன் QA குறிப்புகளை சேமிக்கவும்.",
+  "softwareTeamDlc.markReviewNote": "Reviewer குறிப்புகளை எழுது",
+  "softwareTeamDlc.markQaNote": "QA குறிப்புகளை எழுது",
+  "softwareTeamDlc.reviewNote": "Reviewer குறிப்புகள்",
+  "softwareTeamDlc.qaNote": "QA குறிப்புகள்",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, கட்டாய திருத்தங்கள் vs nits, ஆபத்து.",
+  "softwareTeamDlc.qaNotePlaceholder": "வழக்குகள், கட்டளைகள், வெற்றி/தோல்வி.",
+  "softwareTeamDlc.notesSaved":
+    "குறிப்புகள் சேமிக்கப்பட்டன. Reviewer மற்றும் QA குறிப்புகள் இரண்டும் இருந்தால் Ship திறக்கும்.",
 } as const;

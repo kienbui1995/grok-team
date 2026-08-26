@@ -88,7 +88,8 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Sesi",
   "softwareTeamDlc.handoff": "Serahkan",
   "softwareTeamDlc.handoffTo": "Serahkan ke {role}",
-  "softwareTeamDlc.handoffDone": "Pipeline selesai — Tech Writer ada di tahap Ship.",
+  "softwareTeamDlc.handoffDone":
+    "Pipeline selesai — Tech Writer adalah peran terakhir. Ship masih butuh catatan Reviewer dan QA.",
   "softwareTeamDlc.handoffCopied": "Starter peran berikutnya disalin",
   "softwareTeamDlc.handoffLoaded": "Starter peran berikutnya ada di komposer.",
   "softwareTeamDlc.openInComposer": "Buka di komposer",
@@ -110,4 +111,32 @@ export const idSoftwareTeamDlc = {
     "Belum ada item. Tambah irisan atau ikat sesi ke suatu peran.",
   "softwareTeamDlc.openStudio": "Buka SDLC Studio dari bilah sisi (Agen).",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} dari {total} berkas paket ada di target ini.",
+  "softwareTeamDlc.install.status.missing":
+    "{n} berkas paket hilang di target ini.",
+  "softwareTeamDlc.install.status.checking":
+    "Memeriksa berkas paket pada target yang dipilih…",
+  "softwareTeamDlc.install.repair": "Perbaiki berkas yang hilang",
+  "softwareTeamDlc.install.repairing": "Memperbaiki paket…",
+  "softwareTeamDlc.install.repaired": "Menulis {n} berkas paket yang hilang.",
+  "softwareTeamDlc.install.repairNone":
+    "Tidak ada yang perlu diperbaiki — berkas paket sudah ada.",
+  "softwareTeamDlc.goalModeSet": "Mode tujuan aktif untuk draf ini.",
+  "softwareTeamDlc.goalModeSkipped":
+    "Tujuan tetap di kartu. Host tidak punya API membuat tujuan.",
+  "softwareTeamDlc.shipLocked":
+    "Ship terkunci sampai catatan Reviewer dan QA disimpan.",
+  "softwareTeamDlc.shipNeedReviewer": "Irisan ini belum melewati Reviewer.",
+  "softwareTeamDlc.shipNeedQa": "Irisan ini belum melewati QA.",
+  "softwareTeamDlc.shipNeedReviewNote": "Simpan catatan Reviewer sebelum Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "Simpan catatan QA sebelum Ship.",
+  "softwareTeamDlc.markReviewNote": "Tulis catatan Reviewer",
+  "softwareTeamDlc.markQaNote": "Tulis catatan QA",
+  "softwareTeamDlc.reviewNote": "Catatan Reviewer",
+  "softwareTeamDlc.qaNote": "Catatan QA",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, perbaikan wajib vs nits, risiko.",
+  "softwareTeamDlc.qaNotePlaceholder": "Kasus, perintah, lulus/gagal.",
+  "softwareTeamDlc.notesSaved":
+    "Catatan tersimpan. Ship terbuka jika catatan Reviewer dan QA keduanya ada.",
 } as const;

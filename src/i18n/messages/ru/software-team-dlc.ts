@@ -88,7 +88,8 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Сессия",
   "softwareTeamDlc.handoff": "Передать",
   "softwareTeamDlc.handoffTo": "Передать {role}",
-  "softwareTeamDlc.handoffDone": "Конвейер завершён — Tech Writer на этапе Ship.",
+  "softwareTeamDlc.handoffDone":
+    "Конвейер завершён — Tech Writer последняя роль. Для Ship всё ещё нужны заметки Reviewer и QA.",
   "softwareTeamDlc.handoffCopied": "Стартер следующей роли скопирован",
   "softwareTeamDlc.handoffLoaded": "Стартер следующей роли в поле ввода.",
   "softwareTeamDlc.openInComposer": "Открыть в поле ввода",
@@ -110,4 +111,32 @@ export const ruSoftwareTeamDlc = {
     "Пока нет элементов. Добавьте срез или привяжите сессию к роли.",
   "softwareTeamDlc.openStudio": "Откройте SDLC Studio в боковой панели (Агенты).",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "На этой цели {n} из {total} файлов пакета.",
+  "softwareTeamDlc.install.status.missing":
+    "На этой цели не хватает {n} файлов пакета.",
+  "softwareTeamDlc.install.status.checking":
+    "Проверяем файлы пакета на выбранной цели…",
+  "softwareTeamDlc.install.repair": "Дописать недостающие файлы",
+  "softwareTeamDlc.install.repairing": "Идёт восстановление пакета…",
+  "softwareTeamDlc.install.repaired": "Записано {n} недостающих файлов пакета.",
+  "softwareTeamDlc.install.repairNone":
+    "Восстанавливать нечего — файлы пакета уже на месте.",
+  "softwareTeamDlc.goalModeSet": "Режим цели включён для этого черновика.",
+  "softwareTeamDlc.goalModeSkipped":
+    "Цель остаётся на карточке. У Host нет API создания цели.",
+  "softwareTeamDlc.shipLocked":
+    "Ship заблокирован, пока не сохранены заметки Reviewer и QA.",
+  "softwareTeamDlc.shipNeedReviewer": "Этот срез не прошёл через Reviewer.",
+  "softwareTeamDlc.shipNeedQa": "Этот срез не прошёл через QA.",
+  "softwareTeamDlc.shipNeedReviewNote": "Сохраните заметки Reviewer перед Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "Сохраните заметки QA перед Ship.",
+  "softwareTeamDlc.markReviewNote": "Записать заметки Reviewer",
+  "softwareTeamDlc.markQaNote": "Записать заметки QA",
+  "softwareTeamDlc.reviewNote": "Заметки Reviewer",
+  "softwareTeamDlc.qaNote": "Заметки QA",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, обязательные правки и мелочи, риск.",
+  "softwareTeamDlc.qaNotePlaceholder": "Случаи, команды, успех/провал.",
+  "softwareTeamDlc.notesSaved":
+    "Заметки сохранены. Ship откроется, когда будут и Reviewer, и QA.",
 } as const;

@@ -88,7 +88,8 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Sessão",
   "softwareTeamDlc.handoff": "Passar",
   "softwareTeamDlc.handoffTo": "Passar para {role}",
-  "softwareTeamDlc.handoffDone": "Pipeline concluído — Tech Writer está em Ship.",
+  "softwareTeamDlc.handoffDone":
+    "Pipeline concluído — Tech Writer é o último papel. Ship ainda precisa das notas de Reviewer e QA.",
   "softwareTeamDlc.handoffCopied": "Starter do próximo papel copiado",
   "softwareTeamDlc.handoffLoaded": "O starter do próximo papel está no compositor.",
   "softwareTeamDlc.openInComposer": "Abrir no compositor",
@@ -110,4 +111,32 @@ export const ptBRSoftwareTeamDlc = {
     "Ainda não há itens. Adicione um recorte ou vincule uma sessão a um papel.",
   "softwareTeamDlc.openStudio": "Abra o SDLC Studio na barra lateral (Agentes).",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} de {total} arquivos do pacote estão neste destino.",
+  "softwareTeamDlc.install.status.missing":
+    "Faltam {n} arquivos do pacote neste destino.",
+  "softwareTeamDlc.install.status.checking":
+    "Verificando os arquivos do pacote no destino escolhido…",
+  "softwareTeamDlc.install.repair": "Reparar arquivos ausentes",
+  "softwareTeamDlc.install.repairing": "Reparando o pacote…",
+  "softwareTeamDlc.install.repaired": "Foram gravados {n} arquivos ausentes do pacote.",
+  "softwareTeamDlc.install.repairNone":
+    "Nada a reparar — os arquivos do pacote já estão presentes.",
+  "softwareTeamDlc.goalModeSet": "O modo de objetivo está ativo neste rascunho.",
+  "softwareTeamDlc.goalModeSkipped":
+    "O objetivo fica no cartão. O host não tem API para criar objetivo.",
+  "softwareTeamDlc.shipLocked":
+    "Ship fica bloqueado até salvar as notas de Reviewer e QA.",
+  "softwareTeamDlc.shipNeedReviewer": "Esta fatia não passou pelo Reviewer.",
+  "softwareTeamDlc.shipNeedQa": "Esta fatia não passou pelo QA.",
+  "softwareTeamDlc.shipNeedReviewNote": "Salve as notas de Reviewer antes do Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "Salve as notas de QA antes do Ship.",
+  "softwareTeamDlc.markReviewNote": "Marcar notas de Reviewer",
+  "softwareTeamDlc.markQaNote": "Marcar notas de QA",
+  "softwareTeamDlc.reviewNote": "Notas de Reviewer",
+  "softwareTeamDlc.qaNote": "Notas de QA",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, correções obrigatórias vs nits, risco.",
+  "softwareTeamDlc.qaNotePlaceholder": "Casos, comandos, passou/falhou.",
+  "softwareTeamDlc.notesSaved":
+    "Notas salvas. Ship destrava quando houver notas de Reviewer e de QA.",
 } as const;

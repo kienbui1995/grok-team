@@ -220,6 +220,13 @@ export async function installSoftwareTeamDlcPack(input: {
   target?: SoftwareTeamDlcInstallTarget | null;
   projectPath?: string | null;
   host?: SoftwareTeamPackWriteHost;
+  /** When set, only these pack names are written (both kinds if they share a name). */
+  onlyNames?: readonly string[] | null;
+  /** When set, only these kind+name pairs are written (repair). Wins over onlyNames. */
+  onlyFiles?: ReadonlyArray<{
+    name: string;
+    kind: SoftwareTeamPackFile["kind"];
+  }> | null;
 }): Promise<SoftwareTeamPackInstallResult> {
   const host = input.host ?? defaultSoftwareTeamPackHost();
   const target = pickSoftwareTeamInstallTarget({
@@ -246,9 +253,24 @@ export async function installSoftwareTeamDlcPack(input: {
   const scope: "user" | "project" = target === "project" ? "project" : "user";
   const projectPath =
     target === "project" ? (input.projectPath ?? "").trim() || null : null;
+  const onlyFiles = (input.onlyFiles ?? []).filter((row) => row.name.trim());
+  const only = new Set(
+    (input.onlyNames ?? []).map((name) => name.trim().toLowerCase()).filter(Boolean),
+  );
+  const pack = softwareTeamDlcPackFiles().filter((file) => {
+    if (onlyFiles.length > 0) {
+      return onlyFiles.some(
+        (row) =>
+          row.kind === file.kind &&
+          row.name.trim().toLowerCase() === file.name.toLowerCase(),
+      );
+    }
+    if (only.size === 0) return true;
+    return only.has(file.name.toLowerCase());
+  });
   const files: SoftwareTeamPackFileResult[] = [];
   try {
-    for (const file of softwareTeamDlcPackFiles()) {
+    for (const file of pack) {
       files.push(await writePackFile(host, file, scope, projectPath));
     }
   } catch (err) {

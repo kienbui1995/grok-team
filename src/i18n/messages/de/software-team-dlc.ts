@@ -88,7 +88,8 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Sitzung",
   "softwareTeamDlc.handoff": "Übergeben",
   "softwareTeamDlc.handoffTo": "Übergeben an {role}",
-  "softwareTeamDlc.handoffDone": "Pipeline fertig — Tech Writer hat die Ship-Stufe.",
+  "softwareTeamDlc.handoffDone":
+    "Pipeline fertig — Tech Writer ist die letzte Rolle. Ship braucht noch Reviewer- und QA-Notizen.",
   "softwareTeamDlc.handoffCopied": "Starter der nächsten Rolle kopiert",
   "softwareTeamDlc.handoffLoaded": "Starter der nächsten Rolle liegt im Composer.",
   "softwareTeamDlc.openInComposer": "Im Composer öffnen",
@@ -110,4 +111,32 @@ export const deSoftwareTeamDlc = {
     "Noch keine Arbeitselemente. Eine Scheibe anlegen oder eine Sitzung an eine Rolle binden.",
   "softwareTeamDlc.openStudio": "SDLC Studio über die Seitenleiste (Agenten) öffnen.",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} von {total} Pack-Dateien sind auf diesem Ziel.",
+  "softwareTeamDlc.install.status.missing":
+    "{n} Pack-Dateien fehlen auf diesem Ziel.",
+  "softwareTeamDlc.install.status.checking":
+    "Pack-Dateien auf dem gewählten Ziel werden geprüft…",
+  "softwareTeamDlc.install.repair": "Fehlende Dateien reparieren",
+  "softwareTeamDlc.install.repairing": "Pack wird repariert…",
+  "softwareTeamDlc.install.repaired": "{n} fehlende Pack-Dateien geschrieben.",
+  "softwareTeamDlc.install.repairNone":
+    "Nichts zu reparieren — Pack-Dateien sind schon da.",
+  "softwareTeamDlc.goalModeSet": "Goal-Modus ist für diesen Entwurf an.",
+  "softwareTeamDlc.goalModeSkipped":
+    "Goal bleibt auf der Karte. Host hat keine Goal-Erzeugungs-API.",
+  "softwareTeamDlc.shipLocked":
+    "Ship ist gesperrt, bis Reviewer- und QA-Notizen gespeichert sind.",
+  "softwareTeamDlc.shipNeedReviewer": "Diese Scheibe ist nicht durch Reviewer gegangen.",
+  "softwareTeamDlc.shipNeedQa": "Diese Scheibe ist nicht durch QA gegangen.",
+  "softwareTeamDlc.shipNeedReviewNote": "Reviewer-Notizen vor Ship speichern.",
+  "softwareTeamDlc.shipNeedQaNote": "QA-Notizen vor Ship speichern.",
+  "softwareTeamDlc.markReviewNote": "Reviewer-Notizen eintragen",
+  "softwareTeamDlc.markQaNote": "QA-Notizen eintragen",
+  "softwareTeamDlc.reviewNote": "Reviewer-Notizen",
+  "softwareTeamDlc.qaNote": "QA-Notizen",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, Muss-Fixes vs. Nits, Risiko.",
+  "softwareTeamDlc.qaNotePlaceholder": "Fälle, Befehle, Bestanden/Fehlschlag.",
+  "softwareTeamDlc.notesSaved":
+    "Notizen gespeichert. Ship öffnet, wenn Reviewer- und QA-Notizen beide da sind.",
 } as const;

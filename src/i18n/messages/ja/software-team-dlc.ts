@@ -88,7 +88,8 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "セッション",
   "softwareTeamDlc.handoff": "受け渡し",
   "softwareTeamDlc.handoffTo": "{role} へ渡す",
-  "softwareTeamDlc.handoffDone": "パイプライン完了 — Tech Writer は Ship 段階です。",
+  "softwareTeamDlc.handoffDone":
+    "パイプライン完了 — Tech Writer が最後の役割です。Ship には Reviewer と QA のメモが必要です。",
   "softwareTeamDlc.handoffCopied": "次の役割のスターターをコピーしました",
   "softwareTeamDlc.handoffLoaded": "次の役割のスターターが入力欄にあります。",
   "softwareTeamDlc.openInComposer": "入力欄で開く",
@@ -110,4 +111,32 @@ export const jaSoftwareTeamDlc = {
     "作業項目はまだありません。スライスを追加するか、セッションを役割に結んでください。",
   "softwareTeamDlc.openStudio": "サイドバー（エージェント）から SDLC Studio を開きます。",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "この対象にパックファイルが {n} / {total} あります。",
+  "softwareTeamDlc.install.status.missing":
+    "この対象にパックファイルが {n} 不足しています。",
+  "softwareTeamDlc.install.status.checking":
+    "選択した対象のパックファイルを確認しています…",
+  "softwareTeamDlc.install.repair": "不足ファイルを修復",
+  "softwareTeamDlc.install.repairing": "修復中…",
+  "softwareTeamDlc.install.repaired": "不足していたパックファイルを {n} 件書きました。",
+  "softwareTeamDlc.install.repairNone":
+    "修復不要 — パックファイルは既にあります。",
+  "softwareTeamDlc.goalModeSet": "この下書きで Goal モードをオンにしました。",
+  "softwareTeamDlc.goalModeSkipped":
+    "Goal はカードに残します。Host に Goal 作成 API はありません。",
+  "softwareTeamDlc.shipLocked":
+    "Reviewer と QA のメモを保存するまで Ship はロックされます。",
+  "softwareTeamDlc.shipNeedReviewer": "このスライスは Reviewer を通っていません。",
+  "softwareTeamDlc.shipNeedQa": "このスライスは QA を通っていません。",
+  "softwareTeamDlc.shipNeedReviewNote": "Ship の前に Reviewer メモを保存してください。",
+  "softwareTeamDlc.shipNeedQaNote": "Ship の前に QA メモを保存してください。",
+  "softwareTeamDlc.markReviewNote": "Reviewer メモを記入",
+  "softwareTeamDlc.markQaNote": "QA メモを記入",
+  "softwareTeamDlc.reviewNote": "Reviewer メモ",
+  "softwareTeamDlc.qaNote": "QA メモ",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff、必須修正と nits、リスク。",
+  "softwareTeamDlc.qaNotePlaceholder": "ケース、コマンド、合否。",
+  "softwareTeamDlc.notesSaved":
+    "メモを保存しました。Reviewer と QA のメモが揃うと Ship が開きます。",
 } as const;

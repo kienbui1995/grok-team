@@ -88,7 +88,8 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Session",
   "softwareTeamDlc.handoff": "Passer",
   "softwareTeamDlc.handoffTo": "Passer à {role}",
-  "softwareTeamDlc.handoffDone": "Pipeline terminé — Tech Writer est à l’étape Ship.",
+  "softwareTeamDlc.handoffDone":
+    "Pipeline terminé — Tech Writer est le dernier rôle. Ship exige encore les notes Reviewer et QA.",
   "softwareTeamDlc.handoffCopied": "Starter du rôle suivant copié",
   "softwareTeamDlc.handoffLoaded": "Le starter du rôle suivant est dans le compositeur.",
   "softwareTeamDlc.openInComposer": "Ouvrir dans le compositeur",
@@ -110,4 +111,32 @@ export const frSoftwareTeamDlc = {
     "Aucun élément pour l’instant. Ajoutez une tranche ou liez une session à un rôle.",
   "softwareTeamDlc.openStudio": "Ouvrez SDLC Studio depuis la barre latérale (Agents).",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} fichiers du pack sur {total} sont sur cette cible.",
+  "softwareTeamDlc.install.status.missing":
+    "{n} fichiers du pack manquent sur cette cible.",
+  "softwareTeamDlc.install.status.checking":
+    "Vérification des fichiers du pack sur la cible choisie…",
+  "softwareTeamDlc.install.repair": "Réparer les fichiers manquants",
+  "softwareTeamDlc.install.repairing": "Réparation du pack…",
+  "softwareTeamDlc.install.repaired": "{n} fichiers manquants du pack écrits.",
+  "softwareTeamDlc.install.repairNone":
+    "Rien à réparer — les fichiers du pack sont déjà présents.",
+  "softwareTeamDlc.goalModeSet": "Le mode objectif est activé pour ce brouillon.",
+  "softwareTeamDlc.goalModeSkipped":
+    "L’objectif reste sur la carte. L’hôte n’a pas d’API de création d’objectif.",
+  "softwareTeamDlc.shipLocked":
+    "Ship est verrouillé tant que les notes Reviewer et QA ne sont pas enregistrées.",
+  "softwareTeamDlc.shipNeedReviewer": "Cette tranche n’est pas passée par Reviewer.",
+  "softwareTeamDlc.shipNeedQa": "Cette tranche n’est pas passée par QA.",
+  "softwareTeamDlc.shipNeedReviewNote": "Enregistrez les notes Reviewer avant Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "Enregistrez les notes QA avant Ship.",
+  "softwareTeamDlc.markReviewNote": "Saisir les notes Reviewer",
+  "softwareTeamDlc.markQaNote": "Saisir les notes QA",
+  "softwareTeamDlc.reviewNote": "Notes Reviewer",
+  "softwareTeamDlc.qaNote": "Notes QA",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, corrections obligatoires vs nits, risque.",
+  "softwareTeamDlc.qaNotePlaceholder": "Cas, commandes, succès/échec.",
+  "softwareTeamDlc.notesSaved":
+    "Notes enregistrées. Ship s’ouvre quand les notes Reviewer et QA sont toutes deux présentes.",
 } as const;

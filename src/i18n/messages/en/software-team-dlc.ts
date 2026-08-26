@@ -95,7 +95,8 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Session",
   "softwareTeamDlc.handoff": "Hand off",
   "softwareTeamDlc.handoffTo": "Hand off to {role}",
-  "softwareTeamDlc.handoffDone": "Pipeline complete — Writer has the Ship stage.",
+  "softwareTeamDlc.handoffDone":
+    "Pipeline complete — Writer is the last role. Ship still needs Reviewer and QA notes.",
   "softwareTeamDlc.handoffCopied": "Next-role starter copied",
   "softwareTeamDlc.handoffLoaded": "Next-role starter is in the composer.",
   "softwareTeamDlc.openInComposer": "Open in composer",
@@ -117,4 +118,32 @@ export const enSoftwareTeamDlc = {
     "No work items yet. Add a slice or bind a session to a role.",
   "softwareTeamDlc.openStudio": "Open SDLC Studio from the sidebar (Agents).",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} of {total} pack files are on this target.",
+  "softwareTeamDlc.install.status.missing":
+    "{n} pack files are missing on this target.",
+  "softwareTeamDlc.install.status.checking":
+    "Checking pack files on the chosen target…",
+  "softwareTeamDlc.install.repair": "Repair missing files",
+  "softwareTeamDlc.install.repairing": "Repairing pack…",
+  "softwareTeamDlc.install.repaired": "Wrote {n} missing pack files.",
+  "softwareTeamDlc.install.repairNone":
+    "Nothing to repair — pack files are already present.",
+  "softwareTeamDlc.goalModeSet": "Goal mode is on for this composer draft.",
+  "softwareTeamDlc.goalModeSkipped":
+    "Goal stays on the card. Host has no create-goal API.",
+  "softwareTeamDlc.shipLocked":
+    "Ship is locked until Reviewer and QA notes are saved.",
+  "softwareTeamDlc.shipNeedReviewer": "This slice has not passed through Reviewer.",
+  "softwareTeamDlc.shipNeedQa": "This slice has not passed through QA.",
+  "softwareTeamDlc.shipNeedReviewNote": "Save Reviewer notes before Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "Save QA notes before Ship.",
+  "softwareTeamDlc.markReviewNote": "Mark Reviewer notes",
+  "softwareTeamDlc.markQaNote": "Mark QA notes",
+  "softwareTeamDlc.reviewNote": "Reviewer notes",
+  "softwareTeamDlc.qaNote": "QA notes",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, must-fix vs nits, risk.",
+  "softwareTeamDlc.qaNotePlaceholder": "Cases, commands, pass/fail.",
+  "softwareTeamDlc.notesSaved":
+    "Notes saved. Ship unlocks when Reviewer and QA notes are both present.",
 } as const;

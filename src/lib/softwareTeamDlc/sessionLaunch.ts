@@ -15,6 +15,7 @@ import {
 import type { PlanChromeStored } from "@/lib/planSession";
 import { softwareTeamRoleStarterPrompt } from "./pack";
 import type { SoftwareTeamRoleId } from "./roles";
+import { softwareTeamRoleChecklist } from "./shipGate";
 
 export const SOFTWARE_TEAM_CHAT_HASH = "#/workbench";
 
@@ -29,6 +30,8 @@ export type SoftwareTeamLaunchFailReason =
   | "create_failed";
 
 export type SoftwareTeamPlanChromeOutcome = "set" | "skipped" | "failed";
+
+export type SoftwareTeamGoalModeOutcome = "set" | "skipped";
 
 export type SoftwareTeamStarterFields = {
   roleId: SoftwareTeamRoleId;
@@ -48,7 +51,12 @@ export type SoftwareTeamLaunchHost = {
   sessionPlanChromeSet: (
     sessionId: string,
     chrome: PlanChromeStored,
-  ) => Promise<void>;
+  ) => Promise<unknown>;
+  /** Host goal-entity create. Omitted in production — no such Grok Build API. */
+  createGoalEntity?: (
+    sessionId: string,
+    goalRef: string,
+  ) => Promise<unknown>;
   setDraft?: (text: string) => void;
   saveDraft?: (
     sessionId: string,
@@ -65,6 +73,13 @@ export type SoftwareTeamLaunchResult =
       nav: Exclude<SoftwareTeamComposerNav, "need_session">;
       starter: string;
       planChrome: SoftwareTeamPlanChromeOutcome;
+      goalMode: SoftwareTeamGoalModeOutcome;
+      planRef: string;
+      goalRef: string;
+      /** Host plan entity id, only when `sessionPlanChromeSet` returned one. */
+      hostPlanId: string | null;
+      /** Host goal entity id, only when `createGoalEntity` returned one. */
+      hostGoalId: string | null;
     }
   | {
       ok: false;
@@ -88,6 +103,10 @@ export function composeRoleSessionStarter(
   if (planRef) lines.push(`Plan: ${planRef}`);
   if (goalRef) lines.push(`Goal: ${goalRef}`);
   if (artifactRef) lines.push(`Artifact: ${artifactRef}`);
+  const checklist = softwareTeamRoleChecklist(item.roleId);
+  if (checklist.length) {
+    lines.push("", ...checklist);
+  }
   lines.push(
     "",
     "Stay on Grok Build. Do not spawn a second CLI runtime.",
@@ -186,27 +205,63 @@ export function defaultSoftwareTeamLaunchHost(): SoftwareTeamLaunchHost {
   };
 }
 
+/** Accept a Host-returned entity id only. Never invent one. */
+export function hostEntityIdFromUnknown(raw: unknown): string | null {
+  if (typeof raw === "string") {
+    const id = raw.trim();
+    return id ? id : null;
+  }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const rec = raw as Record<string, unknown>;
+  for (const key of ["id", "planId", "goalId"] as const) {
+    const value = rec[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return null;
+}
+
+export type SoftwareTeamPlanChromeAttach = {
+  outcome: SoftwareTeamPlanChromeOutcome;
+  hostPlanId: string | null;
+};
+
 export async function attachSoftwareTeamPlanChrome(input: {
   host: Pick<SoftwareTeamLaunchHost, "canWritePlanChrome" | "sessionPlanChromeSet">;
   sessionId: string;
   planRef?: string | null;
   title?: string | null;
-}): Promise<SoftwareTeamPlanChromeOutcome> {
+}): Promise<SoftwareTeamPlanChromeAttach> {
   const sessionId = input.sessionId.trim();
   const planRef = (input.planRef ?? "").trim();
-  if (!sessionId || !planRef) return "skipped";
-  if (!input.host.canWritePlanChrome()) return "skipped";
+  if (!sessionId || !planRef) return { outcome: "skipped", hostPlanId: null };
+  if (!input.host.canWritePlanChrome()) {
+    return { outcome: "skipped", hostPlanId: null };
+  }
   try {
-    await input.host.sessionPlanChromeSet(sessionId, {
+    const raw = await input.host.sessionPlanChromeSet(sessionId, {
       title: (input.title ?? "").trim() || "SDLC Studio",
       body: planRef,
       visible: true,
       userClosed: false,
     });
-    return "set";
+    return {
+      outcome: "set",
+      hostPlanId: hostEntityIdFromUnknown(raw),
+    };
   } catch {
-    return "failed";
+    return { outcome: "failed", hostPlanId: null };
   }
+}
+
+/** Patch pipeline plan/goal fields only when Host returned entity ids. */
+export function softwareTeamLaunchItemPatch(
+  result: SoftwareTeamLaunchResult,
+): { planRef?: string; goalRef?: string } | null {
+  if (!result.ok) return null;
+  const patch: { planRef?: string; goalRef?: string } = {};
+  if (result.hostPlanId) patch.planRef = result.hostPlanId;
+  if (result.hostGoalId) patch.goalRef = result.hostGoalId;
+  return Object.keys(patch).length ? patch : null;
 }
 
 export async function launchSoftwareTeamWorkItem(input: {
@@ -258,18 +313,35 @@ export async function launchSoftwareTeamWorkItem(input: {
     saveDraft: input.host.saveDraft,
     storage: input.storage,
   });
-  const planChrome = await attachSoftwareTeamPlanChrome({
+  const planRef = (input.item.planRef ?? "").trim();
+  const goalRef = (input.item.goalRef ?? "").trim();
+  const planAttach = await attachSoftwareTeamPlanChrome({
     host: input.host,
     sessionId,
-    planRef: input.item.planRef,
+    planRef,
     title: input.item.title,
   });
+  let hostGoalId: string | null = null;
+  if (goalRef && input.host.createGoalEntity) {
+    try {
+      hostGoalId = hostEntityIdFromUnknown(
+        await input.host.createGoalEntity(sessionId, goalRef),
+      );
+    } catch {
+      /* keep the card field — do not invent a goal id */
+    }
+  }
   return {
     ok: true,
     sessionId,
     createdSession,
     nav,
     starter,
-    planChrome,
+    planChrome: planAttach.outcome,
+    goalMode: goalRef ? "set" : "skipped",
+    planRef,
+    goalRef,
+    hostPlanId: planAttach.hostPlanId,
+    hostGoalId,
   };
 }

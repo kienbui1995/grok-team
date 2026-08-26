@@ -13,10 +13,14 @@ See `docs/llm-wiki/release.md`.
 
 ### Added
 - **Software Works / SDLC Studio (opt-in)**: Settings → Extensions → Agents can enable a software-delivery edition. The Agents pane becomes a pipeline board (Backlog → Design → Build → Review → Ship) bound to session + role + plan/goal/artifact, with Product→…→Writer handoff. Open/create a session from the board to load the role starter into the composer. Install writes the 6+6+workflow pack into project `.grok/` or Independent agent-home (refuses shared `~/.grok`; never fakes Host success). `/team-*` appears in the slash palette when the edition is on (skill chip; CLI resolves after install). Off by default; never auto-applies a skin.
+- **Software Works pack status + repair**: Studio (and Settings when the edition is on) probes Host lists for the 6 agents + 6 skills + `team-handoff` on the chosen target. Status is installed / missing / blocked_shared / need_host. Repair writes only missing files. Shared `~/.grok` still refuses; browser preview never pretends success.
+- **Software Works Review → QA → Ship gate**: Ship is blocked until the item has visited Reviewer and QA and both notes are saved (persisted on the pipeline item). Reviewer/QA handoff starters include a diff / test / risk checklist. Notes are edited in a `GlassModal`. Plan chrome uses `sessionPlanChromeSet` when available; goal mode is the composer draft flag. Host plan/goal entity ids are written onto the card only when those APIs return an id — never invented.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
 - **Software Works / SDLC Studio（可选）**：设置 → 扩展 → 代理可开启软件交付版。智能体看板变为流水线（待办 → 设计 → 构建 → 评审 → 发布），绑定会话 + 角色 + 计划/目标/产物，并支持 Product→…→Writer 交接。从看板打开/新建会话会把角色开场写入输入框。安装包写入项目 `.grok/` 或独立 agent-home（拒绝共享 `~/.grok`，不假装 Host 成功）。开启后斜杠 `/team-*` 出现在面板（技能芯片；安装后 CLI 才能解析）。默认关；不自动套皮肤。
+- **Software Works 安装状态与补写**：工坊（以及开启后的设置页）用 Host 列表核对所选目标上的 6 个代理 + 6 个技能 + `team-handoff`。状态为已安装 / 缺失 / 共享拒绝 / 需要 Host。补写只写缺失文件。共享 `~/.grok` 仍拒绝；预览不假装成功。
+- **Software Works 评审→测试→发布门槛**：工作项须经过评审与测试并保存双方备注后才能发布（备注落在流水线项上）。交接开场含 diff / 测试 / 风险清单。备注用 `GlassModal`。计划条走 `sessionPlanChromeSet`（若有）；目标模式是输入草稿开关。只有 Host 返回实体 id 才写回卡片，绝不编造。
 - **自定义外观**：设置 → 外观 → 主题可改文字颜色（默认跟随浅/深色近黑/近白）和字体阴影（默认关）。「恢复默认」需二次确认，会把这两项恢复出厂。这两项会随 `.grokskin` 导入导出。
 
 ### Changed

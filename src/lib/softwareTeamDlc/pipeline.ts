@@ -23,6 +23,10 @@ import {
   saveSoftwareTeamSessionTagMap,
   type SoftwareTeamSessionTagMap,
 } from "./sessionTags";
+import {
+  recordSoftwareTeamRoleVisit,
+  softwareTeamShipGate,
+} from "./shipGate";
 
 export const SOFTWARE_TEAM_DLC_PIPELINE_KEY = "grok.softwareTeamDlc.pipeline";
 
@@ -49,6 +53,10 @@ export type SoftwareTeamPipelineItem = {
   planRef: string;
   goalRef: string;
   artifactRef: string;
+  /** Roles this slice has occupied (Reviewer + QA required before Ship). */
+  roleHistory: SoftwareTeamRoleId[];
+  reviewNote: string;
+  qaNote: string;
   updatedAt: number;
   stageSource: SoftwareTeamStageSource;
 };
@@ -66,6 +74,9 @@ export type SoftwareTeamPipelineItemDraft = {
   planRef?: string;
   goalRef?: string;
   artifactRef?: string;
+  roleHistory?: SoftwareTeamRoleId[];
+  reviewNote?: string;
+  qaNote?: string;
   updatedAt?: number;
   stageSource?: SoftwareTeamStageSource;
 };
@@ -116,6 +127,12 @@ export function createSoftwareTeamPipelineItem(
     planRef: (draft.planRef ?? "").trim(),
     goalRef: (draft.goalRef ?? "").trim(),
     artifactRef: (draft.artifactRef ?? "").trim(),
+    roleHistory: recordSoftwareTeamRoleVisit(
+      draft.roleHistory,
+      role.id,
+    ),
+    reviewNote: (draft.reviewNote ?? "").trim(),
+    qaNote: (draft.qaNote ?? "").trim(),
     updatedAt:
       typeof draft.updatedAt === "number" && Number.isFinite(draft.updatedAt)
         ? draft.updatedAt
@@ -144,6 +161,11 @@ export function parseSoftwareTeamPipelineItem(
     planRef: typeof rec.planRef === "string" ? rec.planRef : "",
     goalRef: typeof rec.goalRef === "string" ? rec.goalRef : "",
     artifactRef: typeof rec.artifactRef === "string" ? rec.artifactRef : "",
+    roleHistory: Array.isArray(rec.roleHistory)
+      ? rec.roleHistory.filter(isSoftwareTeamRoleId)
+      : undefined,
+    reviewNote: typeof rec.reviewNote === "string" ? rec.reviewNote : "",
+    qaNote: typeof rec.qaNote === "string" ? rec.qaNote : "",
     updatedAt: typeof rec.updatedAt === "number" ? rec.updatedAt : undefined,
     stageSource: isSoftwareTeamStageSource(sourceRaw) ? sourceRaw : undefined,
   });
@@ -320,8 +342,12 @@ export function addSoftwareTeamPipelineItem(
   store: SoftwareTeamPipelineStore,
   draft: SoftwareTeamPipelineItemDraft,
 ): SoftwareTeamPipelineStore {
-  const item = createSoftwareTeamPipelineItem(draft);
-  if (!item) return store;
+  const created = createSoftwareTeamPipelineItem(draft);
+  if (!created) return store;
+  const item =
+    created.stageId === "ship" && !softwareTeamShipGate(created).ok
+      ? { ...created, stageId: "review" as const }
+      : created;
   let next: SoftwareTeamPipelineStore = {
     items: store.items.filter((existing) => existing.id !== item.id),
   };
@@ -363,15 +389,39 @@ export function updateSoftwareTeamPipelineItem(
   const roleId = patch.roleId ?? prev.roleId;
   const role = softwareTeamRoleById(roleId);
   if (!role) return store;
+  let stageId = patch.stageId ?? prev.stageId;
+  if (stageId === "ship" && prev.stageId !== "ship") {
+    const probeHistory = recordSoftwareTeamRoleVisit(
+      patch.roleHistory ?? prev.roleHistory,
+      prev.roleId,
+      role.id,
+    );
+    const probe = {
+      roleId: role.id,
+      roleHistory: probeHistory,
+      reviewNote: (patch.reviewNote ?? prev.reviewNote).trim(),
+      qaNote: (patch.qaNote ?? prev.qaNote).trim(),
+    };
+    if (!softwareTeamShipGate(probe).ok) {
+      stageId = prev.stageId;
+    }
+  }
   const next = createSoftwareTeamPipelineItem({
     id: prev.id,
     sessionId: patch.sessionId ?? prev.sessionId,
     roleId: role.id,
-    stageId: patch.stageId ?? prev.stageId,
+    stageId,
     title: patch.title ?? prev.title,
     planRef: patch.planRef ?? prev.planRef,
     goalRef: patch.goalRef ?? prev.goalRef,
     artifactRef: patch.artifactRef ?? prev.artifactRef,
+    roleHistory: recordSoftwareTeamRoleVisit(
+      patch.roleHistory ?? prev.roleHistory,
+      prev.roleId,
+      role.id,
+    ),
+    reviewNote: patch.reviewNote ?? prev.reviewNote,
+    qaNote: patch.qaNote ?? prev.qaNote,
     updatedAt: now,
     stageSource: patch.stageSource ?? prev.stageSource,
   });
@@ -384,6 +434,9 @@ export function updateSoftwareTeamPipelineItem(
     next.planRef === prev.planRef &&
     next.goalRef === prev.goalRef &&
     next.artifactRef === prev.artifactRef &&
+    next.reviewNote === prev.reviewNote &&
+    next.qaNote === prev.qaNote &&
+    next.roleHistory.join(",") === prev.roleHistory.join(",") &&
     next.stageSource === prev.stageSource
   ) {
     return store;
@@ -402,6 +455,11 @@ export function setPipelineItemStage(
   now = Date.now(),
 ): SoftwareTeamPipelineStore {
   if (!isSoftwareTeamSdlcStageId(stageId)) return store;
+  const prev = pipelineItemById(store, itemId);
+  if (!prev) return store;
+  if (stageId === "ship" && !softwareTeamShipGate(prev).ok) {
+    return store;
+  }
   return updateSoftwareTeamPipelineItem(
     store,
     itemId,
@@ -481,6 +539,9 @@ export function applySessionKanbanToItem(
 ): SoftwareTeamPipelineItem {
   const stageId = stageFromSessionKanbanColumn(column);
   if (!stageId || item.stageId === stageId) return item;
+  if (stageId === "ship" && !softwareTeamShipGate(item).ok) {
+    return item;
+  }
   return {
     ...item,
     stageId,
@@ -557,7 +618,12 @@ export function clearSessionFromPipeline(
   const item = pipelineItemForSession(store, sessionId);
   if (!item) return store;
   const emptyMeta =
-    !item.title && !item.planRef && !item.goalRef && !item.artifactRef;
+    !item.title &&
+    !item.planRef &&
+    !item.goalRef &&
+    !item.artifactRef &&
+    !item.reviewNote &&
+    !item.qaNote;
   if (emptyMeta) return removeSoftwareTeamPipelineItem(store, item.id);
   return updateSoftwareTeamPipelineItem(store, item.id, { sessionId: "" });
 }

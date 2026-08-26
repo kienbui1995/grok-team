@@ -62,6 +62,13 @@ describe("i18n catalog", () => {
     expect(t("en", "project.trustFirst", { name: "Demo" })).toContain("Demo");
     expect(t("zh", "project.trustFirst", { name: "演示" })).toContain("演示");
     expect(t("ru", "sidebar.selectedCount", { n: 3 })).toContain("3");
+    expect(
+      t("en", "softwareTeamDlc.install.status.installed", { n: 13, total: 13 }),
+    ).toContain("13");
+    expect(t("en", "softwareTeamDlc.install.repaired", { n: 2 })).toContain("2");
+    expect(t("zh", "softwareTeamDlc.install.status.missing", { n: 3 })).toContain(
+      "3",
+    );
   });
 
   it("createT binds locale (English is the product default)", () => {

@@ -27,6 +27,8 @@ import {
   softwareTeamRoleById,
   softwareTeamRoleSlashHint,
   softwareTeamRoleStarterPrompt,
+  softwareTeamShipBlockMessageKey,
+  softwareTeamShipGate,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamRoleId,
   type SoftwareTeamSdlcStageId,
@@ -156,6 +158,7 @@ export function SdlcStudioPage({
     currentSessionId,
     workspace,
     bindSession: pipeline.bindSession,
+    patchItem: (itemId, patch) => pipeline.updateItem(itemId, patch),
     onSelectSession,
   });
   const [query, setQuery] = useState("");
@@ -163,6 +166,11 @@ export function SdlcStudioPage({
   const [copyError, setCopyError] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [editor, setEditor] = useState<ItemDraft | null>(null);
+  const [notesEditor, setNotesEditor] = useState<{
+    itemId: string;
+    kind: "review" | "qa";
+    text: string;
+  } | null>(null);
   const [menu, setMenu] = useState<{
     itemId: string;
     x: number;
@@ -334,11 +342,22 @@ export function SdlcStudioPage({
     const items: ContextMenuItem[] = [
       {
         label: t("softwareTeamDlc.assignStage"),
-        children: SOFTWARE_TEAM_SDLC_STAGES.map((stage) => ({
-          id: `stage-${stage.id}`,
-          label: t("softwareTeamDlc.moveStage", { stage: t(stage.titleKey) }),
-          onClick: () => pipeline.setStage(menuItem.id, stage.id),
-        })),
+        children: SOFTWARE_TEAM_SDLC_STAGES.map((stage) => {
+          const shipBlocked =
+            stage.id === "ship" && !softwareTeamShipGate(menuItem).ok;
+          return {
+            id: `stage-${stage.id}`,
+            label: t("softwareTeamDlc.moveStage", { stage: t(stage.titleKey) }),
+            disabled: shipBlocked,
+            onClick: () => {
+              if (shipBlocked) {
+                setStatus(t("softwareTeamDlc.shipLocked"));
+                return;
+              }
+              pipeline.setStage(menuItem.id, stage.id);
+            },
+          };
+        }),
       },
       {
         label: t("softwareTeamDlc.assignRole"),
@@ -361,6 +380,24 @@ export function SdlcStudioPage({
         disabled: true,
       });
     }
+    items.push({
+      label: t("softwareTeamDlc.markReviewNote"),
+      onClick: () =>
+        setNotesEditor({
+          itemId: menuItem.id,
+          kind: "review",
+          text: menuItem.reviewNote,
+        }),
+    });
+    items.push({
+      label: t("softwareTeamDlc.markQaNote"),
+      onClick: () =>
+        setNotesEditor({
+          itemId: menuItem.id,
+          kind: "qa",
+          text: menuItem.qaNote,
+        }),
+    });
     items.push({
       label: t("softwareTeamDlc.openInComposer"),
       onClick: () => void onOpenInComposer(menuItem),
@@ -546,6 +583,30 @@ export function SdlcStudioPage({
               ? t("softwareTeamDlc.install.installing")
               : t("softwareTeamDlc.install.action")}
           </button>
+          {actions.packStatus?.kind === "missing" ? (
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              disabled={actions.repairing}
+              onClick={() => {
+                void actions.repairPack().then((result) => {
+                  setStatus(
+                    result.ok && result.files.length === 0
+                      ? t("softwareTeamDlc.install.repairNone")
+                      : result.ok
+                        ? t("softwareTeamDlc.install.repaired", {
+                            n: result.files.length,
+                          })
+                        : actions.describeInstall(result),
+                  );
+                });
+              }}
+            >
+              {actions.repairing
+                ? t("softwareTeamDlc.install.repairing")
+                : t("softwareTeamDlc.install.repair")}
+            </button>
+          ) : null}
           <button
             type="button"
             className="btn btn--ghost btn--sm"
@@ -577,6 +638,17 @@ export function SdlcStudioPage({
           }
           return null;
         })()}
+        {actions.packStatus ? (
+          <p className="sdlc-studio__slash-note" role="status">
+            {actions.probing
+              ? t("softwareTeamDlc.install.status.checking")
+              : actions.describePackStatus(actions.packStatus)}
+          </p>
+        ) : actions.probing ? (
+          <p className="sdlc-studio__slash-note" role="status">
+            {t("softwareTeamDlc.install.status.checking")}
+          </p>
+        ) : null}
         <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.slashAfterInstall")}</p>
 
         {status ? (
@@ -662,6 +734,24 @@ export function SdlcStudioPage({
                                 {item.artifactRef ? t("softwareTeamDlc.artifactRef") : null}
                               </span>
                             ) : null}
+                            {(() => {
+                              const gate = softwareTeamShipGate(item);
+                              const nearShip =
+                                item.roleId === "reviewer" ||
+                                item.roleId === "qa" ||
+                                item.roleId === "writer" ||
+                                item.stageId === "review";
+                              if (gate.ok || !nearShip || !gate.blocks[0]) {
+                                return null;
+                              }
+                              return (
+                                <span className="sdlc-studio__refs">
+                                  {t("softwareTeamDlc.shipLocked")}
+                                  {" · "}
+                                  {t(softwareTeamShipBlockMessageKey(gate.blocks[0]))}
+                                </span>
+                              );
+                            })()}
                           </button>
                         </li>
                       ))}
@@ -744,18 +834,34 @@ export function SdlcStudioPage({
             <div className="sdlc-studio__field">
               <span>{t("softwareTeamDlc.assignStage")}</span>
               <div className="sdlc-studio__chips" role="group">
-                {SOFTWARE_TEAM_SDLC_STAGES.map((stage) => (
-                  <button
-                    key={stage.id}
-                    type="button"
-                    className={
-                      "task-board__chip" + (editor.stageId === stage.id ? " is-active" : "")
-                    }
-                    onClick={() => setEditor({ ...editor, stageId: stage.id })}
-                  >
-                    {t(stage.titleKey)}
-                  </button>
-                ))}
+                {SOFTWARE_TEAM_SDLC_STAGES.map((stage) => {
+                  const live = editor.id
+                    ? pipeline.items.find((item) => item.id === editor.id)
+                    : null;
+                  const shipBlocked =
+                    stage.id === "ship" &&
+                    (!live || !softwareTeamShipGate(live).ok);
+                  return (
+                    <button
+                      key={stage.id}
+                      type="button"
+                      className={
+                        "task-board__chip" +
+                        (editor.stageId === stage.id ? " is-active" : "")
+                      }
+                      disabled={shipBlocked}
+                      onClick={() => {
+                        if (shipBlocked) {
+                          setStatus(t("softwareTeamDlc.shipLocked"));
+                          return;
+                        }
+                        setEditor({ ...editor, stageId: stage.id });
+                      }}
+                    >
+                      {t(stage.titleKey)}
+                    </button>
+                  );
+                })}
               </div>
             </div>
             <div className="sdlc-studio__field">
@@ -813,6 +919,69 @@ export function SdlcStudioPage({
               />
             </label>
           </div>
+        ) : null}
+      </GlassModal>
+
+      <GlassModal
+        open={!!notesEditor}
+        onClose={() => setNotesEditor(null)}
+        title={
+          notesEditor?.kind === "qa"
+            ? t("softwareTeamDlc.markQaNote")
+            : t("softwareTeamDlc.markReviewNote")
+        }
+        closeLabel={t("window.close")}
+        wrapBody
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={() => setNotesEditor(null)}
+            >
+              {t("common.cancel")}
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => {
+                if (!notesEditor) return;
+                const text = notesEditor.text.trim();
+                if (notesEditor.kind === "qa") {
+                  pipeline.updateItem(notesEditor.itemId, { qaNote: text });
+                } else {
+                  pipeline.updateItem(notesEditor.itemId, { reviewNote: text });
+                }
+                setNotesEditor(null);
+                setStatus(t("softwareTeamDlc.notesSaved"));
+              }}
+            >
+              {t("common.save")}
+            </button>
+          </>
+        }
+      >
+        {notesEditor ? (
+          <label className="sdlc-studio__field">
+            <span>
+              {notesEditor.kind === "qa"
+                ? t("softwareTeamDlc.qaNote")
+                : t("softwareTeamDlc.reviewNote")}
+            </span>
+            <textarea
+              className="settings-input"
+              rows={5}
+              value={notesEditor.text}
+              onChange={(e) =>
+                setNotesEditor({ ...notesEditor, text: e.target.value })
+              }
+              placeholder={
+                notesEditor.kind === "qa"
+                  ? t("softwareTeamDlc.qaNotePlaceholder")
+                  : t("softwareTeamDlc.reviewNotePlaceholder")
+              }
+            />
+          </label>
         ) : null}
       </GlassModal>
     </div>

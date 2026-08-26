@@ -88,7 +88,8 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Сесія",
   "softwareTeamDlc.handoff": "Передати",
   "softwareTeamDlc.handoffTo": "Передати {role}",
-  "softwareTeamDlc.handoffDone": "Конвеєр завершено — Tech Writer на етапі Ship.",
+  "softwareTeamDlc.handoffDone":
+    "Конвеєр завершено — Tech Writer остання роль. Для Ship ще потрібні нотатки Reviewer і QA.",
   "softwareTeamDlc.handoffCopied": "Стартер наступної ролі скопійовано",
   "softwareTeamDlc.handoffLoaded": "Стартер наступної ролі в полі вводу.",
   "softwareTeamDlc.openInComposer": "Відкрити в полі вводу",
@@ -110,4 +111,32 @@ export const ukSoftwareTeamDlc = {
     "Поки немає елементів. Додайте зріз або прив’яжіть сесію до ролі.",
   "softwareTeamDlc.openStudio": "Відкрийте SDLC Studio в бічній панелі (Агенти).",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "На цій цілі {n} з {total} файлів пакета.",
+  "softwareTeamDlc.install.status.missing":
+    "На цій цілі бракує {n} файлів пакета.",
+  "softwareTeamDlc.install.status.checking":
+    "Перевіряємо файли пакета на вибраній цілі…",
+  "softwareTeamDlc.install.repair": "Дописати відсутні файли",
+  "softwareTeamDlc.install.repairing": "Відновлюємо пакет…",
+  "softwareTeamDlc.install.repaired": "Записано {n} відсутніх файлів пакета.",
+  "softwareTeamDlc.install.repairNone":
+    "Відновлювати нічого — файли пакета вже на місці.",
+  "softwareTeamDlc.goalModeSet": "Режим цілі увімкнено для цього чернетки.",
+  "softwareTeamDlc.goalModeSkipped":
+    "Ціль лишається на картці. У Host немає API створення цілі.",
+  "softwareTeamDlc.shipLocked":
+    "Ship заблоковано, доки не збережено нотатки Reviewer і QA.",
+  "softwareTeamDlc.shipNeedReviewer": "Цей зріз не пройшов через Reviewer.",
+  "softwareTeamDlc.shipNeedQa": "Цей зріз не пройшов через QA.",
+  "softwareTeamDlc.shipNeedReviewNote": "Збережіть нотатки Reviewer перед Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "Збережіть нотатки QA перед Ship.",
+  "softwareTeamDlc.markReviewNote": "Записати нотатки Reviewer",
+  "softwareTeamDlc.markQaNote": "Записати нотатки QA",
+  "softwareTeamDlc.reviewNote": "Нотатки Reviewer",
+  "softwareTeamDlc.qaNote": "Нотатки QA",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, обов’язкові правки й дрібниці, ризик.",
+  "softwareTeamDlc.qaNotePlaceholder": "Випадки, команди, успіх/провал.",
+  "softwareTeamDlc.notesSaved":
+    "Нотатки збережено. Ship відкриється, коли будуть і Reviewer, і QA.",
 } as const;

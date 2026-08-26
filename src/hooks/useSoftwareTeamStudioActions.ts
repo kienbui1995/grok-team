@@ -11,12 +11,17 @@ import {
   installSoftwareTeamDlcPack,
   launchSoftwareTeamWorkItem,
   pickSoftwareTeamInstallTarget,
+  probeSoftwareTeamDlcPack,
+  repairSoftwareTeamDlcPack,
   requestSoftwareTeamChatPane,
   resolveSoftwareTeamWorkspace,
   softwareTeamInstallFailMessageKey,
+  softwareTeamLaunchItemPatch,
+  softwareTeamPackStatusMessageKey,
   type SoftwareTeamDlcInstallTarget,
   type SoftwareTeamLaunchResult,
   type SoftwareTeamPackInstallResult,
+  type SoftwareTeamPackStatus,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamStarterFields,
 } from "@/lib/softwareTeamDlc";
@@ -32,14 +37,25 @@ export function useSoftwareTeamStudioActions(input: {
   currentSessionId?: string | null;
   workspace: SoftwareTeamStudioWorkspace;
   bindSession: (itemId: string, sessionId: string) => void;
+  /** Write Host-returned plan/goal entity ids onto the pipeline item. */
+  patchItem?: (
+    itemId: string,
+    patch: { planRef?: string; goalRef?: string },
+  ) => void;
   onSelectSession?: (sessionId: string) => void;
 }): {
   sessionDataMode: string;
   installTarget: SoftwareTeamDlcInstallTarget;
   setInstallTarget: (target: SoftwareTeamDlcInstallTarget) => void;
   installing: boolean;
+  repairing: boolean;
+  probing: boolean;
+  packStatus: SoftwareTeamPackStatus | null;
+  refreshPackStatus: () => Promise<SoftwareTeamPackStatus>;
   launching: boolean;
   installPack: () => Promise<SoftwareTeamPackInstallResult>;
+  repairPack: () => Promise<SoftwareTeamPackInstallResult>;
+  describePackStatus: (status: SoftwareTeamPackStatus) => string;
   launchItem: (
     item: SoftwareTeamStarterFields & {
       id?: string;
@@ -51,14 +67,25 @@ export function useSoftwareTeamStudioActions(input: {
   describeLaunch: (result: SoftwareTeamLaunchResult) => string;
   describeInstall: (result: SoftwareTeamPackInstallResult) => string;
 } {
-  const { t, currentSessionId, workspace, bindSession, onSelectSession } =
-    input;
+  const {
+    t,
+    currentSessionId,
+    workspace,
+    bindSession,
+    patchItem,
+    onSelectSession,
+  } = input;
   const [sessionDataMode, setSessionDataMode] = useState("shared");
   const [installTarget, setInstallTarget] =
     useState<SoftwareTeamDlcInstallTarget>(() =>
       pickSoftwareTeamInstallTarget({ projectPath: workspace.projectPath }),
     );
   const [installing, setInstalling] = useState(false);
+  const [repairing, setRepairing] = useState(false);
+  const [probing, setProbing] = useState(false);
+  const [packStatus, setPackStatus] = useState<SoftwareTeamPackStatus | null>(
+    null,
+  );
   const [launching, setLaunching] = useState(false);
 
   useEffect(() => {
@@ -78,6 +105,43 @@ export function useSoftwareTeamStudioActions(input: {
       cancelled = true;
     };
   }, []);
+
+  const refreshPackStatus = useCallback(async () => {
+    setProbing(true);
+    try {
+      const status = await probeSoftwareTeamDlcPack({
+        sessionDataMode,
+        target: installTarget,
+        projectPath: workspace.projectPath,
+      });
+      setPackStatus(status);
+      return status;
+    } finally {
+      setProbing(false);
+    }
+  }, [installTarget, sessionDataMode, workspace.projectPath]);
+
+  useEffect(() => {
+    void refreshPackStatus();
+  }, [refreshPackStatus]);
+
+  const describePackStatus = useCallback(
+    (status: SoftwareTeamPackStatus): string => {
+      const key = softwareTeamPackStatusMessageKey(status.kind);
+      if (status.kind === "installed") {
+        const total = status.present.length + status.missing.length;
+        return t(key, { n: status.present.length, total });
+      }
+      if (status.kind === "missing") {
+        return t(key, { n: status.missing.length });
+      }
+      if (status.kind === "host_error") {
+        return t(key, { error: status.error ?? "" });
+      }
+      return t(key);
+    },
+    [t],
+  );
 
   const describeInstall = useCallback(
     (result: SoftwareTeamPackInstallResult): string => {
@@ -134,10 +198,16 @@ export function useSoftwareTeamStudioActions(input: {
       const parts = [t("softwareTeamDlc.starterLoaded")];
       if (result.planChrome === "set") {
         parts.push(t("softwareTeamDlc.planChromeSet"));
-      } else if (result.planChrome === "skipped" || result.planChrome === "failed") {
-        if ((result.starter ?? "").includes("Plan:")) {
-          parts.push(t("softwareTeamDlc.planChromeSkipped"));
-        }
+      } else if (
+        (result.planChrome === "skipped" || result.planChrome === "failed") &&
+        result.planRef
+      ) {
+        parts.push(t("softwareTeamDlc.planChromeSkipped"));
+      }
+      if (result.goalMode === "set") {
+        parts.push(t("softwareTeamDlc.goalModeSet"));
+      } else if (result.goalRef) {
+        parts.push(t("softwareTeamDlc.goalModeSkipped"));
       }
       return parts.join(" ");
     },
@@ -163,37 +233,71 @@ export function useSoftwareTeamStudioActions(input: {
           createIfMissing: opts?.createIfMissing ?? true,
           host: defaultSoftwareTeamLaunchHost(),
         });
-        if (result.ok && result.createdSession && item.id) {
-          bindSession(item.id, result.sessionId);
+        if (result.ok && item.id) {
+          if (result.createdSession) {
+            bindSession(item.id, result.sessionId);
+          }
+          const refs = softwareTeamLaunchItemPatch(result);
+          if (refs) patchItem?.(item.id, refs);
         }
         return result;
       } finally {
         setLaunching(false);
       }
     },
-    [bindSession, currentSessionId, workspace.projectId],
+    [bindSession, currentSessionId, patchItem, workspace.projectId],
   );
 
   const installPack = useCallback(async () => {
     setInstalling(true);
     try {
-      return await installSoftwareTeamDlcPack({
+      const result = await installSoftwareTeamDlcPack({
         sessionDataMode,
         target: installTarget,
         projectPath: workspace.projectPath,
       });
+      await refreshPackStatus();
+      return result;
     } finally {
       setInstalling(false);
     }
-  }, [installTarget, sessionDataMode, workspace.projectPath]);
+  }, [installTarget, refreshPackStatus, sessionDataMode, workspace.projectPath]);
+
+  const repairPack = useCallback(async () => {
+    setRepairing(true);
+    try {
+      const result = await repairSoftwareTeamDlcPack({
+        sessionDataMode,
+        target: installTarget,
+        projectPath: workspace.projectPath,
+        status: packStatus ?? undefined,
+      });
+      await refreshPackStatus();
+      return result;
+    } finally {
+      setRepairing(false);
+    }
+  }, [
+    installTarget,
+    packStatus,
+    refreshPackStatus,
+    sessionDataMode,
+    workspace.projectPath,
+  ]);
 
   return {
     sessionDataMode,
     installTarget,
     setInstallTarget,
     installing,
+    repairing,
+    probing,
+    packStatus,
+    refreshPackStatus,
     launching,
     installPack,
+    repairPack,
+    describePackStatus,
     launchItem,
     applyLaunchNav,
     describeLaunch,

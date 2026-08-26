@@ -88,7 +88,8 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Session",
   "softwareTeamDlc.handoff": "I-hand off",
   "softwareTeamDlc.handoffTo": "I-hand off kay {role}",
-  "softwareTeamDlc.handoffDone": "Tapos na ang pipeline — nasa Ship na ang Tech Writer.",
+  "softwareTeamDlc.handoffDone":
+    "Tapos na ang pipeline — Tech Writer ang huling role. Kailangan pa ng notes ng Reviewer at QA para sa Ship.",
   "softwareTeamDlc.handoffCopied": "Nakopya ang starter ng susunod na role",
   "softwareTeamDlc.handoffLoaded": "Nasa composer na ang starter ng susunod na role.",
   "softwareTeamDlc.openInComposer": "Buksan sa composer",
@@ -110,4 +111,32 @@ export const filSoftwareTeamDlc = {
     "Wala pang work items. Magdagdag ng slice o i-bind ang session sa role.",
   "softwareTeamDlc.openStudio": "Buksan ang SDLC Studio mula sa sidebar (Agents).",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} sa {total} pack file ang nasa target na ito.",
+  "softwareTeamDlc.install.status.missing":
+    "Kulang ng {n} pack file sa target na ito.",
+  "softwareTeamDlc.install.status.checking":
+    "Tinitingnan ang pack file sa napiling target…",
+  "softwareTeamDlc.install.repair": "Ayusin ang nawawalang file",
+  "softwareTeamDlc.install.repairing": "Inaayos ang pack…",
+  "softwareTeamDlc.install.repaired": "Naisulat ang {n} nawawalang pack file.",
+  "softwareTeamDlc.install.repairNone":
+    "Walang aayusin — nandiyan na ang pack file.",
+  "softwareTeamDlc.goalModeSet": "Naka-on ang goal mode sa draft na ito.",
+  "softwareTeamDlc.goalModeSkipped":
+    "Nanatili ang goal sa card. Walang create-goal API ang Host.",
+  "softwareTeamDlc.shipLocked":
+    "Naka-lock ang Ship hanggang maisave ang notes ng Reviewer at QA.",
+  "softwareTeamDlc.shipNeedReviewer": "Hindi pa dumaan sa Reviewer ang slice na ito.",
+  "softwareTeamDlc.shipNeedQa": "Hindi pa dumaan sa QA ang slice na ito.",
+  "softwareTeamDlc.shipNeedReviewNote": "I-save ang notes ng Reviewer bago ang Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "I-save ang notes ng QA bago ang Ship.",
+  "softwareTeamDlc.markReviewNote": "Lagyan ng notes ng Reviewer",
+  "softwareTeamDlc.markQaNote": "Lagyan ng notes ng QA",
+  "softwareTeamDlc.reviewNote": "Notes ng Reviewer",
+  "softwareTeamDlc.qaNote": "Notes ng QA",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, dapat ayusin vs nits, panganib.",
+  "softwareTeamDlc.qaNotePlaceholder": "Mga case, command, pass/fail.",
+  "softwareTeamDlc.notesSaved":
+    "Nai-save ang notes. Mag-unlock ang Ship kapag may notes na ng Reviewer at QA.",
 } as const;

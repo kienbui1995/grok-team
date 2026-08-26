@@ -17,6 +17,11 @@ import {
   type SoftwareTeamPipelineStore,
   updateSoftwareTeamPipelineItem,
 } from "./pipeline";
+import {
+  recordSoftwareTeamRoleVisit,
+  softwareTeamRoleChecklist,
+  softwareTeamShipGate,
+} from "./shipGate";
 
 export const SOFTWARE_TEAM_HANDOFF_CHAIN: readonly SoftwareTeamRoleId[] = [
   "product",
@@ -124,6 +129,12 @@ export function composeHandoffStarter(
   if (from.planRef) lines.push(`Plan: ${from.planRef}`);
   if (from.goalRef) lines.push(`Goal: ${from.goalRef}`);
   if (from.artifactRef) lines.push(`Artifact: ${from.artifactRef}`);
+  const checklist = softwareTeamRoleChecklist(to.roleId);
+  if (checklist.length) {
+    lines.push("", ...checklist);
+  }
+  if (from.reviewNote) lines.push(`Reviewer notes: ${from.reviewNote}`);
+  if (from.qaNote) lines.push(`QA notes: ${from.qaNote}`);
   lines.push(
     "Stay on Grok Build. Do not spawn a second CLI runtime. Continue this session or attach-chat.",
   );
@@ -147,13 +158,26 @@ export function applySoftwareTeamHandoff(
     };
   }
   const role = softwareTeamRoleById(toRole);
-  const toStage = role?.defaultStage ?? "build";
-  const next: SoftwareTeamPipelineItem = {
+  const roleHistory = recordSoftwareTeamRoleVisit(
+    item.roleHistory,
+    item.roleId,
+    toRole,
+  );
+  let toStage = role?.defaultStage ?? "build";
+  const nextDraft: SoftwareTeamPipelineItem = {
     ...item,
     roleId: toRole,
     stageId: toStage,
+    roleHistory,
     stageSource: "handoff",
     updatedAt: now,
+  };
+  if (toStage === "ship" && !softwareTeamShipGate(nextDraft).ok) {
+    toStage = "review";
+  }
+  const next: SoftwareTeamPipelineItem = {
+    ...nextDraft,
+    stageId: toStage,
   };
   return {
     kind: "advanced",
@@ -182,6 +206,9 @@ export function applySoftwareTeamHandoffToStore(
       {
         roleId: result.item.roleId,
         stageId: result.item.stageId,
+        roleHistory: result.item.roleHistory,
+        reviewNote: result.item.reviewNote,
+        qaNote: result.item.qaNote,
         stageSource: "handoff",
       },
       now,

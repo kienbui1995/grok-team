@@ -126,19 +126,49 @@ export {
 } from "./install";
 
 export {
+  SOFTWARE_TEAM_PACK_STATUS_KINDS,
+  defaultSoftwareTeamPackProbeHost,
+  probeSoftwareTeamDlcPack,
+  repairSoftwareTeamDlcPack,
+  softwareTeamListedScopeMatchesTarget,
+  softwareTeamPackStatusMessageKey,
+  type SoftwareTeamPackListedFile,
+  type SoftwareTeamPackProbeHost,
+  type SoftwareTeamPackStatus,
+  type SoftwareTeamPackStatusKind,
+} from "./installStatus";
+
+export {
+  SOFTWARE_TEAM_SHIP_BLOCKS,
+  parseSoftwareTeamRoleHistory,
+  recordSoftwareTeamRoleVisit,
+  softwareTeamHasVisitedRole,
+  softwareTeamRoleChecklist,
+  softwareTeamShipBlockMessageKey,
+  softwareTeamShipGate,
+  type SoftwareTeamShipBlock,
+  type SoftwareTeamShipFields,
+  type SoftwareTeamShipGate,
+} from "./shipGate";
+
+export {
   SOFTWARE_TEAM_CHAT_HASH,
   attachSoftwareTeamPlanChrome,
   composeRoleSessionStarter,
   decideSoftwareTeamComposerNav,
   defaultSoftwareTeamLaunchHost,
+  hostEntityIdFromUnknown,
   launchSoftwareTeamWorkItem,
   requestSoftwareTeamChatPane,
   resolveSoftwareTeamWorkspace,
   seedSoftwareTeamComposerDraft,
+  softwareTeamLaunchItemPatch,
   type SoftwareTeamComposerNav,
+  type SoftwareTeamGoalModeOutcome,
   type SoftwareTeamLaunchFailReason,
   type SoftwareTeamLaunchHost,
   type SoftwareTeamLaunchResult,
+  type SoftwareTeamPlanChromeAttach,
   type SoftwareTeamPlanChromeOutcome,
   type SoftwareTeamStarterFields,
 } from "./sessionLaunch";

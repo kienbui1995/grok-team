@@ -39,7 +39,7 @@ No Host `AppSettings` field — same pattern as Developer mode. Changing the tog
 
 Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`).
 
-Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef`.
+Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef` + `roleHistory` + `reviewNote` / `qaNote`.
 
 | Write | Effect |
 |-------|--------|
@@ -60,8 +60,8 @@ Helpers: `src/lib/softwareTeamDlc/sessionLaunch.ts`.
 | Seed composer | `saveComposerSessionDraft` + live `setDraft` when already on that session | Same-session **must not** call `openSession` — `stashLeaving` would overwrite the starter. |
 | Switch session | existing `onSelectSession` / `openSessionById` | Stash the *other* session, restore ours (draft already saved). |
 | Go to chat (same session) | `window.location.hash = "#/workbench"` | `resolveWorkbenchHash` → chat pane. No AppWorkbench growth. |
-| Plan attach | `api.sessionPlanChromeSet` when Tauri/mirror | If Host cannot write, keep `planRef` on the card. Do not invent a Host plan document. |
-| Goal | session draft `goalMode: true` when `goalRef` is set | No Host “create goal” API. Field + starter line stay honest. |
+| Plan attach | `api.sessionPlanChromeSet` when Tauri/mirror | Chrome is void (no plan document id). If the invoke later returns `{ id }` / `{ planId }`, that id is written to `planRef`. Otherwise keep the card text. Do not invent a Host plan document. |
+| Goal | session draft `goalMode: true` when `goalRef` is set | No Host “create goal” API in production (`createGoalEntity` is optional and omitted). Field + starter line stay honest. A Host goal id is written to `goalRef` only if that optional hook returns one. |
 | Artifact | field + starter line | No fake Host write. |
 
 Handoff uses the same launch path with the next-role starter. No second CLI process.
@@ -88,6 +88,36 @@ Sequence (desktop Host only — `api.isDesktopHost()`):
 
 Do **not** call `agentsScaffold` / `skillCreate` with `scope: "user"` while session data is **shared**.
 
+## Install status + repair
+
+Helpers: `src/lib/softwareTeamDlc/installStatus.ts`.
+
+On every Studio open (and Settings when the edition is on), probe Host `agentsList` / `skillsList` / `workflowsList` for the **chosen target**. A file counts as present only when the listed name matches **and** the listed scope matches the target (`project` / `workspace` / `local` vs `user` / `agent-home` / `independent`). Empty lists are **missing**, never installed.
+
+| Status | Meaning |
+|--------|---------|
+| `installed` | All 13 files listed on that target. |
+| `missing` | Some names absent or wrong scope. Repair writes **only** those names (`onlyNames`). |
+| `blocked_shared` | Shared `~/.grok` + user target. No Host write. |
+| `need_project` | Project target with no folder. |
+| `need_host` | Not desktop Tauri. Does not fake success. |
+| `host_error` | List/write threw. Success is false. |
+
+Repair is idempotent. Shared user writes still refuse.
+
+## Review → QA → Ship gate
+
+Helpers: `src/lib/softwareTeamDlc/shipGate.ts`.
+
+Ship is blocked (UI chips / context menu **and** `setPipelineItemStage` / live `done` / QA→Writer handoff) until:
+
+1. The item has visited **Reviewer** and **QA** (`roleId` or `roleHistory`).
+2. Non-empty **`reviewNote`** and **`qaNote`** (persisted on the pipeline item).
+
+Legacy items already stored as `ship` stay there. New writes and handoff to Writer without notes stay on **Review**.
+
+Reviewer / QA starters (open + handoff) include an English checklist: **diff / test / risk**. Notes are edited in `GlassModal` (Mark Reviewer notes / Mark QA notes) — no `window.prompt`.
+
 ## Slash `/team-*`
 
 `buildSlashCatalog` (domain module, **not** `AppWorkbench.applySlashItem`) merges six skill rows when the edition is on (`src/lib/softwareTeamDlc/slash.ts`). Existing `applySlashItem` `kind: "skill"` inserts `[[skill:team-product]]`.
@@ -112,8 +142,8 @@ Do **not** call `agentsScaffold` / `skillCreate` with `scope: "user"` while sess
 
 ## UI
 
-- Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install).
-- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab.
+- Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install + status/repair).
+- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Reviewer/QA notes via `GlassModal`.
 - Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
 - Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
 - Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).

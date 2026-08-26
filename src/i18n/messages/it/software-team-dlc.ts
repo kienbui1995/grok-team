@@ -88,7 +88,8 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.sessionLabel": "Sessione",
   "softwareTeamDlc.handoff": "Passa",
   "softwareTeamDlc.handoffTo": "Passa a {role}",
-  "softwareTeamDlc.handoffDone": "Pipeline completa — Tech Writer è in Ship.",
+  "softwareTeamDlc.handoffDone":
+    "Pipeline completa — Tech Writer è l’ultimo ruolo. Ship richiede ancora le note Reviewer e QA.",
   "softwareTeamDlc.handoffCopied": "Starter del ruolo successivo copiato",
   "softwareTeamDlc.handoffLoaded": "Lo starter del ruolo successivo è nel composer.",
   "softwareTeamDlc.openInComposer": "Apri nel composer",
@@ -110,4 +111,32 @@ export const itSoftwareTeamDlc = {
     "Nessun elemento ancora. Aggiungi una fetta o collega una sessione a un ruolo.",
   "softwareTeamDlc.openStudio": "Apri SDLC Studio dalla barra laterale (Agenti).",
   "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} di {total} file del pack sono su questa destinazione.",
+  "softwareTeamDlc.install.status.missing":
+    "Mancano {n} file del pack su questa destinazione.",
+  "softwareTeamDlc.install.status.checking":
+    "Controllo dei file del pack sulla destinazione scelta…",
+  "softwareTeamDlc.install.repair": "Ripara i file mancanti",
+  "softwareTeamDlc.install.repairing": "Riparazione del pack…",
+  "softwareTeamDlc.install.repaired": "Scritti {n} file mancanti del pack.",
+  "softwareTeamDlc.install.repairNone":
+    "Niente da riparare — i file del pack sono già presenti.",
+  "softwareTeamDlc.goalModeSet": "La modalità obiettivo è attiva su questa bozza.",
+  "softwareTeamDlc.goalModeSkipped":
+    "L’obiettivo resta sulla scheda. L’host non ha un’API per creare obiettivi.",
+  "softwareTeamDlc.shipLocked":
+    "Ship è bloccato finché non salvi le note Reviewer e QA.",
+  "softwareTeamDlc.shipNeedReviewer": "Questa fetta non è passata da Reviewer.",
+  "softwareTeamDlc.shipNeedQa": "Questa fetta non è passata da QA.",
+  "softwareTeamDlc.shipNeedReviewNote": "Salva le note Reviewer prima di Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "Salva le note QA prima di Ship.",
+  "softwareTeamDlc.markReviewNote": "Segna le note Reviewer",
+  "softwareTeamDlc.markQaNote": "Segna le note QA",
+  "softwareTeamDlc.reviewNote": "Note Reviewer",
+  "softwareTeamDlc.qaNote": "Note QA",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, correzioni obbligatorie vs nits, rischio.",
+  "softwareTeamDlc.qaNotePlaceholder": "Casi, comandi, esito.",
+  "softwareTeamDlc.notesSaved":
+    "Note salvate. Ship si sblocca quando ci sono sia le note Reviewer sia QA.",
 } as const;
