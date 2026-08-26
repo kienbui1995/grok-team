@@ -39,13 +39,15 @@ export function parseSoftwareTeamSessionTag(
 ): SoftwareTeamSessionTag | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const rec = raw as Record<string, unknown>;
-  if (!isSoftwareTeamRoleId(rec.roleId)) return null;
-  const role = softwareTeamRoleById(rec.roleId);
+  const roleRaw = typeof rec.roleId === "string" ? rec.roleId : null;
+  if (!isSoftwareTeamRoleId(roleRaw)) return null;
+  const role = softwareTeamRoleById(roleRaw);
   if (!role) return null;
-  const stageId = isSoftwareTeamSdlcStageId(rec.stageId)
-    ? rec.stageId
+  const stageRaw = typeof rec.stageId === "string" ? rec.stageId : null;
+  const stageId = isSoftwareTeamSdlcStageId(stageRaw)
+    ? stageRaw
     : role.defaultStage;
-  return { roleId: rec.roleId, stageId };
+  return { roleId: roleRaw, stageId };
 }
 
 export function parseSoftwareTeamSessionTagMap(

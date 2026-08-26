@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { AGENT_KANBAN_COLUMN_IDS } from "@/lib/kanbanBoard";
 import {
   DEFAULT_SOFTWARE_TEAM_DLC_ENABLED,
