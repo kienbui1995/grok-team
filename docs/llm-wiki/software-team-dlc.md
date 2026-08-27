@@ -191,7 +191,7 @@ Context menu **Add team session** creates an unbound sibling card (same slice re
 - Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board; title search + stage/role chips combine with that filter; archived deliveries are hidden unless **Show archived**. Click a delivery chip or card to open `SdlcDeliveryDetailPane` (title, role history, Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions, activity, archive, export summary, git branch **label**). Existing `docs/sdlc` files open via Host `openInEditor` or a copied path. Toolbar **Undo** / **Redo** (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y when focus is not in an input) restore the last in-window board mutate; stacks are memory-only and cleared when the project file replaces the cache. Remove card uses a `GlassModal` confirm (session is kept). Git branch is a label only — no worktree, no checkout, no `~/.grok` write. Detail pane can **rename** a delivery (`deliveryTitle` on members) and **duplicate** it (new `deliveryId`, cards unbound).
 - Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
 - Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
-- Strings: `src/i18n/messages/*/software-team-dlc.ts` (15 locales, `en` authority).
+- Strings: `src/i18n/messages/*/software-team-dlc.ts` (16 locales, `en` authority).
 
 ## Forbidden
 

@@ -46,6 +46,7 @@ describe("i18n catalog", () => {
         "ru",
         "ta",
         "uk",
+        "vi",
         "zh",
         "zh-TW",
       ].sort(),
@@ -100,6 +101,32 @@ describe("i18n catalog", () => {
     expect(zh("sidebar.settings")).toBe("设置");
     const ru = createT("ru");
     expect(ru("sidebar.settings")).toBe("Настройки");
+  });
+
+  it("keeps high-traffic Vietnamese domains translated instead of falling back to English", () => {
+    const keys: MessageKey[] = [
+      "project.pin",
+      "main.startTitle",
+      "session.rename",
+      "resources.title",
+      "changes.title",
+      "search.title",
+      "tasks.title",
+      "dashboard.title",
+      "slash.settings",
+      "settings.language",
+      "account.signedIn",
+      "prov.emptyTitle",
+      "automations.title",
+      "doctor.title",
+      "ext.plugins.title",
+      "ext.mcp.title",
+      "ext.market.loading",
+      "error.details",
+    ];
+    for (const key of keys) {
+      expect(messages.vi[key], key).not.toBe(messages.en[key]);
+    }
   });
 
   it("keeps high-traffic Russian domains translated instead of falling back to English", () => {
@@ -306,6 +333,9 @@ describe("resolveLocale", () => {
     expect(resolveLocale("tl")).toBe("fil");
     expect(resolveLocale("in")).toBe("id");
     expect(resolveLocale("ta-LK")).toBe("ta");
+    expect(resolveLocale("vi-VN")).toBe("vi");
+    expect(resolveLocale("vi_VN")).toBe("vi");
+    expect(resolveLocale("VI")).toBe("vi");
   });
 
   it("falls back to the product default for unsupported languages", () => {
@@ -373,6 +403,8 @@ describe("resolveLocaleFromSystem", () => {
     expect(resolveLocaleFromSystem("id-ID")).toBe("id");
     expect(resolveLocaleFromSystem("fil-PH")).toBe("fil");
     expect(resolveLocaleFromSystem("ta-IN")).toBe("ta");
+    expect(resolveLocaleFromSystem("vi-VN")).toBe("vi");
+    expect(resolveLocaleFromSystem("vi_VN.UTF-8")).toBe("vi");
   });
 
   it("folds every Portuguese variant into pt-BR", () => {
@@ -409,6 +441,7 @@ describe("intlLocale / htmlLangForLocale", () => {
     expect(intlLocale("ja")).toBe("ja-JP");
     expect(intlLocale("ko")).toBe("ko-KR");
     expect(intlLocale("de")).toBe("de-DE");
+    expect(intlLocale("vi")).toBe("vi-VN");
   });
 
   it("accepts raw settings strings and unknown ids", () => {
