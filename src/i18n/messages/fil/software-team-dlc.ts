@@ -241,4 +241,24 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Hindi na-export ang buod: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "Nagbago ang pipeline file sa ibang lugar. Hindi ginagalaw. Nanatili ang board sa app. Ang susunod na save ay susulat ng backup {file} sa halip na palitan ang file.",
+  "softwareTeamDlc.undo": "I-undo ang huling pagbabago",
+  "softwareTeamDlc.undone": "Na-undo ang huling pagbabago sa board.",
+  "softwareTeamDlc.undoEmpty": "Walang i-undo.",
+  "softwareTeamDlc.removeItemConfirm": "Alisin ang card na ito?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Alisin ang “{title}” sa SDLC board. Nananatili ang Grok Build session. Maibabalik ng Undo ang card sa window na ito.",
+  "softwareTeamDlc.removeItemConfirmAction": "Alisin ang card",
+  "softwareTeamDlc.gitBranch": "Label ng git branch",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Label lang. Hindi gumagawa ng worktree, hindi nagche-checkout, at hindi nire-rewrite ang ~/.grok ng Software Works.",
+  "softwareTeamDlc.gitBranchSave": "I-save ang label ng branch",
+  "softwareTeamDlc.gitBranchSaved": "Na-save ang label ng branch sa delivery na ito.",
+  "softwareTeamDlc.gitBranchInvalid":
+    "Gumamit ng letra, digit, '.', '_' o '-' at '/' — walang space, walang gitling sa umpisa.",
+  "softwareTeamDlc.gitBranchSuggest": "I-suggest mula sa title",
+  "softwareTeamDlc.gitBranchCopy": "Kopyahin ang label ng branch",
+  "softwareTeamDlc.gitBranchCopied": "Nakopya ang label ng branch.",
+  "softwareTeamDlc.activity.item_removed": "Inalis ang isang work item",
+  "softwareTeamDlc.activity.git_branch": "Na-update ang label ng git branch",
 } as const;

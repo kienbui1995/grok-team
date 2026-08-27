@@ -38,6 +38,7 @@ import {
   isSoftwareTeamItemArchived,
   lastSoftwareTeamPipelineFileStatus,
   listSoftwareTeamDeliveryGroups,
+  normalizeSoftwareTeamGitBranch,
   missingSoftwareTeamDeliveryRoles,
   nextSoftwareTeamRole,
   openSoftwareTeamSdlcDoc,
@@ -82,6 +83,7 @@ type ItemDraft = {
   planRef: string;
   goalRef: string;
   artifactRef: string;
+  gitBranch: string;
 };
 
 async function copyText(text: string): Promise<boolean> {
@@ -119,6 +121,7 @@ function emptyDraft(roleId: SoftwareTeamRoleId = "product"): ItemDraft {
     planRef: "",
     goalRef: "",
     artifactRef: "",
+    gitBranch: "",
   };
 }
 
@@ -132,6 +135,7 @@ function draftFromItem(item: SoftwareTeamPipelineItem): ItemDraft {
     planRef: item.planRef,
     goalRef: item.goalRef,
     artifactRef: item.artifactRef,
+    gitBranch: item.gitBranch,
   };
 }
 
@@ -224,6 +228,9 @@ export function SdlcStudioPage({
     kind: "review" | "qa";
     text: string;
   } | null>(null);
+  const [pendingRemove, setPendingRemove] = useState<SoftwareTeamPipelineItem | null>(
+    null,
+  );
   const [menu, setMenu] = useState<{
     itemId: string;
     x: number;
@@ -468,6 +475,46 @@ export function SdlcStudioPage({
     [t],
   );
 
+  const onCopyGitBranch = useCallback(
+    async (branch: string) => {
+      const label = branch.trim();
+      if (!label) return;
+      const ok = await copyText(label);
+      setCopyError(!ok);
+      setCopied(ok ? `branch:${label}` : null);
+      setStatus(
+        ok ? t("softwareTeamDlc.gitBranchCopied") : t("softwareTeamDlc.copyFailed"),
+      );
+    },
+    [t],
+  );
+
+  const onSaveGitBranch = useCallback(
+    (deliveryId: string, itemId: string, raw: string) => {
+      const normalized = normalizeSoftwareTeamGitBranch(raw);
+      if (normalized === null) {
+        setStatus(t("softwareTeamDlc.gitBranchInvalid"));
+        return false;
+      }
+      if (deliveryId.trim()) {
+        pipeline.setDeliveryGitBranch(deliveryId, normalized);
+      } else if (itemId) {
+        pipeline.updateItem(itemId, { gitBranch: normalized });
+      }
+      setStatus(t("softwareTeamDlc.gitBranchSaved"));
+      return true;
+    },
+    [pipeline, t],
+  );
+
+  const onUndo = useCallback(() => {
+    if (!pipeline.undo()) {
+      setStatus(t("softwareTeamDlc.undoEmpty"));
+      return;
+    }
+    setStatus(t("softwareTeamDlc.undone"));
+  }, [pipeline, t]);
+
   const onHandoff = useCallback(
     async (itemId: string) => {
       const result = pipeline.handoff(itemId);
@@ -643,6 +690,11 @@ export function SdlcStudioPage({
 
   const persistEditor = () => {
     if (!editor) return null;
+    const gitBranch = normalizeSoftwareTeamGitBranch(editor.gitBranch);
+    if (gitBranch === null) {
+      setStatus(t("softwareTeamDlc.gitBranchInvalid"));
+      return null;
+    }
     if (editor.id) {
       pipeline.updateItem(editor.id, {
         title: editor.title,
@@ -652,6 +704,7 @@ export function SdlcStudioPage({
         planRef: editor.planRef,
         goalRef: editor.goalRef,
         artifactRef: editor.artifactRef,
+        gitBranch,
         stageSource: "board",
       });
       return editor.id;
@@ -664,6 +717,7 @@ export function SdlcStudioPage({
       planRef: editor.planRef,
       goalRef: editor.goalRef,
       artifactRef: editor.artifactRef,
+      gitBranch,
       deliveryId: resolveSoftwareTeamDeliveryId(pipeline.items),
       stageSource: "board",
     });
@@ -671,14 +725,15 @@ export function SdlcStudioPage({
   };
 
   const saveEditor = () => {
-    persistEditor();
+    if (!persistEditor()) return;
     setEditor(null);
   };
 
   const saveAndOpenEditor = async () => {
     if (!editor) return;
     const id = persistEditor();
-    const draft = { ...editor, id: id ?? editor.id };
+    if (!id) return;
+    const draft = { ...editor, id };
     setEditor(null);
     const launched = await actions.launchItem(
       {
@@ -819,16 +874,23 @@ export function SdlcStudioPage({
       label: t("softwareTeamDlc.editItem"),
       onClick: () => setEditor(draftFromItem(menuItem)),
     });
+    if (menuItem.gitBranch) {
+      items.push({
+        label: t("softwareTeamDlc.gitBranchCopy"),
+        onClick: () => void onCopyGitBranch(menuItem.gitBranch),
+      });
+    }
     items.push({
       label: t("softwareTeamDlc.removeItem"),
       danger: true,
-      onClick: () => pipeline.removeItem(menuItem.id),
+      onClick: () => setPendingRemove(menuItem),
     });
     return items;
   }, [
     menu,
     menuItem,
     onAddTeammate,
+    onCopyGitBranch,
     onHandoff,
     onOpenInComposer,
     onToggleArchive,
@@ -841,7 +903,20 @@ export function SdlcStudioPage({
   ]);
 
   return (
-    <div className="auto-page agent-kanban-page sdlc-studio" data-testid="sdlc-studio">
+    <div
+      className="auto-page agent-kanban-page sdlc-studio"
+      data-testid="sdlc-studio"
+      tabIndex={-1}
+      onKeyDown={(event) => {
+        if (!(event.ctrlKey || event.metaKey) || event.key !== "z" || event.shiftKey) {
+          return;
+        }
+        const target = event.target as HTMLElement | null;
+        if (target?.closest("input, textarea, [contenteditable='true']")) return;
+        event.preventDefault();
+        onUndo();
+      }}
+    >
       <div className="auto-page__head agent-kanban-page__head">
         <div className="auto-page__titles">
           <h1 className="auto-page__title">{t("softwareTeamDlc.studioTitle")}</h1>
@@ -1027,6 +1102,14 @@ export function SdlcStudioPage({
                 : t("softwareTeamDlc.install.repair")}
             </button>
           ) : null}
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            disabled={!pipeline.canUndo}
+            onClick={onUndo}
+          >
+            {t("softwareTeamDlc.undo")}
+          </button>
           <button
             type="button"
             className="btn btn--ghost btn--sm"
@@ -1446,6 +1529,15 @@ export function SdlcStudioPage({
           if (!focus) return;
           onToggleArchive(focus, archived);
         }}
+        onSaveGitBranch={(branch) => {
+          if (!deliveryDetail) return false;
+          return onSaveGitBranch(
+            deliveryDetail.deliveryId,
+            deliveryDetail.focusItem?.id ?? "",
+            branch,
+          );
+        }}
+        onCopyGitBranch={(branch) => void onCopyGitBranch(branch)}
       />
 
       <GlassModal
@@ -1593,6 +1685,18 @@ export function SdlcStudioPage({
                 onChange={(e) => setEditor({ ...editor, artifactRef: e.target.value })}
                 placeholder={t("softwareTeamDlc.artifactPlaceholder")}
               />
+            </label>
+            <label className="sdlc-studio__field">
+              <span>{t("softwareTeamDlc.gitBranch")}</span>
+              <input
+                className="settings-input"
+                value={editor.gitBranch}
+                onChange={(e) => setEditor({ ...editor, gitBranch: e.target.value })}
+                placeholder={t("softwareTeamDlc.gitBranchPlaceholder")}
+                autoComplete="off"
+                spellCheck={false}
+              />
+              <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.gitBranchHint")}</p>
             </label>
           </div>
         ) : null}
@@ -1762,6 +1866,46 @@ export function SdlcStudioPage({
             })()}
           </div>
         ) : null}
+      </GlassModal>
+
+      <GlassModal
+        open={!!pendingRemove}
+        onClose={() => setPendingRemove(null)}
+        title={t("softwareTeamDlc.removeItemConfirm")}
+        closeLabel={t("window.close")}
+        wrapBody
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={() => setPendingRemove(null)}
+            >
+              {t("common.cancel")}
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => {
+                if (!pendingRemove) return;
+                pipeline.removeItem(pendingRemove.id);
+                setPendingRemove(null);
+                setStatus(t("softwareTeamDlc.removeItem"));
+              }}
+            >
+              {t("softwareTeamDlc.removeItemConfirmAction")}
+            </button>
+          </>
+        }
+      >
+        <p className="sdlc-studio__slash-note">
+          {t("softwareTeamDlc.removeItemConfirmBody", {
+            title:
+              pendingRemove?.title.trim() ||
+              pendingRemove?.id.slice(0, 8) ||
+              "",
+          })}
+        </p>
       </GlassModal>
     </div>
   );

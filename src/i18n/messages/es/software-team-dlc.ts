@@ -241,4 +241,23 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "No se pudo exportar el resumen: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "El archivo de pipeline cambió en otro sitio. Se dejó intacto. El tablero sigue en la app. El próximo guardado escribe una copia {file} en vez de reemplazar el archivo.",
+  "softwareTeamDlc.undo": "Deshacer último cambio",
+  "softwareTeamDlc.undone": "Se deshizo el último cambio del tablero.",
+  "softwareTeamDlc.undoEmpty": "Nada que deshacer.",
+  "softwareTeamDlc.removeItemConfirm": "¿Quitar esta tarjeta?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Quitar “{title}” del tablero SDLC. La sesión de Grok Build se conserva. Deshacer puede restaurar la tarjeta en esta ventana.",
+  "softwareTeamDlc.removeItemConfirmAction": "Quitar tarjeta",
+  "softwareTeamDlc.gitBranch": "Etiqueta de rama git",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Solo una etiqueta. Software Works no crea un worktree, no hace checkout ni reescribe ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Guardar etiqueta de rama",
+  "softwareTeamDlc.gitBranchSaved": "Etiqueta de rama guardada en esta entrega.",
+  "softwareTeamDlc.gitBranchInvalid": "Usa letras, dígitos, '.', '_' o '-' y '/' — sin espacios ni guion inicial.",
+  "softwareTeamDlc.gitBranchSuggest": "Sugerir desde el título",
+  "softwareTeamDlc.gitBranchCopy": "Copiar etiqueta de rama",
+  "softwareTeamDlc.gitBranchCopied": "Etiqueta de rama copiada.",
+  "softwareTeamDlc.activity.item_removed": "Se quitó un elemento",
+  "softwareTeamDlc.activity.git_branch": "Se actualizó la etiqueta de rama git",
 } as const;

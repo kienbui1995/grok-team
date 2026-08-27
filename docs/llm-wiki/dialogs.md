@@ -161,7 +161,7 @@ setAppDialog({
 |------|----------------|
 | App 确认/输入 | `.modal.app-dialog` · `setAppDialog` |
 | Compact keep-note / Doctor / Status / MCP | `setAppDialog` prompt · `.modal` · `GlassModal` · `DoctorModal` |
-| SDLC Studio item editor + Reviewer/QA notes + Start a delivery | `GlassModal` on `SdlcStudioPage` (no `window.prompt`) |
+| SDLC Studio item editor + Reviewer/QA notes + Start a delivery + remove confirm | `GlassModal` on `SdlcStudioPage` (no `window.prompt` / `window.confirm`) |
 | SDLC Studio add team session | `ContextMenu` submenu (no native `<select>`) |
 | SDLC Studio delivery filter + open docs/sdlc | chips + `ContextMenu` (Host `openInEditor` or copy path) |
 | 文件详情 | `.modal.file-path-details` |

@@ -241,4 +241,24 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "சுருக்கத்தை ஏற்றுமதி செய்ய முடியவில்லை: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "திட்டப் பைப்லைன் கோப்பு வேறு இடத்தில் மாறியது. தொடப்படவில்லை. பலகை பயன்பாட்டில் உள்ளது. அடுத்த சேமிப்பு கோப்பை மாற்றாமல் காப்பு {file} எழுதும்.",
+  "softwareTeamDlc.undo": "கடைசி மாற்றத்தை செயல்தவிர்",
+  "softwareTeamDlc.undone": "போர்டின் கடைசி மாற்றம் செயல்தவிர்க்கப்பட்டது.",
+  "softwareTeamDlc.undoEmpty": "செயல்தவிர்க்க எதுவுமில்லை.",
+  "softwareTeamDlc.removeItemConfirm": "இந்த அட்டையை நீக்கவா?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "SDLC போர்டிலிருந்து “{title}” ஐ நீக்கும். Grok Build அமர்வு இருக்கும். இந்த சாளரத்தில் செயல்தவிர் அட்டையை மீட்கும்.",
+  "softwareTeamDlc.removeItemConfirmAction": "அட்டையை நீக்கு",
+  "softwareTeamDlc.gitBranch": "Git கிளை லேபிள்",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "லேபிள் மட்டும். Software Works worktree உருவாக்காது, கிளை checkout செய்யாது, ~/.grok ஐ எழுதாது.",
+  "softwareTeamDlc.gitBranchSave": "கிளை லேபிளை சேமி",
+  "softwareTeamDlc.gitBranchSaved": "இந்த டெலிவரியில் கிளை லேபிள் சேமிக்கப்பட்டது.",
+  "softwareTeamDlc.gitBranchInvalid":
+    "எழுத்து, எண், '.', '_' அல்லது '-' மற்றும் '/' — இடைவெளி இல்லை, முன்னால் ஹைபன் இல்லை.",
+  "softwareTeamDlc.gitBranchSuggest": "தலைப்பிலிருந்து பரிந்துரை",
+  "softwareTeamDlc.gitBranchCopy": "கிளை லேபிளை நகலெடு",
+  "softwareTeamDlc.gitBranchCopied": "கிளை லேபிள் நகலெடுக்கப்பட்டது.",
+  "softwareTeamDlc.activity.item_removed": "பணி உருப்படி நீக்கப்பட்டது",
+  "softwareTeamDlc.activity.git_branch": "Git கிளை லேபிள் புதுப்பிக்கப்பட்டது",
 } as const;

@@ -241,4 +241,23 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Не удалось экспортировать сводку: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "Файл пайплайна изменился в другом месте. Не тронут. Доска остаётся в приложении. Следующее сохранение запишет копию {file}, а не заменит файл.",
+  "softwareTeamDlc.undo": "Отменить последнее изменение",
+  "softwareTeamDlc.undone": "Последнее изменение доски отменено.",
+  "softwareTeamDlc.undoEmpty": "Нечего отменять.",
+  "softwareTeamDlc.removeItemConfirm": "Убрать эту карточку?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Убрать «{title}» с доски SDLC. Сессия Grok Build останется. Отмена вернёт карточку в этом окне.",
+  "softwareTeamDlc.removeItemConfirmAction": "Убрать карточку",
+  "softwareTeamDlc.gitBranch": "Метка git-ветки",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Только метка. Software Works не создаёт worktree, не переключает ветку и не переписывает ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Сохранить метку ветки",
+  "softwareTeamDlc.gitBranchSaved": "Метка ветки сохранена для этой поставки.",
+  "softwareTeamDlc.gitBranchInvalid": "Буквы, цифры, '.', '_' или '-' и '/' — без пробелов и без дефиса в начале.",
+  "softwareTeamDlc.gitBranchSuggest": "Предложить из названия",
+  "softwareTeamDlc.gitBranchCopy": "Копировать метку ветки",
+  "softwareTeamDlc.gitBranchCopied": "Метка ветки скопирована.",
+  "softwareTeamDlc.activity.item_removed": "Элемент убран",
+  "softwareTeamDlc.activity.git_branch": "Метка git-ветки обновлена",
 } as const;

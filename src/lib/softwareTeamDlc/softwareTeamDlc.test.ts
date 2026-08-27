@@ -104,6 +104,15 @@ import {
   isSoftwareTeamSdlcDeliverySummaryRelative,
   planSoftwareTeamDeliveryExport,
   setSoftwareTeamDeliveryArchived,
+  setSoftwareTeamDeliveryGitBranch,
+  clearSoftwareTeamUndoStack,
+  normalizeSoftwareTeamGitBranch,
+  popSoftwareTeamUndoSnapshot,
+  pushSoftwareTeamUndoSnapshot,
+  removeSoftwareTeamPipelineItem,
+  softwareTeamActivityMessageKey,
+  softwareTeamSuggestGitBranch,
+  softwareTeamUndoDepth,
   SOFTWARE_TEAM_ROLE_FILTER_ALL,
   SOFTWARE_TEAM_STAGE_FILTER_ALL,
   softwareTeamLaunchItemPatch,
@@ -2233,5 +2242,89 @@ describe("Software Works archive, studio filter, export, conflict", () => {
     expect(save).toMatchObject({ ok: false, reason: "conflict" });
     expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
     expect(files[".grok/software-works.json.bak"]).toContain("Foreign");
+  });
+});
+
+describe("Software Works undo, remove, git branch label", () => {
+  afterEach(() => {
+    clearSoftwareTeamUndoStack();
+  });
+
+  it("pushes and pops a pipeline snapshot without writing ~/.grok", () => {
+    clearSoftwareTeamUndoStack();
+    expect(softwareTeamUndoDepth()).toBe(0);
+    const empty = createEmptySoftwareTeamPipelineStore();
+    const filled = addSoftwareTeamPipelineItem(empty, {
+      id: "u-1",
+      roleId: "product",
+      title: "Slice",
+      deliveryId: "d-u",
+    });
+    pushSoftwareTeamUndoSnapshot(empty);
+    expect(softwareTeamUndoDepth()).toBe(1);
+    pushSoftwareTeamUndoSnapshot(filled);
+    expect(popSoftwareTeamUndoSnapshot()?.items.map((i) => i.id)).toEqual(["u-1"]);
+    expect(popSoftwareTeamUndoSnapshot()?.items).toEqual([]);
+    expect(popSoftwareTeamUndoSnapshot()).toBeNull();
+  });
+
+  it("remove keeps activity and undo can restore the item", () => {
+    const added = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "rm-1",
+      roleId: "engineer",
+      title: "Keep session",
+      deliveryId: "d-rm",
+    });
+    pushSoftwareTeamUndoSnapshot(added);
+    const removed = removeSoftwareTeamPipelineItem(added, "rm-1");
+    expect(removed.items).toHaveLength(0);
+    expect(removed.activity.some((event) => event.type === "item_removed")).toBe(true);
+    const restored = popSoftwareTeamUndoSnapshot();
+    expect(restored?.items.map((i) => i.id)).toEqual(["rm-1"]);
+  });
+
+  it("accepts feat/slug labels and refuses shared-home-looking junk", () => {
+    expect(normalizeSoftwareTeamGitBranch("")).toBe("");
+    expect(normalizeSoftwareTeamGitBranch("feat/login")).toBe("feat/login");
+    expect(normalizeSoftwareTeamGitBranch("-bad")).toBeNull();
+    expect(normalizeSoftwareTeamGitBranch("has space")).toBeNull();
+    expect(normalizeSoftwareTeamGitBranch("feat/../etc")).toBeNull();
+    expect(softwareTeamSuggestGitBranch("Login form")).toBe("feat/login-form");
+    const store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "gb-1",
+      roleId: "product",
+      title: "Login form",
+      deliveryId: "d-gb",
+    });
+    const labeled = setSoftwareTeamDeliveryGitBranch(store, "d-gb", "feat/login-form");
+    expect(labeled.items[0]?.gitBranch).toBe("feat/login-form");
+    expect(labeled.activity.some((event) => event.type === "git_branch")).toBe(true);
+    expect(setSoftwareTeamDeliveryGitBranch(labeled, "d-gb", "no spaces")).toBe(labeled);
+    expect(softwareTeamActivityMessageKey("item_removed")).toBe(
+      "softwareTeamDlc.activity.item_removed",
+    );
+    expect(softwareTeamActivityMessageKey("git_branch")).toBe(
+      "softwareTeamDlc.activity.git_branch",
+    );
+  });
+
+  it("includes the branch label in the export markdown", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "ex-1",
+      roleId: "product",
+      title: "Billing",
+      deliveryId: "d-ex",
+      gitBranch: "feat/billing",
+    });
+    expect(item).not.toBeNull();
+    if (!item) return;
+    const detail = buildSoftwareTeamDeliveryDetail({
+      items: [item],
+      target: { kind: "delivery", deliveryId: "d-ex" },
+    });
+    expect(detail?.gitBranch).toBe("feat/billing");
+    expect(composeSoftwareTeamDeliveryMarkdown(detail!)).toContain(
+      "Git branch label: feat/billing",
+    );
   });
 });

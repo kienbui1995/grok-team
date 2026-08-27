@@ -241,4 +241,24 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Tidak dapat mengekspor ringkasan: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "Berkas pipeline berubah di tempat lain. Dibiarkan utuh. Papan tetap di aplikasi. Penyimpanan berikutnya menulis cadangan {file} daripada menimpa berkas.",
+  "softwareTeamDlc.undo": "Urungkan perubahan terakhir",
+  "softwareTeamDlc.undone": "Perubahan papan terakhir diurungkan.",
+  "softwareTeamDlc.undoEmpty": "Tidak ada yang diurungkan.",
+  "softwareTeamDlc.removeItemConfirm": "Hapus kartu ini?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Hapus “{title}” dari papan SDLC. Sesi Grok Build tetap ada. Urungkan dapat mengembalikan kartu di jendela ini.",
+  "softwareTeamDlc.removeItemConfirmAction": "Hapus kartu",
+  "softwareTeamDlc.gitBranch": "Label cabang git",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Hanya label. Software Works tidak membuat worktree, tidak checkout cabang, dan tidak menulis ulang ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Simpan label cabang",
+  "softwareTeamDlc.gitBranchSaved": "Label cabang disimpan pada pengiriman ini.",
+  "softwareTeamDlc.gitBranchInvalid":
+    "Gunakan huruf, angka, '.', '_' atau '-' dan '/' — tanpa spasi, tanpa tanda hubung di depan.",
+  "softwareTeamDlc.gitBranchSuggest": "Sarankan dari judul",
+  "softwareTeamDlc.gitBranchCopy": "Salin label cabang",
+  "softwareTeamDlc.gitBranchCopied": "Label cabang disalin.",
+  "softwareTeamDlc.activity.item_removed": "Item kerja dihapus",
+  "softwareTeamDlc.activity.git_branch": "Label cabang git diperbarui",
 } as const;

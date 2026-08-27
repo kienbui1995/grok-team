@@ -241,4 +241,23 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Impossibile esportare il riepilogo: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "Il file pipeline è cambiato altrove. Lasciato intatto. La lavagna resta nell’app. Il prossimo salvataggio scrive un backup {file} invece di sostituire il file.",
+  "softwareTeamDlc.undo": "Annulla ultima modifica",
+  "softwareTeamDlc.undone": "Ultima modifica della bacheca annullata.",
+  "softwareTeamDlc.undoEmpty": "Niente da annullare.",
+  "softwareTeamDlc.removeItemConfirm": "Rimuovere questa scheda?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Rimuovi “{title}” dalla bacheca SDLC. La sessione Grok Build resta. Annulla può ripristinare la scheda in questa finestra.",
+  "softwareTeamDlc.removeItemConfirmAction": "Rimuovi scheda",
+  "softwareTeamDlc.gitBranch": "Etichetta ramo git",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Solo un’etichetta. Software Works non crea worktree, non fa checkout e non riscrive ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Salva etichetta ramo",
+  "softwareTeamDlc.gitBranchSaved": "Etichetta ramo salvata su questa consegna.",
+  "softwareTeamDlc.gitBranchInvalid": "Usa lettere, cifre, '.', '_' o '-' e '/' — niente spazi né trattino iniziale.",
+  "softwareTeamDlc.gitBranchSuggest": "Suggerisci dal titolo",
+  "softwareTeamDlc.gitBranchCopy": "Copia etichetta ramo",
+  "softwareTeamDlc.gitBranchCopied": "Etichetta ramo copiata.",
+  "softwareTeamDlc.activity.item_removed": "Elemento rimosso",
+  "softwareTeamDlc.activity.git_branch": "Etichetta ramo git aggiornata",
 } as const;

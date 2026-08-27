@@ -34,8 +34,14 @@ import {
   boundSoftwareTeamPipelineProjectPath,
   reloadSoftwareTeamPipelineIfNewer,
   setSoftwareTeamDeliveryArchived,
+  setSoftwareTeamDeliveryGitBranch,
   setSoftwareTeamItemArchived,
   updateSoftwareTeamPipelineItem,
+  clearSoftwareTeamUndoStack,
+  popSoftwareTeamUndoSnapshot,
+  pushSoftwareTeamUndoSnapshot,
+  serializeSoftwareTeamPipelineStore,
+  softwareTeamUndoDepth,
   type SoftwareTeamPipelineReload,
 } from "@/lib/softwareTeamDlc";
 import type { AgentKanbanColumnId } from "@/lib/kanbanBoard";
@@ -53,6 +59,14 @@ function commit(store: SoftwareTeamPipelineStore): SoftwareTeamPipelineStore {
   queueSoftwareTeamPipelineProjectPersist(store);
   emitPipelineUi();
   return store;
+}
+
+function commitMutating(next: SoftwareTeamPipelineStore): SoftwareTeamPipelineStore {
+  const current = loadSoftwareTeamPipelineStore();
+  if (serializeSoftwareTeamPipelineStore(current) !== serializeSoftwareTeamPipelineStore(next)) {
+    pushSoftwareTeamUndoSnapshot(current);
+  }
+  return commit(next);
 }
 
 export function useSoftwareTeamDlcEnabled(): boolean {
@@ -102,8 +116,18 @@ export function useSoftwareTeamPipeline(): {
   reloadFromProject: (projectPath?: string | null) => Promise<SoftwareTeamPipelineReload>;
   setDeliveryArchived: (deliveryId: string, archived: boolean) => void;
   setItemArchived: (itemId: string, archived: boolean) => void;
+  setDeliveryGitBranch: (deliveryId: string, branch: string) => boolean;
+  undo: () => boolean;
+  canUndo: boolean;
 } {
   const [store, setStore] = useState(loadSoftwareTeamPipelineStore);
+  const [undoDepth, setUndoDepth] = useState(softwareTeamUndoDepth);
+
+  const rememberUndo = useCallback((next: SoftwareTeamPipelineStore) => {
+    const saved = commitMutating(next);
+    setUndoDepth(softwareTeamUndoDepth());
+    return saved;
+  }, []);
 
   useEffect(() => {
     const sync = () => setStore(loadSoftwareTeamPipelineStore());
@@ -130,32 +154,32 @@ export function useSoftwareTeamPipeline(): {
   const addItem = useCallback((draft: SoftwareTeamPipelineItemDraft) => {
     const next = addSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), draft);
     const created = next.items[next.items.length - 1] ?? null;
-    setStore(commit(next));
+    setStore(rememberUndo(next));
     return created;
-  }, []);
+  }, [rememberUndo]);
 
   const updateItem = useCallback(
     (itemId: string, patch: Partial<Omit<SoftwareTeamPipelineItem, "id">>) => {
       setStore(
-        commit(updateSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), itemId, patch)),
+        rememberUndo(updateSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), itemId, patch)),
       );
     },
-    [],
+    [rememberUndo],
   );
 
   const setStage = useCallback((itemId: string, stageId: SoftwareTeamSdlcStageId) => {
-    setStore(commit(setPipelineItemStage(loadSoftwareTeamPipelineStore(), itemId, stageId)));
-  }, []);
+    setStore(rememberUndo(setPipelineItemStage(loadSoftwareTeamPipelineStore(), itemId, stageId)));
+  }, [rememberUndo]);
 
   const setRole = useCallback((itemId: string, roleId: SoftwareTeamRoleId) => {
-    setStore(commit(setPipelineItemRole(loadSoftwareTeamPipelineStore(), itemId, roleId)));
-  }, []);
+    setStore(rememberUndo(setPipelineItemRole(loadSoftwareTeamPipelineStore(), itemId, roleId)));
+  }, [rememberUndo]);
 
   const bindSession = useCallback((itemId: string, sessionId: string) => {
     setStore(
-      commit(bindPipelineItemSession(loadSoftwareTeamPipelineStore(), itemId, sessionId)),
+      rememberUndo(bindPipelineItemSession(loadSoftwareTeamPipelineStore(), itemId, sessionId)),
     );
-  }, []);
+  }, [rememberUndo]);
 
   const assignSession = useCallback(
     (
@@ -163,43 +187,43 @@ export function useSoftwareTeamPipeline(): {
       patch: { roleId?: SoftwareTeamRoleId; stageId?: SoftwareTeamSdlcStageId },
     ) => {
       setStore(
-        commit(assignSessionToPipeline(loadSoftwareTeamPipelineStore(), sessionId, patch)),
+        rememberUndo(assignSessionToPipeline(loadSoftwareTeamPipelineStore(), sessionId, patch)),
       );
     },
-    [],
+    [rememberUndo],
   );
 
   const clearSession = useCallback((sessionId: string) => {
-    setStore(commit(clearSessionFromPipeline(loadSoftwareTeamPipelineStore(), sessionId)));
-  }, []);
+    setStore(rememberUndo(clearSessionFromPipeline(loadSoftwareTeamPipelineStore(), sessionId)));
+  }, [rememberUndo]);
 
   const removeItem = useCallback((itemId: string) => {
-    setStore(commit(removeSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), itemId)));
-  }, []);
+    setStore(rememberUndo(removeSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), itemId)));
+  }, [rememberUndo]);
 
   const handoff = useCallback((itemId: string): SoftwareTeamHandoffResult | null => {
     const { store: next, result } = applySoftwareTeamHandoffToStore(
       loadSoftwareTeamPipelineStore(),
       itemId,
     );
-    setStore(commit(next));
+    setStore(rememberUndo(next));
     return result;
-  }, []);
+  }, [rememberUndo]);
 
   const applySessionKanban = useCallback(
     (sessionId: string, column: AgentKanbanColumnId) => {
       const current = loadSoftwareTeamPipelineStore();
       const next = applySessionKanbanToPipeline(current, sessionId, column);
       if (next === current) return;
-      setStore(commit(next));
+      setStore(rememberUndo(next));
     },
-    [],
+    [rememberUndo],
   );
 
   const setDeliveryArchived = useCallback(
     (deliveryId: string, archived: boolean) => {
       setStore(
-        commit(
+        rememberUndo(
           setSoftwareTeamDeliveryArchived(
             loadSoftwareTeamPipelineStore(),
             deliveryId,
@@ -208,12 +232,12 @@ export function useSoftwareTeamPipeline(): {
         ),
       );
     },
-    [],
+    [rememberUndo],
   );
 
   const setItemArchived = useCallback((itemId: string, archived: boolean) => {
     setStore(
-      commit(
+      rememberUndo(
         setSoftwareTeamItemArchived(
           loadSoftwareTeamPipelineStore(),
           itemId,
@@ -221,6 +245,22 @@ export function useSoftwareTeamPipeline(): {
         ),
       ),
     );
+  }, [rememberUndo]);
+
+  const setDeliveryGitBranch = useCallback((deliveryId: string, branch: string) => {
+    const current = loadSoftwareTeamPipelineStore();
+    const next = setSoftwareTeamDeliveryGitBranch(current, deliveryId, branch);
+    if (next === current) return false;
+    setStore(rememberUndo(next));
+    return true;
+  }, [rememberUndo]);
+
+  const undo = useCallback(() => {
+    const prev = popSoftwareTeamUndoSnapshot();
+    if (!prev) return false;
+    setStore(commit(prev));
+    setUndoDepth(softwareTeamUndoDepth());
+    return true;
   }, []);
 
   const reloadFromProject = useCallback(async (projectPath?: string | null) => {
@@ -228,6 +268,8 @@ export function useSoftwareTeamPipeline(): {
       projectPath: projectPath ?? boundSoftwareTeamPipelineProjectPath(),
     });
     if (result.ok && result.kind === "replaced") {
+      clearSoftwareTeamUndoStack();
+      setUndoDepth(0);
       setStore(result.store);
     }
     return result;
@@ -243,9 +285,9 @@ export function useSoftwareTeamPipeline(): {
       const current = loadSoftwareTeamPipelineStore();
       const next = applySessionKanbanBoardToPipeline(current, placements);
       if (next === current) return;
-      setStore(commit(next));
+      setStore(rememberUndo(next));
     },
-    [],
+    [rememberUndo],
   );
 
   return {
@@ -266,6 +308,9 @@ export function useSoftwareTeamPipeline(): {
     reloadFromProject,
     setDeliveryArchived,
     setItemArchived,
+    setDeliveryGitBranch,
+    undo,
+    canUndo: undoDepth > 0,
   };
 }
 

@@ -241,4 +241,23 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Não foi possível exportar o resumo: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "O arquivo de pipeline mudou em outro lugar. Permaneceu intacto. O quadro fica no app. O próximo salvamento grava um backup {file} em vez de substituir o arquivo.",
+  "softwareTeamDlc.undo": "Desfazer última alteração",
+  "softwareTeamDlc.undone": "Última alteração do quadro desfeita.",
+  "softwareTeamDlc.undoEmpty": "Nada para desfazer.",
+  "softwareTeamDlc.removeItemConfirm": "Remover este cartão?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Remover “{title}” do quadro SDLC. A sessão do Grok Build permanece. Desfazer pode restaurar o cartão nesta janela.",
+  "softwareTeamDlc.removeItemConfirmAction": "Remover cartão",
+  "softwareTeamDlc.gitBranch": "Rótulo do branch git",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Só um rótulo. O Software Works não cria worktree, não faz checkout e não reescreve ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Salvar rótulo do branch",
+  "softwareTeamDlc.gitBranchSaved": "Rótulo do branch salvo nesta entrega.",
+  "softwareTeamDlc.gitBranchInvalid": "Use letras, dígitos, '.', '_' ou '-' e '/' — sem espaços nem hífen no início.",
+  "softwareTeamDlc.gitBranchSuggest": "Sugerir a partir do título",
+  "softwareTeamDlc.gitBranchCopy": "Copiar rótulo do branch",
+  "softwareTeamDlc.gitBranchCopied": "Rótulo do branch copiado.",
+  "softwareTeamDlc.activity.item_removed": "Item de trabalho removido",
+  "softwareTeamDlc.activity.git_branch": "Rótulo do branch git atualizado",
 } as const;

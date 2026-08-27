@@ -241,4 +241,23 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Impossible d’exporter le résumé : {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "Le fichier pipeline a changé ailleurs. Laissé intact. Le tableau reste dans l’app. La prochaine sauvegarde écrit une copie {file} au lieu de remplacer le fichier.",
+  "softwareTeamDlc.undo": "Annuler le dernier changement",
+  "softwareTeamDlc.undone": "Dernier changement du tableau annulé.",
+  "softwareTeamDlc.undoEmpty": "Rien à annuler.",
+  "softwareTeamDlc.removeItemConfirm": "Retirer cette carte ?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Retirer « {title} » du tableau SDLC. La session Grok Build reste. Annuler peut restaurer la carte dans cette fenêtre.",
+  "softwareTeamDlc.removeItemConfirmAction": "Retirer la carte",
+  "softwareTeamDlc.gitBranch": "Libellé de branche git",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Un libellé seulement. Software Works ne crée pas de worktree, ne bascule pas de branche et ne réécrit pas ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Enregistrer le libellé",
+  "softwareTeamDlc.gitBranchSaved": "Libellé de branche enregistré sur cette livraison.",
+  "softwareTeamDlc.gitBranchInvalid": "Lettres, chiffres, '.', '_' ou '-' et '/' — pas d’espaces, pas de tiret en tête.",
+  "softwareTeamDlc.gitBranchSuggest": "Suggérer d’après le titre",
+  "softwareTeamDlc.gitBranchCopy": "Copier le libellé de branche",
+  "softwareTeamDlc.gitBranchCopied": "Libellé de branche copié.",
+  "softwareTeamDlc.activity.item_removed": "Élément retiré",
+  "softwareTeamDlc.activity.git_branch": "Libellé de branche git mis à jour",
 } as const;

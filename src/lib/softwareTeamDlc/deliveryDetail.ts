@@ -16,6 +16,7 @@ import {
   type SoftwareTeamActivityEvent,
 } from "./activity";
 import { isSoftwareTeamItemArchived } from "./archive";
+import { softwareTeamDeliveryGitBranch } from "./gitBranch";
 import {
   softwareTeamDeliveryTitle,
   softwareTeamRoleHistoryIds,
@@ -52,6 +53,7 @@ export type SoftwareTeamDeliveryDetail = {
   sessions: SoftwareTeamDeliverySessionRef[];
   activity: SoftwareTeamActivityEvent[];
   archived: boolean;
+  gitBranch: string;
 };
 
 export function softwareTeamSessionsForDelivery(
@@ -182,5 +184,6 @@ export function buildSoftwareTeamDeliveryDetail(input: {
       ? isSoftwareTeamItemArchived(focusItem, input.archivedDeliveryIds)
       : Boolean(deliveryId) &&
         (input.archivedDeliveryIds ?? []).includes(deliveryId),
+    gitBranch: softwareTeamDeliveryGitBranch(members),
   };
 }

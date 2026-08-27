@@ -251,6 +251,7 @@ describe("i18n catalog", () => {
       ["softwareTeamDlc.createFailed", ["{error}"]],
       ["softwareTeamDlc.pipelineFileConflict", ["{file}"]],
       ["softwareTeamDlc.exportOk", ["{file}"]],
+      ["softwareTeamDlc.removeItemConfirmBody", ["{title}"]],
     ];
     for (const loc of LOCALES) {
       for (const [key, vars] of cases) {

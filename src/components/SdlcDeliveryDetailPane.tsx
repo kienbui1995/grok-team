@@ -3,12 +3,13 @@
  * Title, role history, Review/QA notes, next CTA, docs/sdlc, same-delivery sessions.
  */
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GlassModal } from "@/components/GlassModal";
 import { createT, intlLocale, type Locale, type MessageKey } from "@/i18n";
 import {
   softwareTeamActivityMessageKey,
   softwareTeamRoleById,
+  softwareTeamSuggestGitBranch,
   type SoftwareTeamDeliveryDetail,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamSdlcDocProbe,
@@ -28,6 +29,8 @@ export type SdlcDeliveryDetailPaneProps = {
   onSelectSession?: (sessionId: string) => void;
   onExport?: () => void;
   onToggleArchive?: (archived: boolean) => void;
+  onSaveGitBranch?: (branch: string) => boolean;
+  onCopyGitBranch?: (branch: string) => void;
 };
 
 function formatActivityAt(locale: Locale, at: number): string {
@@ -53,11 +56,17 @@ export function SdlcDeliveryDetailPane({
   onSelectSession,
   onExport,
   onToggleArchive,
+  onSaveGitBranch,
+  onCopyGitBranch,
 }: SdlcDeliveryDetailPaneProps) {
   const tr = useMemo(() => createT(locale), [locale]);
   const t: TFn = (k, vars) => tr(k, vars);
   const presentDocs = sdlcDocs.filter((row) => row.exists);
   const focus = detail?.focusItem ?? null;
+  const [branchDraft, setBranchDraft] = useState(detail?.gitBranch ?? "");
+  useEffect(() => {
+    setBranchDraft(detail?.gitBranch ?? "");
+  }, [detail?.deliveryId, detail?.gitBranch]);
 
   return (
     <GlassModal
@@ -141,6 +150,48 @@ export function SdlcDeliveryDetailPane({
                 )
                 .join(" → ") || t("softwareTeamDlc.notesEmpty"),
             })}</span>
+          </div>
+          <div className="sdlc-studio__field">
+            <span>{t("softwareTeamDlc.gitBranch")}</span>
+            <input
+              className="settings-input"
+              value={branchDraft}
+              onChange={(e) => setBranchDraft(e.target.value)}
+              placeholder={t("softwareTeamDlc.gitBranchPlaceholder")}
+              autoComplete="off"
+              spellCheck={false}
+              aria-label={t("softwareTeamDlc.gitBranch")}
+            />
+            <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.gitBranchHint")}</p>
+            <div className="sdlc-studio__chips" role="group">
+              {onSaveGitBranch ? (
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--sm"
+                  onClick={() => onSaveGitBranch(branchDraft)}
+                >
+                  {t("softwareTeamDlc.gitBranchSave")}
+                </button>
+              ) : null}
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() =>
+                  setBranchDraft(softwareTeamSuggestGitBranch(detail.title))
+                }
+              >
+                {t("softwareTeamDlc.gitBranchSuggest")}
+              </button>
+              {onCopyGitBranch && branchDraft.trim() ? (
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--sm"
+                  onClick={() => onCopyGitBranch(branchDraft)}
+                >
+                  {t("softwareTeamDlc.gitBranchCopy")}
+                </button>
+              ) : null}
+            </div>
           </div>
           <div className="sdlc-studio__field">
             <span>{t("softwareTeamDlc.reviewNote")}</span>

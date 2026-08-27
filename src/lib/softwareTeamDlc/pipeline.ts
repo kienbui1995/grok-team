@@ -72,6 +72,8 @@ export type SoftwareTeamPipelineItem = {
   stageSource: SoftwareTeamStageSource;
   /** SoT v3. Missing on v1–v2 items = false. */
   archived: boolean;
+  /** Optional git branch *label*. Missing = "". Does not create a worktree. */
+  gitBranch: string;
 };
 
 export type SoftwareTeamPipelineStore = {
@@ -99,6 +101,7 @@ export type SoftwareTeamPipelineItemDraft = {
   updatedAt?: number;
   stageSource?: SoftwareTeamStageSource;
   archived?: boolean;
+  gitBranch?: string;
 };
 
 function defaultStorage(): SoftwareTeamDlcStorage {
@@ -234,6 +237,7 @@ export function createSoftwareTeamPipelineItem(
     deliveryId: (draft.deliveryId ?? "").trim(),
     sessionDonePending: draft.sessionDonePending === true,
     archived: draft.archived === true,
+    gitBranch: (draft.gitBranch ?? "").trim(),
     updatedAt:
       typeof draft.updatedAt === "number" && Number.isFinite(draft.updatedAt)
         ? draft.updatedAt
@@ -270,6 +274,7 @@ export function parseSoftwareTeamPipelineItem(
     deliveryId: typeof rec.deliveryId === "string" ? rec.deliveryId : "",
     sessionDonePending: rec.sessionDonePending === true,
     archived: rec.archived === true,
+    gitBranch: typeof rec.gitBranch === "string" ? rec.gitBranch : "",
     updatedAt: typeof rec.updatedAt === "number" ? rec.updatedAt : undefined,
     stageSource: isSoftwareTeamStageSource(sourceRaw) ? sourceRaw : undefined,
   });
@@ -564,6 +569,7 @@ export function updateSoftwareTeamPipelineItem(
     sessionDonePending:
       patch.sessionDonePending ?? prev.sessionDonePending,
     archived: patch.archived ?? prev.archived,
+    gitBranch: patch.gitBranch ?? prev.gitBranch,
     updatedAt: now,
     stageSource: patch.stageSource ?? prev.stageSource,
   });
@@ -581,6 +587,7 @@ export function updateSoftwareTeamPipelineItem(
     next.deliveryId === prev.deliveryId &&
     next.sessionDonePending === prev.sessionDonePending &&
     next.archived === prev.archived &&
+    next.gitBranch === prev.gitBranch &&
     next.roleHistory.join(",") === prev.roleHistory.join(",") &&
     next.stageSource === prev.stageSource
   ) {
@@ -594,6 +601,12 @@ export function updateSoftwareTeamPipelineItem(
     out = appendSoftwareTeamPipelineActivity(
       out,
       activityDraft("stage_changed", next, { at: now }),
+    );
+  }
+  if (next.gitBranch !== prev.gitBranch) {
+    out = appendSoftwareTeamPipelineActivity(
+      out,
+      activityDraft("git_branch", next, { at: now }),
     );
   }
   if (next.reviewNote !== prev.reviewNote || next.qaNote !== prev.qaNote) {
@@ -671,10 +684,14 @@ export function removeSoftwareTeamPipelineItem(
   itemId: string,
 ): SoftwareTeamPipelineStore {
   const id = itemId.trim();
-  if (!id || !store.items.some((item) => item.id === id)) return store;
-  return withItems(
-    store,
-    store.items.filter((item) => item.id !== id),
+  const prev = store.items.find((item) => item.id === id);
+  if (!id || !prev) return store;
+  return appendSoftwareTeamPipelineActivity(
+    withItems(
+      store,
+      store.items.filter((item) => item.id !== id),
+    ),
+    activityDraft("item_removed", prev),
   );
 }
 

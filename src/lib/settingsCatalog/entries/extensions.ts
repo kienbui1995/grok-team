@@ -134,6 +134,8 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "softwareTeamDlc.archiveDelivery",
       "softwareTeamDlc.exportSummary",
       "softwareTeamDlc.searchTitle",
+      "softwareTeamDlc.undo",
+      "softwareTeamDlc.gitBranch",
     ],
     keywords: [
       "software works",
@@ -169,6 +171,8 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "activity log",
       "archive delivery",
       "export summary",
+      "undo board",
+      "git branch label",
       "软件团队",
       "软件团队 dlc",
       "软件工坊",

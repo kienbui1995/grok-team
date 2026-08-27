@@ -20,6 +20,8 @@ export const SOFTWARE_TEAM_ACTIVITY_TYPES = [
   "delivery_started",
   "archived",
   "unarchived",
+  "item_removed",
+  "git_branch",
 ] as const;
 
 export type SoftwareTeamActivityType =
@@ -139,6 +141,10 @@ export function softwareTeamActivityMessageKey(
       return "softwareTeamDlc.activity.archived";
     case "unarchived":
       return "softwareTeamDlc.activity.unarchived";
+    case "item_removed":
+      return "softwareTeamDlc.activity.item_removed";
+    case "git_branch":
+      return "softwareTeamDlc.activity.git_branch";
     default: {
       const _never: never = type;
       return _never;

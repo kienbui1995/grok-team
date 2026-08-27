@@ -241,4 +241,24 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Kurzfassung nicht exportiert: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "Projekt-Pipeline wurde anderswo geändert. Datei unangetastet. Board bleibt in der App. Der nächste Speichern schreibt eine Sicherung {file} statt die Datei zu ersetzen.",
+  "softwareTeamDlc.undo": "Letzte Änderung rückgängig",
+  "softwareTeamDlc.undone": "Letzte Board-Änderung rückgängig gemacht.",
+  "softwareTeamDlc.undoEmpty": "Nichts rückgängig zu machen.",
+  "softwareTeamDlc.removeItemConfirm": "Diese Karte entfernen?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "„{title}“ vom SDLC-Board entfernen. Die Grok-Build-Sitzung bleibt. Rückgängig stellt die Karte in diesem Fenster wieder her.",
+  "softwareTeamDlc.removeItemConfirmAction": "Karte entfernen",
+  "softwareTeamDlc.gitBranch": "Git-Branch-Label",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Nur ein Label. Software Works erstellt keinen Worktree, checkt keinen Branch aus und schreibt ~/.grok nicht um.",
+  "softwareTeamDlc.gitBranchSave": "Branch-Label speichern",
+  "softwareTeamDlc.gitBranchSaved": "Branch-Label für diese Lieferung gespeichert.",
+  "softwareTeamDlc.gitBranchInvalid":
+    "Buchstaben, Ziffern, '.', '_' oder '-' und '/' — keine Leerzeichen, kein führender Bindestrich.",
+  "softwareTeamDlc.gitBranchSuggest": "Aus Titel vorschlagen",
+  "softwareTeamDlc.gitBranchCopy": "Branch-Label kopieren",
+  "softwareTeamDlc.gitBranchCopied": "Branch-Label kopiert.",
+  "softwareTeamDlc.activity.item_removed": "Arbeitselement entfernt",
+  "softwareTeamDlc.activity.git_branch": "Git-Branch-Label aktualisiert",
 } as const;

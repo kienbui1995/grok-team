@@ -325,6 +325,23 @@ export {
 } from "./studioFilter";
 
 export {
+  SOFTWARE_TEAM_UNDO_MAX,
+  clearSoftwareTeamUndoStack,
+  peekSoftwareTeamUndoSnapshot,
+  popSoftwareTeamUndoSnapshot,
+  pushSoftwareTeamUndoSnapshot,
+  softwareTeamUndoDepth,
+} from "./undo";
+
+export {
+  isSoftwareTeamGitBranchLabel,
+  normalizeSoftwareTeamGitBranch,
+  setSoftwareTeamDeliveryGitBranch,
+  softwareTeamDeliveryGitBranch,
+  softwareTeamSuggestGitBranch,
+} from "./gitBranch";
+
+export {
   SOFTWARE_TEAM_EXPORT_REASONS,
   composeSoftwareTeamDeliveryMarkdown,
   defaultSoftwareTeamExportHost,

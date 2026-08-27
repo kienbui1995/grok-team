@@ -241,4 +241,23 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Не вдалося експортувати підсумок: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "Файл пайплайна змінився деінде. Не змінено. Дошка лишається в застосунку. Наступне збереження запише копію {file}, а не замінить файл.",
+  "softwareTeamDlc.undo": "Скасувати останню зміну",
+  "softwareTeamDlc.undone": "Останню зміну дошки скасовано.",
+  "softwareTeamDlc.undoEmpty": "Немає що скасовувати.",
+  "softwareTeamDlc.removeItemConfirm": "Прибрати цю картку?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Прибрати «{title}» з дошки SDLC. Сесія Grok Build залишиться. Скасування поверне картку в цьому вікні.",
+  "softwareTeamDlc.removeItemConfirmAction": "Прибрати картку",
+  "softwareTeamDlc.gitBranch": "Мітка git-гілки",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Лише мітка. Software Works не створює worktree, не перемикає гілку й не переписує ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Зберегти мітку гілки",
+  "softwareTeamDlc.gitBranchSaved": "Мітку гілки збережено для цієї поставки.",
+  "softwareTeamDlc.gitBranchInvalid": "Літери, цифри, '.', '_' або '-' і '/' — без пробілів і без дефіса на початку.",
+  "softwareTeamDlc.gitBranchSuggest": "Запропонувати з назви",
+  "softwareTeamDlc.gitBranchCopy": "Копіювати мітку гілки",
+  "softwareTeamDlc.gitBranchCopied": "Мітку гілки скопійовано.",
+  "softwareTeamDlc.activity.item_removed": "Елемент прибрано",
+  "softwareTeamDlc.activity.git_branch": "Мітку git-гілки оновлено",
 } as const;

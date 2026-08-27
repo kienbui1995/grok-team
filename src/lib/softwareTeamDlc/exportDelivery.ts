@@ -162,6 +162,9 @@ export function composeSoftwareTeamDeliveryMarkdown(
   ];
   if (detail.deliveryId) lines.push(`Delivery id: ${detail.deliveryId}`);
   lines.push(`Archived: ${detail.archived ? "yes" : "no"}`);
+  if (detail.gitBranch.trim()) {
+    lines.push(`Git branch label: ${detail.gitBranch.trim()}`);
+  }
   lines.push("");
   lines.push("## Role history");
   lines.push(

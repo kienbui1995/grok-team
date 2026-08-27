@@ -249,4 +249,24 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.exportHostError": "Could not export the summary: {error}",
   "softwareTeamDlc.pipelineFileConflict":
     "Project pipeline file changed elsewhere. Left it untouched. Your board stays in the app. Next save writes a backup {file} instead of replacing the file.",
+  "softwareTeamDlc.undo": "Undo last change",
+  "softwareTeamDlc.undone": "Last board change undone.",
+  "softwareTeamDlc.undoEmpty": "Nothing to undo.",
+  "softwareTeamDlc.removeItemConfirm": "Remove this card?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Remove “{title}” from the SDLC board. The Grok Build session stays. Undo can restore the card in this window.",
+  "softwareTeamDlc.removeItemConfirmAction": "Remove card",
+  "softwareTeamDlc.gitBranch": "Git branch label",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "A label only. Software Works does not create a worktree, check out a branch, or rewrite ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Save branch label",
+  "softwareTeamDlc.gitBranchSaved": "Branch label saved on this delivery.",
+  "softwareTeamDlc.gitBranchInvalid":
+    "Use letters, digits, '.', '_' or '-' and '/' — no spaces, no leading dash.",
+  "softwareTeamDlc.gitBranchSuggest": "Suggest from title",
+  "softwareTeamDlc.gitBranchCopy": "Copy branch label",
+  "softwareTeamDlc.gitBranchCopied": "Branch label copied.",
+  "softwareTeamDlc.activity.item_removed": "Removed a work item",
+  "softwareTeamDlc.activity.git_branch": "Updated git branch label",
 } as const;
