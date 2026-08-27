@@ -206,6 +206,8 @@ export {
   softwareTeamBootstrapMessageKey,
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
+  duplicateSoftwareTeamDelivery,
+  renameSoftwareTeamDelivery,
   writeSoftwareTeamWorkspaceBootstrap,
   type SoftwareTeamBootstrapFileResult,
   type SoftwareTeamBootstrapHost,
@@ -328,8 +330,10 @@ export {
   SOFTWARE_TEAM_UNDO_MAX,
   clearSoftwareTeamUndoStack,
   peekSoftwareTeamUndoSnapshot,
+  popSoftwareTeamRedoSnapshot,
   popSoftwareTeamUndoSnapshot,
   pushSoftwareTeamUndoSnapshot,
+  softwareTeamRedoDepth,
   softwareTeamUndoDepth,
 } from "./undo";
 

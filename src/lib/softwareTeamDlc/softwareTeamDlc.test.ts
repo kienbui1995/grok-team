@@ -113,6 +113,11 @@ import {
   softwareTeamActivityMessageKey,
   softwareTeamSuggestGitBranch,
   softwareTeamUndoDepth,
+  softwareTeamRedoDepth,
+  popSoftwareTeamRedoSnapshot,
+  renameSoftwareTeamDelivery,
+  duplicateSoftwareTeamDelivery,
+  softwareTeamDeliveryTitle,
   SOFTWARE_TEAM_ROLE_FILTER_ALL,
   SOFTWARE_TEAM_STAGE_FILTER_ALL,
   softwareTeamLaunchItemPatch,
@@ -2326,5 +2331,56 @@ describe("Software Works undo, remove, git branch label", () => {
     expect(composeSoftwareTeamDeliveryMarkdown(detail!)).toContain(
       "Git branch label: feat/billing",
     );
+  });
+
+  it("redoes after undo and clears redo on a new mutate snapshot", () => {
+    clearSoftwareTeamUndoStack();
+    const empty = createEmptySoftwareTeamPipelineStore();
+    const filled = addSoftwareTeamPipelineItem(empty, {
+      id: "rd-1",
+      roleId: "product",
+      title: "Slice",
+      deliveryId: "d-rd",
+    });
+    pushSoftwareTeamUndoSnapshot(empty);
+    expect(softwareTeamRedoDepth()).toBe(0);
+    const undone = popSoftwareTeamUndoSnapshot(filled);
+    expect(undone?.items).toEqual([]);
+    expect(softwareTeamRedoDepth()).toBe(1);
+    const redone = popSoftwareTeamRedoSnapshot(undone ?? empty);
+    expect(redone?.items.map((i) => i.id)).toEqual(["rd-1"]);
+    pushSoftwareTeamUndoSnapshot(redone ?? filled);
+    expect(softwareTeamRedoDepth()).toBe(0);
+  });
+
+  it("renames a delivery without rewriting ~/.grok and duplicates unbound copies", () => {
+    const first = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "rn-1",
+      roleId: "product",
+      title: "Card A",
+      sessionId: "sess-a",
+      deliveryId: "d-rn",
+    });
+    const store = addSoftwareTeamPipelineItem(first, {
+      id: "rn-2",
+      roleId: "engineer",
+      title: "Card B",
+      sessionId: "sess-b",
+      deliveryId: "d-rn",
+    });
+    const renamed = renameSoftwareTeamDelivery(store, "d-rn", "Billing slice");
+    expect(softwareTeamDeliveryTitle(renamed.items, "d-rn")).toBe("Billing slice");
+    expect(renamed.items.every((item) => item.title !== "Billing slice" || item.deliveryTitle === "Billing slice")).toBe(true);
+    expect(renamed.activity.some((event) => event.type === "delivery_renamed")).toBe(true);
+
+    const dup = duplicateSoftwareTeamDelivery(renamed, "d-rn", " (copy)");
+    expect(dup).not.toBeNull();
+    if (!dup) return;
+    expect(dup.deliveryId).not.toBe("d-rn");
+    const copies = dup.store.items.filter((item) => item.deliveryId === dup.deliveryId);
+    expect(copies).toHaveLength(2);
+    expect(copies.every((item) => item.sessionId === "")).toBe(true);
+    expect(softwareTeamDeliveryTitle(dup.store.items, dup.deliveryId)).toContain("copy");
+    expect(dup.store.activity.some((event) => event.type === "delivery_duplicated")).toBe(true);
   });
 });

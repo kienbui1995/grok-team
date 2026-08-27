@@ -57,6 +57,8 @@ export type SoftwareTeamPipelineItem = {
   roleId: SoftwareTeamRoleId;
   stageId: SoftwareTeamSdlcStageId;
   title: string;
+  /** Shared delivery name. Missing = "". Falls back to item title in filters. */
+  deliveryTitle: string;
   planRef: string;
   goalRef: string;
   artifactRef: string;
@@ -90,6 +92,7 @@ export type SoftwareTeamPipelineItemDraft = {
   roleId: SoftwareTeamRoleId;
   stageId?: SoftwareTeamSdlcStageId;
   title?: string;
+  deliveryTitle?: string;
   planRef?: string;
   goalRef?: string;
   artifactRef?: string;
@@ -225,6 +228,7 @@ export function createSoftwareTeamPipelineItem(
     roleId: role.id,
     stageId,
     title: (draft.title ?? "").trim(),
+    deliveryTitle: (draft.deliveryTitle ?? "").trim(),
     planRef: (draft.planRef ?? "").trim(),
     goalRef: (draft.goalRef ?? "").trim(),
     artifactRef: (draft.artifactRef ?? "").trim(),
@@ -263,6 +267,7 @@ export function parseSoftwareTeamPipelineItem(
     roleId: roleRaw,
     stageId: isSoftwareTeamSdlcStageId(stageRaw) ? stageRaw : undefined,
     title: typeof rec.title === "string" ? rec.title : "",
+    deliveryTitle: typeof rec.deliveryTitle === "string" ? rec.deliveryTitle : "",
     planRef: typeof rec.planRef === "string" ? rec.planRef : "",
     goalRef: typeof rec.goalRef === "string" ? rec.goalRef : "",
     artifactRef: typeof rec.artifactRef === "string" ? rec.artifactRef : "",
@@ -555,6 +560,7 @@ export function updateSoftwareTeamPipelineItem(
     roleId: role.id,
     stageId,
     title: patch.title ?? prev.title,
+    deliveryTitle: patch.deliveryTitle ?? prev.deliveryTitle,
     planRef: patch.planRef ?? prev.planRef,
     goalRef: patch.goalRef ?? prev.goalRef,
     artifactRef: patch.artifactRef ?? prev.artifactRef,
@@ -579,6 +585,7 @@ export function updateSoftwareTeamPipelineItem(
     next.roleId === prev.roleId &&
     next.stageId === prev.stageId &&
     next.title === prev.title &&
+    next.deliveryTitle === prev.deliveryTitle &&
     next.planRef === prev.planRef &&
     next.goalRef === prev.goalRef &&
     next.artifactRef === prev.artifactRef &&
@@ -601,6 +608,12 @@ export function updateSoftwareTeamPipelineItem(
     out = appendSoftwareTeamPipelineActivity(
       out,
       activityDraft("stage_changed", next, { at: now }),
+    );
+  }
+  if (next.deliveryTitle !== prev.deliveryTitle) {
+    out = appendSoftwareTeamPipelineActivity(
+      out,
+      activityDraft("delivery_renamed", next, { at: now }),
     );
   }
   if (next.gitBranch !== prev.gitBranch) {

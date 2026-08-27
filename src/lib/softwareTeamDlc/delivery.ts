@@ -7,9 +7,13 @@
 
 import * as api from "@/lib/api";
 import type { MessageKey } from "@/i18n";
-import type {
-  SoftwareTeamPipelineItem,
-  SoftwareTeamPipelineItemDraft,
+import {
+  appendSoftwareTeamPipelineActivity,
+  createSoftwareTeamPipelineItem,
+  updateSoftwareTeamPipelineItem,
+  type SoftwareTeamPipelineItem,
+  type SoftwareTeamPipelineItemDraft,
+  type SoftwareTeamPipelineStore,
 } from "./pipeline";
 import { softwareTeamRoleById, type SoftwareTeamRoleId } from "./roles";
 
@@ -285,4 +289,84 @@ export function softwareTeamDeliverySiblingDraft(input: {
     artifactRef: input.source.artifactRef,
     stageSource: "board",
   };
+}
+
+export function renameSoftwareTeamDelivery(
+  store: SoftwareTeamPipelineStore,
+  deliveryId: string,
+  title: string,
+  now = Date.now(),
+): SoftwareTeamPipelineStore {
+  const id = deliveryId.trim();
+  const name = title.trim();
+  if (!id || !name) return store;
+  let next = store;
+  for (const item of store.items) {
+    if (item.deliveryId.trim() !== id) continue;
+    next = updateSoftwareTeamPipelineItem(
+      next,
+      item.id,
+      { deliveryTitle: name },
+      now,
+    );
+  }
+  return next;
+}
+
+export function duplicateSoftwareTeamDelivery(
+  store: SoftwareTeamPipelineStore,
+  deliveryId: string,
+  titleSuffix: string,
+  now = Date.now(),
+): { store: SoftwareTeamPipelineStore; deliveryId: string } | null {
+  const id = deliveryId.trim();
+  if (!id) return null;
+  const members = store.items.filter((item) => item.deliveryId.trim() === id);
+  if (!members.length) return null;
+  const suffix = titleSuffix.trim();
+  const newId = newSoftwareTeamDeliveryId();
+  const copies: SoftwareTeamPipelineItem[] = [];
+  for (const item of members) {
+    const baseTitle = (item.deliveryTitle || item.title).trim();
+    const copyTitle = suffix && baseTitle ? `${baseTitle}${suffix}` : baseTitle || suffix;
+    const created = createSoftwareTeamPipelineItem({
+      roleId: item.roleId,
+      stageId: item.stageId,
+      title: item.title.trim()
+        ? suffix
+          ? `${item.title.trim()}${suffix}`
+          : item.title.trim()
+        : "",
+      deliveryTitle: copyTitle,
+      planRef: item.planRef,
+      goalRef: item.goalRef,
+      artifactRef: item.artifactRef,
+      roleHistory: item.roleHistory,
+      reviewNote: item.reviewNote,
+      qaNote: item.qaNote,
+      deliveryId: newId,
+      sessionId: "",
+      sessionDonePending: false,
+      archived: false,
+      gitBranch: item.gitBranch,
+      stageSource: "board",
+      updatedAt: now,
+    });
+    if (created) copies.push(created);
+  }
+  if (!copies.length) return null;
+  let next: SoftwareTeamPipelineStore = {
+    items: [...store.items, ...copies],
+    activity: store.activity,
+    archivedDeliveryIds: store.archivedDeliveryIds,
+  };
+  next = appendSoftwareTeamPipelineActivity(next, {
+    at: now,
+    type: "delivery_duplicated",
+    deliveryId: newId,
+    itemId: copies[0]!.id,
+    roleId: copies[0]!.roleId,
+    stageId: copies[0]!.stageId,
+  });
+  return { store: next, deliveryId: newId };
 }

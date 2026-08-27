@@ -26,6 +26,8 @@ export function softwareTeamDeliveryTitle(
   const id = deliveryId.trim();
   if (!id) return "";
   const members = items.filter((item) => item.deliveryId.trim() === id);
+  const named = members.find((item) => item.deliveryTitle.trim());
+  if (named?.deliveryTitle.trim()) return named.deliveryTitle.trim();
   const titled = members.find((item) => item.title.trim()) ?? members[0];
   return (titled?.title ?? "").trim() || id.slice(0, 8);
 }
@@ -41,7 +43,8 @@ export function listSoftwareTeamDeliveryGroups(
     if (!prev) {
       map.set(id, {
         id,
-        title: item.title.trim() || id.slice(0, 8),
+        title:
+          item.deliveryTitle.trim() || item.title.trim() || id.slice(0, 8),
         count: 1,
         updatedAt: item.updatedAt,
       });
@@ -50,9 +53,11 @@ export function listSoftwareTeamDeliveryGroups(
     prev.count += 1;
     if (item.updatedAt >= prev.updatedAt) {
       prev.updatedAt = item.updatedAt;
-      if (item.title.trim()) prev.title = item.title.trim();
+      if (item.deliveryTitle.trim()) prev.title = item.deliveryTitle.trim();
+      else if (item.title.trim()) prev.title = item.title.trim();
     } else if (!prev.title || prev.title === id.slice(0, 8)) {
-      if (item.title.trim()) prev.title = item.title.trim();
+      if (item.deliveryTitle.trim()) prev.title = item.deliveryTitle.trim();
+      else if (item.title.trim()) prev.title = item.title.trim();
     }
   }
   return [...map.values()].sort((a, b) => b.updatedAt - a.updatedAt);

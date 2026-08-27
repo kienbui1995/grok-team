@@ -21,6 +21,7 @@ See `docs/llm-wiki/release.md`.
 - **Software Works delivery detail + activity + reload**: Click a delivery chip or card for a `GlassModal` pane (title, `roleHistory`, Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions). Project SoT is schema **v2** (`activity[]`); v1 files still load. Meaningful mutates append an event. Studio re-reads the file on open/focus/visibility via `mtimeMs` (no Host watch API, no dense poll). Newer file replaces the cache; parse fail keeps the cache.
 - **Software Works archive, search/filter, export, conflict honesty**: Archive a delivery without deleting history (hidden unless Show archived). Title search plus stage/role chips combine with the delivery filter. Detail pane can export `docs/sdlc/<slug>-delivery.md` in the project (Host + project; refuses `~/.grok`; no app CHANGELOG write). SoT writes are schema **v3**; v1–v2 still load. If the local board is dirty and the project file is newer, reload keeps memory and the next save backs up the foreign file to `.bak` instead of overwriting it.
 - **Software Works undo, remove confirm, git branch label**: Studio can undo the last in-window board mutate (toolbar or Ctrl/Cmd+Z outside inputs; stack is memory-only and cleared when the project file replaces the cache). Removing a card asks in a `GlassModal` and does not delete the Grok Build session. A delivery can store a git branch **label** (suggest from title, copy, export); Software Works does not create a worktree, check out a branch, or rewrite `~/.grok`.
+- **Software Works redo, rename, duplicate**: Redo (toolbar, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y) replays the last undone board mutate. The delivery pane can rename the slice (`deliveryTitle`) and duplicate it as unbound cards on a new `deliveryId`. Branch labels show on cards.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
@@ -33,6 +34,7 @@ See `docs/llm-wiki/release.md`.
 - **Software Works 交付详情 + 活动日志 + 重载**：点击交付芯片或卡片打开 `GlassModal`（标题、角色历程、评审/测试备注、下一步交接/发布、`docs/sdlc`、同一 `deliveryId` 会话）。项目 SoT 为 **v2**（`activity[]`）；v1 仍可读。有意义的变更会追加事件。工坊在打开/聚焦/可见时用 `mtimeMs` 重读（无 Host watch，不密轮询）。文件更新则替换缓存；解析失败保留缓存。
 - **Software Works 归档、搜索筛选、导出、冲突诚实**：归档交付不删历史（默认隐藏，可显示已归档）。标题搜索 + 阶段/角色芯片与交付筛选叠加。详情可导出项目内 `docs/sdlc/<slug>-delivery.md`（需要 Host + 项目；拒绝 `~/.grok`；不写应用 CHANGELOG）。SoT 写 **v3**；v1–v2 仍可读。本地未保存且文件更新时，重载不覆盖内存；下次保存把外来文件备份为 `.bak` 并拒绝覆盖。
 - **Software Works 撤销、移除确认、git 分支标签**：工坊可撤销本窗口上次看板变更（工具栏或输入框外 Ctrl/Cmd+Z；栈只在内存，项目文件替换缓存时清空）。移除卡片用 `GlassModal` 确认，不删 Grok Build 会话。交付可存 git 分支**标签**（按标题建议、复制、导出）；不会创建 worktree、不会 checkout，也不会改写 `~/.grok`。
+- **Software Works 重做、重命名、复制交付**：重做（工具栏、Ctrl/Cmd+Shift+Z 或 Ctrl/Cmd+Y）回放刚撤销的看板变更。详情可改交付名（`deliveryTitle`）并复制为新 `deliveryId` 的未绑定卡片。卡片上显示分支标签。
 - **自定义外观**：设置 → 外观 → 主题可改文字颜色（默认跟随浅/深色近黑/近白）和字体阴影（默认关）。「恢复默认」需二次确认，会把这两项恢复出厂。这两项会随 `.grokskin` 导入导出。
 
 ### Changed

@@ -515,6 +515,30 @@ export function SdlcStudioPage({
     setStatus(t("softwareTeamDlc.undone"));
   }, [pipeline, t]);
 
+  const onRedo = useCallback(() => {
+    if (!pipeline.redo()) {
+      setStatus(t("softwareTeamDlc.redoEmpty"));
+      return;
+    }
+    setStatus(t("softwareTeamDlc.redone"));
+  }, [pipeline, t]);
+
+  const onDuplicateDelivery = useCallback(
+    (deliveryId: string) => {
+      const id = pipeline.duplicateDelivery(
+        deliveryId,
+        t("softwareTeamDlc.duplicateSuffix"),
+      );
+      if (!id) {
+        setStatus(t("softwareTeamDlc.duplicateFailed"));
+        return;
+      }
+      setStatus(t("softwareTeamDlc.duplicated"));
+      setDetailTarget({ kind: "delivery", deliveryId: id });
+    },
+    [pipeline, t],
+  );
+
   const onHandoff = useCallback(
     async (itemId: string) => {
       const result = pipeline.handoff(itemId);
@@ -874,6 +898,12 @@ export function SdlcStudioPage({
       label: t("softwareTeamDlc.editItem"),
       onClick: () => setEditor(draftFromItem(menuItem)),
     });
+    if (menuItem.deliveryId) {
+      items.push({
+        label: t("softwareTeamDlc.duplicateDelivery"),
+        onClick: () => onDuplicateDelivery(menuItem.deliveryId),
+      });
+    }
     if (menuItem.gitBranch) {
       items.push({
         label: t("softwareTeamDlc.gitBranchCopy"),
@@ -891,6 +921,7 @@ export function SdlcStudioPage({
     menuItem,
     onAddTeammate,
     onCopyGitBranch,
+    onDuplicateDelivery,
     onHandoff,
     onOpenInComposer,
     onToggleArchive,
@@ -908,13 +939,21 @@ export function SdlcStudioPage({
       data-testid="sdlc-studio"
       tabIndex={-1}
       onKeyDown={(event) => {
-        if (!(event.ctrlKey || event.metaKey) || event.key !== "z" || event.shiftKey) {
-          return;
-        }
+        if (!(event.ctrlKey || event.metaKey)) return;
         const target = event.target as HTMLElement | null;
         if (target?.closest("input, textarea, [contenteditable='true']")) return;
-        event.preventDefault();
-        onUndo();
+        const redoKey =
+          (event.key === "z" && event.shiftKey) || event.key === "y";
+        const undoKey = event.key === "z" && !event.shiftKey;
+        if (redoKey) {
+          event.preventDefault();
+          onRedo();
+          return;
+        }
+        if (undoKey) {
+          event.preventDefault();
+          onUndo();
+        }
       }}
     >
       <div className="auto-page__head agent-kanban-page__head">
@@ -1109,6 +1148,14 @@ export function SdlcStudioPage({
             onClick={onUndo}
           >
             {t("softwareTeamDlc.undo")}
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            disabled={!pipeline.canRedo}
+            onClick={onRedo}
+          >
+            {t("softwareTeamDlc.redo")}
           </button>
           <button
             type="button"
@@ -1391,6 +1438,11 @@ export function SdlcStudioPage({
                             <span className="agent-kanban__card-title">
                               {displayTitle(item)}
                             </span>
+                            {item.gitBranch.trim() ? (
+                              <span className="sdlc-studio__refs">
+                                {t("softwareTeamDlc.gitBranch")}: {item.gitBranch.trim()}
+                              </span>
+                            ) : null}
                             <span className="agent-kanban__card-team">
                               {t(softwareTeamRoleById(item.roleId)?.titleKey ?? "softwareTeamDlc.rosterTitle")}
                             </span>
@@ -1538,6 +1590,20 @@ export function SdlcStudioPage({
           );
         }}
         onCopyGitBranch={(branch) => void onCopyGitBranch(branch)}
+        onRenameDelivery={(title) => {
+          if (!deliveryDetail?.deliveryId) return false;
+          const ok = pipeline.renameDelivery(deliveryDetail.deliveryId, title);
+          setStatus(
+            ok
+              ? t("softwareTeamDlc.deliveryRenamed")
+              : t("softwareTeamDlc.deliveryRenameNeedTitle"),
+          );
+          return ok;
+        }}
+        onDuplicateDelivery={() => {
+          if (!deliveryDetail?.deliveryId) return;
+          onDuplicateDelivery(deliveryDetail.deliveryId);
+        }}
       />
 
       <GlassModal

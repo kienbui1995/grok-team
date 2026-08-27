@@ -135,7 +135,9 @@ export const EXTENSIONS_ENTRIES: readonly SettingsEntry[] = [
       "softwareTeamDlc.exportSummary",
       "softwareTeamDlc.searchTitle",
       "softwareTeamDlc.undo",
+      "softwareTeamDlc.redo",
       "softwareTeamDlc.gitBranch",
+      "softwareTeamDlc.duplicateDelivery",
     ],
     keywords: [
       "software works",

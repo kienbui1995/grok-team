@@ -31,6 +31,8 @@ export type SdlcDeliveryDetailPaneProps = {
   onToggleArchive?: (archived: boolean) => void;
   onSaveGitBranch?: (branch: string) => boolean;
   onCopyGitBranch?: (branch: string) => void;
+  onRenameDelivery?: (title: string) => boolean;
+  onDuplicateDelivery?: () => void;
 };
 
 function formatActivityAt(locale: Locale, at: number): string {
@@ -58,15 +60,19 @@ export function SdlcDeliveryDetailPane({
   onToggleArchive,
   onSaveGitBranch,
   onCopyGitBranch,
+  onRenameDelivery,
+  onDuplicateDelivery,
 }: SdlcDeliveryDetailPaneProps) {
   const tr = useMemo(() => createT(locale), [locale]);
   const t: TFn = (k, vars) => tr(k, vars);
   const presentDocs = sdlcDocs.filter((row) => row.exists);
   const focus = detail?.focusItem ?? null;
   const [branchDraft, setBranchDraft] = useState(detail?.gitBranch ?? "");
+  const [titleDraft, setTitleDraft] = useState(detail?.title ?? "");
   useEffect(() => {
     setBranchDraft(detail?.gitBranch ?? "");
-  }, [detail?.deliveryId, detail?.gitBranch]);
+    setTitleDraft(detail?.title ?? "");
+  }, [detail?.deliveryId, detail?.gitBranch, detail?.title]);
 
   return (
     <GlassModal
@@ -112,6 +118,15 @@ export function SdlcDeliveryDetailPane({
               {t("softwareTeamDlc.exportSummary")}
             </button>
           ) : null}
+          {onDuplicateDelivery && detail?.deliveryId ? (
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={onDuplicateDelivery}
+            >
+              {t("softwareTeamDlc.duplicateDelivery")}
+            </button>
+          ) : null}
           {onToggleArchive ? (
             <button
               type="button"
@@ -134,6 +149,27 @@ export function SdlcDeliveryDetailPane({
           <p className="sdlc-studio__slash-note">
             {t("softwareTeamDlc.deliveryDetailHint")}
           </p>
+          {onRenameDelivery && detail.deliveryId ? (
+            <div className="sdlc-studio__field">
+              <span>{t("softwareTeamDlc.deliveryName")}</span>
+              <input
+                className="settings-input"
+                value={titleDraft}
+                onChange={(e) => setTitleDraft(e.target.value)}
+                placeholder={t("softwareTeamDlc.startDeliveryTitlePlaceholder")}
+                autoComplete="off"
+                spellCheck={false}
+                aria-label={t("softwareTeamDlc.deliveryName")}
+              />
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => onRenameDelivery(titleDraft)}
+              >
+                {t("softwareTeamDlc.deliveryRename")}
+              </button>
+            </div>
+          ) : null}
           {detail.archived ? (
             <p className="sdlc-studio__slash-note" role="status">
               {t("softwareTeamDlc.archived")}
