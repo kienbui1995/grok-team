@@ -119,7 +119,7 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.install.repairNone": "無需補寫 — 套件檔已在目標上。",
   "softwareTeamDlc.goalModeSet": "此輸入草稿已開啟目標模式。",
   "softwareTeamDlc.goalModeSkipped": "目標留在卡片上。Host 沒有建立目標實體的介面。",
-  "softwareTeamDlc.shipLocked": "未儲存評審與測試備註前不能發布。",
+  "softwareTeamDlc.shipLocked": "此交付尚未備齊評審與測試備註，不能發布。",
   "softwareTeamDlc.shipNeedReviewer": "此切片尚未經過評審角色。",
   "softwareTeamDlc.shipNeedQa": "此切片尚未經過測試角色。",
   "softwareTeamDlc.shipNeedReviewNote": "發布前請先儲存評審備註。",
@@ -130,7 +130,7 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "測試備註",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff、必改與吹毛求疵、風險。",
   "softwareTeamDlc.qaNotePlaceholder": "用例、命令、通過/失敗。",
-  "softwareTeamDlc.notesSaved": "備註已儲存。評審與測試備註都齊後才能發布。",
+  "softwareTeamDlc.notesSaved": "備註已儲存。此交付同時有評審與測試備註後才能發布。",
   "softwareTeamDlc.startDelivery": "開始一次交付",
   "softwareTeamDlc.startDeliveryHint":
     "建立流水線項並開啟 Grok Build 工作階段，寫入角色開場。可選的 docs/sdlc 佔位只寫在本專案資料夾，絕不寫 ~/.grok。",
@@ -184,7 +184,7 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "無法開啟檔案：{error}",
   "softwareTeamDlc.deliveryDetail": "交付",
   "softwareTeamDlc.deliveryDetailHint":
-    "標題、角色歷程、評審/測試備註、下一步、docs/sdlc，以及同一交付的工作階段。",
+    "標題、共用切片參照、角色歷程、評審/測試備註（整次交付的發布門檻）、下一步、docs/sdlc，以及同一交付的工作階段。",
   "softwareTeamDlc.openDelivery": "開啟交付",
   "softwareTeamDlc.deliverySessions": "此交付的工作階段",
   "softwareTeamDlc.deliveryNoSessions": "還沒有綁定工作階段。",
@@ -262,4 +262,8 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "缺少團隊工作階段：{roles}",
   "softwareTeamDlc.teamComplete": "此交付已有 Product、Engineer、Reviewer 卡片。",
   "softwareTeamDlc.addSdlcDocs": "補上缺少的 docs/sdlc 檔案",
+  "softwareTeamDlc.sliceRefsHint":
+    "計畫、目標與產物在此交付的每張卡片上共用。儲存會一併更新。",
+  "softwareTeamDlc.sliceRefsSaved": "已把切片參照儲存到此交付的每張卡片。",
+  "softwareTeamDlc.saveSliceRefs": "儲存切片參照",
 } as const;

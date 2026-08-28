@@ -40,6 +40,13 @@ export type SdlcDeliveryDetailPaneProps = {
   bindThisChatDisabled?: boolean;
   onUnbindSession?: () => void;
   onAddSdlcDocs?: () => void;
+  onSaveSliceRefs?: (refs: {
+    planRef: string;
+    goalRef: string;
+    artifactRef: string;
+  }) => boolean;
+  onSaveReviewNote?: (text: string) => void;
+  onSaveQaNote?: (text: string) => void;
 };
 
 function formatActivityAt(locale: Locale, at: number): string {
@@ -75,6 +82,9 @@ export function SdlcDeliveryDetailPane({
   bindThisChatDisabled,
   onUnbindSession,
   onAddSdlcDocs,
+  onSaveSliceRefs,
+  onSaveReviewNote,
+  onSaveQaNote,
 }: SdlcDeliveryDetailPaneProps) {
   const tr = useMemo(() => createT(locale), [locale]);
   const t: TFn = (k, vars) => tr(k, vars);
@@ -82,10 +92,31 @@ export function SdlcDeliveryDetailPane({
   const focus = detail?.focusItem ?? null;
   const [branchDraft, setBranchDraft] = useState(detail?.gitBranch ?? "");
   const [titleDraft, setTitleDraft] = useState(detail?.title ?? "");
+  const [planDraft, setPlanDraft] = useState(detail?.planRef ?? "");
+  const [goalDraft, setGoalDraft] = useState(detail?.goalRef ?? "");
+  const [artifactDraft, setArtifactDraft] = useState(detail?.artifactRef ?? "");
+  const [reviewDraft, setReviewDraft] = useState(
+    detail?.reviewNotes[0]?.text ?? "",
+  );
+  const [qaDraft, setQaDraft] = useState(detail?.qaNotes[0]?.text ?? "");
   useEffect(() => {
     setBranchDraft(detail?.gitBranch ?? "");
     setTitleDraft(detail?.title ?? "");
-  }, [detail?.deliveryId, detail?.gitBranch, detail?.title]);
+    setPlanDraft(detail?.planRef ?? "");
+    setGoalDraft(detail?.goalRef ?? "");
+    setArtifactDraft(detail?.artifactRef ?? "");
+    setReviewDraft(detail?.reviewNotes[0]?.text ?? "");
+    setQaDraft(detail?.qaNotes[0]?.text ?? "");
+  }, [
+    detail?.deliveryId,
+    detail?.gitBranch,
+    detail?.title,
+    detail?.planRef,
+    detail?.goalRef,
+    detail?.artifactRef,
+    detail?.reviewNotes,
+    detail?.qaNotes,
+  ]);
 
   return (
     <GlassModal
@@ -243,32 +274,98 @@ export function SdlcDeliveryDetailPane({
             </div>
           </div>
           <div className="sdlc-studio__field">
+            <span>{t("softwareTeamDlc.planRef")}</span>
+            <input
+              className="settings-input"
+              value={planDraft}
+              onChange={(e) => setPlanDraft(e.target.value)}
+              placeholder={t("softwareTeamDlc.planPlaceholder")}
+              autoComplete="off"
+              spellCheck={false}
+              aria-label={t("softwareTeamDlc.planRef")}
+            />
+          </div>
+          <div className="sdlc-studio__field">
+            <span>{t("softwareTeamDlc.goalRef")}</span>
+            <input
+              className="settings-input"
+              value={goalDraft}
+              onChange={(e) => setGoalDraft(e.target.value)}
+              placeholder={t("softwareTeamDlc.goalPlaceholder")}
+              autoComplete="off"
+              spellCheck={false}
+              aria-label={t("softwareTeamDlc.goalRef")}
+            />
+          </div>
+          <div className="sdlc-studio__field">
+            <span>{t("softwareTeamDlc.artifactRef")}</span>
+            <input
+              className="settings-input"
+              value={artifactDraft}
+              onChange={(e) => setArtifactDraft(e.target.value)}
+              placeholder={t("softwareTeamDlc.artifactPlaceholder")}
+              autoComplete="off"
+              spellCheck={false}
+              aria-label={t("softwareTeamDlc.artifactRef")}
+            />
+            <p className="sdlc-studio__slash-note">
+              {t("softwareTeamDlc.sliceRefsHint")}
+            </p>
+            {onSaveSliceRefs ? (
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() =>
+                  onSaveSliceRefs({
+                    planRef: planDraft,
+                    goalRef: goalDraft,
+                    artifactRef: artifactDraft,
+                  })
+                }
+              >
+                {t("softwareTeamDlc.saveSliceRefs")}
+              </button>
+            ) : null}
+          </div>
+          <div className="sdlc-studio__field">
             <span>{t("softwareTeamDlc.reviewNote")}</span>
-            {detail.reviewNotes.length ? (
-              <ul className="sdlc-studio__activity">
-                {detail.reviewNotes.map((note) => (
-                  <li key={`review-${note.itemId}`} className="sdlc-studio__activity-item">
-                    {note.text}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.notesEmpty")}</p>
-            )}
+            <textarea
+              className="settings-input"
+              rows={4}
+              value={reviewDraft}
+              onChange={(e) => setReviewDraft(e.target.value)}
+              placeholder={t("softwareTeamDlc.reviewNotePlaceholder")}
+              aria-label={t("softwareTeamDlc.reviewNote")}
+            />
+            {onSaveReviewNote ? (
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => onSaveReviewNote(reviewDraft)}
+              >
+                {t("common.save")}
+              </button>
+            ) : null}
           </div>
           <div className="sdlc-studio__field">
             <span>{t("softwareTeamDlc.qaNote")}</span>
-            {detail.qaNotes.length ? (
-              <ul className="sdlc-studio__activity">
-                {detail.qaNotes.map((note) => (
-                  <li key={`qa-${note.itemId}`} className="sdlc-studio__activity-item">
-                    {note.text}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.notesEmpty")}</p>
-            )}
+            <textarea
+              className="settings-input"
+              rows={4}
+              value={qaDraft}
+              onChange={(e) => setQaDraft(e.target.value)}
+              placeholder={t("softwareTeamDlc.qaNotePlaceholder")}
+              aria-label={t("softwareTeamDlc.qaNote")}
+            />
+            {onSaveQaNote ? (
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => onSaveQaNote(qaDraft)}
+              >
+                {t("common.save")}
+              </button>
+            ) : null}
           </div>
           <div className="sdlc-studio__field">
             <span>{t("softwareTeamDlc.openSdlcDocs")}</span>

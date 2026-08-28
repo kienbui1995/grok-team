@@ -126,7 +126,7 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Goal はカードに残します。Host に Goal 作成 API はありません。",
   "softwareTeamDlc.shipLocked":
-    "Reviewer と QA のメモを保存するまで Ship はロックされます。",
+    "このデリバリーに Reviewer と QA のメモがあるまで Ship はロックされます。",
   "softwareTeamDlc.shipNeedReviewer": "このスライスは Reviewer を通っていません。",
   "softwareTeamDlc.shipNeedQa": "このスライスは QA を通っていません。",
   "softwareTeamDlc.shipNeedReviewNote": "Ship の前に Reviewer メモを保存してください。",
@@ -138,7 +138,7 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff、必須修正と nits、リスク。",
   "softwareTeamDlc.qaNotePlaceholder": "ケース、コマンド、合否。",
   "softwareTeamDlc.notesSaved":
-    "メモを保存しました。Reviewer と QA のメモが揃うと Ship が開きます。",
+    "メモを保存しました。このデリバリーに Reviewer と QA のメモが揃うと Ship が開きます。",
   "softwareTeamDlc.startDelivery": "デリバリーを開始",
   "softwareTeamDlc.startDeliveryHint":
     "パイプライン項目を作り、役割スターター付きで Grok Build セッションを開きます。docs/sdlc のプレースホルダはこのプロジェクト内だけ — ~/.grok には書きません。",
@@ -203,7 +203,7 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "ファイルを開けませんでした: {error}",
   "softwareTeamDlc.deliveryDetail": "デリバリー",
   "softwareTeamDlc.deliveryDetailHint":
-    "タイトル、役割履歴、レビュー/QA メモ、次の手順、docs/sdlc、このスライスのセッション。",
+    "タイトル、共有スライス参照、役割履歴、レビュー/QA メモ（デリバリー全体の Ship）、次の手順、docs/sdlc、このスライスのセッション。",
   "softwareTeamDlc.openDelivery": "デリバリーを開く",
   "softwareTeamDlc.deliverySessions": "このデリバリーのセッション",
   "softwareTeamDlc.deliveryNoSessions": "まだ紐づくセッションはありません。",
@@ -285,4 +285,8 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "足りないチームセッション: {roles}",
   "softwareTeamDlc.teamComplete": "このデリバリーに Product / Engineer / Reviewer のカードがあります。",
   "softwareTeamDlc.addSdlcDocs": "足りない docs/sdlc ファイルを追加",
+  "softwareTeamDlc.sliceRefsHint":
+    "プラン・ゴール・成果物はこのデリバリーの全カードで共有されます。保存するとすべて更新されます。",
+  "softwareTeamDlc.sliceRefsSaved": "スライス参照をこのデリバリーの全カードに保存しました。",
+  "softwareTeamDlc.saveSliceRefs": "スライス参照を保存",
 } as const;

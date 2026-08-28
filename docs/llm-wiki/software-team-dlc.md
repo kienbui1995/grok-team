@@ -15,7 +15,7 @@ A single pipeline for a slice of software:
 3. Move the item on the SDLC board (Backlog → Design → Build → Review → Ship).
 4. Hand off Product → Architect → Engineer → Reviewer → QA → Writer. The item’s stage updates and the next-role starter is loaded into that session’s composer (or a new session if Host `sessionCreate` is available).
 
-Plan / goal / artifact fields live on the work item so the next role sees the same slice.
+Plan / goal / artifact fields live on the work item so the next role sees the same slice. When cards share a `deliveryId`, those three refs stay aligned (edit one card or the detail pane, the others update). Reviewer / QA notes stay on their own cards; the Ship gate reads the first non-empty note across the delivery.
 
 - **Off by default.** Ordinary Grok App users are unchanged.
 - **Never auto-applies** an appearance skin (see [appearance-skins.md](./appearance-skins.md)).
@@ -50,7 +50,7 @@ Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) i
 
 Schema: `{ schema: "software-works.pipeline", version: 3, updatedAt, items, activity, archivedDeliveryIds }`. **v1–v2 still load** (`activity` / `archivedDeliveryIds` hydrate to `[]`; item `archived` missing = false). Writes are v3. Host `fs_write_file` may **create** this allowlisted path, docs/sdlc placeholders, and `docs/sdlc/<slug>-delivery.md` when missing. Parse failure still refuses overwrite and may write `.grok/software-works.json.bak`.
 
-`activity[]` events: `{ at, type, deliveryId, itemId, … }` for add, stage, handoff, notes, start delivery, archive, unarchive. Unknown types are skipped. Cap 200. Old items without activity still hydrate.
+`activity[]` events: `{ at, type, deliveryId, itemId, … }` for add, stage, handoff, notes, start delivery, archive, unarchive, `item_removed`, `item_moved`, `session_bound`, `session_unbound`, `delivery_renamed`, `delivery_duplicated`, `git_branch`. Unknown types are skipped. Cap 200. Old items without activity still hydrate.
 
 **Archive:** `archivedDeliveryIds` plus item `archived`. Does not delete items or activity. Default Studio filter hides archived deliveries; **Show archived** reveals them. Unarchive is the same field flipped.
 
@@ -128,16 +128,18 @@ Repair is idempotent. Shared user writes still refuse.
 
 Helpers: `src/lib/softwareTeamDlc/shipGate.ts`.
 
-Ship is blocked (UI chips / context menu **and** `setPipelineItemStage` / live `done` / QA→Writer handoff) until:
+`softwareTeamShipGate` is still the **single-item** check (unit tests stay on that helper). Studio, board moves, live `done`, and QA→Writer handoff use **`softwareTeamDeliveryShipGate`** when the card has a `deliveryId`: union `roleId` + `roleHistory` across members, first non-empty `reviewNote` / `qaNote`. Sibling Reviewer + QA notes unlock Ship on the Engineer / Product card.
 
-1. The item has visited **Reviewer** and **QA** (`roleId` or `roleHistory`).
-2. Non-empty **`reviewNote`** and **`qaNote`** (persisted on the pipeline item).
+Ship is blocked (UI chips / context menu **and** `setPipelineItemStage` / live `done` / QA→Writer handoff) until **this delivery** has:
 
-Legacy items already stored as `ship` stay there. New writes and handoff to Writer without notes stay on **Review**.
+1. Visited **Reviewer** and **QA** (`roleId` or `roleHistory` on any member).
+2. Non-empty **`reviewNote`** and **`qaNote`** (first non-empty across members). Notes stay on the Reviewer / QA card; they are **not** copied to every card. Ship / Writer handoff merges them onto the **focus** card only.
 
-Reviewer / QA starters (open + handoff) include an English checklist: **diff / test / risk**. Notes are edited in `GlassModal` (Mark Reviewer notes / Mark QA notes) — no `window.prompt`.
+Legacy items already stored as `ship` stay there. New writes and handoff to Writer without delivery-wide notes stay on **Review**.
 
-Live `done` + gate fail → CTA **Handoff to {next role}**. Live `done` + gate ok → CTA **Ship · Writer starter** (user click only). Ship seeds the Writer starter in the composer. It does **not** write this app’s `CHANGELOG.md` or any file.
+Reviewer / QA starters (open + handoff) include an English checklist: **diff / test / risk**. Notes are edited in `GlassModal` (Mark Reviewer notes / Mark QA notes) or on the delivery detail pane — no `window.prompt`.
+
+Live `done` + gate fail → CTA **Handoff to {next role}**. Live `done` + gate ok → CTA **Ship · Writer starter** (user click only). Ship seeds the Writer starter in the composer. It does **not** write this app’s `CHANGELOG.md` or any file. Do not invent Host plan/goal ids.
 
 ## Start a delivery
 
@@ -188,7 +190,7 @@ Context menu **Add team session** creates an unbound sibling card (same slice re
 ## UI
 
 - Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install + status/repair).
-- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board; title search + stage/role chips combine with that filter; archived deliveries are hidden unless **Show archived**. Click a delivery chip or card to open `SdlcDeliveryDetailPane` (title, role history, Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions, activity, archive, export summary, git branch **label**). Existing `docs/sdlc` files open via Host `openInEditor` or a copied path. Toolbar **Undo** / **Redo** (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y when focus is not in an input) restore the last in-window board mutate; stacks are memory-only and cleared when the project file replaces the cache. Remove card uses a `GlassModal` confirm (session is kept). Git branch is a label only — no worktree, no checkout, no `~/.grok` write. Detail pane can **rename** a delivery (`deliveryTitle` on members) and **duplicate** it (new `deliveryId`, cards unbound). **Bind this chat** attaches the open workbench session to a card (one card per session; does not create a chat). Context menu can **unbind** or **move** a card to another delivery / ungrouped. Detail pane lists missing Product / Engineer / Reviewer sessions and can add those teammates or write missing `docs/sdlc` placeholders (same Host honesty as Start a delivery).
+- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board; title search + stage/role chips combine with that filter; archived deliveries are hidden unless **Show archived**. Click a delivery chip or card to open `SdlcDeliveryDetailPane` (title, **editable** shared plan/goal/artifact, role history, **editable** Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions, activity, archive, export summary, git branch **label**). Saving slice refs syncs every member of the delivery; saving notes writes onto the Reviewer / QA card when present (`setSoftwareTeamDeliveryNote`). Existing `docs/sdlc` files open via Host `openInEditor` or a copied path. Toolbar **Undo** / **Redo** (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y when focus is not in an input) restore the last in-window board mutate; stacks are memory-only and cleared when the project file replaces the cache. Remove card uses a `GlassModal` confirm (session is kept). Git branch is a label only — no worktree, no checkout, no `~/.grok` write. Detail pane can **rename** a delivery (`deliveryTitle` on members) and **duplicate** it (new `deliveryId`, cards unbound). **Bind this chat** attaches the open workbench session to a card (one card per session; does not create a chat). Steal-bind appends `session_unbound` on the previous card. Context menu can **unbind** or **move** a card to another delivery / ungrouped (move inherits destination title, branch, and slice refs). Detail pane lists missing Product / Engineer / Reviewer sessions and can add those teammates or write missing `docs/sdlc` placeholders (same Host honesty as Start a delivery).
 - Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
 - Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
 - Strings: `src/i18n/messages/*/software-team-dlc.ts` (16 locales, `en` authority).

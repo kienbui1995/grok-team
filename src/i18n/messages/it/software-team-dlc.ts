@@ -126,7 +126,7 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "L’obiettivo resta sulla scheda. L’host non ha un’API per creare obiettivi.",
   "softwareTeamDlc.shipLocked":
-    "Ship è bloccato finché non salvi le note Reviewer e QA.",
+    "Ship è bloccato finché questa consegna non ha note Reviewer e QA.",
   "softwareTeamDlc.shipNeedReviewer": "Questa fetta non è passata da Reviewer.",
   "softwareTeamDlc.shipNeedQa": "Questa fetta non è passata da QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Salva le note Reviewer prima di Ship.",
@@ -138,7 +138,7 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, correzioni obbligatorie vs nits, rischio.",
   "softwareTeamDlc.qaNotePlaceholder": "Casi, comandi, esito.",
   "softwareTeamDlc.notesSaved":
-    "Note salvate. Ship si sblocca quando ci sono sia le note Reviewer sia QA.",
+    "Note salvate. Ship si sblocca quando questa consegna ha note Reviewer e QA.",
   "softwareTeamDlc.startDelivery": "Avvia una consegna",
   "softwareTeamDlc.startDeliveryHint":
     "Crea un elemento pipeline e apre una sessione Grok Build con lo starter del ruolo. I placeholder docs/sdlc restano in questa cartella progetto — mai ~/.grok.",
@@ -203,7 +203,7 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Impossibile aprire il file: {error}",
   "softwareTeamDlc.deliveryDetail": "Consegna",
   "softwareTeamDlc.deliveryDetailHint":
-    "Titolo, cronologia ruoli, note Review/QA, passo successivo, docs/sdlc e sessioni di questa fetta.",
+    "Titolo, rif. della fetta condivisi, cronologia ruoli, note Review/QA (Ship per tutta la consegna), passo successivo, docs/sdlc e sessioni di questa fetta.",
   "softwareTeamDlc.openDelivery": "Apri consegna",
   "softwareTeamDlc.deliverySessions": "Sessioni di questa consegna",
   "softwareTeamDlc.deliveryNoSessions": "Nessuna sessione collegata.",
@@ -287,4 +287,8 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Sessioni del team mancanti: {roles}",
   "softwareTeamDlc.teamComplete": "Le schede Product, Engineer e Reviewer sono su questa consegna.",
   "softwareTeamDlc.addSdlcDocs": "Aggiungi i file docs/sdlc mancanti",
+  "softwareTeamDlc.sliceRefsHint":
+    "Piano, obiettivo e artefatto sono condivisi su ogni scheda di questa consegna. Salvare li aggiorna tutti.",
+  "softwareTeamDlc.sliceRefsSaved": "Rif. della fetta salvati su ogni scheda di questa consegna.",
+  "softwareTeamDlc.saveSliceRefs": "Salva rif. della fetta",
 } as const;

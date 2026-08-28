@@ -10,7 +10,10 @@ import {
   decideSoftwareTeamDoneCta,
   type SoftwareTeamDoneCta,
 } from "./doneCta";
-import { softwareTeamShipGate } from "./shipGate";
+import {
+  firstSoftwareTeamNonEmptyField,
+  softwareTeamDeliveryShipGate,
+} from "./shipGate";
 import {
   softwareTeamActivityForDelivery,
   type SoftwareTeamActivityEvent,
@@ -54,6 +57,9 @@ export type SoftwareTeamDeliveryDetail = {
   activity: SoftwareTeamActivityEvent[];
   archived: boolean;
   gitBranch: string;
+  planRef: string;
+  goalRef: string;
+  artifactRef: string;
 };
 
 export function softwareTeamSessionsForDelivery(
@@ -94,12 +100,14 @@ export function unionSoftwareTeamDeliveryRoleHistory(
 
 export function decideSoftwareTeamDeliveryNextCta(
   item: SoftwareTeamPipelineItem | null,
+  members?: readonly SoftwareTeamPipelineItem[] | null,
 ): SoftwareTeamDoneCta {
   if (!item) return { kind: "none" };
-  const pending = decideSoftwareTeamDoneCta(item);
+  const pending = decideSoftwareTeamDoneCta(item, members);
   if (pending.kind !== "none") return pending;
   if (item.stageId === "ship") return { kind: "none" };
-  if (softwareTeamShipGate(item).ok) return { kind: "ship" };
+  const cohort = members && members.length > 0 ? members : [item];
+  if (softwareTeamDeliveryShipGate(cohort).ok) return { kind: "ship" };
   const nextRole = nextSoftwareTeamRole(item.roleId);
   if (nextRole) return { kind: "handoff", nextRole };
   return { kind: "none" };
@@ -169,7 +177,12 @@ export function buildSoftwareTeamDeliveryDetail(input: {
     qaNotes: members
       .filter((item) => item.qaNote.trim())
       .map((item) => ({ itemId: item.id, text: item.qaNote.trim() })),
-    cta: decideSoftwareTeamDeliveryNextCta(focusItem),
+    cta: decideSoftwareTeamDeliveryNextCta(focusItem, members),
+    planRef: firstSoftwareTeamNonEmptyField(members.map((item) => item.planRef)),
+    goalRef: firstSoftwareTeamNonEmptyField(members.map((item) => item.goalRef)),
+    artifactRef: firstSoftwareTeamNonEmptyField(
+      members.map((item) => item.artifactRef),
+    ),
     sessions: softwareTeamSessionsForDelivery(
       input.sessions ?? [],
       members,

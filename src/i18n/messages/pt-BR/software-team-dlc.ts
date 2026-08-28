@@ -126,7 +126,7 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "O objetivo fica no cartão. O host não tem API para criar objetivo.",
   "softwareTeamDlc.shipLocked":
-    "Ship fica bloqueado até salvar as notas de Reviewer e QA.",
+    "Ship fica bloqueado até esta entrega ter notas de Reviewer e QA.",
   "softwareTeamDlc.shipNeedReviewer": "Esta fatia não passou pelo Reviewer.",
   "softwareTeamDlc.shipNeedQa": "Esta fatia não passou pelo QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Salve as notas de Reviewer antes do Ship.",
@@ -138,7 +138,7 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, correções obrigatórias vs nits, risco.",
   "softwareTeamDlc.qaNotePlaceholder": "Casos, comandos, passou/falhou.",
   "softwareTeamDlc.notesSaved":
-    "Notas salvas. Ship destrava quando houver notas de Reviewer e de QA.",
+    "Notas salvas. Ship destrava quando esta entrega tiver notas de Reviewer e de QA.",
   "softwareTeamDlc.startDelivery": "Começar uma entrega",
   "softwareTeamDlc.startDeliveryHint":
     "Cria um item do pipeline e abre uma sessão Grok Build com o starter do papel. Placeholders de docs/sdlc ficam nesta pasta do projeto — nunca ~/.grok.",
@@ -203,7 +203,7 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Não foi possível abrir o arquivo: {error}",
   "softwareTeamDlc.deliveryDetail": "Entrega",
   "softwareTeamDlc.deliveryDetailHint":
-    "Título, histórico de papéis, notas de Review/QA, próximo passo, docs/sdlc e sessões deste recorte.",
+    "Título, refs de recorte compartilhadas, histórico de papéis, notas de Review/QA (Ship da entrega inteira), próximo passo, docs/sdlc e sessões deste recorte.",
   "softwareTeamDlc.openDelivery": "Abrir entrega",
   "softwareTeamDlc.deliverySessions": "Sessões desta entrega",
   "softwareTeamDlc.deliveryNoSessions": "Ainda não há sessões vinculadas.",
@@ -287,4 +287,8 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Sessões de equipe em falta: {roles}",
   "softwareTeamDlc.teamComplete": "Os cartões Product, Engineer e Reviewer estão nesta entrega.",
   "softwareTeamDlc.addSdlcDocs": "Adicionar arquivos docs/sdlc ausentes",
+  "softwareTeamDlc.sliceRefsHint":
+    "Plano, meta e artefato são compartilhados em todos os cartões desta entrega. Salvar atualiza todos.",
+  "softwareTeamDlc.sliceRefsSaved": "Refs do recorte salvas em todos os cartões desta entrega.",
+  "softwareTeamDlc.saveSliceRefs": "Salvar refs do recorte",
 } as const;

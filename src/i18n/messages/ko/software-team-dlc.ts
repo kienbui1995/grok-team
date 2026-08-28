@@ -126,7 +126,7 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Goal은 카드에 남습니다. Host에 Goal 생성 API가 없습니다.",
   "softwareTeamDlc.shipLocked":
-    "Reviewer와 QA 메모를 저장하기 전까지 Ship이 잠깁니다.",
+    "이 딜리버리에 Reviewer와 QA 메모가 있을 때까지 Ship이 잠깁니다.",
   "softwareTeamDlc.shipNeedReviewer": "이 슬라이스는 Reviewer를 거치지 않았습니다.",
   "softwareTeamDlc.shipNeedQa": "이 슬라이스는 QA를 거치지 않았습니다.",
   "softwareTeamDlc.shipNeedReviewNote": "Ship 전에 Reviewer 메모를 저장하세요.",
@@ -138,7 +138,7 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, 필수 수정과 nits, 위험.",
   "softwareTeamDlc.qaNotePlaceholder": "케이스, 명령, 합격/불합격.",
   "softwareTeamDlc.notesSaved":
-    "메모를 저장했습니다. Reviewer와 QA 메모가 모두 있으면 Ship이 열립니다.",
+    "메모를 저장했습니다. 이 딜리버리에 Reviewer와 QA 메모가 모두 있으면 Ship이 열립니다.",
   "softwareTeamDlc.startDelivery": "딜리버리 시작",
   "softwareTeamDlc.startDeliveryHint":
     "파이프라인 항목을 만들고 역할 스타터와 함께 Grok Build 세션을 엽니다. docs/sdlc 자리 표시자는 이 프로젝트 폴더에만 쓰며 ~/.grok 에는 쓰지 않습니다.",
@@ -203,7 +203,7 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "파일을 열지 못했습니다: {error}",
   "softwareTeamDlc.deliveryDetail": "딜리버리",
   "softwareTeamDlc.deliveryDetailHint":
-    "제목, 역할 이력, Review/QA 메모, 다음 단계, docs/sdlc, 이 슬라이스의 세션.",
+    "제목, 공유 슬라이스 참조, 역할 이력, Review/QA 메모(딜리버리 전체 Ship), 다음 단계, docs/sdlc, 이 슬라이스의 세션.",
   "softwareTeamDlc.openDelivery": "딜리버리 열기",
   "softwareTeamDlc.deliverySessions": "이 딜리버리의 세션",
   "softwareTeamDlc.deliveryNoSessions": "연결된 세션이 아직 없습니다.",
@@ -285,4 +285,8 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "빠진 팀 세션: {roles}",
   "softwareTeamDlc.teamComplete": "이 딜리버리에 Product, Engineer, Reviewer 카드가 있습니다.",
   "softwareTeamDlc.addSdlcDocs": "빠진 docs/sdlc 파일 추가",
+  "softwareTeamDlc.sliceRefsHint":
+    "계획, 목표, 산출물은 이 딜리버리의 모든 카드에서 공유됩니다. 저장하면 모두 업데이트됩니다.",
+  "softwareTeamDlc.sliceRefsSaved": "슬라이스 참조를 이 딜리버리의 모든 카드에 저장했습니다.",
+  "softwareTeamDlc.saveSliceRefs": "슬라이스 참조 저장",
 } as const;

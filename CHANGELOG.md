@@ -12,6 +12,7 @@ See `docs/llm-wiki/release.md`.
 ## [Unreleased]
 
 ### Added
+- **Software Works delivery-wide Ship + shared slice refs**: Reviewer and QA notes on sibling cards unlock Ship on the Engineer/Product card (`softwareTeamDeliveryShipGate`). Plan/goal/artifact stay aligned across the same `deliveryId` (board edit, add, move, or the detail pane). The delivery pane can edit those refs and Review/QA notes; notes stay on the Reviewer/QA card. Steal-bind logs `session_unbound`. Still no Host plan/goal invent, no `~/.grok` rewrite.
 - **Software Works bind this chat + move card**: Studio can bind the open workbench session onto a card (one session per card; no fake create). Context menu unbinds or moves a card to another delivery / ungrouped. Delivery pane shows missing Product / Engineer / Reviewer sessions, adds those teammates, and can write missing `docs/sdlc` placeholders (Host + project; never `~/.grok`).
 - **Vietnamese UI (`vi`)**: Settings → Language can lock **Tiếng Việt**. OS tags `vi`, `vi-VN`, and `vi_VN` resolve to the new catalog (English stays the key authority). Tray, Remote IM bridge, and `intlLocale("vi")` → `vi-VN` stay in lockstep.
 - **Software Works / SDLC Studio (opt-in)**: Settings → Extensions → Agents can enable a software-delivery edition. The Agents pane becomes a pipeline board (Backlog → Design → Build → Review → Ship) bound to session + role + plan/goal/artifact, with Product→…→Writer handoff. Open/create a session from the board to load the role starter into the composer. Install writes the 6+6+workflow pack into project `.grok/` or Independent agent-home (refuses shared `~/.grok`; never fakes Host success). `/team-*` appears in the slash palette when the edition is on (skill chip; CLI resolves after install). Off by default; never auto-applies a skin.
@@ -27,6 +28,7 @@ See `docs/llm-wiki/release.md`.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
+- **Software Works 整次交付的发布门槛 + 共享切片引用**：同一次交付上评审/测试卡片的备注可解锁工程师/产品卡片的发布（`softwareTeamDeliveryShipGate`）。同一 `deliveryId` 的计划/目标/产物保持对齐（看板编辑、新增、挪卡或详情）。详情可改这些引用和评审/测试备注；备注仍落在评审/测试卡上。抢绑会记 `session_unbound`。仍不编造 Host 计划/目标，不改写 `~/.grok`。
 - **Software Works 绑定当前对话 + 挪卡片**：工坊可把当前工作台会话绑到一张卡片（一会话一卡，不假装新建）。右键可解绑，或把卡片挪到另一交付 / 取消分组。详情显示缺少的 Product / Engineer / Reviewer，可补会话，也可补写缺失的 `docs/sdlc`（需要 Host + 项目；不写 `~/.grok`）。
 - **越南语界面（`vi`）**：设置 → 语言可锁定 **Tiếng Việt**。系统标签 `vi` / `vi-VN` / `vi_VN` 落到该目录（英语仍是键权威）。托盘、Remote IM 与 `intlLocale("vi")` → `vi-VN` 同步。
 - **Software Works / SDLC Studio（可选）**：设置 → 扩展 → 代理可开启软件交付版。智能体看板变为流水线（待办 → 设计 → 构建 → 评审 → 发布），绑定会话 + 角色 + 计划/目标/产物，并支持 Product→…→Writer 交接。从看板打开/新建会话会把角色开场写入输入框。安装包写入项目 `.grok/` 或独立 agent-home（拒绝共享 `~/.grok`，不假装 Host 成功）。开启后斜杠 `/team-*` 出现在面板（技能芯片；安装后 CLI 才能解析）。默认关；不自动套皮肤。

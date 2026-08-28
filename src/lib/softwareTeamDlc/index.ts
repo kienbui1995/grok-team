@@ -160,8 +160,12 @@ export {
 
 export {
   SOFTWARE_TEAM_SHIP_BLOCKS,
+  firstSoftwareTeamNonEmptyField,
   parseSoftwareTeamRoleHistory,
   recordSoftwareTeamRoleVisit,
+  softwareTeamDeliveryMembers,
+  softwareTeamDeliveryShipFields,
+  softwareTeamDeliveryShipGate,
   softwareTeamHasVisitedRole,
   softwareTeamRoleChecklist,
   softwareTeamShipBlockMessageKey,
@@ -209,7 +213,10 @@ export {
   duplicateSoftwareTeamDelivery,
   moveSoftwareTeamItemDelivery,
   renameSoftwareTeamDelivery,
+  setSoftwareTeamDeliveryNote,
+  syncSoftwareTeamDeliverySliceRefs,
   writeSoftwareTeamWorkspaceBootstrap,
+  type SoftwareTeamDeliveryNoteKind,
   type SoftwareTeamBootstrapFileResult,
   type SoftwareTeamBootstrapHost,
   type SoftwareTeamBootstrapReason,

@@ -126,7 +126,7 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Ціль лишається на картці. У Host немає API створення цілі.",
   "softwareTeamDlc.shipLocked":
-    "Ship заблоковано, доки не збережено нотатки Reviewer і QA.",
+    "Ship заблоковано, доки в цієї поставки немає нотаток Reviewer і QA.",
   "softwareTeamDlc.shipNeedReviewer": "Цей зріз не пройшов через Reviewer.",
   "softwareTeamDlc.shipNeedQa": "Цей зріз не пройшов через QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Збережіть нотатки Reviewer перед Ship.",
@@ -138,7 +138,7 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, обов’язкові правки й дрібниці, ризик.",
   "softwareTeamDlc.qaNotePlaceholder": "Випадки, команди, успіх/провал.",
   "softwareTeamDlc.notesSaved":
-    "Нотатки збережено. Ship відкриється, коли будуть і Reviewer, і QA.",
+    "Нотатки збережено. Ship відкриється, коли в цієї поставки будуть і Reviewer, і QA.",
   "softwareTeamDlc.startDelivery": "Почати поставку",
   "softwareTeamDlc.startDeliveryHint":
     "Створює елемент конвеєра й відкриває сесію Grok Build зі стартером ролі. Заготовки docs/sdlc лише в теці цього проєкту — не в ~/.grok.",
@@ -203,7 +203,7 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Не вдалося відкрити файл: {error}",
   "softwareTeamDlc.deliveryDetail": "Поставка",
   "softwareTeamDlc.deliveryDetailHint":
-    "Назва, історія ролей, нотатки Review/QA, наступний крок, docs/sdlc і сесії цього зрізу.",
+    "Назва, спільні посилання зрізу, історія ролей, нотатки Review/QA (Ship на всю поставку), наступний крок, docs/sdlc і сесії цього зрізу.",
   "softwareTeamDlc.openDelivery": "Відкрити поставку",
   "softwareTeamDlc.deliverySessions": "Сесії цієї поставки",
   "softwareTeamDlc.deliveryNoSessions": "Ще немає прив’язаних сесій.",
@@ -287,4 +287,8 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Бракує командних сесій: {roles}",
   "softwareTeamDlc.teamComplete": "На цій поставці є картки Product, Engineer і Reviewer.",
   "softwareTeamDlc.addSdlcDocs": "Додати відсутні файли docs/sdlc",
+  "softwareTeamDlc.sliceRefsHint":
+    "План, мета й артефакт спільні для всіх карток цієї поставки. Збереження оновлює всі.",
+  "softwareTeamDlc.sliceRefsSaved": "Посилання зрізу збережено на всіх картках цієї поставки.",
+  "softwareTeamDlc.saveSliceRefs": "Зберегти посилання зрізу",
 } as const;

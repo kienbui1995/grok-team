@@ -126,7 +126,7 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Цель остаётся на карточке. У Host нет API создания цели.",
   "softwareTeamDlc.shipLocked":
-    "Ship заблокирован, пока не сохранены заметки Reviewer и QA.",
+    "Ship заблокирован, пока у этой поставки нет заметок Reviewer и QA.",
   "softwareTeamDlc.shipNeedReviewer": "Этот срез не прошёл через Reviewer.",
   "softwareTeamDlc.shipNeedQa": "Этот срез не прошёл через QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Сохраните заметки Reviewer перед Ship.",
@@ -138,7 +138,7 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, обязательные правки и мелочи, риск.",
   "softwareTeamDlc.qaNotePlaceholder": "Случаи, команды, успех/провал.",
   "softwareTeamDlc.notesSaved":
-    "Заметки сохранены. Ship откроется, когда будут и Reviewer, и QA.",
+    "Заметки сохранены. Ship откроется, когда у этой поставки будут и Reviewer, и QA.",
   "softwareTeamDlc.startDelivery": "Начать поставку",
   "softwareTeamDlc.startDeliveryHint":
     "Создаёт элемент конвейера и открывает сессию Grok Build со стартером роли. Заготовки docs/sdlc только в папке этого проекта — не в ~/.grok.",
@@ -203,7 +203,7 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Не удалось открыть файл: {error}",
   "softwareTeamDlc.deliveryDetail": "Поставка",
   "softwareTeamDlc.deliveryDetailHint":
-    "Название, история ролей, заметки Review/QA, следующий шаг, docs/sdlc и сессии этого среза.",
+    "Название, общие ссылки среза, история ролей, заметки Review/QA (Ship на всю поставку), следующий шаг, docs/sdlc и сессии этого среза.",
   "softwareTeamDlc.openDelivery": "Открыть поставку",
   "softwareTeamDlc.deliverySessions": "Сессии этой поставки",
   "softwareTeamDlc.deliveryNoSessions": "Пока нет привязанных сессий.",
@@ -287,4 +287,8 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Не хватает командных сессий: {roles}",
   "softwareTeamDlc.teamComplete": "На этой поставке есть карточки Product, Engineer и Reviewer.",
   "softwareTeamDlc.addSdlcDocs": "Добавить недостающие файлы docs/sdlc",
+  "softwareTeamDlc.sliceRefsHint":
+    "План, цель и артефакт общие для всех карточек этой поставки. Сохранение обновляет все.",
+  "softwareTeamDlc.sliceRefsSaved": "Ссылки среза сохранены на всех карточках этой поставки.",
+  "softwareTeamDlc.saveSliceRefs": "Сохранить ссылки среза",
 } as const;

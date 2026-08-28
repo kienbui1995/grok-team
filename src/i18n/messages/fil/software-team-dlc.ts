@@ -126,7 +126,7 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Nanatili ang goal sa card. Walang create-goal API ang Host.",
   "softwareTeamDlc.shipLocked":
-    "Naka-lock ang Ship hanggang maisave ang notes ng Reviewer at QA.",
+    "Naka-lock ang Ship hanggang magkaroon ang delivery na ito ng notes ng Reviewer at QA.",
   "softwareTeamDlc.shipNeedReviewer": "Hindi pa dumaan sa Reviewer ang slice na ito.",
   "softwareTeamDlc.shipNeedQa": "Hindi pa dumaan sa QA ang slice na ito.",
   "softwareTeamDlc.shipNeedReviewNote": "I-save ang notes ng Reviewer bago ang Ship.",
@@ -138,7 +138,7 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, dapat ayusin vs nits, panganib.",
   "softwareTeamDlc.qaNotePlaceholder": "Mga case, command, pass/fail.",
   "softwareTeamDlc.notesSaved":
-    "Nai-save ang notes. Mag-unlock ang Ship kapag may notes na ng Reviewer at QA.",
+    "Nai-save ang notes. Mag-unlock ang Ship kapag may notes ng Reviewer at QA ang delivery na ito.",
   "softwareTeamDlc.startDelivery": "Magsimula ng delivery",
   "softwareTeamDlc.startDeliveryHint":
     "Gumagawa ng pipeline item at magbubukas ng Grok Build session na may role starter. Ang docs/sdlc placeholders ay sa folder ng proyektong ito lang — hindi ~/.grok.",
@@ -203,7 +203,7 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Hindi mabuksan ang file: {error}",
   "softwareTeamDlc.deliveryDetail": "Delivery",
   "softwareTeamDlc.deliveryDetailHint":
-    "Pamagat, history ng role, note ng Review/QA, susunod na hakbang, docs/sdlc, at session sa slice na ito.",
+    "Pamagat, shared slice refs, history ng role, note ng Review/QA (Ship sa buong delivery), susunod na hakbang, docs/sdlc, at session sa slice na ito.",
   "softwareTeamDlc.openDelivery": "Buksan ang delivery",
   "softwareTeamDlc.deliverySessions": "Mga session sa delivery na ito",
   "softwareTeamDlc.deliveryNoSessions": "Wala pang naka-bind na session.",
@@ -288,4 +288,8 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Kulang ang team session: {roles}",
   "softwareTeamDlc.teamComplete": "Nasa delivery na ang card ng Product, Engineer, at Reviewer.",
   "softwareTeamDlc.addSdlcDocs": "Idagdag ang nawawalang docs/sdlc",
+  "softwareTeamDlc.sliceRefsHint":
+    "Ang plan, goal, at artifact ay shared sa bawat card ng delivery na ito. Ang pag-save ay nag-a-update sa lahat.",
+  "softwareTeamDlc.sliceRefsSaved": "Na-save ang slice refs sa bawat card ng delivery na ito.",
+  "softwareTeamDlc.saveSliceRefs": "I-save ang slice refs",
 } as const;

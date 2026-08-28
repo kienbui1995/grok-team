@@ -133,7 +133,7 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Goal stays on the card. Host has no create-goal API.",
   "softwareTeamDlc.shipLocked":
-    "Ship is locked until Reviewer and QA notes are saved.",
+    "Ship is locked until this delivery has Reviewer and QA notes.",
   "softwareTeamDlc.shipNeedReviewer": "This slice has not passed through Reviewer.",
   "softwareTeamDlc.shipNeedQa": "This slice has not passed through QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Save Reviewer notes before Ship.",
@@ -145,7 +145,7 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, must-fix vs nits, risk.",
   "softwareTeamDlc.qaNotePlaceholder": "Cases, commands, pass/fail.",
   "softwareTeamDlc.notesSaved":
-    "Notes saved. Ship unlocks when Reviewer and QA notes are both present.",
+    "Notes saved. Ship unlocks when this delivery has both Reviewer and QA notes.",
   "softwareTeamDlc.startDelivery": "Start a delivery",
   "softwareTeamDlc.startDeliveryHint":
     "Create a pipeline item and open a Grok Build session with the role starter. Optional docs/sdlc placeholders stay in this project folder — never ~/.grok.",
@@ -211,7 +211,7 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Could not open the file: {error}",
   "softwareTeamDlc.deliveryDetail": "Delivery",
   "softwareTeamDlc.deliveryDetailHint":
-    "Title, role history, Review/QA notes, next step, docs/sdlc, and sessions on this slice.",
+    "Title, shared slice refs, role history, Review/QA notes (delivery-wide Ship), next step, docs/sdlc, and sessions on this slice.",
   "softwareTeamDlc.openDelivery": "Open delivery",
   "softwareTeamDlc.deliverySessions": "Sessions on this delivery",
   "softwareTeamDlc.deliveryNoSessions": "No bound sessions yet.",
@@ -297,4 +297,8 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.teamComplete":
     "Product, Engineer, and Reviewer cards are on this delivery.",
   "softwareTeamDlc.addSdlcDocs": "Add missing docs/sdlc files",
+  "softwareTeamDlc.sliceRefsHint":
+    "Plan, goal, and artifact are shared across every card on this delivery. Saving updates all of them.",
+  "softwareTeamDlc.sliceRefsSaved": "Slice refs saved on every card in this delivery.",
+  "softwareTeamDlc.saveSliceRefs": "Save slice refs",
 } as const;

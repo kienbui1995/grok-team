@@ -133,7 +133,7 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Mục tiêu ở lại trên thẻ. Host không có API tạo mục tiêu.",
   "softwareTeamDlc.shipLocked":
-    "Ship bị khóa cho đến khi ghi chú Reviewer và QA được lưu.",
+    "Ship bị khóa cho đến khi đợt giao này có ghi chú Reviewer và QA.",
   "softwareTeamDlc.shipNeedReviewer": "Lát này chưa qua Reviewer.",
   "softwareTeamDlc.shipNeedQa": "Lát này chưa qua QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Lưu ghi chú Reviewer trước khi Ship.",
@@ -145,7 +145,7 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, bắt buộc sửa so với nits, rủi ro.",
   "softwareTeamDlc.qaNotePlaceholder": "Trường hợp, lệnh, đạt/trượt.",
   "softwareTeamDlc.notesSaved":
-    "Đã lưu ghi chú. Ship mở khóa khi cả ghi chú Reviewer và QA đều có.",
+    "Đã lưu ghi chú. Ship mở khóa khi đợt giao này có cả ghi chú Reviewer và QA.",
   "softwareTeamDlc.startDelivery": "Bắt đầu đợt giao",
   "softwareTeamDlc.startDeliveryHint":
     "Tạo hạng mục pipeline và mở phiên Grok Build với starter vai. Placeholder docs/sdlc tùy chọn ở lại thư mục dự án này — không bao giờ ~/.grok.",
@@ -211,7 +211,7 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Không mở được tệp: {error}",
   "softwareTeamDlc.deliveryDetail": "Đợt giao",
   "softwareTeamDlc.deliveryDetailHint":
-    "Tiêu đề, lịch sử vai, ghi chú Review/QA, bước tiếp, docs/sdlc, và phiên trên lát này.",
+    "Tiêu đề, tham chiếu lát dùng chung, lịch sử vai, ghi chú Review/QA (Ship theo đợt giao), bước tiếp, docs/sdlc, và phiên trên lát này.",
   "softwareTeamDlc.openDelivery": "Mở đợt giao",
   "softwareTeamDlc.deliverySessions": "Phiên trên đợt giao này",
   "softwareTeamDlc.deliveryNoSessions": "Chưa có phiên gắn.",
@@ -296,4 +296,8 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Thiếu phiên nhóm: {roles}",
   "softwareTeamDlc.teamComplete": "Đợt giao này đã có thẻ Product, Engineer và Reviewer.",
   "softwareTeamDlc.addSdlcDocs": "Thêm tệp docs/sdlc còn thiếu",
+  "softwareTeamDlc.sliceRefsHint":
+    "Kế hoạch, mục tiêu và ấn phẩm dùng chung trên mọi thẻ của đợt giao này. Lưu sẽ cập nhật tất cả.",
+  "softwareTeamDlc.sliceRefsSaved": "Đã lưu tham chiếu lát trên mọi thẻ của đợt giao này.",
+  "softwareTeamDlc.saveSliceRefs": "Lưu tham chiếu lát",
 } as const;

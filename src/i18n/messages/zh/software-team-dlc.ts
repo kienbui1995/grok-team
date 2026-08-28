@@ -119,7 +119,7 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.install.repairNone": "无需补写 — 包文件已在目标上。",
   "softwareTeamDlc.goalModeSet": "此输入草稿已打开目标模式。",
   "softwareTeamDlc.goalModeSkipped": "目标留在卡片上。Host 没有创建目标实体的接口。",
-  "softwareTeamDlc.shipLocked": "未保存评审与测试备注前不能发布。",
+  "softwareTeamDlc.shipLocked": "此交付尚未备齐评审与测试备注，不能发布。",
   "softwareTeamDlc.shipNeedReviewer": "此切片尚未经过评审角色。",
   "softwareTeamDlc.shipNeedQa": "此切片尚未经过测试角色。",
   "softwareTeamDlc.shipNeedReviewNote": "发布前请先保存评审备注。",
@@ -130,7 +130,7 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "测试备注",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff、必改与吹毛求疵、风险。",
   "softwareTeamDlc.qaNotePlaceholder": "用例、命令、通过/失败。",
-  "softwareTeamDlc.notesSaved": "备注已保存。评审与测试备注都齐后才能发布。",
+  "softwareTeamDlc.notesSaved": "备注已保存。此交付同时有评审与测试备注后才能发布。",
   "softwareTeamDlc.startDelivery": "开始一次交付",
   "softwareTeamDlc.startDeliveryHint":
     "创建流水线项并打开 Grok Build 会话，写入角色开场。可选的 docs/sdlc 占位只写在本项目文件夹，绝不写 ~/.grok。",
@@ -184,7 +184,7 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "无法打开文件：{error}",
   "softwareTeamDlc.deliveryDetail": "交付",
   "softwareTeamDlc.deliveryDetailHint":
-    "标题、角色历程、评审/测试备注、下一步、docs/sdlc，以及同一交付的会话。",
+    "标题、共享切片引用、角色历程、评审/测试备注（整次交付的发布门槛）、下一步、docs/sdlc，以及同一交付的会话。",
   "softwareTeamDlc.openDelivery": "打开交付",
   "softwareTeamDlc.deliverySessions": "此交付的会话",
   "softwareTeamDlc.deliveryNoSessions": "还没有绑定会话。",
@@ -262,4 +262,8 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "缺少团队会话：{roles}",
   "softwareTeamDlc.teamComplete": "此交付已有 Product、Engineer、Reviewer 卡片。",
   "softwareTeamDlc.addSdlcDocs": "补写缺少的 docs/sdlc 文件",
+  "softwareTeamDlc.sliceRefsHint":
+    "计划、目标和产物在此交付的每张卡片上共享。保存会一起更新。",
+  "softwareTeamDlc.sliceRefsSaved": "已把切片引用保存到此交付的每张卡片。",
+  "softwareTeamDlc.saveSliceRefs": "保存切片引用",
 } as const;

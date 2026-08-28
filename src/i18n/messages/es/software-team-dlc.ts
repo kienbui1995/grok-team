@@ -126,7 +126,7 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "El objetivo se queda en la tarjeta. El host no tiene API para crear objetivos.",
   "softwareTeamDlc.shipLocked":
-    "Ship está bloqueado hasta guardar las notas de Reviewer y QA.",
+    "Ship está bloqueado hasta que esta entrega tenga notas de Reviewer y QA.",
   "softwareTeamDlc.shipNeedReviewer": "Esta rodaja no ha pasado por Reviewer.",
   "softwareTeamDlc.shipNeedQa": "Esta rodaja no ha pasado por QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Guarda las notas de Reviewer antes de Ship.",
@@ -138,7 +138,7 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, cambios obligatorios vs nits, riesgo.",
   "softwareTeamDlc.qaNotePlaceholder": "Casos, comandos, aprobado/fallo.",
   "softwareTeamDlc.notesSaved":
-    "Notas guardadas. Ship se desbloquea cuando hay notas de Reviewer y de QA.",
+    "Notas guardadas. Ship se desbloquea cuando esta entrega tiene notas de Reviewer y de QA.",
   "softwareTeamDlc.startDelivery": "Empezar una entrega",
   "softwareTeamDlc.startDeliveryHint":
     "Crea un elemento de pipeline y abre una sesión Grok Build con el starter del rol. Los placeholders de docs/sdlc quedan en esta carpeta de proyecto — nunca ~/.grok.",
@@ -203,7 +203,7 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "No se pudo abrir el archivo: {error}",
   "softwareTeamDlc.deliveryDetail": "Entrega",
   "softwareTeamDlc.deliveryDetailHint":
-    "Título, historial de roles, notas de revisión/QA, siguiente paso, docs/sdlc y sesiones de este corte.",
+    "Título, refs de corte compartidas, historial de roles, notas de revisión/QA (Ship de toda la entrega), siguiente paso, docs/sdlc y sesiones de este corte.",
   "softwareTeamDlc.openDelivery": "Abrir entrega",
   "softwareTeamDlc.deliverySessions": "Sesiones de esta entrega",
   "softwareTeamDlc.deliveryNoSessions": "Aún no hay sesiones vinculadas.",
@@ -287,4 +287,8 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Faltan sesiones de equipo: {roles}",
   "softwareTeamDlc.teamComplete": "Hay tarjetas de Product, Engineer y Reviewer en esta entrega.",
   "softwareTeamDlc.addSdlcDocs": "Añadir archivos docs/sdlc que falten",
+  "softwareTeamDlc.sliceRefsHint":
+    "Plan, objetivo y artefacto se comparten en todas las tarjetas de esta entrega. Guardar las actualiza todas.",
+  "softwareTeamDlc.sliceRefsSaved": "Refs del corte guardadas en todas las tarjetas de esta entrega.",
+  "softwareTeamDlc.saveSliceRefs": "Guardar refs del corte",
 } as const;

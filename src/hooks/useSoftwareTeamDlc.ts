@@ -47,6 +47,9 @@ import {
   duplicateSoftwareTeamDelivery,
   moveSoftwareTeamItemDelivery,
   renameSoftwareTeamDelivery,
+  setSoftwareTeamDeliveryNote,
+  syncSoftwareTeamDeliverySliceRefs,
+  type SoftwareTeamDeliveryNoteKind,
   type SoftwareTeamPipelineReload,
 } from "@/lib/softwareTeamDlc";
 import type { AgentKanbanColumnId } from "@/lib/kanbanBoard";
@@ -125,6 +128,16 @@ export function useSoftwareTeamPipeline(): {
   renameDelivery: (deliveryId: string, title: string) => boolean;
   moveItemToDelivery: (itemId: string, deliveryId: string) => boolean;
   duplicateDelivery: (deliveryId: string, titleSuffix: string) => string | null;
+  syncDeliverySliceRefs: (
+    deliveryId: string,
+    refs: { planRef?: string; goalRef?: string; artifactRef?: string },
+  ) => boolean;
+  setDeliveryNote: (input: {
+    deliveryId?: string | null;
+    focusItemId?: string | null;
+    kind: SoftwareTeamDeliveryNoteKind;
+    text: string;
+  }) => void;
   undo: () => boolean;
   redo: () => boolean;
   canUndo: boolean;
@@ -295,6 +308,36 @@ export function useSoftwareTeamPipeline(): {
     return result.deliveryId;
   }, [rememberUndo]);
 
+  const syncDeliverySliceRefs = useCallback(
+    (
+      deliveryId: string,
+      refs: { planRef?: string; goalRef?: string; artifactRef?: string },
+    ) => {
+      const current = loadSoftwareTeamPipelineStore();
+      const next = syncSoftwareTeamDeliverySliceRefs(current, deliveryId, refs);
+      if (next === current) return false;
+      setStore(rememberUndo(next));
+      return true;
+    },
+    [rememberUndo],
+  );
+
+  const setDeliveryNote = useCallback(
+    (input: {
+      deliveryId?: string | null;
+      focusItemId?: string | null;
+      kind: SoftwareTeamDeliveryNoteKind;
+      text: string;
+    }) => {
+      setStore(
+        rememberUndo(
+          setSoftwareTeamDeliveryNote(loadSoftwareTeamPipelineStore(), input),
+        ),
+      );
+    },
+    [rememberUndo],
+  );
+
   const undo = useCallback(() => {
     const current = loadSoftwareTeamPipelineStore();
     const prev = popSoftwareTeamUndoSnapshot(current);
@@ -362,6 +405,8 @@ export function useSoftwareTeamPipeline(): {
     renameDelivery,
     moveItemToDelivery,
     duplicateDelivery,
+    syncDeliverySliceRefs,
+    setDeliveryNote,
     undo,
     redo,
     canUndo: undoDepth > 0,

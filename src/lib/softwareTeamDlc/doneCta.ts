@@ -8,8 +8,12 @@
 import { nextSoftwareTeamRole } from "./handoff";
 import type { SoftwareTeamPipelineItem } from "./pipeline";
 import {
+  firstSoftwareTeamNonEmptyField,
   recordSoftwareTeamRoleVisit,
+  softwareTeamDeliveryShipFields,
+  softwareTeamDeliveryShipGate,
   softwareTeamShipGate,
+  type SoftwareTeamShipFields,
 } from "./shipGate";
 import { softwareTeamRoleStarterPrompt } from "./pack";
 import type { SoftwareTeamRoleId } from "./roles";
@@ -38,12 +42,42 @@ export function decideSoftwareTeamDoneCta(
     | "sessionDonePending"
     | "stageId"
   >,
+  siblings?: readonly SoftwareTeamShipFields[] | null,
 ): SoftwareTeamDoneCta {
   if (!item.sessionDonePending) return { kind: "none" };
-  if (softwareTeamShipGate(item).ok) return { kind: "ship" };
+  const cohort = siblings && siblings.length > 0 ? siblings : [item];
+  if (softwareTeamDeliveryShipGate(cohort).ok) return { kind: "ship" };
   const nextRole = nextSoftwareTeamRole(item.roleId);
   if (nextRole) return { kind: "handoff", nextRole };
   return { kind: "none" };
+}
+
+function mergeShipSliceOntoItem(
+  item: SoftwareTeamPipelineItem,
+  siblings?: readonly SoftwareTeamPipelineItem[] | null,
+): Pick<
+  SoftwareTeamPipelineItem,
+  "planRef" | "goalRef" | "artifactRef" | "reviewNote" | "qaNote" | "roleHistory"
+> {
+  const others = (siblings ?? []).filter((row) => row.id !== item.id);
+  const fields = softwareTeamDeliveryShipFields([item, ...others]);
+  return {
+    planRef: firstSoftwareTeamNonEmptyField([
+      item.planRef,
+      ...others.map((row) => row.planRef),
+    ]),
+    goalRef: firstSoftwareTeamNonEmptyField([
+      item.goalRef,
+      ...others.map((row) => row.goalRef),
+    ]),
+    artifactRef: firstSoftwareTeamNonEmptyField([
+      item.artifactRef,
+      ...others.map((row) => row.artifactRef),
+    ]),
+    reviewNote: fields.reviewNote,
+    qaNote: fields.qaNote,
+    roleHistory: [...fields.roleHistory],
+  };
 }
 
 /**
@@ -87,16 +121,24 @@ export function softwareTeamWriterShipWritesFiles(): boolean {
 export function applySoftwareTeamShipChoice(
   item: SoftwareTeamPipelineItem,
   now = Date.now(),
+  siblings?: readonly SoftwareTeamPipelineItem[] | null,
 ):
   | { ok: true; item: SoftwareTeamPipelineItem; starter: string }
   | { ok: false; blocks: ReturnType<typeof softwareTeamShipGate>["blocks"] } {
-  const gate = softwareTeamShipGate(item);
+  const cohort = siblings && siblings.length > 0 ? siblings : [item];
+  const gate = softwareTeamDeliveryShipGate(cohort);
   if (!gate.ok) return { ok: false, blocks: gate.blocks };
+  const merged = mergeShipSliceOntoItem(item, siblings);
   const next: SoftwareTeamPipelineItem = {
     ...item,
+    ...merged,
     roleId: "writer",
     stageId: "ship",
-    roleHistory: recordSoftwareTeamRoleVisit(item.roleHistory, item.roleId, "writer"),
+    roleHistory: recordSoftwareTeamRoleVisit(
+      merged.roleHistory,
+      item.roleId,
+      "writer",
+    ),
     sessionDonePending: false,
     stageSource: "board",
     updatedAt: now,

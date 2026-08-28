@@ -19,9 +19,10 @@ import {
   updateSoftwareTeamPipelineItem,
 } from "./pipeline";
 import {
+  firstSoftwareTeamNonEmptyField,
   recordSoftwareTeamRoleVisit,
+  softwareTeamDeliveryShipGate,
   softwareTeamRoleChecklist,
-  softwareTeamShipGate,
 } from "./shipGate";
 
 export const SOFTWARE_TEAM_HANDOFF_CHAIN: readonly SoftwareTeamRoleId[] = [
@@ -142,9 +143,42 @@ export function composeHandoffStarter(
   return lines.join("\n");
 }
 
+function mergeDeliverySlice(
+  item: SoftwareTeamPipelineItem,
+  siblings?: readonly SoftwareTeamPipelineItem[] | null,
+): Pick<
+  SoftwareTeamPipelineItem,
+  "planRef" | "goalRef" | "artifactRef" | "reviewNote" | "qaNote"
+> {
+  const others = (siblings ?? []).filter((row) => row.id !== item.id);
+  return {
+    planRef: firstSoftwareTeamNonEmptyField([
+      item.planRef,
+      ...others.map((row) => row.planRef),
+    ]),
+    goalRef: firstSoftwareTeamNonEmptyField([
+      item.goalRef,
+      ...others.map((row) => row.goalRef),
+    ]),
+    artifactRef: firstSoftwareTeamNonEmptyField([
+      item.artifactRef,
+      ...others.map((row) => row.artifactRef),
+    ]),
+    reviewNote: firstSoftwareTeamNonEmptyField([
+      item.reviewNote,
+      ...others.map((row) => row.reviewNote),
+    ]),
+    qaNote: firstSoftwareTeamNonEmptyField([
+      item.qaNote,
+      ...others.map((row) => row.qaNote),
+    ]),
+  };
+}
+
 export function applySoftwareTeamHandoff(
   item: SoftwareTeamPipelineItem,
   now = Date.now(),
+  siblings?: readonly SoftwareTeamPipelineItem[] | null,
 ): SoftwareTeamHandoffResult {
   const toRole = nextSoftwareTeamRole(item.roleId);
   if (!toRole) {
@@ -164,23 +198,33 @@ export function applySoftwareTeamHandoff(
     item.roleId,
     toRole,
   );
+  const merged = mergeDeliverySlice(item, siblings);
   let toStage = role?.defaultStage ?? "build";
   const nextDraft: SoftwareTeamPipelineItem = {
     ...item,
+    ...merged,
     roleId: toRole,
     stageId: toStage,
     roleHistory,
     stageSource: "handoff",
     updatedAt: now,
   };
-  if (toStage === "ship" && !softwareTeamShipGate(nextDraft).ok) {
+  const others = (siblings ?? []).filter((row) => row.id !== item.id);
+  const cohort = others.length ? [...others, nextDraft] : [nextDraft];
+  if (toStage === "ship" && !softwareTeamDeliveryShipGate(cohort).ok) {
     toStage = "review";
   }
   const next: SoftwareTeamPipelineItem = {
-    ...nextDraft,
+    ...item,
+    ...(toStage === "ship" ? merged : {}),
+    roleId: toRole,
     stageId: toStage,
+    roleHistory,
+    stageSource: "handoff",
+    updatedAt: now,
     sessionDonePending: false,
   };
+  const starterFrom = { ...item, ...merged };
   return {
     kind: "advanced",
     fromRole: item.roleId,
@@ -188,7 +232,7 @@ export function applySoftwareTeamHandoff(
     fromStage: item.stageId,
     toStage,
     item: next,
-    starter: composeHandoffStarter(item, next),
+    starter: composeHandoffStarter(starterFrom, next),
   };
 }
 
@@ -199,7 +243,10 @@ export function applySoftwareTeamHandoffToStore(
 ): { store: SoftwareTeamPipelineStore; result: SoftwareTeamHandoffResult | null } {
   const prev = pipelineItemById(store, itemId);
   if (!prev) return { store, result: null };
-  const result = applySoftwareTeamHandoff(prev, now);
+  const members = prev.deliveryId.trim()
+    ? store.items.filter((row) => row.deliveryId.trim() === prev.deliveryId.trim())
+    : [prev];
+  const result = applySoftwareTeamHandoff(prev, now, members);
   if (result.kind === "done") return { store, result };
   const next = updateSoftwareTeamPipelineItem(
     store,

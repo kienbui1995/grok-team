@@ -87,6 +87,47 @@ export function softwareTeamShipGate(
   return { ok: blocks.length === 0, blocks };
 }
 
+export function firstSoftwareTeamNonEmptyField(
+  values: readonly (string | null | undefined)[],
+): string {
+  for (const value of values) {
+    const text = (value ?? "").trim();
+    if (text) return text;
+  }
+  return "";
+}
+
+export function softwareTeamDeliveryMembers<T extends { deliveryId: string }>(
+  items: readonly T[],
+  deliveryId: string | null | undefined,
+): T[] {
+  const id = (deliveryId ?? "").trim();
+  if (!id) return [];
+  return items.filter((item) => item.deliveryId.trim() === id);
+}
+
+export function softwareTeamDeliveryShipFields(
+  items: readonly SoftwareTeamShipFields[],
+): SoftwareTeamShipFields {
+  const roleHistory = recordSoftwareTeamRoleVisit(
+    items.flatMap((item) => [item.roleId, ...item.roleHistory]),
+  );
+  return {
+    roleId: items[0]?.roleId ?? "product",
+    roleHistory,
+    reviewNote: firstSoftwareTeamNonEmptyField(
+      items.map((item) => item.reviewNote),
+    ),
+    qaNote: firstSoftwareTeamNonEmptyField(items.map((item) => item.qaNote)),
+  };
+}
+
+export function softwareTeamDeliveryShipGate(
+  items: readonly SoftwareTeamShipFields[],
+): SoftwareTeamShipGate {
+  return softwareTeamShipGate(softwareTeamDeliveryShipFields(items));
+}
+
 export function softwareTeamShipBlockMessageKey(
   block: SoftwareTeamShipBlock,
 ):

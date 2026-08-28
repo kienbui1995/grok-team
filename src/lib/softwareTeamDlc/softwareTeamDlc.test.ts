@@ -132,6 +132,12 @@ import {
   softwareTeamRoleChecklist,
   softwareTeamShipBlockMessageKey,
   softwareTeamShipGate,
+  firstSoftwareTeamNonEmptyField,
+  softwareTeamDeliveryMembers,
+  softwareTeamDeliveryShipFields,
+  softwareTeamDeliveryShipGate,
+  setSoftwareTeamDeliveryNote,
+  syncSoftwareTeamDeliverySliceRefs,
   type SoftwareTeamLaunchHost,
   type SoftwareTeamPackProbeHost,
   type SoftwareTeamPackWriteHost,
@@ -1902,7 +1908,7 @@ describe("Software Works activity + delivery detail + reload", () => {
       "sess-qa",
     ]);
     expect(detail?.activity).toHaveLength(1);
-    expect(detail?.cta.kind).toBe("handoff");
+    expect(detail?.cta.kind).toBe("ship");
     expect(decideSoftwareTeamDeliveryNextCta(a).kind).toBe("handoff");
     expect(
       buildSoftwareTeamDeliveryDetail({
@@ -2408,13 +2414,16 @@ describe("Software Works undo, remove, git branch label", () => {
   });
 
   it("moves a card between deliveries and ungroups without inventing a session", () => {
-    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+    let     store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
       id: "mv-a",
       roleId: "product",
       title: "Alpha",
       deliveryId: "d-a",
       deliveryTitle: "Alpha",
       gitBranch: "feat/alpha",
+      planRef: "docs/sdlc/spec.md",
+      goalRef: "ship billing",
+      artifactRef: "pr-1",
     });
     store = addSoftwareTeamPipelineItem(store, {
       id: "mv-b",
@@ -2428,6 +2437,9 @@ describe("Software Works undo, remove, git branch label", () => {
     expect(card?.deliveryId).toBe("d-a");
     expect(card?.deliveryTitle).toBe("Alpha");
     expect(card?.gitBranch).toBe("feat/alpha");
+    expect(card?.planRef).toBe("docs/sdlc/spec.md");
+    expect(card?.goalRef).toBe("ship billing");
+    expect(card?.artifactRef).toBe("pr-1");
     expect(card?.sessionId).toBe("");
     expect(moved.activity.some((event) => event.type === "item_moved")).toBe(true);
     expect(moveSoftwareTeamItemDelivery(moved, "mv-b", "d-a")).toBe(moved);
@@ -2455,11 +2467,247 @@ describe("Software Works undo, remove, git branch label", () => {
     expect(bound.items.find((item) => item.id === "bd-2")?.sessionId).toBe("sess-shared");
     expect(bound.items.find((item) => item.id === "bd-1")?.sessionId).toBe("");
     expect(bound.activity.some((event) => event.type === "session_bound")).toBe(true);
+    expect(bound.activity.some((event) => event.type === "session_unbound")).toBe(
+      true,
+    );
     expect(softwareTeamActivityMessageKey("item_moved")).toBe(
       "softwareTeamDlc.activity.item_moved",
     );
     expect(softwareTeamActivityMessageKey("session_unbound")).toBe(
       "softwareTeamDlc.activity.session_unbound",
+    );
+  });
+});
+
+describe("Software Works delivery-wide Ship + slice refs", () => {
+  function engineerPlusNotes() {
+    const engineer = createSoftwareTeamPipelineItem({
+      id: "eng-1",
+      roleId: "engineer",
+      stageId: "build",
+      title: "Auth",
+      deliveryId: "d-ship",
+      sessionDonePending: true,
+      roleHistory: ["product", "engineer"],
+    })!;
+    const reviewer = createSoftwareTeamPipelineItem({
+      id: "rev-1",
+      roleId: "reviewer",
+      stageId: "review",
+      title: "Auth",
+      deliveryId: "d-ship",
+      reviewNote: "must-fix auth",
+      roleHistory: ["reviewer"],
+    })!;
+    const qa = createSoftwareTeamPipelineItem({
+      id: "qa-1",
+      roleId: "qa",
+      stageId: "review",
+      title: "Auth",
+      deliveryId: "d-ship",
+      qaNote: "vitest pass",
+      roleHistory: ["qa"],
+    })!;
+    return { engineer, reviewer, qa, members: [engineer, reviewer, qa] };
+  }
+
+  it("sibling Reviewer+QA notes unlock Ship on the Engineer card", () => {
+    const { engineer, members } = engineerPlusNotes();
+    expect(softwareTeamShipGate(engineer).ok).toBe(false);
+    expect(softwareTeamDeliveryShipGate([engineer]).ok).toBe(false);
+    expect(softwareTeamDeliveryShipGate(members).ok).toBe(true);
+    expect(softwareTeamDeliveryShipFields(members)).toMatchObject({
+      reviewNote: "must-fix auth",
+      qaNote: "vitest pass",
+    });
+    expect(firstSoftwareTeamNonEmptyField(["", "  ", "docs/plan"])).toBe(
+      "docs/plan",
+    );
+    expect(softwareTeamDeliveryMembers(members, "d-ship")).toHaveLength(3);
+  });
+
+  it("decideSoftwareTeamDoneCta and delivery detail CTA become ship when siblings unlock", () => {
+    const { engineer, members } = engineerPlusNotes();
+    expect(decideSoftwareTeamDoneCta(engineer).kind).toBe("handoff");
+    expect(decideSoftwareTeamDoneCta(engineer, members)).toEqual({
+      kind: "ship",
+    });
+    expect(decideSoftwareTeamDeliveryNextCta(engineer).kind).toBe("handoff");
+    expect(decideSoftwareTeamDeliveryNextCta(engineer, members).kind).toBe(
+      "ship",
+    );
+    const detail = buildSoftwareTeamDeliveryDetail({
+      items: members,
+      target: { kind: "delivery", deliveryId: "d-ship", focusItemId: "eng-1" },
+    });
+    expect(detail?.cta.kind).toBe("ship");
+    expect(detail?.planRef).toBe("");
+  });
+
+  it("applySoftwareTeamShipChoice with siblings copies notes onto the shipped card only", () => {
+    const { engineer, members } = engineerPlusNotes();
+    const blocked = applySoftwareTeamShipChoice(engineer);
+    expect(blocked.ok).toBe(false);
+    const ship = applySoftwareTeamShipChoice(engineer, 20, members);
+    expect(ship.ok).toBe(true);
+    if (!ship.ok) return;
+    expect(ship.item.id).toBe("eng-1");
+    expect(ship.item.roleId).toBe("writer");
+    expect(ship.item.stageId).toBe("ship");
+    expect(ship.item.reviewNote).toBe("must-fix auth");
+    expect(ship.item.qaNote).toBe("vitest pass");
+    expect(ship.starter).toMatch(/must-fix auth/);
+    expect(ship.starter).toMatch(/vitest pass/);
+    expect(members.find((row) => row.id === "rev-1")?.roleId).toBe("reviewer");
+  });
+
+  it("setPipelineItemStage to ship is allowed when siblings have notes and blocked on this card alone", () => {
+    const { engineer, reviewer, qa } = engineerPlusNotes();
+    let store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      engineer,
+    );
+    store = addSoftwareTeamPipelineItem(store, reviewer);
+    store = addSoftwareTeamPipelineItem(store, qa);
+    const alone = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      engineer,
+    );
+    expect(setPipelineItemStage(alone, "eng-1", "ship").items[0]?.stageId).toBe(
+      "build",
+    );
+    const shipped = setPipelineItemStage(store, "eng-1", "ship", 30);
+    expect(pipelineItemById(shipped, "eng-1")?.stageId).toBe("ship");
+  });
+
+  it("sync refs writes all members and updateSoftwareTeamPipelineItem planRef syncs siblings", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "ref-a",
+      roleId: "product",
+      deliveryId: "d-ref",
+      planRef: "old-plan",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "ref-b",
+      roleId: "engineer",
+      deliveryId: "d-ref",
+    });
+    expect(pipelineItemById(store, "ref-b")?.planRef).toBe("old-plan");
+    store = syncSoftwareTeamDeliverySliceRefs(store, "d-ref", {
+      planRef: "docs/sdlc/spec.md",
+      goalRef: "login",
+      artifactRef: "pr-9",
+    });
+    expect(store.items.every((item) => item.planRef === "docs/sdlc/spec.md")).toBe(
+      true,
+    );
+    expect(store.items.every((item) => item.goalRef === "login")).toBe(true);
+    expect(store.items.every((item) => item.artifactRef === "pr-9")).toBe(true);
+    store = updateSoftwareTeamPipelineItem(store, "ref-a", {
+      planRef: "docs/sdlc/design.md",
+    });
+    expect(pipelineItemById(store, "ref-b")?.planRef).toBe("docs/sdlc/design.md");
+    expect(pipelineItemById(store, "ref-b")?.reviewNote).toBe("");
+  });
+
+  it("setSoftwareTeamDeliveryNote writes onto the reviewer/qa card", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "note-eng",
+      roleId: "engineer",
+      deliveryId: "d-note",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "note-rev",
+      roleId: "reviewer",
+      deliveryId: "d-note",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "note-qa",
+      roleId: "qa",
+      deliveryId: "d-note",
+    });
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-note",
+      focusItemId: "note-eng",
+      kind: "review",
+      text: "nits only",
+    });
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-note",
+      focusItemId: "note-eng",
+      kind: "qa",
+      text: "pnpm test",
+    });
+    expect(pipelineItemById(store, "note-rev")?.reviewNote).toBe("nits only");
+    expect(pipelineItemById(store, "note-qa")?.qaNote).toBe("pnpm test");
+    expect(pipelineItemById(store, "note-eng")?.reviewNote).toBe("");
+    expect(pipelineItemById(store, "note-eng")?.qaNote).toBe("");
+  });
+
+  it("QA→Writer handoff lands on ship when siblings unlock", () => {
+    const qa = createSoftwareTeamPipelineItem({
+      id: "qa-handoff",
+      roleId: "qa",
+      stageId: "review",
+      deliveryId: "d-h",
+      qaNote: "",
+      roleHistory: ["qa"],
+    })!;
+    const reviewer = createSoftwareTeamPipelineItem({
+      id: "rev-handoff",
+      roleId: "reviewer",
+      stageId: "review",
+      deliveryId: "d-h",
+      reviewNote: "looks good",
+      roleHistory: ["reviewer"],
+    })!;
+    const qaWithNote = { ...qa, qaNote: "cases pass" };
+    const blocked = applySoftwareTeamHandoff(qa, 40);
+    expect(blocked.kind).toBe("advanced");
+    if (blocked.kind === "advanced") expect(blocked.toStage).toBe("review");
+    const step = applySoftwareTeamHandoff(qaWithNote, 41, [qaWithNote, reviewer]);
+    expect(step.kind).toBe("advanced");
+    if (step.kind !== "advanced") return;
+    expect(step.toRole).toBe("writer");
+    expect(step.toStage).toBe("ship");
+    expect(step.item.reviewNote).toBe("looks good");
+    expect(step.starter).toMatch(/looks good/);
+    let store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      reviewer,
+    );
+    store = addSoftwareTeamPipelineItem(store, qaWithNote);
+    const handed = applySoftwareTeamHandoffToStore(store, "qa-handoff", 42);
+    expect(handed.result?.kind).toBe("advanced");
+    if (handed.result?.kind !== "advanced") return;
+    expect(handed.result.toStage).toBe("ship");
+    expect(pipelineItemById(handed.store, "qa-handoff")?.stageId).toBe("ship");
+  });
+
+  it("does not invent Host plan or goal ids when syncing slice refs", () => {
+    const store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      {
+        id: "host-1",
+        roleId: "product",
+        deliveryId: "d-host",
+        planRef: "/plan billing",
+        goalRef: "checkout",
+      },
+    );
+    const next = syncSoftwareTeamDeliverySliceRefs(store, "d-host", {
+      planRef: "/plan billing",
+      goalRef: "checkout",
+    });
+    expect(pipelineItemById(next, "host-1")).toMatchObject({
+      planRef: "/plan billing",
+      goalRef: "checkout",
+    });
+    expect(pipelineItemById(next, "host-1")?.planRef).not.toMatch(
+      /^[0-9a-f-]{36}$/i,
+    );
+    expect(pipelineItemById(next, "host-1")?.goalRef).not.toMatch(
+      /^[0-9a-f-]{36}$/i,
     );
   });
 });

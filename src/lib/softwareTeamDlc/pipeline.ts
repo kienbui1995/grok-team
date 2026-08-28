@@ -24,8 +24,9 @@ import {
   type SoftwareTeamSessionTagMap,
 } from "./sessionTags";
 import {
+  firstSoftwareTeamNonEmptyField,
   recordSoftwareTeamRoleVisit,
-  softwareTeamShipGate,
+  softwareTeamDeliveryShipGate,
 } from "./shipGate";
 import {
   appendSoftwareTeamActivity,
@@ -468,16 +469,74 @@ function replaceItem(
   return withItems(store, items);
 }
 
+/** Local cohort lookup — do not import delivery.ts (circular). */
+function deliveryMembersForItem(
+  store: SoftwareTeamPipelineStore,
+  item: Pick<SoftwareTeamPipelineItem, "deliveryId">,
+): SoftwareTeamPipelineItem[] {
+  const id = item.deliveryId.trim();
+  if (!id) return [];
+  return store.items.filter((row) => row.deliveryId.trim() === id);
+}
+
+function alignDeliverySliceRefs(
+  store: SoftwareTeamPipelineStore,
+  deliveryId: string,
+  refs: Pick<SoftwareTeamPipelineItem, "planRef" | "goalRef" | "artifactRef">,
+  now: number,
+): SoftwareTeamPipelineStore {
+  const id = deliveryId.trim();
+  if (!id) return store;
+  let changed = false;
+  const items = store.items.map((row) => {
+    if (row.deliveryId.trim() !== id) return row;
+    if (
+      row.planRef === refs.planRef &&
+      row.goalRef === refs.goalRef &&
+      row.artifactRef === refs.artifactRef
+    ) {
+      return row;
+    }
+    changed = true;
+    return {
+      ...row,
+      planRef: refs.planRef,
+      goalRef: refs.goalRef,
+      artifactRef: refs.artifactRef,
+      updatedAt: now,
+    };
+  });
+  return changed ? withItems(store, items) : store;
+}
+
 export function addSoftwareTeamPipelineItem(
   store: SoftwareTeamPipelineStore,
   draft: SoftwareTeamPipelineItemDraft,
 ): SoftwareTeamPipelineStore {
   const created = createSoftwareTeamPipelineItem(draft);
   if (!created) return store;
-  const item =
-    created.stageId === "ship" && !softwareTeamShipGate(created).ok
-      ? { ...created, stageId: "review" as const }
-      : created;
+  const siblings = deliveryMembersForItem(store, created).filter(
+    (row) => row.id !== created.id,
+  );
+  let item = created;
+  if (siblings.length) {
+    item = {
+      ...created,
+      planRef:
+        created.planRef.trim() ||
+        firstSoftwareTeamNonEmptyField(siblings.map((row) => row.planRef)),
+      goalRef:
+        created.goalRef.trim() ||
+        firstSoftwareTeamNonEmptyField(siblings.map((row) => row.goalRef)),
+      artifactRef:
+        created.artifactRef.trim() ||
+        firstSoftwareTeamNonEmptyField(siblings.map((row) => row.artifactRef)),
+    };
+  }
+  const cohort = siblings.length ? [...siblings, item] : [item];
+  if (item.stageId === "ship" && !softwareTeamDeliveryShipGate(cohort).ok) {
+    item = { ...item, stageId: "review" };
+  }
   const isNewDelivery =
     Boolean(item.deliveryId) &&
     !store.items.some(
@@ -489,9 +548,21 @@ export function addSoftwareTeamPipelineItem(
     store.items.filter((existing) => existing.id !== item.id),
   );
   if (item.sessionId) {
-    next = unbindOtherSessions(next, item.id, item.sessionId);
+    next = unbindOtherSessions(next, item.id, item.sessionId, item.updatedAt);
   }
   next = withItems(next, [...next.items, item]);
+  if (siblings.length && item.deliveryId) {
+    next = alignDeliverySliceRefs(
+      next,
+      item.deliveryId,
+      {
+        planRef: item.planRef,
+        goalRef: item.goalRef,
+        artifactRef: item.artifactRef,
+      },
+      item.updatedAt,
+    );
+  }
   next = appendSoftwareTeamPipelineActivity(
     next,
     activityDraft("item_added", item, { at: item.updatedAt }),
@@ -509,16 +580,25 @@ function unbindOtherSessions(
   store: SoftwareTeamPipelineStore,
   keepItemId: string,
   sessionId: string,
+  now = Date.now(),
 ): SoftwareTeamPipelineStore {
   const id = sessionId.trim();
   if (!id) return store;
-  let changed = false;
+  const stolen: SoftwareTeamPipelineItem[] = [];
   const items = store.items.map((item) => {
     if (item.id === keepItemId || item.sessionId !== id) return item;
-    changed = true;
-    return { ...item, sessionId: "", updatedAt: Date.now() };
+    stolen.push(item);
+    return { ...item, sessionId: "", updatedAt: now };
   });
-  return changed ? withItems(store, items) : store;
+  if (!stolen.length) return store;
+  let next = withItems(store, items);
+  for (const item of stolen) {
+    next = appendSoftwareTeamPipelineActivity(
+      next,
+      activityDraft("session_unbound", item, { at: now }),
+    );
+  }
+  return next;
 }
 
 export function updateSoftwareTeamPipelineItem(
@@ -545,12 +625,18 @@ export function updateSoftwareTeamPipelineItem(
       role.id,
     );
     const probe = {
+      ...prev,
       roleId: role.id,
       roleHistory: probeHistory,
       reviewNote: (patch.reviewNote ?? prev.reviewNote).trim(),
       qaNote: (patch.qaNote ?? prev.qaNote).trim(),
+      deliveryId: (patch.deliveryId ?? prev.deliveryId).trim(),
     };
-    if (!softwareTeamShipGate(probe).ok) {
+    const members = deliveryMembersForItem(store, probe);
+    const cohort = members.length
+      ? members.map((row) => (row.id === prev.id ? probe : row))
+      : [probe];
+    if (!softwareTeamDeliveryShipGate(cohort).ok) {
       stageId = prev.stageId;
     }
   }
@@ -601,8 +687,25 @@ export function updateSoftwareTeamPipelineItem(
     return store;
   }
   let out = replaceItem(store, next);
+  if (
+    next.deliveryId.trim() &&
+    (next.planRef !== prev.planRef ||
+      next.goalRef !== prev.goalRef ||
+      next.artifactRef !== prev.artifactRef)
+  ) {
+    out = alignDeliverySliceRefs(
+      out,
+      next.deliveryId,
+      {
+        planRef: next.planRef,
+        goalRef: next.goalRef,
+        artifactRef: next.artifactRef,
+      },
+      now,
+    );
+  }
   if (next.sessionId) {
-    out = unbindOtherSessions(out, next.id, next.sessionId);
+    out = unbindOtherSessions(out, next.id, next.sessionId, now);
   }
   if (next.stageId !== prev.stageId && next.stageSource !== "handoff") {
     out = appendSoftwareTeamPipelineActivity(
@@ -657,8 +760,12 @@ export function setPipelineItemStage(
   if (!isSoftwareTeamSdlcStageId(stageId)) return store;
   const prev = pipelineItemById(store, itemId);
   if (!prev) return store;
-  if (stageId === "ship" && !softwareTeamShipGate(prev).ok) {
-    return store;
+  if (stageId === "ship") {
+    const members = deliveryMembersForItem(store, prev);
+    const cohort = members.length ? members : [prev];
+    if (!softwareTeamDeliveryShipGate(cohort).ok) {
+      return store;
+    }
   }
   return updateSoftwareTeamPipelineItem(
     store,

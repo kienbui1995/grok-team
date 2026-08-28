@@ -19,6 +19,7 @@ import {
 import { softwareTeamDeliveryTitle } from "./deliveryFilter";
 import { softwareTeamDeliveryGitBranch } from "./gitBranch";
 import { softwareTeamRoleById, type SoftwareTeamRoleId } from "./roles";
+import { firstSoftwareTeamNonEmptyField } from "./shipGate";
 
 export const SOFTWARE_TEAM_BOOTSTRAP_RELATIVE = [
   "docs/sdlc/spec.md",
@@ -294,6 +295,90 @@ export function softwareTeamDeliverySiblingDraft(input: {
   };
 }
 
+export function syncSoftwareTeamDeliverySliceRefs(
+  store: SoftwareTeamPipelineStore,
+  deliveryId: string,
+  refs: {
+    planRef?: string | null;
+    goalRef?: string | null;
+    artifactRef?: string | null;
+  },
+  now = Date.now(),
+): SoftwareTeamPipelineStore {
+  const id = deliveryId.trim();
+  if (!id) return store;
+  const patch: Partial<
+    Pick<SoftwareTeamPipelineItem, "planRef" | "goalRef" | "artifactRef">
+  > = {};
+  if (refs.planRef !== undefined) patch.planRef = (refs.planRef ?? "").trim();
+  if (refs.goalRef !== undefined) patch.goalRef = (refs.goalRef ?? "").trim();
+  if (refs.artifactRef !== undefined) {
+    patch.artifactRef = (refs.artifactRef ?? "").trim();
+  }
+  if (Object.keys(patch).length === 0) return store;
+  let next = store;
+  for (const item of store.items) {
+    if (item.deliveryId.trim() !== id) continue;
+    next = updateSoftwareTeamPipelineItem(next, item.id, patch, now);
+  }
+  return next;
+}
+
+export type SoftwareTeamDeliveryNoteKind = "review" | "qa";
+
+export function setSoftwareTeamDeliveryNote(
+  store: SoftwareTeamPipelineStore,
+  input: {
+    deliveryId?: string | null;
+    focusItemId?: string | null;
+    kind: SoftwareTeamDeliveryNoteKind;
+    text: string;
+  },
+  now = Date.now(),
+): SoftwareTeamPipelineStore {
+  const field = (() => {
+    switch (input.kind) {
+      case "review":
+        return "reviewNote" as const;
+      case "qa":
+        return "qaNote" as const;
+      default: {
+        const _never: never = input.kind;
+        return _never;
+      }
+    }
+  })();
+  const roleId = (() => {
+    switch (input.kind) {
+      case "review":
+        return "reviewer" as const;
+      case "qa":
+        return "qa" as const;
+      default: {
+        const _never: never = input.kind;
+        return _never;
+      }
+    }
+  })();
+  const text = input.text.trim();
+  const deliveryId = (input.deliveryId ?? "").trim();
+  const focusId = (input.focusItemId ?? "").trim();
+  const members = deliveryId
+    ? store.items.filter((item) => item.deliveryId.trim() === deliveryId)
+    : focusId
+      ? store.items.filter((item) => item.id === focusId)
+      : [];
+  if (!members.length) return store;
+  const byRole = members.find((item) => item.roleId === roleId);
+  const byNote = members.find((item) => item[field].trim());
+  const byFocus = focusId
+    ? members.find((item) => item.id === focusId)
+    : undefined;
+  const target = byRole ?? byNote ?? byFocus ?? members[0];
+  if (!target) return store;
+  return updateSoftwareTeamPipelineItem(store, target.id, { [field]: text }, now);
+}
+
 export function renameSoftwareTeamDelivery(
   store: SoftwareTeamPipelineStore,
   deliveryId: string,
@@ -404,6 +489,15 @@ export function moveSoftwareTeamItemDelivery(
     softwareTeamDeliveryTitle(store.items, target) ||
     prev.deliveryTitle;
   const branch = softwareTeamDeliveryGitBranch(siblings) || prev.gitBranch;
+  const planRef =
+    firstSoftwareTeamNonEmptyField(siblings.map((item) => item.planRef)) ||
+    prev.planRef;
+  const goalRef =
+    firstSoftwareTeamNonEmptyField(siblings.map((item) => item.goalRef)) ||
+    prev.goalRef;
+  const artifactRef =
+    firstSoftwareTeamNonEmptyField(siblings.map((item) => item.artifactRef)) ||
+    prev.artifactRef;
   return updateSoftwareTeamPipelineItem(
     store,
     itemId,
@@ -411,6 +505,9 @@ export function moveSoftwareTeamItemDelivery(
       deliveryId: target,
       deliveryTitle: title,
       gitBranch: branch,
+      planRef,
+      goalRef,
+      artifactRef,
     },
     now,
   );

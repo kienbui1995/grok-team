@@ -126,7 +126,7 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Goal bleibt auf der Karte. Host hat keine Goal-Erzeugungs-API.",
   "softwareTeamDlc.shipLocked":
-    "Ship ist gesperrt, bis Reviewer- und QA-Notizen gespeichert sind.",
+    "Ship ist gesperrt, bis diese Lieferung Reviewer- und QA-Notizen hat.",
   "softwareTeamDlc.shipNeedReviewer": "Diese Scheibe ist nicht durch Reviewer gegangen.",
   "softwareTeamDlc.shipNeedQa": "Diese Scheibe ist nicht durch QA gegangen.",
   "softwareTeamDlc.shipNeedReviewNote": "Reviewer-Notizen vor Ship speichern.",
@@ -138,7 +138,7 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, Muss-Fixes vs. Nits, Risiko.",
   "softwareTeamDlc.qaNotePlaceholder": "Fälle, Befehle, Bestanden/Fehlschlag.",
   "softwareTeamDlc.notesSaved":
-    "Notizen gespeichert. Ship öffnet, wenn Reviewer- und QA-Notizen beide da sind.",
+    "Notizen gespeichert. Ship öffnet, wenn diese Lieferung Reviewer- und QA-Notizen hat.",
   "softwareTeamDlc.startDelivery": "Lieferung starten",
   "softwareTeamDlc.startDeliveryHint":
     "Legt ein Pipeline-Element an und öffnet eine Grok-Build-Sitzung mit dem Rollenstarter. Optionale docs/sdlc-Platzhalter bleiben in diesem Projektordner — nie ~/.grok.",
@@ -203,7 +203,7 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Datei nicht geöffnet: {error}",
   "softwareTeamDlc.deliveryDetail": "Lieferung",
   "softwareTeamDlc.deliveryDetailHint":
-    "Titel, Rollenverlauf, Review-/QA-Notizen, nächster Schritt, docs/sdlc und Sitzungen dieser Scheibe.",
+    "Titel, gemeinsame Scheiben-Refs, Rollenverlauf, Review-/QA-Notizen (Ship für die ganze Lieferung), nächster Schritt, docs/sdlc und Sitzungen dieser Scheibe.",
   "softwareTeamDlc.openDelivery": "Lieferung öffnen",
   "softwareTeamDlc.deliverySessions": "Sitzungen dieser Lieferung",
   "softwareTeamDlc.deliveryNoSessions": "Noch keine gebundenen Sitzungen.",
@@ -288,4 +288,8 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Fehlende Teamsitzungen: {roles}",
   "softwareTeamDlc.teamComplete": "Karten für Product, Engineer und Reviewer sind auf dieser Lieferung.",
   "softwareTeamDlc.addSdlcDocs": "Fehlende docs/sdlc-Dateien anlegen",
+  "softwareTeamDlc.sliceRefsHint":
+    "Plan, Ziel und Artefakt gelten für jede Karte dieser Lieferung. Speichern aktualisiert alle.",
+  "softwareTeamDlc.sliceRefsSaved": "Scheiben-Refs auf allen Karten dieser Lieferung gespeichert.",
+  "softwareTeamDlc.saveSliceRefs": "Scheiben-Refs speichern",
 } as const;

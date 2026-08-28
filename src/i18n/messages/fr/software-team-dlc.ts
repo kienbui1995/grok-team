@@ -126,7 +126,7 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "L’objectif reste sur la carte. L’hôte n’a pas d’API de création d’objectif.",
   "softwareTeamDlc.shipLocked":
-    "Ship est verrouillé tant que les notes Reviewer et QA ne sont pas enregistrées.",
+    "Ship est verrouillé tant que cette livraison n’a pas de notes Reviewer et QA.",
   "softwareTeamDlc.shipNeedReviewer": "Cette tranche n’est pas passée par Reviewer.",
   "softwareTeamDlc.shipNeedQa": "Cette tranche n’est pas passée par QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Enregistrez les notes Reviewer avant Ship.",
@@ -138,7 +138,7 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, corrections obligatoires vs nits, risque.",
   "softwareTeamDlc.qaNotePlaceholder": "Cas, commandes, succès/échec.",
   "softwareTeamDlc.notesSaved":
-    "Notes enregistrées. Ship s’ouvre quand les notes Reviewer et QA sont toutes deux présentes.",
+    "Notes enregistrées. Ship s’ouvre quand cette livraison a les notes Reviewer et QA.",
   "softwareTeamDlc.startDelivery": "Démarrer une livraison",
   "softwareTeamDlc.startDeliveryHint":
     "Crée un élément de pipeline et ouvre une session Grok Build avec le starter du rôle. Les espaces docs/sdlc restent dans ce dossier projet — jamais ~/.grok.",
@@ -203,7 +203,7 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Impossible d’ouvrir le fichier : {error}",
   "softwareTeamDlc.deliveryDetail": "Livraison",
   "softwareTeamDlc.deliveryDetailHint":
-    "Titre, historique des rôles, notes Revue/QA, prochaine étape, docs/sdlc et sessions de cette tranche.",
+    "Titre, refs de tranche partagées, historique des rôles, notes Revue/QA (Ship pour toute la livraison), prochaine étape, docs/sdlc et sessions de cette tranche.",
   "softwareTeamDlc.openDelivery": "Ouvrir la livraison",
   "softwareTeamDlc.deliverySessions": "Sessions de cette livraison",
   "softwareTeamDlc.deliveryNoSessions": "Aucune session liée pour l’instant.",
@@ -287,4 +287,8 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Sessions d’équipe manquantes : {roles}",
   "softwareTeamDlc.teamComplete": "Les cartes Product, Engineer et Reviewer sont sur cette livraison.",
   "softwareTeamDlc.addSdlcDocs": "Ajouter les fichiers docs/sdlc manquants",
+  "softwareTeamDlc.sliceRefsHint":
+    "Plan, objectif et artefact sont partagés sur toutes les cartes de cette livraison. Enregistrer les met toutes à jour.",
+  "softwareTeamDlc.sliceRefsSaved": "Refs de tranche enregistrées sur toutes les cartes de cette livraison.",
+  "softwareTeamDlc.saveSliceRefs": "Enregistrer les refs de tranche",
 } as const;

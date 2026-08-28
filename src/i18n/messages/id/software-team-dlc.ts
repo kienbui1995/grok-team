@@ -126,7 +126,7 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "Tujuan tetap di kartu. Host tidak punya API membuat tujuan.",
   "softwareTeamDlc.shipLocked":
-    "Ship terkunci sampai catatan Reviewer dan QA disimpan.",
+    "Ship terkunci sampai pengiriman ini punya catatan Reviewer dan QA.",
   "softwareTeamDlc.shipNeedReviewer": "Irisan ini belum melewati Reviewer.",
   "softwareTeamDlc.shipNeedQa": "Irisan ini belum melewati QA.",
   "softwareTeamDlc.shipNeedReviewNote": "Simpan catatan Reviewer sebelum Ship.",
@@ -138,7 +138,7 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, perbaikan wajib vs nits, risiko.",
   "softwareTeamDlc.qaNotePlaceholder": "Kasus, perintah, lulus/gagal.",
   "softwareTeamDlc.notesSaved":
-    "Catatan tersimpan. Ship terbuka jika catatan Reviewer dan QA keduanya ada.",
+    "Catatan tersimpan. Ship terbuka jika pengiriman ini punya catatan Reviewer dan QA.",
   "softwareTeamDlc.startDelivery": "Mulai pengiriman",
   "softwareTeamDlc.startDeliveryHint":
     "Membuat item pipeline dan membuka sesi Grok Build dengan starter peran. Placeholder docs/sdlc hanya di folder proyek ini — bukan ~/.grok.",
@@ -203,7 +203,7 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "Tidak dapat membuka berkas: {error}",
   "softwareTeamDlc.deliveryDetail": "Pengiriman",
   "softwareTeamDlc.deliveryDetailHint":
-    "Judul, riwayat peran, catatan Review/QA, langkah berikutnya, docs/sdlc, dan sesi pada irisan ini.",
+    "Judul, referensi irisan bersama, riwayat peran, catatan Review/QA (Ship untuk seluruh pengiriman), langkah berikutnya, docs/sdlc, dan sesi pada irisan ini.",
   "softwareTeamDlc.openDelivery": "Buka pengiriman",
   "softwareTeamDlc.deliverySessions": "Sesi pada pengiriman ini",
   "softwareTeamDlc.deliveryNoSessions": "Belum ada sesi terikat.",
@@ -288,4 +288,8 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "Sesi tim yang kurang: {roles}",
   "softwareTeamDlc.teamComplete": "Kartu Product, Engineer, dan Reviewer ada di pengiriman ini.",
   "softwareTeamDlc.addSdlcDocs": "Tambah berkas docs/sdlc yang kurang",
+  "softwareTeamDlc.sliceRefsHint":
+    "Rencana, tujuan, dan artefak dipakai bersama di setiap kartu pengiriman ini. Menyimpan akan memperbarui semuanya.",
+  "softwareTeamDlc.sliceRefsSaved": "Referensi irisan disimpan di semua kartu pengiriman ini.",
+  "softwareTeamDlc.saveSliceRefs": "Simpan referensi irisan",
 } as const;

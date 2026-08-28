@@ -60,8 +60,9 @@ import {
   softwareTeamSdlcDocOpenMessageKey,
   softwareTeamRoleSlashHint,
   softwareTeamRoleStarterPrompt,
+  softwareTeamDeliveryMembers,
   softwareTeamShipBlockMessageKey,
-  softwareTeamShipGate,
+  softwareTeamDeliveryShipGate,
   writeSoftwareTeamWorkspaceBootstrap,
   type SoftwareTeamDeliveryDetailTarget,
   type SoftwareTeamDeliveryFilterId,
@@ -112,6 +113,14 @@ async function copyText(text: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+function deliveryCohort(
+  items: readonly SoftwareTeamPipelineItem[],
+  item: SoftwareTeamPipelineItem,
+): SoftwareTeamPipelineItem[] {
+  const members = softwareTeamDeliveryMembers(items, item.deliveryId);
+  return members.length ? members : [item];
 }
 
 function emptyDraft(roleId: SoftwareTeamRoleId = "product"): ItemDraft {
@@ -592,7 +601,11 @@ export function SdlcStudioPage({
 
   const onShipChoice = useCallback(
     async (item: SoftwareTeamPipelineItem) => {
-      const choice = applySoftwareTeamShipChoice(item);
+      const choice = applySoftwareTeamShipChoice(
+        item,
+        Date.now(),
+        deliveryCohort(pipeline.items, item),
+      );
       if (!choice.ok) {
         setStatus(t("softwareTeamDlc.shipLocked"));
         return;
@@ -601,6 +614,11 @@ export function SdlcStudioPage({
         roleId: choice.item.roleId,
         stageId: choice.item.stageId,
         roleHistory: choice.item.roleHistory,
+        planRef: choice.item.planRef,
+        goalRef: choice.item.goalRef,
+        artifactRef: choice.item.artifactRef,
+        reviewNote: choice.item.reviewNote,
+        qaNote: choice.item.qaNote,
         sessionDonePending: false,
         stageSource: "board",
       });
@@ -851,7 +869,10 @@ export function SdlcStudioPage({
         label: t("softwareTeamDlc.assignStage"),
         children: SOFTWARE_TEAM_SDLC_STAGES.map((stage) => {
           const shipBlocked =
-            stage.id === "ship" && !softwareTeamShipGate(menuItem).ok;
+            stage.id === "ship" &&
+            !softwareTeamDeliveryShipGate(
+              deliveryCohort(pipeline.items, menuItem),
+            ).ok;
           return {
             id: `stage-${stage.id}`,
             label: t("softwareTeamDlc.moveStage", { stage: t(stage.titleKey) }),
@@ -1583,7 +1604,9 @@ export function SdlcStudioPage({
                               </span>
                             ) : null}
                             {(() => {
-                              const gate = softwareTeamShipGate(item);
+                              const gate = softwareTeamDeliveryShipGate(
+                                deliveryCohort(pipeline.items, item),
+                              );
                               const nearShip =
                                 item.roleId === "reviewer" ||
                                 item.roleId === "qa" ||
@@ -1619,7 +1642,10 @@ export function SdlcStudioPage({
                             })()}
                           </button>
                           {(() => {
-                            const cta = decideSoftwareTeamDoneCta(item);
+                            const cta = decideSoftwareTeamDoneCta(
+                              item,
+                              deliveryCohort(pipeline.items, item),
+                            );
                             if (cta.kind === "none") return null;
                             if (cta.kind === "ship") {
                               return (
@@ -1749,6 +1775,39 @@ export function SdlcStudioPage({
         onAddSdlcDocs={
           sdlcDocs.some((row) => !row.exists) ? () => void onAddSdlcDocs() : undefined
         }
+        onSaveSliceRefs={(refs) => {
+          if (deliveryDetail?.deliveryId) {
+            const ok = pipeline.syncDeliverySliceRefs(
+              deliveryDetail.deliveryId,
+              refs,
+            );
+            setStatus(t("softwareTeamDlc.sliceRefsSaved"));
+            return ok;
+          }
+          const focus = deliveryDetail?.focusItem;
+          if (!focus) return false;
+          pipeline.updateItem(focus.id, refs);
+          setStatus(t("softwareTeamDlc.sliceRefsSaved"));
+          return true;
+        }}
+        onSaveReviewNote={(text) => {
+          pipeline.setDeliveryNote({
+            deliveryId: deliveryDetail?.deliveryId,
+            focusItemId: deliveryDetail?.focusItem?.id,
+            kind: "review",
+            text,
+          });
+          setStatus(t("softwareTeamDlc.notesSaved"));
+        }}
+        onSaveQaNote={(text) => {
+          pipeline.setDeliveryNote({
+            deliveryId: deliveryDetail?.deliveryId,
+            focusItemId: deliveryDetail?.focusItem?.id,
+            kind: "qa",
+            text,
+          });
+          setStatus(t("softwareTeamDlc.notesSaved"));
+        }}
       />
 
       <GlassModal
@@ -1819,7 +1878,10 @@ export function SdlcStudioPage({
                     : null;
                   const shipBlocked =
                     stage.id === "ship" &&
-                    (!live || !softwareTeamShipGate(live).ok);
+                    (!live ||
+                      !softwareTeamDeliveryShipGate(
+                        deliveryCohort(pipeline.items, live),
+                      ).ok);
                   return (
                     <button
                       key={stage.id}

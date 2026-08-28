@@ -126,7 +126,7 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.goalModeSkipped":
     "இலக்கு அட்டையில் இருக்கும். Host-இல் இலக்கு உருவாக்க API இல்லை.",
   "softwareTeamDlc.shipLocked":
-    "Reviewer மற்றும் QA குறிப்புகள் சேமிக்கும் வரை Ship பூட்டப்பட்டிருக்கும்.",
+    "இந்த விநியோகத்தில் Reviewer மற்றும் QA குறிப்புகள் இருக்கும் வரை Ship பூட்டப்பட்டிருக்கும்.",
   "softwareTeamDlc.shipNeedReviewer": "இந்த துண்டு Reviewer வழியாக செல்லவில்லை.",
   "softwareTeamDlc.shipNeedQa": "இந்த துண்டு QA வழியாக செல்லவில்லை.",
   "softwareTeamDlc.shipNeedReviewNote": "Ship-க்கு முன் Reviewer குறிப்புகளை சேமிக்கவும்.",
@@ -138,7 +138,7 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, கட்டாய திருத்தங்கள் vs nits, ஆபத்து.",
   "softwareTeamDlc.qaNotePlaceholder": "வழக்குகள், கட்டளைகள், வெற்றி/தோல்வி.",
   "softwareTeamDlc.notesSaved":
-    "குறிப்புகள் சேமிக்கப்பட்டன. Reviewer மற்றும் QA குறிப்புகள் இரண்டும் இருந்தால் Ship திறக்கும்.",
+    "குறிப்புகள் சேமிக்கப்பட்டன. இந்த விநியோகத்தில் Reviewer மற்றும் QA குறிப்புகள் இரண்டும் இருந்தால் Ship திறக்கும்.",
   "softwareTeamDlc.startDelivery": "ஒரு விநியோகத்தை தொடங்கு",
   "softwareTeamDlc.startDeliveryHint":
     "பைப்லைன் உருப்படியை உருவாக்கி, பங்கு தொடக்கத்துடன் Grok Build அமர்வை திறக்கும். docs/sdlc இடம்பிடிப்பான்கள் இந்த திட்டக் கோப்புறையில் மட்டும் — ~/.grok அல்ல.",
@@ -203,7 +203,7 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.openSdlcDocHostError": "கோப்பை திறக்க முடியவில்லை: {error}",
   "softwareTeamDlc.deliveryDetail": "விநியோகம்",
   "softwareTeamDlc.deliveryDetailHint":
-    "தலைப்பு, பங்கு வரலாறு, Review/QA குறிப்புகள், அடுத்த படி, docs/sdlc, இந்த துண்டின் அமர்வுகள்.",
+    "தலைப்பு, பகிரப்பட்ட துண்டு குறிப்புகள், பங்கு வரலாறு, Review/QA குறிப்புகள் (முழு விநியோக Ship), அடுத்த படி, docs/sdlc, இந்த துண்டின் அமர்வுகள்.",
   "softwareTeamDlc.openDelivery": "விநியோகத்தை திற",
   "softwareTeamDlc.deliverySessions": "இந்த விநியோகத்தின் அமர்வுகள்",
   "softwareTeamDlc.deliveryNoSessions": "இணைக்கப்பட்ட அமர்வுகள் இல்லை.",
@@ -288,4 +288,8 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.missingRoles": "குறையும் குழு அமர்வுகள்: {roles}",
   "softwareTeamDlc.teamComplete": "இந்த டெலிவரியில் Product, Engineer, Reviewer அட்டைகள் உள்ளன.",
   "softwareTeamDlc.addSdlcDocs": "விடுபட்ட docs/sdlc கோப்புகளைச் சேர்",
+  "softwareTeamDlc.sliceRefsHint":
+    "திட்டம், இலக்கு, விளைபொருள் இந்த விநியோகத்தின் அனைத்து அட்டைகளிலும் பகிரப்படும். சேமித்தால் அனைத்தும் புதுப்பிக்கப்படும்.",
+  "softwareTeamDlc.sliceRefsSaved": "துண்டு குறிப்புகள் இந்த விநியோகத்தின் அனைத்து அட்டைகளிலும் சேமிக்கப்பட்டன.",
+  "softwareTeamDlc.saveSliceRefs": "துண்டு குறிப்புகளை சேமி",
 } as const;
