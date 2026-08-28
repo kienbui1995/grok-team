@@ -610,10 +610,23 @@ export function updateSoftwareTeamPipelineItem(
       activityDraft("stage_changed", next, { at: now }),
     );
   }
-  if (next.deliveryTitle !== prev.deliveryTitle) {
+  if (next.deliveryId !== prev.deliveryId) {
+    out = appendSoftwareTeamPipelineActivity(
+      out,
+      activityDraft("item_moved", next, { at: now }),
+    );
+  } else if (next.deliveryTitle !== prev.deliveryTitle) {
     out = appendSoftwareTeamPipelineActivity(
       out,
       activityDraft("delivery_renamed", next, { at: now }),
+    );
+  }
+  if (next.sessionId !== prev.sessionId) {
+    out = appendSoftwareTeamPipelineActivity(
+      out,
+      activityDraft(next.sessionId ? "session_bound" : "session_unbound", next, {
+        at: now,
+      }),
     );
   }
   if (next.gitBranch !== prev.gitBranch) {

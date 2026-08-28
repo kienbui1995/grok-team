@@ -41,14 +41,17 @@ import {
   normalizeSoftwareTeamGitBranch,
   missingSoftwareTeamDeliveryRoles,
   nextSoftwareTeamRole,
+  decideSoftwareTeamBindThisChat,
   openSoftwareTeamSdlcDoc,
   pickSoftwareTeamAttachSessions,
   planSoftwareTeamDlcPackWrite,
   planSoftwareTeamWorkspaceBootstrap,
   probeSoftwareTeamSdlcDocs,
   resolveSoftwareTeamDeliveryId,
+  softwareTeamBindThisChatMessageKey,
   softwareTeamBootstrapMessageKey,
   softwareTeamDeliveryItemDraft,
+  softwareTeamDeliveryTitle,
   softwareTeamDeliverySiblingDraft,
   softwareTeamExportMessageKey,
   softwareTeamPipelineFileMessageKey,
@@ -292,17 +295,16 @@ export function SdlcStudioPage({
     return () => window.removeEventListener(SOFTWARE_TEAM_PIPELINE_FILE_EVENT, sync);
   }, []);
 
+  const refreshSdlcDocs = useCallback(async () => {
+    const rows = await probeSoftwareTeamSdlcDocs({
+      projectPath: workspace.projectPath,
+    });
+    setSdlcDocs(rows);
+  }, [workspace.projectPath]);
+
   useEffect(() => {
-    let cancelled = false;
-    void probeSoftwareTeamSdlcDocs({ projectPath: workspace.projectPath }).then(
-      (rows) => {
-        if (!cancelled) setSdlcDocs(rows);
-      },
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, [workspace.projectPath, pipeline.items.length]);
+    void refreshSdlcDocs();
+  }, [refreshSdlcDocs, pipeline.items.length]);
 
   const sessionTitle = useCallback(
     (sessionId: string) => {
@@ -708,6 +710,71 @@ export function SdlcStudioPage({
     [actions, pipeline],
   );
 
+  const onBindThisChat = useCallback(
+    (item: SoftwareTeamPipelineItem) => {
+      const decision = decideSoftwareTeamBindThisChat({
+        currentSessionId,
+        itemSessionId: item.sessionId,
+      });
+      if (decision.reason === "bound") {
+        pipeline.bindSession(item.id, decision.sessionId);
+      }
+      setStatus(t(softwareTeamBindThisChatMessageKey(decision.reason)));
+    },
+    [currentSessionId, pipeline, t],
+  );
+
+  const onUnbindSession = useCallback(
+    (item: SoftwareTeamPipelineItem) => {
+      if (!item.sessionId.trim()) return;
+      pipeline.updateItem(item.id, { sessionId: "" });
+      setStatus(t("softwareTeamDlc.unbindSessionDone"));
+    },
+    [pipeline, t],
+  );
+
+  const onMoveToDelivery = useCallback(
+    (item: SoftwareTeamPipelineItem, deliveryId: string) => {
+      const title = deliveryId
+        ? softwareTeamDeliveryTitle(pipeline.items, deliveryId) ||
+          deliveryId.slice(0, 8)
+        : "";
+      const ok = pipeline.moveItemToDelivery(item.id, deliveryId);
+      if (!ok) return;
+      setStatus(
+        deliveryId
+          ? t("softwareTeamDlc.movedToDelivery", { title })
+          : t("softwareTeamDlc.movedUngrouped"),
+      );
+    },
+    [pipeline, t],
+  );
+
+  const onAddSdlcDocs = useCallback(async () => {
+    const boot = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: workspace.projectPath,
+      title: deliveryDetail?.title ?? "",
+      bootstrap: true,
+    });
+    if (!boot.ok) {
+      setStatus(
+        boot.reason === "host_error"
+          ? t(softwareTeamBootstrapMessageKey(boot.reason), {
+              error: boot.error ?? "",
+            })
+          : t(softwareTeamBootstrapMessageKey(boot.reason)),
+      );
+      return;
+    }
+    const created = boot.files.filter((file) => file.action === "created");
+    setStatus(
+      created.length
+        ? t("softwareTeamDlc.startDeliveryBootstrapped", { n: created.length })
+        : t("softwareTeamDlc.startDeliveryBootstrapSkip"),
+    );
+    await refreshSdlcDocs();
+  }, [deliveryDetail?.title, refreshSdlcDocs, t, workspace.projectPath]);
+
   const openCreate = (roleId?: SoftwareTeamRoleId) => {
     setEditor(emptyDraft(roleId ?? "product"));
   };
@@ -887,10 +954,47 @@ export function SdlcStudioPage({
         })),
       });
     }
+    const bindDecision = decideSoftwareTeamBindThisChat({
+      currentSessionId,
+      itemSessionId: menuItem.sessionId,
+    });
+    items.push({
+      label: t("softwareTeamDlc.bindThisChat"),
+      disabled: !bindDecision.ok || bindDecision.reason === "already",
+      onClick: () => onBindThisChat(menuItem),
+    });
     if (menuItem.sessionId) {
+      items.push({
+        label: t("softwareTeamDlc.clearTag"),
+        onClick: () => onUnbindSession(menuItem),
+      });
       items.push({
         label: t("dashboard.openSession"),
         onClick: () => onSelectSession?.(menuItem.sessionId),
+      });
+    }
+    const moveTargets = listSoftwareTeamDeliveryGroups(pipeline.items).filter(
+      (group) => group.id !== menuItem.deliveryId.trim(),
+    );
+    if (moveTargets.length || menuItem.deliveryId.trim()) {
+      items.push({
+        label: t("softwareTeamDlc.moveToDelivery"),
+        children: [
+          ...(menuItem.deliveryId.trim()
+            ? [
+                {
+                  id: "move-unscoped",
+                  label: t("softwareTeamDlc.deliveryUnscoped"),
+                  onClick: () => onMoveToDelivery(menuItem, ""),
+                },
+              ]
+            : []),
+          ...moveTargets.map((group) => ({
+            id: `move-${group.id}`,
+            label: group.title,
+            onClick: () => onMoveToDelivery(menuItem, group.id),
+          })),
+        ],
       });
     }
     items.push({ separator: true });
@@ -917,14 +1021,18 @@ export function SdlcStudioPage({
     });
     return items;
   }, [
+    currentSessionId,
     menu,
     menuItem,
     onAddTeammate,
+    onBindThisChat,
     onCopyGitBranch,
     onDuplicateDelivery,
     onHandoff,
+    onMoveToDelivery,
     onOpenInComposer,
     onToggleArchive,
+    onUnbindSession,
     openDetail,
     onOpenSdlcDoc,
     onSelectSession,
@@ -1604,6 +1712,43 @@ export function SdlcStudioPage({
           if (!deliveryDetail?.deliveryId) return;
           onDuplicateDelivery(deliveryDetail.deliveryId);
         }}
+        missingRoles={
+          deliveryDetail?.deliveryId
+            ? missingSoftwareTeamDeliveryRoles(
+                pipeline.items,
+                deliveryDetail.deliveryId,
+              )
+            : []
+        }
+        onAddTeammate={(roleId) => {
+          const focus = deliveryDetail?.focusItem;
+          if (!focus) return;
+          void onAddTeammate(focus, roleId);
+        }}
+        onBindThisChat={() => {
+          const focus = deliveryDetail?.focusItem;
+          if (!focus) return;
+          onBindThisChat(focus);
+        }}
+        bindThisChatDisabled={
+          !deliveryDetail?.focusItem ||
+          decideSoftwareTeamBindThisChat({
+            currentSessionId,
+            itemSessionId: deliveryDetail.focusItem.sessionId,
+          }).reason !== "bound"
+        }
+        onUnbindSession={
+          deliveryDetail?.focusItem?.sessionId
+            ? () => {
+                const focus = deliveryDetail.focusItem;
+                if (!focus) return;
+                onUnbindSession(focus);
+              }
+            : undefined
+        }
+        onAddSdlcDocs={
+          sdlcDocs.some((row) => !row.exists) ? () => void onAddSdlcDocs() : undefined
+        }
       />
 
       <GlassModal

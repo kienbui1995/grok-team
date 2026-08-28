@@ -45,6 +45,7 @@ import {
   softwareTeamRedoDepth,
   softwareTeamUndoDepth,
   duplicateSoftwareTeamDelivery,
+  moveSoftwareTeamItemDelivery,
   renameSoftwareTeamDelivery,
   type SoftwareTeamPipelineReload,
 } from "@/lib/softwareTeamDlc";
@@ -122,6 +123,7 @@ export function useSoftwareTeamPipeline(): {
   setItemArchived: (itemId: string, archived: boolean) => void;
   setDeliveryGitBranch: (deliveryId: string, branch: string) => boolean;
   renameDelivery: (deliveryId: string, title: string) => boolean;
+  moveItemToDelivery: (itemId: string, deliveryId: string) => boolean;
   duplicateDelivery: (deliveryId: string, titleSuffix: string) => string | null;
   undo: () => boolean;
   redo: () => boolean;
@@ -277,6 +279,14 @@ export function useSoftwareTeamPipeline(): {
     return true;
   }, [rememberUndo]);
 
+  const moveItemToDelivery = useCallback((itemId: string, deliveryId: string) => {
+    const current = loadSoftwareTeamPipelineStore();
+    const next = moveSoftwareTeamItemDelivery(current, itemId, deliveryId);
+    if (next === current) return false;
+    setStore(rememberUndo(next));
+    return true;
+  }, [rememberUndo]);
+
   const duplicateDelivery = useCallback((deliveryId: string, titleSuffix: string) => {
     const current = loadSoftwareTeamPipelineStore();
     const result = duplicateSoftwareTeamDelivery(current, deliveryId, titleSuffix);
@@ -350,6 +360,7 @@ export function useSoftwareTeamPipeline(): {
     setItemArchived,
     setDeliveryGitBranch,
     renameDelivery,
+    moveItemToDelivery,
     duplicateDelivery,
     undo,
     redo,

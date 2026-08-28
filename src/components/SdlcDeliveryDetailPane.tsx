@@ -12,6 +12,7 @@ import {
   softwareTeamSuggestGitBranch,
   type SoftwareTeamDeliveryDetail,
   type SoftwareTeamPipelineItem,
+  type SoftwareTeamRoleId,
   type SoftwareTeamSdlcDocProbe,
 } from "@/lib/softwareTeamDlc";
 
@@ -33,6 +34,12 @@ export type SdlcDeliveryDetailPaneProps = {
   onCopyGitBranch?: (branch: string) => void;
   onRenameDelivery?: (title: string) => boolean;
   onDuplicateDelivery?: () => void;
+  missingRoles?: readonly SoftwareTeamRoleId[];
+  onAddTeammate?: (roleId: SoftwareTeamRoleId) => void;
+  onBindThisChat?: () => void;
+  bindThisChatDisabled?: boolean;
+  onUnbindSession?: () => void;
+  onAddSdlcDocs?: () => void;
 };
 
 function formatActivityAt(locale: Locale, at: number): string {
@@ -62,6 +69,12 @@ export function SdlcDeliveryDetailPane({
   onCopyGitBranch,
   onRenameDelivery,
   onDuplicateDelivery,
+  missingRoles = [],
+  onAddTeammate,
+  onBindThisChat,
+  bindThisChatDisabled,
+  onUnbindSession,
+  onAddSdlcDocs,
 }: SdlcDeliveryDetailPaneProps) {
   const tr = useMemo(() => createT(locale), [locale]);
   const t: TFn = (k, vars) => tr(k, vars);
@@ -257,9 +270,9 @@ export function SdlcDeliveryDetailPane({
               <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.notesEmpty")}</p>
             )}
           </div>
-          {presentDocs.length ? (
-            <div className="sdlc-studio__field">
-              <span>{t("softwareTeamDlc.openSdlcDocs")}</span>
+          <div className="sdlc-studio__field">
+            <span>{t("softwareTeamDlc.openSdlcDocs")}</span>
+            {presentDocs.length ? (
               <div className="sdlc-studio__chips" role="group">
                 {presentDocs.map((row) => (
                   <button
@@ -274,10 +287,79 @@ export function SdlcDeliveryDetailPane({
                   </button>
                 ))}
               </div>
-            </div>
-          ) : null}
+            ) : (
+              <p className="sdlc-studio__slash-note">
+                {t("softwareTeamDlc.openSdlcDocMissing")}
+              </p>
+            )}
+            {onAddSdlcDocs ? (
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={onAddSdlcDocs}
+              >
+                {t("softwareTeamDlc.addSdlcDocs")}
+              </button>
+            ) : null}
+          </div>
+          <div className="sdlc-studio__field">
+            <span>
+              {missingRoles.length
+                ? t("softwareTeamDlc.missingRoles", {
+                    roles: missingRoles
+                      .map((roleId) =>
+                        t(
+                          softwareTeamRoleById(roleId)?.titleKey ??
+                            "softwareTeamDlc.rosterTitle",
+                        ),
+                      )
+                      .join(", "),
+                  })
+                : t("softwareTeamDlc.teamComplete")}
+            </span>
+            {onAddTeammate && missingRoles.length ? (
+              <div className="sdlc-studio__chips" role="group">
+                {missingRoles.map((roleId) => (
+                  <button
+                    key={roleId}
+                    type="button"
+                    className="btn btn--ghost btn--sm"
+                    onClick={() => onAddTeammate(roleId)}
+                  >
+                    {t("softwareTeamDlc.addTeammate", {
+                      role: t(
+                        softwareTeamRoleById(roleId)?.titleKey ??
+                          "softwareTeamDlc.rosterTitle",
+                      ),
+                    })}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
           <div className="sdlc-studio__field">
             <span>{t("softwareTeamDlc.deliverySessions")}</span>
+            <div className="sdlc-studio__chips" role="group">
+              {onBindThisChat ? (
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--sm"
+                  disabled={bindThisChatDisabled}
+                  onClick={onBindThisChat}
+                >
+                  {t("softwareTeamDlc.bindThisChat")}
+                </button>
+              ) : null}
+              {onUnbindSession ? (
+                <button
+                  type="button"
+                  className="btn btn--ghost btn--sm"
+                  onClick={onUnbindSession}
+                >
+                  {t("softwareTeamDlc.clearTag")}
+                </button>
+              ) : null}
+            </div>
             {detail.sessions.length ? (
               <div className="sdlc-studio__sessions" role="list">
                 {detail.sessions.map((session) => (

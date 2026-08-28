@@ -10,11 +10,14 @@ import type { MessageKey } from "@/i18n";
 import {
   appendSoftwareTeamPipelineActivity,
   createSoftwareTeamPipelineItem,
+  pipelineItemById,
   updateSoftwareTeamPipelineItem,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamPipelineItemDraft,
   type SoftwareTeamPipelineStore,
 } from "./pipeline";
+import { softwareTeamDeliveryTitle } from "./deliveryFilter";
+import { softwareTeamDeliveryGitBranch } from "./gitBranch";
 import { softwareTeamRoleById, type SoftwareTeamRoleId } from "./roles";
 
 export const SOFTWARE_TEAM_BOOTSTRAP_RELATIVE = [
@@ -369,4 +372,46 @@ export function duplicateSoftwareTeamDelivery(
     stageId: copies[0]!.stageId,
   });
   return { store: next, deliveryId: newId };
+}
+
+/**
+ * Move a card onto another delivery (or ungroup). Inherits the destination
+ * title and branch label. Does not create a session or write ~/.grok.
+ */
+export function moveSoftwareTeamItemDelivery(
+  store: SoftwareTeamPipelineStore,
+  itemId: string,
+  targetDeliveryId: string | null | undefined,
+  now = Date.now(),
+): SoftwareTeamPipelineStore {
+  const prev = pipelineItemById(store, itemId);
+  if (!prev) return store;
+  const target = (targetDeliveryId ?? "").trim();
+  if (prev.deliveryId.trim() === target) return store;
+  if (!target) {
+    return updateSoftwareTeamPipelineItem(
+      store,
+      itemId,
+      { deliveryId: "", deliveryTitle: "" },
+      now,
+    );
+  }
+  const siblings = store.items.filter(
+    (item) => item.id !== prev.id && item.deliveryId.trim() === target,
+  );
+  const title =
+    softwareTeamDeliveryTitle(siblings, target) ||
+    softwareTeamDeliveryTitle(store.items, target) ||
+    prev.deliveryTitle;
+  const branch = softwareTeamDeliveryGitBranch(siblings) || prev.gitBranch;
+  return updateSoftwareTeamPipelineItem(
+    store,
+    itemId,
+    {
+      deliveryId: target,
+      deliveryTitle: title,
+      gitBranch: branch,
+    },
+    now,
+  );
 }

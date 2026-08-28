@@ -24,6 +24,9 @@ export const SOFTWARE_TEAM_ACTIVITY_TYPES = [
   "git_branch",
   "delivery_renamed",
   "delivery_duplicated",
+  "item_moved",
+  "session_bound",
+  "session_unbound",
 ] as const;
 
 export type SoftwareTeamActivityType =
@@ -151,6 +154,12 @@ export function softwareTeamActivityMessageKey(
       return "softwareTeamDlc.activity.delivery_renamed";
     case "delivery_duplicated":
       return "softwareTeamDlc.activity.delivery_duplicated";
+    case "item_moved":
+      return "softwareTeamDlc.activity.item_moved";
+    case "session_bound":
+      return "softwareTeamDlc.activity.session_bound";
+    case "session_unbound":
+      return "softwareTeamDlc.activity.session_unbound";
     default: {
       const _never: never = type;
       return _never;

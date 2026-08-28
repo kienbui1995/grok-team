@@ -207,6 +207,7 @@ export {
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
   duplicateSoftwareTeamDelivery,
+  moveSoftwareTeamItemDelivery,
   renameSoftwareTeamDelivery,
   writeSoftwareTeamWorkspaceBootstrap,
   type SoftwareTeamBootstrapFileResult,
@@ -344,6 +345,14 @@ export {
   softwareTeamDeliveryGitBranch,
   softwareTeamSuggestGitBranch,
 } from "./gitBranch";
+
+export {
+  SOFTWARE_TEAM_BIND_CHAT_REASONS,
+  decideSoftwareTeamBindThisChat,
+  softwareTeamBindThisChatMessageKey,
+  type SoftwareTeamBindChatDecision,
+  type SoftwareTeamBindChatReason,
+} from "./bindChat";
 
 export {
   SOFTWARE_TEAM_EXPORT_REASONS,

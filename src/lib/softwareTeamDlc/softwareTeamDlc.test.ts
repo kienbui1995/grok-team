@@ -117,6 +117,10 @@ import {
   popSoftwareTeamRedoSnapshot,
   renameSoftwareTeamDelivery,
   duplicateSoftwareTeamDelivery,
+  bindPipelineItemSession,
+  decideSoftwareTeamBindThisChat,
+  moveSoftwareTeamItemDelivery,
+  softwareTeamBindThisChatMessageKey,
   softwareTeamDeliveryTitle,
   SOFTWARE_TEAM_ROLE_FILTER_ALL,
   SOFTWARE_TEAM_STAGE_FILTER_ALL,
@@ -2382,5 +2386,80 @@ describe("Software Works undo, remove, git branch label", () => {
     expect(copies.every((item) => item.sessionId === "")).toBe(true);
     expect(softwareTeamDeliveryTitle(dup.store.items, dup.deliveryId)).toContain("copy");
     expect(dup.store.activity.some((event) => event.type === "delivery_duplicated")).toBe(true);
+  });
+
+  it("binds the open chat only when a session exists and is not already on the card", () => {
+    expect(decideSoftwareTeamBindThisChat({}).reason).toBe("need_session");
+    expect(
+      decideSoftwareTeamBindThisChat({
+        currentSessionId: "sess-1",
+        itemSessionId: "sess-1",
+      }).reason,
+    ).toBe("already");
+    expect(
+      decideSoftwareTeamBindThisChat({
+        currentSessionId: "sess-2",
+        itemSessionId: "sess-1",
+      }),
+    ).toEqual({ ok: true, reason: "bound", sessionId: "sess-2" });
+    expect(softwareTeamBindThisChatMessageKey("need_session")).toBe(
+      "softwareTeamDlc.bindThisChatNeedSession",
+    );
+  });
+
+  it("moves a card between deliveries and ungroups without inventing a session", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "mv-a",
+      roleId: "product",
+      title: "Alpha",
+      deliveryId: "d-a",
+      deliveryTitle: "Alpha",
+      gitBranch: "feat/alpha",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "mv-b",
+      roleId: "engineer",
+      title: "Beta card",
+      deliveryId: "d-b",
+      deliveryTitle: "Beta",
+    });
+    const moved = moveSoftwareTeamItemDelivery(store, "mv-b", "d-a");
+    const card = moved.items.find((item) => item.id === "mv-b");
+    expect(card?.deliveryId).toBe("d-a");
+    expect(card?.deliveryTitle).toBe("Alpha");
+    expect(card?.gitBranch).toBe("feat/alpha");
+    expect(card?.sessionId).toBe("");
+    expect(moved.activity.some((event) => event.type === "item_moved")).toBe(true);
+    expect(moveSoftwareTeamItemDelivery(moved, "mv-b", "d-a")).toBe(moved);
+
+    const unbound = moveSoftwareTeamItemDelivery(moved, "mv-b", "");
+    expect(unbound.items.find((item) => item.id === "mv-b")?.deliveryId).toBe("");
+    expect(unbound.items.find((item) => item.id === "mv-b")?.deliveryTitle).toBe("");
+  });
+
+  it("unbinds the previous card when the same chat is bound again", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "bd-1",
+      roleId: "product",
+      title: "One",
+      sessionId: "sess-shared",
+      deliveryId: "d-bd",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "bd-2",
+      roleId: "engineer",
+      title: "Two",
+      deliveryId: "d-bd",
+    });
+    const bound = bindPipelineItemSession(store, "bd-2", "sess-shared");
+    expect(bound.items.find((item) => item.id === "bd-2")?.sessionId).toBe("sess-shared");
+    expect(bound.items.find((item) => item.id === "bd-1")?.sessionId).toBe("");
+    expect(bound.activity.some((event) => event.type === "session_bound")).toBe(true);
+    expect(softwareTeamActivityMessageKey("item_moved")).toBe(
+      "softwareTeamDlc.activity.item_moved",
+    );
+    expect(softwareTeamActivityMessageKey("session_unbound")).toBe(
+      "softwareTeamDlc.activity.session_unbound",
+    );
   });
 });
