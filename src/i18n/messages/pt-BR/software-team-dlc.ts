@@ -285,10 +285,16 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Sessão vinculada",
   "softwareTeamDlc.activity.session_unbound": "Sessão desvinculada",
   "softwareTeamDlc.missingRoles": "Sessões de equipe em falta: {roles}",
-  "softwareTeamDlc.teamComplete": "Os cartões Product, Engineer e Reviewer estão nesta entrega.",
+  "softwareTeamDlc.teamComplete":
+    "Os cartões Product, Architect, Engineer, Reviewer, QA e Writer estão nesta entrega.",
   "softwareTeamDlc.addSdlcDocs": "Adicionar arquivos docs/sdlc ausentes",
   "softwareTeamDlc.sliceRefsHint":
     "Plano, meta e artefato são compartilhados em todos os cartões desta entrega. Salvar atualiza todos.",
   "softwareTeamDlc.sliceRefsSaved": "Refs do recorte salvas em todos os cartões desta entrega.",
   "softwareTeamDlc.saveSliceRefs": "Salvar refs do recorte",
+  "softwareTeamDlc.copySummary": "Copiar resumo",
+  "softwareTeamDlc.copySummaryOk": "Resumo copiado.",
+  "softwareTeamDlc.copySummaryFailed": "Não foi possível copiar o resumo.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Resumo copiado. Nenhum arquivo do projeto foi gravado.",
 } as const;

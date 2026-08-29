@@ -286,10 +286,16 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Nag-bind ng session",
   "softwareTeamDlc.activity.session_unbound": "Inalis ang bind ng session",
   "softwareTeamDlc.missingRoles": "Kulang ang team session: {roles}",
-  "softwareTeamDlc.teamComplete": "Nasa delivery na ang card ng Product, Engineer, at Reviewer.",
+  "softwareTeamDlc.teamComplete":
+    "Nasa delivery na ang card ng Product, Architect, Engineer, Reviewer, QA, at Writer.",
   "softwareTeamDlc.addSdlcDocs": "Idagdag ang nawawalang docs/sdlc",
   "softwareTeamDlc.sliceRefsHint":
     "Ang plan, goal, at artifact ay shared sa bawat card ng delivery na ito. Ang pag-save ay nag-a-update sa lahat.",
   "softwareTeamDlc.sliceRefsSaved": "Na-save ang slice refs sa bawat card ng delivery na ito.",
   "softwareTeamDlc.saveSliceRefs": "I-save ang slice refs",
+  "softwareTeamDlc.copySummary": "Kopyahin ang buod",
+  "softwareTeamDlc.copySummaryOk": "Nakopya ang buod.",
+  "softwareTeamDlc.copySummaryFailed": "Hindi makopya ang buod.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Nakopya ang buod. Walang file sa proyekto na naisulat.",
 } as const;

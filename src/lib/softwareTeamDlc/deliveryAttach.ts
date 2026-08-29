@@ -14,16 +14,22 @@ import {
   prependChatTokens,
   type ChatRef,
 } from "@/lib/chatAttach";
+import { SOFTWARE_TEAM_HANDOFF_CHAIN } from "./handoff";
 import type { SoftwareTeamPipelineItem } from "./pipeline";
 import type { SoftwareTeamRoleId } from "./roles";
 
 export const SOFTWARE_TEAM_ATTACH_MAX = MAX_ATTACHED_CHATS;
 
+/** Attach-chat ranking (max 3). Architect / QA / Writer stay lower priority. */
 export const SOFTWARE_TEAM_ATTACH_PREFER: readonly SoftwareTeamRoleId[] = [
   "product",
   "engineer",
   "reviewer",
 ];
+
+/** Missing-role chips / Add teammate — full Product→Writer chain. */
+export const SOFTWARE_TEAM_ROSTER_ROLES: readonly SoftwareTeamRoleId[] =
+  SOFTWARE_TEAM_HANDOFF_CHAIN;
 
 export type SoftwareTeamAttachPick = {
   sessionId: string;
@@ -104,11 +110,11 @@ export function seedSoftwareTeamAttachStarter(
   return prependChatTokens(starter, [...refs]);
 }
 
-/** Preferred roles on this delivery that do not already have a card. */
+/** Roster roles on this delivery that do not already have a card. */
 export function missingSoftwareTeamDeliveryRoles(
   items: readonly SoftwareTeamPipelineItem[],
   deliveryId: string,
-  prefer: readonly SoftwareTeamRoleId[] = SOFTWARE_TEAM_ATTACH_PREFER,
+  prefer: readonly SoftwareTeamRoleId[] = SOFTWARE_TEAM_ROSTER_ROLES,
 ): SoftwareTeamRoleId[] {
   const id = deliveryId.trim();
   const present = new Set(

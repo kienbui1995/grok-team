@@ -286,10 +286,16 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Sesi diikat",
   "softwareTeamDlc.activity.session_unbound": "Sesi dilepas",
   "softwareTeamDlc.missingRoles": "Sesi tim yang kurang: {roles}",
-  "softwareTeamDlc.teamComplete": "Kartu Product, Engineer, dan Reviewer ada di pengiriman ini.",
+  "softwareTeamDlc.teamComplete":
+    "Kartu Product, Architect, Engineer, Reviewer, QA, dan Writer ada di pengiriman ini.",
   "softwareTeamDlc.addSdlcDocs": "Tambah berkas docs/sdlc yang kurang",
   "softwareTeamDlc.sliceRefsHint":
     "Rencana, tujuan, dan artefak dipakai bersama di setiap kartu pengiriman ini. Menyimpan akan memperbarui semuanya.",
   "softwareTeamDlc.sliceRefsSaved": "Referensi irisan disimpan di semua kartu pengiriman ini.",
   "softwareTeamDlc.saveSliceRefs": "Simpan referensi irisan",
+  "softwareTeamDlc.copySummary": "Salin ringkasan",
+  "softwareTeamDlc.copySummaryOk": "Ringkasan disalin.",
+  "softwareTeamDlc.copySummaryFailed": "Tidak bisa menyalin ringkasan.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Ringkasan disalin. Tidak ada berkas proyek yang ditulis.",
 } as const;

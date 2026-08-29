@@ -122,6 +122,26 @@ export function defaultSoftwareTeamExportHost(): SoftwareTeamExportHost {
   };
 }
 
+/** Failed Host write: copy markdown instead. Never pretends a file was written. */
+export function softwareTeamExportShouldCopyInstead(
+  reason: SoftwareTeamExportReason,
+): boolean {
+  switch (reason) {
+    case "ok_project":
+      return false;
+    case "need_host":
+    case "need_project":
+    case "blocked_shared_home":
+    case "bad_slug":
+    case "host_error":
+      return true;
+    default: {
+      const _never: never = reason;
+      return _never;
+    }
+  }
+}
+
 export function softwareTeamExportMessageKey(
   reason: SoftwareTeamExportReason,
 ): MessageKey {

@@ -285,10 +285,16 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Se vinculó una sesión",
   "softwareTeamDlc.activity.session_unbound": "Se desvinculó una sesión",
   "softwareTeamDlc.missingRoles": "Faltan sesiones de equipo: {roles}",
-  "softwareTeamDlc.teamComplete": "Hay tarjetas de Product, Engineer y Reviewer en esta entrega.",
+  "softwareTeamDlc.teamComplete":
+    "Hay tarjetas de Product, Architect, Engineer, Reviewer, QA y Writer en esta entrega.",
   "softwareTeamDlc.addSdlcDocs": "Añadir archivos docs/sdlc que falten",
   "softwareTeamDlc.sliceRefsHint":
     "Plan, objetivo y artefacto se comparten en todas las tarjetas de esta entrega. Guardar las actualiza todas.",
   "softwareTeamDlc.sliceRefsSaved": "Refs del corte guardadas en todas las tarjetas de esta entrega.",
   "softwareTeamDlc.saveSliceRefs": "Guardar refs del corte",
+  "softwareTeamDlc.copySummary": "Copiar resumen",
+  "softwareTeamDlc.copySummaryOk": "Resumen copiado.",
+  "softwareTeamDlc.copySummaryFailed": "No se pudo copiar el resumen.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Se copió el resumen. No se escribió ningún archivo del proyecto.",
 } as const;

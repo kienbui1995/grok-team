@@ -283,10 +283,16 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "セッションを結びました",
   "softwareTeamDlc.activity.session_unbound": "セッションの結びを解除",
   "softwareTeamDlc.missingRoles": "足りないチームセッション: {roles}",
-  "softwareTeamDlc.teamComplete": "このデリバリーに Product / Engineer / Reviewer のカードがあります。",
+  "softwareTeamDlc.teamComplete":
+    "このデリバリーに Product / Architect / Engineer / Reviewer / QA / Writer のカードがあります。",
   "softwareTeamDlc.addSdlcDocs": "足りない docs/sdlc ファイルを追加",
   "softwareTeamDlc.sliceRefsHint":
     "プラン・ゴール・成果物はこのデリバリーの全カードで共有されます。保存するとすべて更新されます。",
   "softwareTeamDlc.sliceRefsSaved": "スライス参照をこのデリバリーの全カードに保存しました。",
   "softwareTeamDlc.saveSliceRefs": "スライス参照を保存",
+  "softwareTeamDlc.copySummary": "要約をコピー",
+  "softwareTeamDlc.copySummaryOk": "要約をコピーしました。",
+  "softwareTeamDlc.copySummaryFailed": "要約をコピーできませんでした。",
+  "softwareTeamDlc.exportCopiedInstead":
+    "要約をコピーしました。プロジェクトファイルは書いていません。",
 } as const;

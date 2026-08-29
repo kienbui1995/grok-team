@@ -128,6 +128,14 @@ import {
   softwareTeamWriterShipWritesFiles,
   writeSoftwareTeamWorkspaceBootstrap,
   SOFTWARE_TEAM_ATTACH_MAX,
+  SOFTWARE_TEAM_ATTACH_PREFER,
+  SOFTWARE_TEAM_ROSTER_ROLES,
+  SOFTWARE_TEAM_DLC_STUDIO_PREFS_KEY,
+  loadSoftwareTeamStudioPrefs,
+  parseSoftwareTeamStudioPrefs,
+  resolveSoftwareTeamStudioPrefs,
+  saveSoftwareTeamStudioPrefs,
+  softwareTeamExportShouldCopyInstead,
   SOFTWARE_TEAM_BOOTSTRAP_RELATIVE,
   softwareTeamRoleChecklist,
   softwareTeamShipBlockMessageKey,
@@ -1575,7 +1583,10 @@ describe("Software Works attach-chat seed (max 3)", () => {
       planRef: "docs/sdlc/spec.md",
     });
     expect(missingSoftwareTeamDeliveryRoles([a, b], "del-9")).toEqual([
+      "architect",
       "reviewer",
+      "qa",
+      "writer",
     ]);
   });
 });
@@ -2709,5 +2720,126 @@ describe("Software Works delivery-wide Ship + slice refs", () => {
     expect(pipelineItemById(next, "host-1")?.goalRef).not.toMatch(
       /^[0-9a-f-]{36}$/i,
     );
+  });
+});
+
+describe("Software Works studio prefs + full roster + copy export", () => {
+  it("remembers the last delivery filter and falls back when the id is gone", () => {
+    const storage = memoryStore();
+    expect(parseSoftwareTeamStudioPrefs(null)).toEqual({
+      deliveryFilter: SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
+      showArchived: false,
+    });
+    saveSoftwareTeamStudioPrefs(
+      { deliveryFilter: "d-keep", showArchived: true },
+      storage,
+    );
+    expect(storage.getItem(SOFTWARE_TEAM_DLC_STUDIO_PREFS_KEY)).toContain("d-keep");
+    expect(loadSoftwareTeamStudioPrefs(storage)).toEqual({
+      deliveryFilter: "d-keep",
+      showArchived: true,
+    });
+    const keep = createSoftwareTeamPipelineItem({
+      id: "sp-1",
+      roleId: "product",
+      deliveryId: "d-keep",
+    })!;
+    expect(
+      resolveSoftwareTeamStudioPrefs(
+        { deliveryFilter: "d-gone", showArchived: false },
+        [keep],
+      ).deliveryFilter,
+    ).toBe(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
+    expect(
+      resolveSoftwareTeamStudioPrefs(
+        { deliveryFilter: "d-keep", showArchived: false },
+        [keep],
+      ),
+    ).toEqual({ deliveryFilter: "d-keep", showArchived: false });
+  });
+
+  it("turns Show archived on when the remembered delivery is archived", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "sp-arch",
+      roleId: "engineer",
+      deliveryId: "d-arch",
+      archived: true,
+    })!;
+    const resolved = resolveSoftwareTeamStudioPrefs(
+      { deliveryFilter: "d-arch", showArchived: false },
+      [item],
+      ["d-arch"],
+    );
+    expect(resolved).toEqual({
+      deliveryFilter: "d-arch",
+      showArchived: true,
+    });
+  });
+
+  it("lists the full Product→Writer roster as missing roles", () => {
+    expect([...SOFTWARE_TEAM_ROSTER_ROLES]).toEqual([
+      "product",
+      "architect",
+      "engineer",
+      "reviewer",
+      "qa",
+      "writer",
+    ]);
+    expect([...SOFTWARE_TEAM_ATTACH_PREFER]).toEqual([
+      "product",
+      "engineer",
+      "reviewer",
+    ]);
+    const product = createSoftwareTeamPipelineItem({
+      id: "rs-1",
+      roleId: "product",
+      deliveryId: "d-rs",
+    })!;
+    expect(missingSoftwareTeamDeliveryRoles([product], "d-rs")).toEqual([
+      "architect",
+      "engineer",
+      "reviewer",
+      "qa",
+      "writer",
+    ]);
+    const full = SOFTWARE_TEAM_ROSTER_ROLES.map((roleId, index) =>
+      createSoftwareTeamPipelineItem({
+        id: `rs-${roleId}`,
+        roleId,
+        deliveryId: "d-rs",
+        updatedAt: index + 1,
+      })!,
+    );
+    expect(missingSoftwareTeamDeliveryRoles(full, "d-rs")).toEqual([]);
+  });
+
+  it("copies markdown when Host export is refused and never writes ~/.grok", async () => {
+    expect(softwareTeamExportShouldCopyInstead("ok_project")).toBe(false);
+    expect(softwareTeamExportShouldCopyInstead("need_host")).toBe(true);
+    expect(softwareTeamExportShouldCopyInstead("blocked_shared_home")).toBe(true);
+    const item = createSoftwareTeamPipelineItem({
+      id: "cp-1",
+      roleId: "product",
+      title: "Billing",
+      deliveryId: "d-copy",
+    })!;
+    const detail = buildSoftwareTeamDeliveryDetail({
+      items: [item],
+      target: { kind: "delivery", deliveryId: "d-copy" },
+    })!;
+    const blocked = await exportSoftwareTeamDeliverySummary({
+      projectPath: "~/.grok",
+      detail,
+      host: {
+        isDesktopHost: () => true,
+        writeFile: async () => {
+          throw new Error("should not write");
+        },
+      },
+    });
+    expect(blocked.ok).toBe(false);
+    if (blocked.ok) return;
+    expect(softwareTeamExportShouldCopyInstead(blocked.reason)).toBe(true);
+    expect(composeSoftwareTeamDeliveryMarkdown(detail)).toContain("# Billing");
   });
 });

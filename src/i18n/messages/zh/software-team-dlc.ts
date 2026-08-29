@@ -260,10 +260,14 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "已绑定会话",
   "softwareTeamDlc.activity.session_unbound": "已解除会话绑定",
   "softwareTeamDlc.missingRoles": "缺少团队会话：{roles}",
-  "softwareTeamDlc.teamComplete": "此交付已有 Product、Engineer、Reviewer 卡片。",
+  "softwareTeamDlc.teamComplete": "此交付已有 Product、Architect、Engineer、Reviewer、QA、Writer 卡片。",
   "softwareTeamDlc.addSdlcDocs": "补写缺少的 docs/sdlc 文件",
   "softwareTeamDlc.sliceRefsHint":
     "计划、目标和产物在此交付的每张卡片上共享。保存会一起更新。",
   "softwareTeamDlc.sliceRefsSaved": "已把切片引用保存到此交付的每张卡片。",
   "softwareTeamDlc.saveSliceRefs": "保存切片引用",
+  "softwareTeamDlc.copySummary": "复制摘要",
+  "softwareTeamDlc.copySummaryOk": "已复制摘要。",
+  "softwareTeamDlc.copySummaryFailed": "无法复制摘要。",
+  "softwareTeamDlc.exportCopiedInstead": "已复制摘要。没有写入项目文件。",
 } as const;

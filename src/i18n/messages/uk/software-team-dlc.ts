@@ -285,10 +285,16 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Сесію прив’язано",
   "softwareTeamDlc.activity.session_unbound": "Сесію відв’язано",
   "softwareTeamDlc.missingRoles": "Бракує командних сесій: {roles}",
-  "softwareTeamDlc.teamComplete": "На цій поставці є картки Product, Engineer і Reviewer.",
+  "softwareTeamDlc.teamComplete":
+    "На цій поставці є картки Product, Architect, Engineer, Reviewer, QA і Writer.",
   "softwareTeamDlc.addSdlcDocs": "Додати відсутні файли docs/sdlc",
   "softwareTeamDlc.sliceRefsHint":
     "План, мета й артефакт спільні для всіх карток цієї поставки. Збереження оновлює всі.",
   "softwareTeamDlc.sliceRefsSaved": "Посилання зрізу збережено на всіх картках цієї поставки.",
   "softwareTeamDlc.saveSliceRefs": "Зберегти посилання зрізу",
+  "softwareTeamDlc.copySummary": "Копіювати підсумок",
+  "softwareTeamDlc.copySummaryOk": "Підсумок скопійовано.",
+  "softwareTeamDlc.copySummaryFailed": "Не вдалося скопіювати підсумок.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Підсумок скопійовано. Файл проєкту не записано.",
 } as const;

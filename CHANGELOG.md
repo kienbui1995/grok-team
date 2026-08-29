@@ -12,6 +12,7 @@ See `docs/llm-wiki/release.md`.
 ## [Unreleased]
 
 ### Added
+- **Software Works studio memory + full roster + copy summary**: SDLC Studio remembers the last delivery filter and Show archived (`grok.softwareTeamDlc.studio`; deleted ids fall back to All). Missing-role chips cover the full Product→Writer chain (attach-chat still prefers Product / Engineer / Reviewer, max 3). Export that cannot write a project file copies the markdown instead and says no file was written. **Copy summary** is always available. Still no Host invent, no `~/.grok` rewrite.
 - **Software Works delivery-wide Ship + shared slice refs**: Reviewer and QA notes on sibling cards unlock Ship on the Engineer/Product card (`softwareTeamDeliveryShipGate`). Plan/goal/artifact stay aligned across the same `deliveryId` (board edit, add, move, or the detail pane). The delivery pane can edit those refs and Review/QA notes; notes stay on the Reviewer/QA card. Steal-bind logs `session_unbound`. Still no Host plan/goal invent, no `~/.grok` rewrite.
 - **Software Works bind this chat + move card**: Studio can bind the open workbench session onto a card (one session per card; no fake create). Context menu unbinds or moves a card to another delivery / ungrouped. Delivery pane shows missing Product / Engineer / Reviewer sessions, adds those teammates, and can write missing `docs/sdlc` placeholders (Host + project; never `~/.grok`).
 - **Vietnamese UI (`vi`)**: Settings → Language can lock **Tiếng Việt**. OS tags `vi`, `vi-VN`, and `vi_VN` resolve to the new catalog (English stays the key authority). Tray, Remote IM bridge, and `intlLocale("vi")` → `vi-VN` stay in lockstep.
@@ -28,6 +29,7 @@ See `docs/llm-wiki/release.md`.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
+- **Software Works 工坊记忆 + 完整名单 + 复制摘要**：SDLC Studio 记住上次交付筛选和「显示已归档」（`grok.softwareTeamDlc.studio`；已删 id 回落到全部）。缺角色芯片覆盖 Product→Writer 全链（attach-chat 仍优先 Product / Engineer / Reviewer，最多 3）。无法写入项目文件时改为复制 markdown，并说明没有写文件。**复制摘要**随时可用。仍不编造 Host，不改写 `~/.grok`。
 - **Software Works 整次交付的发布门槛 + 共享切片引用**：同一次交付上评审/测试卡片的备注可解锁工程师/产品卡片的发布（`softwareTeamDeliveryShipGate`）。同一 `deliveryId` 的计划/目标/产物保持对齐（看板编辑、新增、挪卡或详情）。详情可改这些引用和评审/测试备注；备注仍落在评审/测试卡上。抢绑会记 `session_unbound`。仍不编造 Host 计划/目标，不改写 `~/.grok`。
 - **Software Works 绑定当前对话 + 挪卡片**：工坊可把当前工作台会话绑到一张卡片（一会话一卡，不假装新建）。右键可解绑，或把卡片挪到另一交付 / 取消分组。详情显示缺少的 Product / Engineer / Reviewer，可补会话，也可补写缺失的 `docs/sdlc`（需要 Host + 项目；不写 `~/.grok`）。
 - **越南语界面（`vi`）**：设置 → 语言可锁定 **Tiếng Việt**。系统标签 `vi` / `vi-VN` / `vi_VN` 落到该目录（英语仍是键权威）。托盘、Remote IM 与 `intlLocale("vi")` → `vi-VN` 同步。

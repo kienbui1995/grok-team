@@ -29,6 +29,7 @@ export type SdlcDeliveryDetailPaneProps = {
   onOpenSdlcDoc: (relative: string) => void;
   onSelectSession?: (sessionId: string) => void;
   onExport?: () => void;
+  onCopySummary?: () => void;
   onToggleArchive?: (archived: boolean) => void;
   onSaveGitBranch?: (branch: string) => boolean;
   onCopyGitBranch?: (branch: string) => void;
@@ -71,6 +72,7 @@ export function SdlcDeliveryDetailPane({
   onOpenSdlcDoc,
   onSelectSession,
   onExport,
+  onCopySummary,
   onToggleArchive,
   onSaveGitBranch,
   onCopyGitBranch,
@@ -160,6 +162,11 @@ export function SdlcDeliveryDetailPane({
           {onExport ? (
             <button type="button" className="btn btn--ghost" onClick={onExport}>
               {t("softwareTeamDlc.exportSummary")}
+            </button>
+          ) : null}
+          {onCopySummary ? (
+            <button type="button" className="btn btn--ghost" onClick={onCopySummary}>
+              {t("softwareTeamDlc.copySummary")}
             </button>
           ) : null}
           {onDuplicateDelivery && detail?.deliveryId ? (

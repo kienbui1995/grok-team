@@ -283,10 +283,16 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "세션을 묶음",
   "softwareTeamDlc.activity.session_unbound": "세션 묶기를 해제",
   "softwareTeamDlc.missingRoles": "빠진 팀 세션: {roles}",
-  "softwareTeamDlc.teamComplete": "이 딜리버리에 Product, Engineer, Reviewer 카드가 있습니다.",
+  "softwareTeamDlc.teamComplete":
+    "이 딜리버리에 Product, Architect, Engineer, Reviewer, QA, Writer 카드가 있습니다.",
   "softwareTeamDlc.addSdlcDocs": "빠진 docs/sdlc 파일 추가",
   "softwareTeamDlc.sliceRefsHint":
     "계획, 목표, 산출물은 이 딜리버리의 모든 카드에서 공유됩니다. 저장하면 모두 업데이트됩니다.",
   "softwareTeamDlc.sliceRefsSaved": "슬라이스 참조를 이 딜리버리의 모든 카드에 저장했습니다.",
   "softwareTeamDlc.saveSliceRefs": "슬라이스 참조 저장",
+  "softwareTeamDlc.copySummary": "요약 복사",
+  "softwareTeamDlc.copySummaryOk": "요약을 복사했습니다.",
+  "softwareTeamDlc.copySummaryFailed": "요약을 복사하지 못했습니다.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "요약을 복사했습니다. 프로젝트 파일은 쓰지 않았습니다.",
 } as const;

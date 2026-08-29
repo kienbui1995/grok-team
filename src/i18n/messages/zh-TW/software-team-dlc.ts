@@ -260,10 +260,14 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "已綁定工作階段",
   "softwareTeamDlc.activity.session_unbound": "已解除工作階段綁定",
   "softwareTeamDlc.missingRoles": "缺少團隊工作階段：{roles}",
-  "softwareTeamDlc.teamComplete": "此交付已有 Product、Engineer、Reviewer 卡片。",
+  "softwareTeamDlc.teamComplete": "此交付已有 Product、Architect、Engineer、Reviewer、QA、Writer 卡片。",
   "softwareTeamDlc.addSdlcDocs": "補上缺少的 docs/sdlc 檔案",
   "softwareTeamDlc.sliceRefsHint":
     "計畫、目標與產物在此交付的每張卡片上共用。儲存會一併更新。",
   "softwareTeamDlc.sliceRefsSaved": "已把切片參照儲存到此交付的每張卡片。",
   "softwareTeamDlc.saveSliceRefs": "儲存切片參照",
+  "softwareTeamDlc.copySummary": "複製摘要",
+  "softwareTeamDlc.copySummaryOk": "已複製摘要。",
+  "softwareTeamDlc.copySummaryFailed": "無法複製摘要。",
+  "softwareTeamDlc.exportCopiedInstead": "已複製摘要。沒有寫入專案檔。",
 } as const;

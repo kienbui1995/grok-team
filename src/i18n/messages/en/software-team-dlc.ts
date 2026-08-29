@@ -295,10 +295,15 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_unbound": "Unbound a session",
   "softwareTeamDlc.missingRoles": "Missing team sessions: {roles}",
   "softwareTeamDlc.teamComplete":
-    "Product, Engineer, and Reviewer cards are on this delivery.",
+    "Product, Architect, Engineer, Reviewer, QA, and Writer cards are on this delivery.",
   "softwareTeamDlc.addSdlcDocs": "Add missing docs/sdlc files",
   "softwareTeamDlc.sliceRefsHint":
     "Plan, goal, and artifact are shared across every card on this delivery. Saving updates all of them.",
   "softwareTeamDlc.sliceRefsSaved": "Slice refs saved on every card in this delivery.",
   "softwareTeamDlc.saveSliceRefs": "Save slice refs",
+  "softwareTeamDlc.copySummary": "Copy summary",
+  "softwareTeamDlc.copySummaryOk": "Summary copied.",
+  "softwareTeamDlc.copySummaryFailed": "Could not copy the summary.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Copied the summary. No project file was written.",
 } as const;

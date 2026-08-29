@@ -285,10 +285,16 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Session liée",
   "softwareTeamDlc.activity.session_unbound": "Session déliée",
   "softwareTeamDlc.missingRoles": "Sessions d’équipe manquantes : {roles}",
-  "softwareTeamDlc.teamComplete": "Les cartes Product, Engineer et Reviewer sont sur cette livraison.",
+  "softwareTeamDlc.teamComplete":
+    "Les cartes Product, Architect, Engineer, Reviewer, QA et Writer sont sur cette livraison.",
   "softwareTeamDlc.addSdlcDocs": "Ajouter les fichiers docs/sdlc manquants",
   "softwareTeamDlc.sliceRefsHint":
     "Plan, objectif et artefact sont partagés sur toutes les cartes de cette livraison. Enregistrer les met toutes à jour.",
   "softwareTeamDlc.sliceRefsSaved": "Refs de tranche enregistrées sur toutes les cartes de cette livraison.",
   "softwareTeamDlc.saveSliceRefs": "Enregistrer les refs de tranche",
+  "softwareTeamDlc.copySummary": "Copier le résumé",
+  "softwareTeamDlc.copySummaryOk": "Résumé copié.",
+  "softwareTeamDlc.copySummaryFailed": "Impossible de copier le résumé.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Résumé copié. Aucun fichier du projet n’a été écrit.",
 } as const;

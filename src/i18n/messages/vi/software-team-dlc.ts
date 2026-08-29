@@ -294,10 +294,16 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Đã gắn một phiên",
   "softwareTeamDlc.activity.session_unbound": "Đã bỏ gắn phiên",
   "softwareTeamDlc.missingRoles": "Thiếu phiên nhóm: {roles}",
-  "softwareTeamDlc.teamComplete": "Đợt giao này đã có thẻ Product, Engineer và Reviewer.",
+  "softwareTeamDlc.teamComplete":
+    "Đợt giao này đã có thẻ Product, Architect, Engineer, Reviewer, QA và Writer.",
   "softwareTeamDlc.addSdlcDocs": "Thêm tệp docs/sdlc còn thiếu",
   "softwareTeamDlc.sliceRefsHint":
     "Kế hoạch, mục tiêu và ấn phẩm dùng chung trên mọi thẻ của đợt giao này. Lưu sẽ cập nhật tất cả.",
   "softwareTeamDlc.sliceRefsSaved": "Đã lưu tham chiếu lát trên mọi thẻ của đợt giao này.",
   "softwareTeamDlc.saveSliceRefs": "Lưu tham chiếu lát",
+  "softwareTeamDlc.copySummary": "Sao chép tóm tắt",
+  "softwareTeamDlc.copySummaryOk": "Đã sao chép tóm tắt.",
+  "softwareTeamDlc.copySummaryFailed": "Không sao chép được tóm tắt.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Đã sao chép tóm tắt. Không ghi tệp trong dự án.",
 } as const;

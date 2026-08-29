@@ -285,10 +285,16 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Сессия привязана",
   "softwareTeamDlc.activity.session_unbound": "Сессия отвязана",
   "softwareTeamDlc.missingRoles": "Не хватает командных сессий: {roles}",
-  "softwareTeamDlc.teamComplete": "На этой поставке есть карточки Product, Engineer и Reviewer.",
+  "softwareTeamDlc.teamComplete":
+    "На этой поставке есть карточки Product, Architect, Engineer, Reviewer, QA и Writer.",
   "softwareTeamDlc.addSdlcDocs": "Добавить недостающие файлы docs/sdlc",
   "softwareTeamDlc.sliceRefsHint":
     "План, цель и артефакт общие для всех карточек этой поставки. Сохранение обновляет все.",
   "softwareTeamDlc.sliceRefsSaved": "Ссылки среза сохранены на всех карточках этой поставки.",
   "softwareTeamDlc.saveSliceRefs": "Сохранить ссылки среза",
+  "softwareTeamDlc.copySummary": "Копировать сводку",
+  "softwareTeamDlc.copySummaryOk": "Сводка скопирована.",
+  "softwareTeamDlc.copySummaryFailed": "Не удалось скопировать сводку.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Сводка скопирована. Файл проекта не записан.",
 } as const;

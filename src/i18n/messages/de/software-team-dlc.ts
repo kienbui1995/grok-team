@@ -286,10 +286,16 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Sitzung gebunden",
   "softwareTeamDlc.activity.session_unbound": "Sitzung gelöst",
   "softwareTeamDlc.missingRoles": "Fehlende Teamsitzungen: {roles}",
-  "softwareTeamDlc.teamComplete": "Karten für Product, Engineer und Reviewer sind auf dieser Lieferung.",
+  "softwareTeamDlc.teamComplete":
+    "Karten für Product, Architect, Engineer, Reviewer, QA und Writer sind auf dieser Lieferung.",
   "softwareTeamDlc.addSdlcDocs": "Fehlende docs/sdlc-Dateien anlegen",
   "softwareTeamDlc.sliceRefsHint":
     "Plan, Ziel und Artefakt gelten für jede Karte dieser Lieferung. Speichern aktualisiert alle.",
   "softwareTeamDlc.sliceRefsSaved": "Scheiben-Refs auf allen Karten dieser Lieferung gespeichert.",
   "softwareTeamDlc.saveSliceRefs": "Scheiben-Refs speichern",
+  "softwareTeamDlc.copySummary": "Zusammenfassung kopieren",
+  "softwareTeamDlc.copySummaryOk": "Zusammenfassung kopiert.",
+  "softwareTeamDlc.copySummaryFailed": "Zusammenfassung konnte nicht kopiert werden.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Zusammenfassung kopiert. Es wurde keine Projektdatei geschrieben.",
 } as const;

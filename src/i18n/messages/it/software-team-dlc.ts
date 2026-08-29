@@ -285,10 +285,16 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Sessione collegata",
   "softwareTeamDlc.activity.session_unbound": "Sessione scollegata",
   "softwareTeamDlc.missingRoles": "Sessioni del team mancanti: {roles}",
-  "softwareTeamDlc.teamComplete": "Le schede Product, Engineer e Reviewer sono su questa consegna.",
+  "softwareTeamDlc.teamComplete":
+    "Le schede Product, Architect, Engineer, Reviewer, QA e Writer sono su questa consegna.",
   "softwareTeamDlc.addSdlcDocs": "Aggiungi i file docs/sdlc mancanti",
   "softwareTeamDlc.sliceRefsHint":
     "Piano, obiettivo e artefatto sono condivisi su ogni scheda di questa consegna. Salvare li aggiorna tutti.",
   "softwareTeamDlc.sliceRefsSaved": "Rif. della fetta salvati su ogni scheda di questa consegna.",
   "softwareTeamDlc.saveSliceRefs": "Salva rif. della fetta",
+  "softwareTeamDlc.copySummary": "Copia riepilogo",
+  "softwareTeamDlc.copySummaryOk": "Riepilogo copiato.",
+  "softwareTeamDlc.copySummaryFailed": "Impossibile copiare il riepilogo.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Riepilogo copiato. Nessun file del progetto è stato scritto.",
 } as const;

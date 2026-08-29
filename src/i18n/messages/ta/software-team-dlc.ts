@@ -286,10 +286,16 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "அமர்வு இணைக்கப்பட்டது",
   "softwareTeamDlc.activity.session_unbound": "அமர்வு இணைப்பு நீக்கப்பட்டது",
   "softwareTeamDlc.missingRoles": "குறையும் குழு அமர்வுகள்: {roles}",
-  "softwareTeamDlc.teamComplete": "இந்த டெலிவரியில் Product, Engineer, Reviewer அட்டைகள் உள்ளன.",
+  "softwareTeamDlc.teamComplete":
+    "இந்த டெலிவரியில் Product, Architect, Engineer, Reviewer, QA, Writer அட்டைகள் உள்ளன.",
   "softwareTeamDlc.addSdlcDocs": "விடுபட்ட docs/sdlc கோப்புகளைச் சேர்",
   "softwareTeamDlc.sliceRefsHint":
     "திட்டம், இலக்கு, விளைபொருள் இந்த விநியோகத்தின் அனைத்து அட்டைகளிலும் பகிரப்படும். சேமித்தால் அனைத்தும் புதுப்பிக்கப்படும்.",
   "softwareTeamDlc.sliceRefsSaved": "துண்டு குறிப்புகள் இந்த விநியோகத்தின் அனைத்து அட்டைகளிலும் சேமிக்கப்பட்டன.",
   "softwareTeamDlc.saveSliceRefs": "துண்டு குறிப்புகளை சேமி",
+  "softwareTeamDlc.copySummary": "சுருக்கத்தை நகலெடு",
+  "softwareTeamDlc.copySummaryOk": "சுருக்கம் நகலெடுக்கப்பட்டது.",
+  "softwareTeamDlc.copySummaryFailed": "சுருக்கத்தை நகலெடுக்க முடியவில்லை.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "சுருக்கம் நகலெடுக்கப்பட்டது. திட்டக் கோப்பு எழுதப்படவில்லை.",
 } as const;

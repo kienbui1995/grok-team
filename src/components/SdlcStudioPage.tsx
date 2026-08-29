@@ -33,11 +33,15 @@ import {
   buildSoftwareTeamDeliveryDetail,
   decideSoftwareTeamDoneCta,
   ensureSoftwareTeamItemDeliveryId,
+  composeSoftwareTeamDeliveryMarkdown,
   exportSoftwareTeamDeliverySummary,
   filterSoftwareTeamStudioItems,
   isSoftwareTeamItemArchived,
   lastSoftwareTeamPipelineFileStatus,
   listSoftwareTeamDeliveryGroups,
+  loadSoftwareTeamStudioPrefs,
+  resolveSoftwareTeamStudioPrefs,
+  saveSoftwareTeamStudioPrefs,
   normalizeSoftwareTeamGitBranch,
   missingSoftwareTeamDeliveryRoles,
   nextSoftwareTeamRole,
@@ -54,6 +58,7 @@ import {
   softwareTeamDeliveryTitle,
   softwareTeamDeliverySiblingDraft,
   softwareTeamExportMessageKey,
+  softwareTeamExportShouldCopyInstead,
   softwareTeamPipelineFileMessageKey,
   softwareTeamRoleById,
   softwareTeamRoleHistoryIds,
@@ -214,8 +219,12 @@ export function SdlcStudioPage({
   });
   const [query, setQuery] = useState("");
   const [deliveryFilter, setDeliveryFilter] =
-    useState<SoftwareTeamDeliveryFilterId>(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
-  const [showArchived, setShowArchived] = useState(false);
+    useState<SoftwareTeamDeliveryFilterId>(
+      () => loadSoftwareTeamStudioPrefs().deliveryFilter,
+    );
+  const [showArchived, setShowArchived] = useState(
+    () => loadSoftwareTeamStudioPrefs().showArchived,
+  );
   const [stageFilter, setStageFilter] =
     useState<SoftwareTeamStageFilterId>(SOFTWARE_TEAM_STAGE_FILTER_ALL);
   const [roleFilter, setRoleFilter] =
@@ -249,6 +258,42 @@ export function SdlcStudioPage({
     y: number;
   } | null>(null);
   const emptyWizardOffered = useRef(false);
+
+  const persistStudioPrefs = useCallback(
+    (next: {
+      deliveryFilter?: SoftwareTeamDeliveryFilterId;
+      showArchived?: boolean;
+    }) => {
+      const prefs = resolveSoftwareTeamStudioPrefs(
+        {
+          deliveryFilter: next.deliveryFilter ?? deliveryFilter,
+          showArchived: next.showArchived ?? showArchived,
+        },
+        pipeline.items,
+        pipeline.store.archivedDeliveryIds,
+      );
+      setDeliveryFilter(prefs.deliveryFilter);
+      setShowArchived(prefs.showArchived);
+      saveSoftwareTeamStudioPrefs(prefs);
+    },
+    [deliveryFilter, pipeline.items, pipeline.store.archivedDeliveryIds, showArchived],
+  );
+
+  useEffect(() => {
+    const resolved = resolveSoftwareTeamStudioPrefs(
+      { deliveryFilter, showArchived },
+      pipeline.items,
+      pipeline.store.archivedDeliveryIds,
+    );
+    if (
+      resolved.deliveryFilter === deliveryFilter &&
+      resolved.showArchived === showArchived
+    ) {
+      return;
+    }
+    setDeliveryFilter(resolved.deliveryFilter);
+    setShowArchived(resolved.showArchived);
+  }, [deliveryFilter, pipeline.items, pipeline.store.archivedDeliveryIds, showArchived]);
 
   useEffect(() => {
     let timer: number | null = null;
@@ -337,7 +382,7 @@ export function SdlcStudioPage({
   const openDetail = useCallback((item: SoftwareTeamPipelineItem) => {
     const deliveryId = item.deliveryId.trim();
     if (deliveryId) {
-      setDeliveryFilter(deliveryId);
+      persistStudioPrefs({ deliveryFilter: deliveryId });
       setDetailTarget({
         kind: "delivery",
         deliveryId,
@@ -346,7 +391,7 @@ export function SdlcStudioPage({
       return;
     }
     setDetailTarget({ kind: "item", itemId: item.id });
-  }, []);
+  }, [persistStudioPrefs]);
 
   const deliveryDetail = useMemo(() => {
     if (!detailTarget) return null;
@@ -437,6 +482,22 @@ export function SdlcStudioPage({
     [t, workspace.projectPath],
   );
 
+  const onCopyDeliverySummary = useCallback(
+    async (detail: NonNullable<typeof deliveryDetail>) => {
+      const markdown = composeSoftwareTeamDeliveryMarkdown(detail);
+      const ok = await copyText(markdown);
+      setCopyError(!ok);
+      setCopied(ok ? `summary:${detail.deliveryId || detail.focusItem?.id || "x"}` : null);
+      setStatus(
+        ok
+          ? t("softwareTeamDlc.copySummaryOk")
+          : t("softwareTeamDlc.copySummaryFailed"),
+      );
+      return ok;
+    },
+    [t],
+  );
+
   const onExportDelivery = useCallback(
     async (detail: NonNullable<typeof deliveryDetail>) => {
       const result = await exportSoftwareTeamDeliverySummary({
@@ -449,12 +510,22 @@ export function SdlcStudioPage({
         );
         return;
       }
-      setStatus(
+      const reasonText =
         result.reason === "host_error"
           ? t(softwareTeamExportMessageKey(result.reason), {
               error: result.error ?? "",
             })
-          : t(softwareTeamExportMessageKey(result.reason)),
+          : t(softwareTeamExportMessageKey(result.reason));
+      if (!softwareTeamExportShouldCopyInstead(result.reason)) {
+        setStatus(reasonText);
+        return;
+      }
+      const copiedOk = await copyText(composeSoftwareTeamDeliveryMarkdown(detail));
+      setCopyError(!copiedOk);
+      setStatus(
+        copiedOk
+          ? `${reasonText} ${t("softwareTeamDlc.exportCopiedInstead")}`
+          : reasonText,
       );
     },
     [t, workspace.projectPath],
@@ -1318,7 +1389,9 @@ export function SdlcStudioPage({
                   : "")
               }
               onClick={() => {
-                setDeliveryFilter(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
+                persistStudioPrefs({
+                  deliveryFilter: SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
+                });
                 setDetailTarget(null);
               }}
             >
@@ -1333,7 +1406,7 @@ export function SdlcStudioPage({
                   (deliveryFilter === group.id ? " is-active" : "")
                 }
                 onClick={() => {
-                  setDeliveryFilter(group.id);
+                  persistStudioPrefs({ deliveryFilter: group.id });
                   setDetailTarget({ kind: "delivery", deliveryId: group.id });
                 }}
               >
@@ -1350,7 +1423,9 @@ export function SdlcStudioPage({
                     : "")
                 }
                 onClick={() => {
-                  setDeliveryFilter(SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED);
+                  persistStudioPrefs({
+                    deliveryFilter: SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+                  });
                   setDetailTarget(null);
                 }}
               >
@@ -1419,7 +1494,9 @@ export function SdlcStudioPage({
           <button
             type="button"
             className={"task-board__chip" + (showArchived ? " is-active" : "")}
-            onClick={() => setShowArchived((prev) => !prev)}
+            onClick={() =>
+              persistStudioPrefs({ showArchived: !showArchived })
+            }
           >
             {t("softwareTeamDlc.showArchived")}
           </button>
@@ -1709,6 +1786,9 @@ export function SdlcStudioPage({
         onSelectSession={onSelectSession}
         onExport={() => {
           if (deliveryDetail) void onExportDelivery(deliveryDetail);
+        }}
+        onCopySummary={() => {
+          if (deliveryDetail) void onCopyDeliverySummary(deliveryDetail);
         }}
         onToggleArchive={(archived) => {
           const focus = deliveryDetail?.focusItem;

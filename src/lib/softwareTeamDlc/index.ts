@@ -236,6 +236,7 @@ export {
 export {
   SOFTWARE_TEAM_ATTACH_MAX,
   SOFTWARE_TEAM_ATTACH_PREFER,
+  SOFTWARE_TEAM_ROSTER_ROLES,
   missingSoftwareTeamDeliveryRoles,
   pickSoftwareTeamAttachSessions,
   seedSoftwareTeamAttachStarter,
@@ -371,7 +372,18 @@ export {
   softwareTeamDeliveryExportRelative,
   softwareTeamDeliverySlug,
   softwareTeamExportMessageKey,
+  softwareTeamExportShouldCopyInstead,
   type SoftwareTeamExportHost,
   type SoftwareTeamExportReason,
   type SoftwareTeamExportResult,
 } from "./exportDelivery";
+
+export {
+  DEFAULT_SOFTWARE_TEAM_STUDIO_PREFS,
+  SOFTWARE_TEAM_DLC_STUDIO_PREFS_KEY,
+  loadSoftwareTeamStudioPrefs,
+  parseSoftwareTeamStudioPrefs,
+  resolveSoftwareTeamStudioPrefs,
+  saveSoftwareTeamStudioPrefs,
+  type SoftwareTeamStudioPrefs,
+} from "./studioPrefs";
