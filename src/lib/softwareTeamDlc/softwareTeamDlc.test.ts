@@ -98,7 +98,13 @@ import {
   softwareTeamDeliverySiblingDraft,
   softwareTeamRoleHistoryIds,
   acceptSoftwareTeamPipelineFile,
+  bindSoftwareTeamPipelineProjectPath,
+  hydrateSoftwareTeamPipelineFromProject,
+  isSoftwareTeamPipelineLocalDirty,
   keepSoftwareTeamPipelineLocal,
+  lastSoftwareTeamPipelineFileMtimeMs,
+  lastSoftwareTeamPipelineFileStatus,
+  queueSoftwareTeamPipelineProjectPersist,
   writeSoftwareTeamPipelineFile,
   buildSoftwareTeamDeliveryDetail,
   composeSoftwareTeamDeliveryMarkdown,
@@ -173,6 +179,8 @@ function fileHost(opts?: {
   files?: Record<string, string>;
   mtimes?: Record<string, number>;
   failWrite?: string;
+  omitMtime?: boolean;
+  readError?: string;
 }) {
   const files = { ...(opts?.files ?? {}) };
   const mtimes = { ...(opts?.mtimes ?? {}) };
@@ -184,10 +192,15 @@ function fileHost(opts?: {
     host: {
       isDesktopHost: () => opts?.desktop !== false,
       readFile: async (_p: string, relative: string) => {
+        if (opts?.readError) {
+          return { error: opts.readError };
+        }
         if (relative in files) {
           return {
             text: files[relative],
-            mtimeMs: mtimes[relative] ?? 1,
+            ...(opts?.omitMtime
+              ? {}
+              : { mtimeMs: mtimes[relative] ?? 1 }),
           };
         }
         return { error: `not a file: ${relative}` };
@@ -197,9 +210,24 @@ function fileHost(opts?: {
         if (opts?.failWrite === relative) throw new Error("write boom");
         files[relative] = content;
         mtimes[relative] = (mtimes[relative] ?? 0) + 10;
+        return { mtimeMs: mtimes[relative] };
       },
     },
   };
+}
+
+function pipelineDoc(
+  items: ReturnType<typeof createSoftwareTeamPipelineItem>[],
+  extra?: { version?: number; updatedAt?: number },
+) {
+  return JSON.stringify({
+    schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+    version: extra?.version ?? 3,
+    updatedAt: extra?.updatedAt ?? 1,
+    items,
+    activity: [],
+    archivedDeliveryIds: [],
+  });
 }
 
 describe("Software Team DLC enable pref", () => {
@@ -3109,5 +3137,554 @@ describe("Software Works delivery handoff keeps the source card", () => {
     if (!again.ok) return;
     expect(again.mode).toBe("focus");
     expect(again.store.items.filter((item) => item.roleId === "writer")).toHaveLength(1);
+  });
+});
+
+describe("Software Works pipeline file adversarial persist/conflict", () => {
+  afterEach(() => {
+    bindSoftwareTeamPipelineProjectPath(null);
+    resetSoftwareTeamPipelineFileSeenState();
+  });
+
+  async function seenBoard(
+    title: string,
+    opts?: { omitMtime?: boolean; mtime?: number },
+  ) {
+    const item = createSoftwareTeamPipelineItem({
+      id: "adv-1",
+      roleId: "product",
+      title,
+      deliveryId: "d-adv",
+    })!;
+    const { host, files, mtimes } = fileHost({
+      files: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: pipelineDoc([item]) },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: opts?.mtime ?? 10 },
+      omitMtime: opts?.omitMtime,
+    });
+    const storage = memoryStore();
+    const loaded = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(loaded).toMatchObject({ ok: true, kind: "replaced" });
+    if (!loaded.ok || loaded.kind !== "replaced") {
+      throw new Error("expected first reload to replace");
+    }
+    return { host, files, mtimes, storage, store: loaded.store, item };
+  }
+
+  it("conflicts on dirty local + different file when mtime is missing", async () => {
+    const { host, files, storage, store } = await seenBoard("Local", {
+      omitMtime: true,
+    });
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    expect(isSoftwareTeamPipelineLocalDirty(dirty)).toBe(true);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    const conflict = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    expect(conflict).toMatchObject({ ok: false, kind: "conflict" });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Local", "Unsaved"],
+    );
+  });
+
+  it("conflicts on dirty local + different file when mtime does not increase", async () => {
+    const { host, files, mtimes, storage, store } = await seenBoard("Local", {
+      mtime: 10,
+    });
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 10;
+    const conflict = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    expect(conflict).toMatchObject({ ok: false, kind: "conflict" });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Local", "Unsaved"],
+    );
+  });
+
+  it("does not treat Date.now() as the file mtime after write", async () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "adv-w",
+      roleId: "product",
+      title: "Wrote",
+      deliveryId: "d-adv",
+    })!;
+    const store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      item,
+    );
+    const { host, files, mtimes } = fileHost();
+    const written = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store,
+      host,
+    });
+    expect(written).toMatchObject({ ok: true, reason: "ok_project" });
+    const seen = lastSoftwareTeamPipelineFileMtimeMs();
+    expect(seen).toBe(mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]);
+    expect(seen).toBeLessThan(1_000_000);
+
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-w",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = (seen ?? 0) + 5;
+    const storage = memoryStore();
+    persistSoftwareTeamPipeline(store, storage);
+    const replaced = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: store,
+    });
+    expect(replaced).toMatchObject({ ok: true, kind: "replaced" });
+    if (!replaced.ok || replaced.kind !== "replaced") return;
+    expect(replaced.store.items[0]?.title).toBe("Foreign");
+  });
+
+  it("refuses implicit overwrite when the file was never accepted", async () => {
+    const local = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "adv-n1",
+      roleId: "product",
+      title: "Cache",
+      deliveryId: "d-adv",
+    });
+    const { host, files } = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: pipelineDoc([
+          createSoftwareTeamPipelineItem({
+            id: "adv-n2",
+            roleId: "engineer",
+            title: "Disk",
+            deliveryId: "d-adv",
+          }),
+        ]),
+      },
+    });
+    const write = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: local,
+      host,
+    });
+    expect(write).toMatchObject({ ok: false, reason: "conflict" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Disk");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Cache");
+  });
+
+  it("write-without-flag still conflicts after a dirty+newer file", async () => {
+    const { host, files, mtimes, storage, store } = await seenBoard("Local");
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    expect(
+      await reloadSoftwareTeamPipelineIfNewer({
+        projectPath: "/repo",
+        host,
+        storage,
+        cached: dirty,
+      }),
+    ).toMatchObject({ ok: false, kind: "conflict" });
+    const implicit = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+    });
+    expect(implicit).toMatchObject({ ok: false, reason: "conflict" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
+  });
+
+  it("queued persist refuses overwrite while conflict is unresolved", async () => {
+    const { host, files, mtimes, storage, store } = await seenBoard("Local");
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    expect(
+      await reloadSoftwareTeamPipelineIfNewer({
+        projectPath: "/repo",
+        host,
+        storage,
+        cached: dirty,
+      }),
+    ).toMatchObject({ ok: false, kind: "conflict" });
+    bindSoftwareTeamPipelineProjectPath("/repo");
+    queueSoftwareTeamPipelineProjectPersist(dirty, host);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(lastSoftwareTeamPipelineFileStatus()).toMatchObject({
+      ok: false,
+      reason: "conflict",
+    });
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
+  });
+
+  it("keep after refused write overwrites only with the flag", async () => {
+    const { host, files, mtimes, storage, store } = await seenBoard("Local");
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    const refused = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+    });
+    expect(refused).toMatchObject({ ok: false, reason: "conflict" });
+    const kept = await keepSoftwareTeamPipelineLocal({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+      storage,
+    });
+    expect(kept).toMatchObject({ ok: true, reason: "ok_project" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE]).toContain("Foreign");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Unsaved");
+    const again = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+    });
+    expect(again).toMatchObject({ ok: true, skipped: true });
+  });
+
+  it("does not overwrite when backup write fails", async () => {
+    const { host, files, mtimes, storage, store } = await seenBoard("Local");
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    const failing = fileHost({
+      files,
+      mtimes,
+      failWrite: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+    });
+    failing.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] =
+      files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE];
+    const kept = await keepSoftwareTeamPipelineLocal({
+      projectPath: "/repo",
+      store: dirty,
+      host: failing.host,
+      storage,
+    });
+    expect(kept.ok).toBe(false);
+    expect(failing.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
+    expect(failing.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain(
+      "Unsaved",
+    );
+  });
+
+  it("backs up and keeps local when the file is unreadable JSON after conflict", async () => {
+    const { host, files, mtimes, storage, store } = await seenBoard("Local");
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    expect(
+      await reloadSoftwareTeamPipelineIfNewer({
+        projectPath: "/repo",
+        host,
+        storage,
+        cached: dirty,
+      }),
+    ).toMatchObject({ ok: false, kind: "conflict" });
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = "{not-json";
+    const failed = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    expect(failed).toMatchObject({ ok: false, kind: "parse_failed", backedUp: true });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Local", "Unsaved"],
+    );
+    const implicit = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+    });
+    expect(implicit).toMatchObject({ ok: false, reason: "parse_fail" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toBe("{not-json");
+    const kept = await keepSoftwareTeamPipelineLocal({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+      storage,
+    });
+    expect(kept).toMatchObject({ ok: true, reason: "ok_project" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE]).toBe("{not-json");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Unsaved");
+  });
+
+  it("accept when the project file is missing keeps the dirty cache", async () => {
+    const { host, files, mtimes, storage, store } = await seenBoard("Local");
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    delete files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE];
+    const accepted = await acceptSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(accepted).toMatchObject({ ok: true, kind: "missing" });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Local", "Unsaved"],
+    );
+  });
+
+  it("accept is idempotent; hydrate does not clobber dirty without accept", async () => {
+    const { host, files, mtimes, storage, store } = await seenBoard("Local");
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = pipelineDoc([
+      createSoftwareTeamPipelineItem({
+        id: "adv-1",
+        roleId: "product",
+        title: "Foreign",
+        deliveryId: "d-adv",
+      }),
+    ]);
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    const hydrated = await hydrateSoftwareTeamPipelineFromProject({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(hydrated).toMatchObject({ ok: false, reason: "conflict" });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Local", "Unsaved"],
+    );
+    const first = await acceptSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(first).toMatchObject({ ok: true, kind: "replaced" });
+    const second = await acceptSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(second).toMatchObject({ ok: true, kind: "replaced" });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Foreign"],
+    );
+  });
+
+  it("refuses write when the existing file cannot be read", async () => {
+    const store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "adv-e",
+      roleId: "product",
+      title: "Cache",
+      deliveryId: "d-adv",
+    });
+    const { host, files } = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: pipelineDoc([
+          createSoftwareTeamPipelineItem({
+            id: "adv-e",
+            roleId: "product",
+            title: "Disk",
+            deliveryId: "d-adv",
+          }),
+        ]),
+      },
+      readError: "permission denied",
+    });
+    const write = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store,
+      host,
+    });
+    expect(write).toMatchObject({ ok: false, reason: "host_error" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Disk");
+  });
+
+  it("resets seen state when the bound project path changes", async () => {
+    const a = await seenBoard("Auth");
+    bindSoftwareTeamPipelineProjectPath("/repo-a");
+    const dirty = addSoftwareTeamPipelineItem(a.store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, a.storage);
+    const b = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]:
+          a.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE],
+      },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: 10 },
+    });
+    bindSoftwareTeamPipelineProjectPath("/repo-b");
+    const write = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo-b",
+      store: dirty,
+      host: b.host,
+    });
+    expect(write).toMatchObject({ ok: false, reason: "conflict" });
+    expect(b.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Unsaved");
+  });
+
+  it("shared ~/.grok and /home/u/.grok refuse accept/keep/write/queue", async () => {
+    const store = createEmptySoftwareTeamPipelineStore();
+    const { host, writes } = fileHost();
+    for (const projectPath of ["~/.grok", "/home/u/.grok"]) {
+      expect(
+        await writeSoftwareTeamPipelineFile({ projectPath, store, host }),
+      ).toMatchObject({ ok: false, reason: "blocked_shared_home" });
+      expect(
+        await acceptSoftwareTeamPipelineFile({ projectPath, host }),
+      ).toMatchObject({ ok: false, kind: "blocked_shared_home" });
+      expect(
+        await keepSoftwareTeamPipelineLocal({ projectPath, store, host }),
+      ).toMatchObject({ ok: false, reason: "blocked_shared_home" });
+      expect(
+        await reloadSoftwareTeamPipelineIfNewer({ projectPath, host }),
+      ).toMatchObject({ ok: false, kind: "blocked_shared_home" });
+    }
+    bindSoftwareTeamPipelineProjectPath("/home/u/.grok");
+    queueSoftwareTeamPipelineProjectPersist(store, host);
+    await Promise.resolve();
+    expect(writes).toEqual([]);
   });
 });
