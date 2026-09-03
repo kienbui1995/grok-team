@@ -13,7 +13,7 @@ A single pipeline for a slice of software:
 1. Install the role pack (optional, honest Host write) into **project `.grok/`** or **Independent** agent-home.
 2. Add a work item or click a card: **open or create** a Grok Build session and put the role starter **in the composer** (not clipboard-only).
 3. Move the item on the SDLC board (Backlog → Design → Build → Review → Ship).
-4. Hand off Product → Architect → Engineer → Reviewer → QA → Writer. The item’s stage updates and the next-role starter is loaded into that session’s composer (or a new session if Host `sessionCreate` is available).
+4. Hand off Product → Architect → Engineer → Reviewer → QA → Writer. **Ungrouped** cards still change role in place. Cards with a `deliveryId` **keep their role**; handoff opens the next-role sibling (or creates one, unbound) and loads that starter. Same for Ship → Writer.
 
 Plan / goal / artifact fields live on the work item so the next role sees the same slice. When cards share a `deliveryId`, those three refs stay aligned (edit one card or the detail pane, the others update). Reviewer / QA notes stay on their own cards; the Ship gate reads the first non-empty note across the delivery.
 
@@ -64,7 +64,7 @@ Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRe
 |-------|--------|
 | Board stage change | Updates the item (`stageSource: board`) and **rewrites** session tags from the store. |
 | Live session `working` / `done` | `working` → Build. `done` **never auto-Ships** — sets `sessionDonePending` and shows a Handoff / Ship CTA. `needs_you` / `idle` do **not** overwrite Design / Review / Backlog. |
-| Handoff | Next role + that role’s default stage (`stageSource: handoff`) + starter text into the composer. |
+| Handoff | Ungrouped: next role + that role’s default stage on the **same** card (`stageSource: handoff`). Delivery: keep the source card; focus or create the next-role sibling (new session on launch). Starter goes into that session’s composer. |
 | Session tags | Projection only (`grok.softwareTeamDlc.sessionTags`). Never a second dead overlay. Legacy tags hydrate into items on first load. |
 
 Does not change Host session schema. Does not spawn CLI processes.
@@ -83,7 +83,7 @@ Helpers: `src/lib/softwareTeamDlc/sessionLaunch.ts`.
 | Goal | session draft `goalMode: true` when `goalRef` is set | No Host “create goal” API in production (`createGoalEntity` is optional and omitted). Field + starter line stay honest. A Host goal id is written to `goalRef` only if that optional hook returns one. |
 | Artifact | field + starter line | No fake Host write. |
 
-Handoff uses the same launch path with the next-role starter. No second CLI process.
+Handoff uses the same launch path with the next-role starter. On a delivery it launches the **sibling** card (create if missing), not a second CLI process. Ungrouped cards still mutate in place.
 
 ## Install pack (honesty)
 
@@ -163,7 +163,7 @@ Existing domain: `src/lib/chatAttach.ts` (`MAX_ATTACHED_CHATS = 3`). Workbench c
 
 Studio helper `deliveryAttach.ts` picks up to 3 **other** bound session UUIDs on the **same** `deliveryId` (prefer Product / Engineer / Reviewer for attach ranking) and seeds `composerSessionDraft.chatAttachments` plus `[[chat:]]` tokens on launch. Items with a different or empty delivery id are not mixed in. Non-UUID ids are skipped. There is **no** Host “team attach” RPC. Live chips appear when Workbench restores that session draft.
 
-Context menu **Add team session** and the detail pane create an unbound sibling card (same slice refs + `deliveryId`) and open a **new** Grok Build session for any missing role on the Product→Writer chain (`SOFTWARE_TEAM_ROSTER_ROLES`). Attach-chat ranking stays Product / Engineer / Reviewer. New work items inherit the board’s delivery id when one exists.
+Context menu **Add team session** and the detail pane create an unbound sibling card (same slice refs + `deliveryId`) and open a **new** Grok Build session for any missing role on the Product→Writer chain (`SOFTWARE_TEAM_ROSTER_ROLES`). **Handoff / Ship on a delivery** do the same for the next role (or Writer) instead of rewriting the source card. Attach-chat ranking stays Product / Engineer / Reviewer. New work items inherit the board’s delivery id when one exists.
 
 ## Slash `/team-*`
 

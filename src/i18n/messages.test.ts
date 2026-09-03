@@ -74,6 +74,9 @@ describe("i18n catalog", () => {
       t("en", "softwareTeamDlc.startDeliveryBootstrapped", { n: 3 }),
     ).toContain("3");
     expect(t("en", "softwareTeamDlc.handoffCta", { role: "QA" })).toContain("QA");
+    expect(
+      t("en", "softwareTeamDlc.handoffKept", { role: "QA", from: "Engineer" }),
+    ).toContain("QA");
     expect(t("en", "softwareTeamDlc.addTeammate", { role: "Engineer" })).toContain(
       "Engineer",
     );

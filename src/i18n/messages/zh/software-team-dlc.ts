@@ -270,4 +270,7 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryOk": "已复制摘要。",
   "softwareTeamDlc.copySummaryFailed": "无法复制摘要。",
   "softwareTeamDlc.exportCopiedInstead": "已复制摘要。没有写入项目文件。",
+  "softwareTeamDlc.handoffKept": "已打开 {role}。此卡片仍是 {from}。",
+  "softwareTeamDlc.handoffCreated": "已添加 {role} 卡片。此卡片仍是 {from}。",
+  "softwareTeamDlc.shipKept": "已打开 Writer。此卡片仍是 {from}。",
 } as const;

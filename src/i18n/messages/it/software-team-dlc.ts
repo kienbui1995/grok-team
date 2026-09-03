@@ -297,4 +297,10 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Impossibile copiare il riepilogo.",
   "softwareTeamDlc.exportCopiedInstead":
     "Riepilogo copiato. Nessun file del progetto è stato scritto.",
+  "softwareTeamDlc.handoffKept":
+    "Aperto {role}. Questa scheda resta {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Aggiunta una scheda {role}. Questa scheda resta {from}.",
+  "softwareTeamDlc.shipKept":
+    "Aperto Writer. Questa scheda resta {from}.",
 } as const;

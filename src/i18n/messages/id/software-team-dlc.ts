@@ -298,4 +298,10 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Tidak bisa menyalin ringkasan.",
   "softwareTeamDlc.exportCopiedInstead":
     "Ringkasan disalin. Tidak ada berkas proyek yang ditulis.",
+  "softwareTeamDlc.handoffKept":
+    "{role} dibuka. Kartu ini tetap {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Kartu {role} ditambah. Kartu ini tetap {from}.",
+  "softwareTeamDlc.shipKept":
+    "Writer dibuka. Kartu ini tetap {from}.",
 } as const;

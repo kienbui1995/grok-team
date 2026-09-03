@@ -295,4 +295,10 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "요약을 복사하지 못했습니다.",
   "softwareTeamDlc.exportCopiedInstead":
     "요약을 복사했습니다. 프로젝트 파일은 쓰지 않았습니다.",
+  "softwareTeamDlc.handoffKept":
+    "{role}을(를) 열었습니다. 이 카드는 {from}으로 유지됩니다.",
+  "softwareTeamDlc.handoffCreated":
+    "{role} 카드를 추가했습니다. 이 카드는 {from}으로 유지됩니다.",
+  "softwareTeamDlc.shipKept":
+    "Writer를 열었습니다. 이 카드는 {from}으로 유지됩니다.",
 } as const;

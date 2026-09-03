@@ -298,4 +298,10 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Zusammenfassung konnte nicht kopiert werden.",
   "softwareTeamDlc.exportCopiedInstead":
     "Zusammenfassung kopiert. Es wurde keine Projektdatei geschrieben.",
+  "softwareTeamDlc.handoffKept":
+    "{role} geöffnet. Diese Karte bleibt {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "{role}-Karte hinzugefügt. Diese Karte bleibt {from}.",
+  "softwareTeamDlc.shipKept":
+    "Writer geöffnet. Diese Karte bleibt {from}.",
 } as const;

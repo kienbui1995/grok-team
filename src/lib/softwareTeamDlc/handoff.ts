@@ -11,8 +11,11 @@ import {
 } from "./roles";
 import type { SoftwareTeamSdlcStageId } from "./sdlc";
 import { softwareTeamRoleStarterPrompt } from "./pack";
+import { softwareTeamDeliverySiblingDraft } from "./delivery";
 import {
+  addSoftwareTeamPipelineItem,
   appendSoftwareTeamPipelineActivity,
+  createSoftwareTeamPipelineItem,
   pipelineItemById,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamPipelineStore,
@@ -57,6 +60,17 @@ export function nextSoftwareTeamRole(
   }
 }
 
+export const SOFTWARE_TEAM_HANDOFF_MODES = [
+  "mutate",
+  "focus",
+  "created",
+  "done",
+  "none",
+] as const;
+
+export type SoftwareTeamHandoffMode =
+  (typeof SOFTWARE_TEAM_HANDOFF_MODES)[number];
+
 export type SoftwareTeamHandoffResult =
   | {
       kind: "advanced";
@@ -76,6 +90,19 @@ export type SoftwareTeamHandoffResult =
       item: SoftwareTeamPipelineItem;
       starter: null;
     };
+
+export type SoftwareTeamHandoffStoreResult = {
+  store: SoftwareTeamPipelineStore;
+  result: SoftwareTeamHandoffResult | null;
+  mode: SoftwareTeamHandoffMode;
+};
+
+/** Delivery cards keep their role. Ungrouped cards still mutate in place. */
+export function softwareTeamHandoffKeepsSourceCard(
+  item: Pick<SoftwareTeamPipelineItem, "deliveryId">,
+): boolean {
+  return Boolean(item.deliveryId.trim());
+}
 
 function roleLabel(roleId: SoftwareTeamRoleId): string {
   switch (roleId) {
@@ -236,41 +263,138 @@ export function applySoftwareTeamHandoff(
   };
 }
 
+function membersForHandoff(
+  store: SoftwareTeamPipelineStore,
+  item: SoftwareTeamPipelineItem,
+): SoftwareTeamPipelineItem[] {
+  const deliveryId = item.deliveryId.trim();
+  if (!deliveryId) return [item];
+  return store.items.filter((row) => row.deliveryId.trim() === deliveryId);
+}
+
+function appendHandoffActivity(
+  store: SoftwareTeamPipelineStore,
+  item: SoftwareTeamPipelineItem,
+  now: number,
+): SoftwareTeamPipelineStore {
+  return appendSoftwareTeamPipelineActivity(store, {
+    at: now,
+    type: "handoff",
+    deliveryId: item.deliveryId,
+    itemId: item.id,
+    roleId: item.roleId,
+    stageId: item.stageId,
+  });
+}
+
 export function applySoftwareTeamHandoffToStore(
   store: SoftwareTeamPipelineStore,
   itemId: string,
   now = Date.now(),
-): { store: SoftwareTeamPipelineStore; result: SoftwareTeamHandoffResult | null } {
+): SoftwareTeamHandoffStoreResult {
   const prev = pipelineItemById(store, itemId);
-  if (!prev) return { store, result: null };
-  const members = prev.deliveryId.trim()
-    ? store.items.filter((row) => row.deliveryId.trim() === prev.deliveryId.trim())
-    : [prev];
-  const result = applySoftwareTeamHandoff(prev, now, members);
-  if (result.kind === "done") return { store, result };
-  const next = updateSoftwareTeamPipelineItem(
+  if (!prev) return { store, result: null, mode: "none" };
+  const members = membersForHandoff(store, prev);
+  if (!softwareTeamHandoffKeepsSourceCard(prev)) {
+    const result = applySoftwareTeamHandoff(prev, now, members);
+    if (result.kind === "done") return { store, result, mode: "done" };
+    const next = updateSoftwareTeamPipelineItem(
+      store,
+      itemId,
+      {
+        roleId: result.item.roleId,
+        stageId: result.item.stageId,
+        roleHistory: result.item.roleHistory,
+        reviewNote: result.item.reviewNote,
+        qaNote: result.item.qaNote,
+        sessionDonePending: false,
+        stageSource: "handoff",
+      },
+      now,
+    );
+    return {
+      store: appendHandoffActivity(next, result.item, now),
+      result,
+      mode: "mutate",
+    };
+  }
+
+  const toRole = nextSoftwareTeamRole(prev.roleId);
+  if (!toRole) {
+    const cleared = updateSoftwareTeamPipelineItem(
+      store,
+      itemId,
+      { sessionDonePending: false },
+      now,
+    );
+    return {
+      store: cleared,
+      result: {
+        kind: "done",
+        fromRole: prev.roleId,
+        toRole: null,
+        fromStage: prev.stageId,
+        toStage: null,
+        item: prev,
+        starter: null,
+      },
+      mode: "done",
+    };
+  }
+
+  const merged = mergeDeliverySlice(prev, members);
+  const starterFrom = { ...prev, ...merged };
+  let nextStore = updateSoftwareTeamPipelineItem(
     store,
     itemId,
-    {
-      roleId: result.item.roleId,
-      stageId: result.item.stageId,
-      roleHistory: result.item.roleHistory,
-      reviewNote: result.item.reviewNote,
-      qaNote: result.item.qaNote,
-      sessionDonePending: false,
-      stageSource: "handoff",
-    },
+    { sessionDonePending: false },
     now,
   );
-  return {
-    store: appendSoftwareTeamPipelineActivity(next, {
-      at: now,
-      type: "handoff",
-      deliveryId: result.item.deliveryId,
-      itemId: result.item.id,
-      roleId: result.item.roleId,
-      stageId: result.item.stageId,
+  const existing = members.find((row) => row.id !== prev.id && row.roleId === toRole);
+  if (existing) {
+    const starter = composeHandoffStarter(starterFrom, existing);
+    return {
+      store: appendHandoffActivity(nextStore, existing, now),
+      result: {
+        kind: "advanced",
+        fromRole: prev.roleId,
+        toRole,
+        fromStage: prev.stageId,
+        toStage: existing.stageId,
+        item: existing,
+        starter,
+      },
+      mode: "focus",
+    };
+  }
+
+  const created = createSoftwareTeamPipelineItem({
+    ...softwareTeamDeliverySiblingDraft({
+      source: starterFrom,
+      roleId: toRole,
+      deliveryId: prev.deliveryId,
     }),
-    result,
+    stageSource: "handoff",
+    updatedAt: now,
+  });
+  if (!created) {
+    const fallback = applySoftwareTeamHandoff(prev, now, members);
+    return { store, result: fallback, mode: "none" };
+  }
+  nextStore = addSoftwareTeamPipelineItem(nextStore, created);
+  const live = pipelineItemById(nextStore, created.id) ?? created;
+  const starter = composeHandoffStarter(starterFrom, live);
+  return {
+    store: appendHandoffActivity(nextStore, live, now),
+    result: {
+      kind: "advanced",
+      fromRole: prev.roleId,
+      toRole,
+      fromStage: prev.stageId,
+      toStage: live.stageId,
+      item: live,
+      starter,
+    },
+    mode: "created",
   };
 }

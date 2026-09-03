@@ -295,4 +295,10 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "要約をコピーできませんでした。",
   "softwareTeamDlc.exportCopiedInstead":
     "要約をコピーしました。プロジェクトファイルは書いていません。",
+  "softwareTeamDlc.handoffKept":
+    "{role} を開きました。このカードは {from} のままです。",
+  "softwareTeamDlc.handoffCreated":
+    "{role} カードを追加しました。このカードは {from} のままです。",
+  "softwareTeamDlc.shipKept":
+    "Writer を開きました。このカードは {from} のままです。",
 } as const;

@@ -297,4 +297,10 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "No se pudo copiar el resumen.",
   "softwareTeamDlc.exportCopiedInstead":
     "Se copió el resumen. No se escribió ningún archivo del proyecto.",
+  "softwareTeamDlc.handoffKept":
+    "Se abrió {role}. Esta tarjeta sigue siendo {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Se añadió una tarjeta {role}. Esta tarjeta sigue siendo {from}.",
+  "softwareTeamDlc.shipKept":
+    "Se abrió Writer. Esta tarjeta sigue siendo {from}.",
 } as const;

@@ -298,4 +298,10 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Hindi makopya ang buod.",
   "softwareTeamDlc.exportCopiedInstead":
     "Nakopya ang buod. Walang file sa proyekto na naisulat.",
+  "softwareTeamDlc.handoffKept":
+    "Binuksan ang {role}. Ang card na ito ay nananatiling {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Nagdagdag ng {role} card. Ang card na ito ay nananatiling {from}.",
+  "softwareTeamDlc.shipKept":
+    "Binuksan ang Writer. Ang card na ito ay nananatiling {from}.",
 } as const;

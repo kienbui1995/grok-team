@@ -105,11 +105,15 @@ export {
 
 export {
   SOFTWARE_TEAM_HANDOFF_CHAIN,
+  SOFTWARE_TEAM_HANDOFF_MODES,
   applySoftwareTeamHandoff,
   applySoftwareTeamHandoffToStore,
   composeHandoffStarter,
   nextSoftwareTeamRole,
+  softwareTeamHandoffKeepsSourceCard,
+  type SoftwareTeamHandoffMode,
   type SoftwareTeamHandoffResult,
+  type SoftwareTeamHandoffStoreResult,
 } from "./handoff";
 
 export {
@@ -225,12 +229,14 @@ export {
 
 export {
   SOFTWARE_TEAM_DONE_CTA_KINDS,
+  applySoftwareTeamDeliveryShipToStore,
   applySoftwareTeamShipChoice,
   composeWriterShipStarter,
   decideSoftwareTeamDoneCta,
   softwareTeamWriterShipWritesFiles,
   type SoftwareTeamDoneCta,
   type SoftwareTeamDoneCtaKind,
+  type SoftwareTeamShipStoreResult,
 } from "./doneCta";
 
 export {

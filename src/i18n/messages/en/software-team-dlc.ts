@@ -306,4 +306,10 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Could not copy the summary.",
   "softwareTeamDlc.exportCopiedInstead":
     "Copied the summary. No project file was written.",
+  "softwareTeamDlc.handoffKept":
+    "Opened {role}. This card stays {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Added a {role} card. This card stays {from}.",
+  "softwareTeamDlc.shipKept":
+    "Opened Writer. This card stays {from}.",
 } as const;

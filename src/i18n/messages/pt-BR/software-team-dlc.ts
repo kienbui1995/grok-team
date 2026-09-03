@@ -297,4 +297,10 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Não foi possível copiar o resumo.",
   "softwareTeamDlc.exportCopiedInstead":
     "Resumo copiado. Nenhum arquivo do projeto foi gravado.",
+  "softwareTeamDlc.handoffKept":
+    "{role} aberto. Este cartão continua {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Cartão {role} adicionado. Este cartão continua {from}.",
+  "softwareTeamDlc.shipKept":
+    "Writer aberto. Este cartão continua {from}.",
 } as const;

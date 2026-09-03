@@ -297,4 +297,10 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Не вдалося скопіювати підсумок.",
   "softwareTeamDlc.exportCopiedInstead":
     "Підсумок скопійовано. Файл проєкту не записано.",
+  "softwareTeamDlc.handoffKept":
+    "Відкрито {role}. Ця картка лишається {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Додано картку {role}. Ця картка лишається {from}.",
+  "softwareTeamDlc.shipKept":
+    "Відкрито Writer. Ця картка лишається {from}.",
 } as const;

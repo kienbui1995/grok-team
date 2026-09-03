@@ -297,4 +297,10 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Impossible de copier le résumé.",
   "softwareTeamDlc.exportCopiedInstead":
     "Résumé copié. Aucun fichier du projet n’a été écrit.",
+  "softwareTeamDlc.handoffKept":
+    "{role} ouvert. Cette carte reste {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Carte {role} ajoutée. Cette carte reste {from}.",
+  "softwareTeamDlc.shipKept":
+    "Writer ouvert. Cette carte reste {from}.",
 } as const;

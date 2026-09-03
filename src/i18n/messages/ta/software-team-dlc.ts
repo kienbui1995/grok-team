@@ -298,4 +298,10 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "சுருக்கத்தை நகலெடுக்க முடியவில்லை.",
   "softwareTeamDlc.exportCopiedInstead":
     "சுருக்கம் நகலெடுக்கப்பட்டது. திட்டக் கோப்பு எழுதப்படவில்லை.",
+  "softwareTeamDlc.handoffKept":
+    "{role} திறக்கப்பட்டது. இந்த அட்டை {from} ஆகவே இருக்கும்.",
+  "softwareTeamDlc.handoffCreated":
+    "{role} அட்டை சேர்க்கப்பட்டது. இந்த அட்டை {from} ஆகவே இருக்கும்.",
+  "softwareTeamDlc.shipKept":
+    "Writer திறக்கப்பட்டது. இந்த அட்டை {from} ஆகவே இருக்கும்.",
 } as const;

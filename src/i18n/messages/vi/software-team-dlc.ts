@@ -306,4 +306,10 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Không sao chép được tóm tắt.",
   "softwareTeamDlc.exportCopiedInstead":
     "Đã sao chép tóm tắt. Không ghi tệp trong dự án.",
+  "softwareTeamDlc.handoffKept":
+    "Đã mở {role}. Thẻ này vẫn là {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Đã thêm thẻ {role}. Thẻ này vẫn là {from}.",
+  "softwareTeamDlc.shipKept":
+    "Đã mở Writer. Thẻ này vẫn là {from}.",
 } as const;

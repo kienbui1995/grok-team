@@ -29,7 +29,6 @@ import {
   SOFTWARE_TEAM_PIPELINE_FILE_EVENT,
   SOFTWARE_TEAM_ROLE_FILTER_ALL,
   SOFTWARE_TEAM_STAGE_FILTER_ALL,
-  applySoftwareTeamShipChoice,
   buildSoftwareTeamDeliveryDetail,
   decideSoftwareTeamDoneCta,
   ensureSoftwareTeamItemDeliveryId,
@@ -623,7 +622,8 @@ export function SdlcStudioPage({
 
   const onHandoff = useCallback(
     async (itemId: string) => {
-      const result = pipeline.handoff(itemId);
+      const handed = pipeline.handoff(itemId);
+      const result = handed.result;
       if (!result) return;
       if (result.kind === "done") {
         setStatus(t("softwareTeamDlc.handoffDone"));
@@ -636,9 +636,23 @@ export function SdlcStudioPage({
         },
         { starter: result.starter, createIfMissing: true },
       );
+      const fromRole = t(
+        softwareTeamRoleById(result.fromRole)?.titleKey ??
+          "softwareTeamDlc.rosterTitle",
+      );
+      const toRole = t(
+        softwareTeamRoleById(result.toRole)?.titleKey ??
+          "softwareTeamDlc.rosterTitle",
+      );
+      const kept =
+        handed.mode === "created"
+          ? t("softwareTeamDlc.handoffCreated", { role: toRole, from: fromRole })
+          : handed.mode === "focus"
+            ? t("softwareTeamDlc.handoffKept", { role: toRole, from: fromRole })
+            : t("softwareTeamDlc.handoffLoaded");
       if (launched.ok) {
         setCopyError(false);
-        setStatus(t("softwareTeamDlc.handoffLoaded"));
+        setStatus(kept);
         actions.applyLaunchNav(launched);
         return;
       }
@@ -647,7 +661,7 @@ export function SdlcStudioPage({
       setCopied(ok ? `handoff:${itemId}` : null);
       setStatus(
         launched.ok === false
-          ? `${actions.describeLaunch(launched)} ${
+          ? `${kept} ${actions.describeLaunch(launched)} ${
               ok ? t("softwareTeamDlc.handoffCopied") : t("softwareTeamDlc.copyFailed")
             }`
           : t("softwareTeamDlc.copyFailed"),
@@ -672,35 +686,31 @@ export function SdlcStudioPage({
 
   const onShipChoice = useCallback(
     async (item: SoftwareTeamPipelineItem) => {
-      const choice = applySoftwareTeamShipChoice(
-        item,
-        Date.now(),
-        deliveryCohort(pipeline.items, item),
-      );
+      const choice = pipeline.ship(item.id);
       if (!choice.ok) {
         setStatus(t("softwareTeamDlc.shipLocked"));
         return;
       }
-      pipeline.updateItem(item.id, {
-        roleId: choice.item.roleId,
-        stageId: choice.item.stageId,
-        roleHistory: choice.item.roleHistory,
-        planRef: choice.item.planRef,
-        goalRef: choice.item.goalRef,
-        artifactRef: choice.item.artifactRef,
-        reviewNote: choice.item.reviewNote,
-        qaNote: choice.item.qaNote,
-        sessionDonePending: false,
-        stageSource: "board",
-      });
       const launched = await actions.launchItem(
         {
-          ...itemToStarterFields({ ...item, ...choice.item }),
+          ...itemToStarterFields(choice.item),
           roleId: "writer",
         },
         { starter: choice.starter, createIfMissing: true },
       );
-      setStatus(actions.describeLaunch(launched));
+      const fromRole = t(
+        softwareTeamRoleById(item.roleId)?.titleKey ??
+          "softwareTeamDlc.rosterTitle",
+      );
+      const kept =
+        choice.mode === "created" || choice.mode === "focus"
+          ? t("softwareTeamDlc.shipKept", { from: fromRole })
+          : actions.describeLaunch(launched);
+      setStatus(
+        launched.ok
+          ? kept
+          : `${kept} ${actions.describeLaunch(launched)}`,
+      );
       if (launched.ok) actions.applyLaunchNav(launched);
     },
     [actions, pipeline, t],

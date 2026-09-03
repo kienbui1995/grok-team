@@ -8,6 +8,7 @@ import {
   SOFTWARE_TEAM_DLC_PIPELINE_CHANGE_EVENT,
   applySessionKanbanBoardToPipeline,
   applySessionKanbanToPipeline,
+  applySoftwareTeamDeliveryShipToStore,
   applySoftwareTeamHandoffToStore,
   assignSessionToPipeline,
   bindPipelineItemSession,
@@ -22,7 +23,8 @@ import {
   saveSoftwareTeamDlcEnabled,
   setPipelineItemRole,
   setPipelineItemStage,
-  type SoftwareTeamHandoffResult,
+  type SoftwareTeamHandoffStoreResult,
+  type SoftwareTeamShipStoreResult,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamPipelineItemDraft,
   type SoftwareTeamPipelineStore,
@@ -116,7 +118,8 @@ export function useSoftwareTeamPipeline(): {
   ) => void;
   clearSession: (sessionId: string) => void;
   removeItem: (itemId: string) => void;
-  handoff: (itemId: string) => SoftwareTeamHandoffResult | null;
+  handoff: (itemId: string) => SoftwareTeamHandoffStoreResult;
+  ship: (itemId: string) => SoftwareTeamShipStoreResult;
   applySessionKanban: (sessionId: string, column: AgentKanbanColumnId) => void;
   applySessionKanbanBoard: (
     placements: ReadonlyArray<{ sessionId: string; column: AgentKanbanColumnId }>,
@@ -230,12 +233,19 @@ export function useSoftwareTeamPipeline(): {
     setStore(rememberUndo(removeSoftwareTeamPipelineItem(loadSoftwareTeamPipelineStore(), itemId)));
   }, [rememberUndo]);
 
-  const handoff = useCallback((itemId: string): SoftwareTeamHandoffResult | null => {
-    const { store: next, result } = applySoftwareTeamHandoffToStore(
+  const handoff = useCallback((itemId: string): SoftwareTeamHandoffStoreResult => {
+    const current = loadSoftwareTeamPipelineStore();
+    const handed = applySoftwareTeamHandoffToStore(current, itemId);
+    if (handed.store !== current) setStore(rememberUndo(handed.store));
+    return handed;
+  }, [rememberUndo]);
+
+  const ship = useCallback((itemId: string): SoftwareTeamShipStoreResult => {
+    const result = applySoftwareTeamDeliveryShipToStore(
       loadSoftwareTeamPipelineStore(),
       itemId,
     );
-    setStore(rememberUndo(next));
+    if (result.ok) setStore(rememberUndo(result.store));
     return result;
   }, [rememberUndo]);
 
@@ -396,6 +406,7 @@ export function useSoftwareTeamPipeline(): {
     clearSession,
     removeItem,
     handoff,
+    ship,
     applySessionKanban,
     applySessionKanbanBoard,
     reloadFromProject,

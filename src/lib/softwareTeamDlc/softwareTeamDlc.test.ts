@@ -13,6 +13,7 @@ import {
   SOFTWARE_TEAM_SDLC_STAGE_IDS,
   addSoftwareTeamPipelineItem,
   applySessionKanbanToPipeline,
+  applySoftwareTeamDeliveryShipToStore,
   applySoftwareTeamHandoff,
   applySoftwareTeamHandoffToStore,
   assignSessionToPipeline,
@@ -53,6 +54,7 @@ import {
   stageFromSessionKanbanColumn,
   upsertSoftwareTeamSessionTag,
   applySoftwareTeamShipChoice,
+  softwareTeamHandoffKeepsSourceCard,
   attachSoftwareTeamPlanChrome,
   composeHandoffStarter,
   composeRoleSessionStarter,
@@ -1827,6 +1829,8 @@ describe("Software Works activity + delivery detail + reload", () => {
     );
     const handed = applySoftwareTeamHandoffToStore(store, "act-1", 13);
     expect(handed.result?.kind).toBe("advanced");
+    expect(handed.mode).toBe("created");
+    expect(pipelineItemById(handed.store, "act-1")?.roleId).toBe("product");
     expect(handed.store.activity.some((e) => e.type === "handoff")).toBe(true);
     expect(handed.store.activity.every((e) => e.deliveryId === "del-act")).toBe(
       true,
@@ -2691,8 +2695,14 @@ describe("Software Works delivery-wide Ship + slice refs", () => {
     const handed = applySoftwareTeamHandoffToStore(store, "qa-handoff", 42);
     expect(handed.result?.kind).toBe("advanced");
     if (handed.result?.kind !== "advanced") return;
+    expect(handed.mode).toBe("created");
     expect(handed.result.toStage).toBe("ship");
-    expect(pipelineItemById(handed.store, "qa-handoff")?.stageId).toBe("ship");
+    expect(pipelineItemById(handed.store, "qa-handoff")?.roleId).toBe("qa");
+    expect(pipelineItemById(handed.store, "qa-handoff")?.stageId).toBe("review");
+    const writer = handed.store.items.find((item) => item.roleId === "writer");
+    expect(writer?.stageId).toBe("ship");
+    expect(writer?.sessionId).toBe("");
+    expect(handed.result.item.id).toBe(writer?.id);
   });
 
   it("does not invent Host plan or goal ids when syncing slice refs", () => {
@@ -2841,5 +2851,93 @@ describe("Software Works studio prefs + full roster + copy export", () => {
     if (blocked.ok) return;
     expect(softwareTeamExportShouldCopyInstead(blocked.reason)).toBe(true);
     expect(composeSoftwareTeamDeliveryMarkdown(detail)).toContain("# Billing");
+  });
+});
+
+describe("Software Works delivery handoff keeps the source card", () => {
+  it("mutates ungrouped cards and keeps delivery cards", () => {
+    const loose = createSoftwareTeamPipelineItem({
+      id: "loose-1",
+      roleId: "product",
+    })!;
+    expect(softwareTeamHandoffKeepsSourceCard(loose)).toBe(false);
+    const bound = createSoftwareTeamPipelineItem({
+      id: "bound-1",
+      roleId: "product",
+      deliveryId: "d-keep",
+    })!;
+    expect(softwareTeamHandoffKeepsSourceCard(bound)).toBe(true);
+  });
+
+  it("creates or focuses the next-role sibling without rewriting the source", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "src-prod",
+      roleId: "product",
+      title: "Auth",
+      deliveryId: "d-sib",
+      planRef: "docs/sdlc/spec.md",
+      sessionId: "sess-prod",
+    });
+    const first = applySoftwareTeamHandoffToStore(store, "src-prod", 5);
+    expect(first.mode).toBe("created");
+    expect(pipelineItemById(first.store, "src-prod")?.roleId).toBe("product");
+    expect(pipelineItemById(first.store, "src-prod")?.sessionId).toBe("sess-prod");
+    const architect = first.store.items.find((item) => item.roleId === "architect");
+    expect(architect?.sessionId).toBe("");
+    expect(architect?.planRef).toBe("docs/sdlc/spec.md");
+    expect(first.result?.kind).toBe("advanced");
+    if (first.result?.kind === "advanced") {
+      expect(first.result.item.id).toBe(architect?.id);
+      expect(first.result.starter).toMatch(/Architect/);
+      expect(first.result.starter).not.toMatch(/Claude|Codex/i);
+    }
+
+    const second = applySoftwareTeamHandoffToStore(first.store, "src-prod", 6);
+    expect(second.mode).toBe("focus");
+    expect(second.store.items.filter((item) => item.roleId === "architect")).toHaveLength(
+      1,
+    );
+    expect(pipelineItemById(second.store, "src-prod")?.roleId).toBe("product");
+  });
+
+  it("ships a Writer sibling and leaves Engineer in place", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "ship-eng",
+      roleId: "engineer",
+      stageId: "build",
+      deliveryId: "d-sib-ship",
+      sessionDonePending: true,
+      roleHistory: ["engineer"],
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "ship-rev",
+      roleId: "reviewer",
+      deliveryId: "d-sib-ship",
+      reviewNote: "nits",
+      roleHistory: ["reviewer"],
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "ship-qa",
+      roleId: "qa",
+      deliveryId: "d-sib-ship",
+      qaNote: "vitest",
+      roleHistory: ["qa"],
+    });
+    const shipped = applySoftwareTeamDeliveryShipToStore(store, "ship-eng", 9);
+    expect(shipped.ok).toBe(true);
+    if (!shipped.ok) return;
+    expect(shipped.mode).toBe("created");
+    expect(pipelineItemById(shipped.store, "ship-eng")?.roleId).toBe("engineer");
+    const writer = shipped.store.items.find((item) => item.roleId === "writer");
+    expect(writer?.stageId).toBe("ship");
+    expect(writer?.sessionId).toBe("");
+    expect(shipped.starter).toMatch(/Tech Writer/);
+    expect(shipped.item.id).toBe(writer?.id);
+
+    const again = applySoftwareTeamDeliveryShipToStore(shipped.store, "ship-eng", 10);
+    expect(again.ok).toBe(true);
+    if (!again.ok) return;
+    expect(again.mode).toBe("focus");
+    expect(again.store.items.filter((item) => item.roleId === "writer")).toHaveLength(1);
   });
 });

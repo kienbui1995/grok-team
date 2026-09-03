@@ -5,8 +5,17 @@
  * Choosing Ship only seeds a Writer starter — it does not write files.
  */
 
-import { nextSoftwareTeamRole } from "./handoff";
-import type { SoftwareTeamPipelineItem } from "./pipeline";
+import { softwareTeamDeliverySiblingDraft } from "./delivery";
+import { nextSoftwareTeamRole, softwareTeamHandoffKeepsSourceCard } from "./handoff";
+import {
+  addSoftwareTeamPipelineItem,
+  createSoftwareTeamPipelineItem,
+  pipelineItemById,
+  setPipelineItemStage,
+  updateSoftwareTeamPipelineItem,
+  type SoftwareTeamPipelineItem,
+  type SoftwareTeamPipelineStore,
+} from "./pipeline";
 import {
   firstSoftwareTeamNonEmptyField,
   recordSoftwareTeamRoleVisit,
@@ -144,4 +153,121 @@ export function applySoftwareTeamShipChoice(
     updatedAt: now,
   };
   return { ok: true, item: next, starter: composeWriterShipStarter(next) };
+}
+
+export type SoftwareTeamShipStoreResult =
+  | {
+      ok: true;
+      store: SoftwareTeamPipelineStore;
+      item: SoftwareTeamPipelineItem;
+      starter: string;
+      mode: "mutate" | "focus" | "created";
+    }
+  | {
+      ok: false;
+      store: SoftwareTeamPipelineStore;
+      blocks: ReturnType<typeof softwareTeamShipGate>["blocks"];
+    };
+
+/**
+ * Ship a card. Ungrouped cards become Writer. Delivery cards keep their
+ * role and open or create the Writer sibling.
+ */
+export function applySoftwareTeamDeliveryShipToStore(
+  store: SoftwareTeamPipelineStore,
+  itemId: string,
+  now = Date.now(),
+): SoftwareTeamShipStoreResult {
+  const prev = pipelineItemById(store, itemId);
+  if (!prev) {
+    return {
+      ok: false,
+      store,
+      blocks: softwareTeamShipGate({
+        roleId: "product",
+        roleHistory: [],
+        reviewNote: "",
+        qaNote: "",
+      }).blocks,
+    };
+  }
+  const members = prev.deliveryId.trim()
+    ? store.items.filter((row) => row.deliveryId.trim() === prev.deliveryId.trim())
+    : [prev];
+  const choice = applySoftwareTeamShipChoice(prev, now, members);
+  if (!choice.ok) return { ok: false, store, blocks: choice.blocks };
+
+  if (!softwareTeamHandoffKeepsSourceCard(prev)) {
+    const next = updateSoftwareTeamPipelineItem(
+      store,
+      itemId,
+      {
+        roleId: choice.item.roleId,
+        stageId: choice.item.stageId,
+        roleHistory: choice.item.roleHistory,
+        planRef: choice.item.planRef,
+        goalRef: choice.item.goalRef,
+        artifactRef: choice.item.artifactRef,
+        reviewNote: choice.item.reviewNote,
+        qaNote: choice.item.qaNote,
+        sessionDonePending: false,
+        stageSource: "board",
+      },
+      now,
+    );
+    const live = pipelineItemById(next, itemId) ?? choice.item;
+    return {
+      ok: true,
+      store: next,
+      item: live,
+      starter: choice.starter,
+      mode: "mutate",
+    };
+  }
+
+  let nextStore = updateSoftwareTeamPipelineItem(
+    store,
+    itemId,
+    { sessionDonePending: false },
+    now,
+  );
+  const existing = members.find(
+    (row) => row.id !== prev.id && row.roleId === "writer",
+  );
+  if (existing) {
+    if (existing.stageId !== "ship") {
+      nextStore = setPipelineItemStage(nextStore, existing.id, "ship", now);
+    }
+    const live = pipelineItemById(nextStore, existing.id) ?? existing;
+    return {
+      ok: true,
+      store: nextStore,
+      item: live,
+      starter: composeWriterShipStarter({ ...live, ...choice.item }),
+      mode: "focus",
+    };
+  }
+
+  const created = createSoftwareTeamPipelineItem({
+    ...softwareTeamDeliverySiblingDraft({
+      source: { ...prev, ...choice.item },
+      roleId: "writer",
+      deliveryId: prev.deliveryId,
+    }),
+    stageId: "ship",
+    stageSource: "board",
+    updatedAt: now,
+  });
+  if (!created) {
+    return { ok: false, store, blocks: [] };
+  }
+  nextStore = addSoftwareTeamPipelineItem(nextStore, created);
+  const live = pipelineItemById(nextStore, created.id) ?? created;
+  return {
+    ok: true,
+    store: nextStore,
+    item: live,
+    starter: composeWriterShipStarter({ ...live, ...choice.item }),
+    mode: "created",
+  };
 }

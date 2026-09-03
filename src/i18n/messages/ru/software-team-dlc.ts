@@ -297,4 +297,10 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.copySummaryFailed": "Не удалось скопировать сводку.",
   "softwareTeamDlc.exportCopiedInstead":
     "Сводка скопирована. Файл проекта не записан.",
+  "softwareTeamDlc.handoffKept":
+    "Открыта роль {role}. Эта карточка остаётся {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Добавлена карточка {role}. Эта карточка остаётся {from}.",
+  "softwareTeamDlc.shipKept":
+    "Открыт Writer. Эта карточка остаётся {from}.",
 } as const;
