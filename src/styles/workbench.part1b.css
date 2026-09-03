@@ -711,6 +711,18 @@ html[data-theme="dark"][data-wallpaper="1"]
   color: var(--text-tertiary, var(--text-secondary));
 }
 
+.sdlc-studio__file-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.sdlc-studio__file-row .sdlc-studio__slash-note {
+  margin: 0;
+}
+
 .sdlc-studio__columns {
   grid-template-columns: repeat(5, minmax(140px, 1fr));
 }

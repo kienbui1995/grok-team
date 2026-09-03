@@ -93,6 +93,16 @@ describe("i18n catalog", () => {
       }),
     ).toContain(".grok/software-works.json.bak");
     expect(
+      t("en", "softwareTeamDlc.conflictBody", {
+        file: ".grok/software-works.json.bak",
+      }),
+    ).toContain(".grok/software-works.json.bak");
+    expect(
+      t("vi", "softwareTeamDlc.conflictKeptBoard", {
+        file: ".grok/software-works.json.bak",
+      }),
+    ).toContain(".grok/software-works.json.bak");
+    expect(
       t("en", "softwareTeamDlc.exportOk", { file: "docs/sdlc/billing-delivery.md" }),
     ).toContain("docs/sdlc/billing-delivery.md");
   });

@@ -303,4 +303,15 @@ export const ptBRSoftwareTeamDlc = {
     "Cartão {role} adicionado. Este cartão continua {from}.",
   "softwareTeamDlc.shipKept":
     "Writer aberto. Este cartão continua {from}.",
+  "softwareTeamDlc.conflictTitle": "Conflito do pipeline do projeto",
+  "softwareTeamDlc.conflictBody":
+    "O arquivo de pipeline do projeto mudou enquanto este quadro ainda tem alterações não salvas. Escolha qual cópia manter. A outra pode ficar em {file}.",
+  "softwareTeamDlc.conflictUseFile": "Usar arquivo do projeto",
+  "softwareTeamDlc.conflictKeepBoard": "Manter este quadro",
+  "softwareTeamDlc.conflictUsedFile":
+    "Quadro substituído pelo arquivo do projeto.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Este quadro foi gravado no arquivo do projeto. A outra cópia está em {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Não foi possível gravar este quadro sobre o arquivo do projeto.",
 } as const;

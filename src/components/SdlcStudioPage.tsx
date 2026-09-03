@@ -251,6 +251,9 @@ export function SdlcStudioPage({
   const [pendingRemove, setPendingRemove] = useState<SoftwareTeamPipelineItem | null>(
     null,
   );
+  const [conflictOpen, setConflictOpen] = useState(false);
+  const [conflictBusy, setConflictBusy] = useState(false);
+  const conflictPromptedRef = useRef(false);
   const [menu, setMenu] = useState<{
     itemId: string;
     x: number;
@@ -306,6 +309,10 @@ export function SdlcStudioPage({
               file: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
             }),
           );
+          if (!conflictPromptedRef.current) {
+            conflictPromptedRef.current = true;
+            setConflictOpen(true);
+          }
         }
       });
     };
@@ -347,6 +354,70 @@ export function SdlcStudioPage({
     window.addEventListener(SOFTWARE_TEAM_PIPELINE_FILE_EVENT, sync);
     return () => window.removeEventListener(SOFTWARE_TEAM_PIPELINE_FILE_EVENT, sync);
   }, []);
+
+  const inConflict =
+    fileStatus?.ok === false && fileStatus.reason === "conflict";
+
+  useEffect(() => {
+    if (inConflict && !conflictPromptedRef.current) {
+      conflictPromptedRef.current = true;
+      setConflictOpen(true);
+    }
+    if (!inConflict) {
+      conflictPromptedRef.current = false;
+      setConflictOpen(false);
+    }
+  }, [inConflict]);
+
+  const resolveUseProjectFile = useCallback(async () => {
+    if (conflictBusy) return;
+    setConflictBusy(true);
+    try {
+      const result = await pipeline.acceptProjectFile(workspace.projectPath);
+      if (result.ok && result.kind === "replaced") {
+        setConflictOpen(false);
+        setStatus(t("softwareTeamDlc.conflictUsedFile"));
+        return;
+      }
+      if (result.ok && result.kind === "missing") {
+        setStatus(t("softwareTeamDlc.pipelineFileMissing"));
+        return;
+      }
+      if (!result.ok) {
+        setStatus(
+          result.kind === "host_error"
+            ? t("softwareTeamDlc.pipelineFileHostError", {
+                error: result.error ?? "",
+              })
+            : t("softwareTeamDlc.pipelineFileConflict", {
+                file: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+              }),
+        );
+      }
+    } finally {
+      setConflictBusy(false);
+    }
+  }, [conflictBusy, pipeline, t, workspace.projectPath]);
+
+  const resolveKeepLocalBoard = useCallback(async () => {
+    if (conflictBusy) return;
+    setConflictBusy(true);
+    try {
+      const result = await pipeline.keepLocalBoard(workspace.projectPath);
+      if (result.ok) {
+        setConflictOpen(false);
+        setStatus(
+          t("softwareTeamDlc.conflictKeptBoard", {
+            file: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+          }),
+        );
+        return;
+      }
+      setStatus(t("softwareTeamDlc.conflictKeepFailed"));
+    } finally {
+      setConflictBusy(false);
+    }
+  }, [conflictBusy, pipeline, t, workspace.projectPath]);
 
   const refreshSdlcDocs = useCallback(async () => {
     const rows = await probeSoftwareTeamSdlcDocs({
@@ -1569,19 +1640,41 @@ export function SdlcStudioPage({
         ) : null}
         <p className="sdlc-studio__slash-note">{t("softwareTeamDlc.slashAfterInstall")}</p>
         {fileStatus ? (
-          <p className="sdlc-studio__slash-note" role="status">
-            {fileStatus.ok === false && fileStatus.reason === "host_error"
-              ? t(softwareTeamPipelineFileMessageKey(fileStatus.reason), {
-                  error: fileStatus.error ?? "",
-                })
-              : fileStatus.ok === false &&
-                  (fileStatus.reason === "parse_fail" ||
-                    fileStatus.reason === "conflict")
+          <div className="sdlc-studio__file-row">
+            <p className="sdlc-studio__slash-note" role="status">
+              {fileStatus.ok === false && fileStatus.reason === "host_error"
                 ? t(softwareTeamPipelineFileMessageKey(fileStatus.reason), {
-                    file: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+                    error: fileStatus.error ?? "",
                   })
-                : t(softwareTeamPipelineFileMessageKey(fileStatus.reason))}
-          </p>
+                : fileStatus.ok === false &&
+                    (fileStatus.reason === "parse_fail" ||
+                      fileStatus.reason === "conflict")
+                  ? t(softwareTeamPipelineFileMessageKey(fileStatus.reason), {
+                      file: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+                    })
+                  : t(softwareTeamPipelineFileMessageKey(fileStatus.reason))}
+            </p>
+            {inConflict ? (
+              <div className="sdlc-studio__chips" role="group">
+                <button
+                  type="button"
+                  className="task-board__chip"
+                  disabled={conflictBusy}
+                  onClick={() => void resolveUseProjectFile()}
+                >
+                  {t("softwareTeamDlc.conflictUseFile")}
+                </button>
+                <button
+                  type="button"
+                  className="task-board__chip"
+                  disabled={conflictBusy}
+                  onClick={() => void resolveKeepLocalBoard()}
+                >
+                  {t("softwareTeamDlc.conflictKeepBoard")}
+                </button>
+              </div>
+            ) : null}
+          </div>
         ) : null}
 
         {status ? (
@@ -2229,6 +2322,48 @@ export function SdlcStudioPage({
             })()}
           </div>
         ) : null}
+      </GlassModal>
+
+      <GlassModal
+        open={conflictOpen}
+        onClose={() => setConflictOpen(false)}
+        title={t("softwareTeamDlc.conflictTitle")}
+        closeLabel={t("window.close")}
+        wrapBody
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              disabled={conflictBusy}
+              onClick={() => setConflictOpen(false)}
+            >
+              {t("common.cancel")}
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              disabled={conflictBusy}
+              onClick={() => void resolveKeepLocalBoard()}
+            >
+              {t("softwareTeamDlc.conflictKeepBoard")}
+            </button>
+            <button
+              type="button"
+              className="btn"
+              disabled={conflictBusy}
+              onClick={() => void resolveUseProjectFile()}
+            >
+              {t("softwareTeamDlc.conflictUseFile")}
+            </button>
+          </>
+        }
+      >
+        <p className="sdlc-studio__slash-note">
+          {t("softwareTeamDlc.conflictBody", {
+            file: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+          })}
+        </p>
       </GlassModal>
 
       <GlassModal

@@ -312,4 +312,14 @@ export const viSoftwareTeamDlc = {
     "Đã thêm thẻ {role}. Thẻ này vẫn là {from}.",
   "softwareTeamDlc.shipKept":
     "Đã mở Writer. Thẻ này vẫn là {from}.",
+  "softwareTeamDlc.conflictTitle": "Xung đột tệp pipeline dự án",
+  "softwareTeamDlc.conflictBody":
+    "Tệp pipeline của dự án đã đổi trong khi bảng này còn chỉnh sửa chưa lưu. Chọn bản nào giữ lại. Bản kia có thể ở lại {file}.",
+  "softwareTeamDlc.conflictUseFile": "Dùng tệp dự án",
+  "softwareTeamDlc.conflictKeepBoard": "Giữ bảng này",
+  "softwareTeamDlc.conflictUsedFile": "Đã thay bảng bằng tệp dự án.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Đã ghi bảng này vào tệp dự án. Bản kia ở {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Không ghi được bảng này đè lên tệp dự án.",
 } as const;

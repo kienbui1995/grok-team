@@ -273,4 +273,13 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.handoffKept": "已開啟 {role}。此卡片仍是 {from}。",
   "softwareTeamDlc.handoffCreated": "已新增 {role} 卡片。此卡片仍是 {from}。",
   "softwareTeamDlc.shipKept": "已開啟 Writer。此卡片仍是 {from}。",
+  "softwareTeamDlc.conflictTitle": "專案流水線檔案衝突",
+  "softwareTeamDlc.conflictBody":
+    "專案流水線檔案已在別處變更，而本視窗看板仍有未儲存變更。請選擇要保留哪一份。另一份可留在 {file}。",
+  "softwareTeamDlc.conflictUseFile": "使用專案檔",
+  "softwareTeamDlc.conflictKeepBoard": "保留此看板",
+  "softwareTeamDlc.conflictUsedFile": "已用專案檔取代看板。",
+  "softwareTeamDlc.conflictKeptBoard":
+    "已將此看板寫入專案檔。另一份在 {file}。",
+  "softwareTeamDlc.conflictKeepFailed": "無法用此看板覆寫專案檔。",
 } as const;

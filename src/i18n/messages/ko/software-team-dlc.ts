@@ -301,4 +301,14 @@ export const koSoftwareTeamDlc = {
     "{role} 카드를 추가했습니다. 이 카드는 {from}으로 유지됩니다.",
   "softwareTeamDlc.shipKept":
     "Writer를 열었습니다. 이 카드는 {from}으로 유지됩니다.",
+  "softwareTeamDlc.conflictTitle": "프로젝트 파이프라인 충돌",
+  "softwareTeamDlc.conflictBody":
+    "이 보드에 저장되지 않은 변경이 있는 동안 프로젝트 파이프라인 파일이 바뀌었습니다. 어떤 복사본을 유지할지 고르세요. 다른 쪽은 {file}에 둘 수 있습니다.",
+  "softwareTeamDlc.conflictUseFile": "프로젝트 파일 사용",
+  "softwareTeamDlc.conflictKeepBoard": "이 보드 유지",
+  "softwareTeamDlc.conflictUsedFile": "보드를 프로젝트 파일로 바꿨습니다.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "이 보드를 프로젝트 파일에 썼습니다. 다른 복사본은 {file}에 있습니다.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "이 보드로 프로젝트 파일을 덮어쓰지 못했습니다.",
 } as const;

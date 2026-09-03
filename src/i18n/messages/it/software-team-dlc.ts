@@ -303,4 +303,14 @@ export const itSoftwareTeamDlc = {
     "Aggiunta una scheda {role}. Questa scheda resta {from}.",
   "softwareTeamDlc.shipKept":
     "Aperto Writer. Questa scheda resta {from}.",
+  "softwareTeamDlc.conflictTitle": "Conflitto della pipeline di progetto",
+  "softwareTeamDlc.conflictBody":
+    "Il file della pipeline del progetto è cambiato mentre questa bacheca ha ancora modifiche non salvate. Scegli quale copia tenere. L’altra può restare in {file}.",
+  "softwareTeamDlc.conflictUseFile": "Usa il file di progetto",
+  "softwareTeamDlc.conflictKeepBoard": "Tieni questa bacheca",
+  "softwareTeamDlc.conflictUsedFile": "Bacheca sostituita dal file di progetto.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Questa bacheca è stata scritta nel file di progetto. L’altra copia è in {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Impossibile scrivere questa bacheca sul file di progetto.",
 } as const;

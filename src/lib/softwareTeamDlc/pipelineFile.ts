@@ -10,7 +10,9 @@
  * visibility using `mtimeMs` from `fsReadFile`.
  *
  * Dirty local + newer foreign file = conflict: keep memory, do not clobber
- * the file. The next save backs up the foreign file to `.bak` and refuses.
+ * the file. The next save backs up the foreign file to `.bak` and refuses
+ * unless the user picks **Keep this board** (`overwriteConflict`). **Use
+ * project file** hydrates even when local is dirty.
  */
 
 import * as api from "@/lib/api";
@@ -476,6 +478,8 @@ export async function writeSoftwareTeamPipelineFile(input: {
   store: SoftwareTeamPipelineStore;
   host?: SoftwareTeamPipelineFileHost;
   now?: number;
+  /** After a `.bak` of the foreign file, write this store anyway. */
+  overwriteConflict?: boolean;
 }): Promise<SoftwareTeamPipelineFileWrite> {
   const host = input.host ?? defaultSoftwareTeamPipelineFileHost();
   const plan = planSoftwareTeamPipelineFileWrite({
@@ -533,15 +537,17 @@ export async function writeSoftwareTeamPipelineFile(input: {
       } catch {
         backedUp = false;
       }
-      const fail: SoftwareTeamPipelineFileWrite = {
-        ok: false,
-        reason: "conflict",
-        error: backedUp
-          ? SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE
-          : "foreign file unchanged",
-      };
-      emitFileStatus(fail);
-      return fail;
+      if (!input.overwriteConflict) {
+        const fail: SoftwareTeamPipelineFileWrite = {
+          ok: false,
+          reason: "conflict",
+          error: backedUp
+            ? SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE
+            : "foreign file unchanged",
+        };
+        emitFileStatus(fail);
+        return fail;
+      }
     }
   }
   try {
@@ -721,4 +727,80 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
     store: loaded.store,
     mtimeMs,
   };
+}
+
+function fileReadFailToReload(
+  loaded: Extract<SoftwareTeamPipelineFileRead, { ok: false }>,
+): SoftwareTeamPipelineReload {
+  switch (loaded.reason) {
+    case "parse_fail":
+      return {
+        ok: false,
+        kind: "parse_failed",
+        backedUp: loaded.backedUp,
+      };
+    case "need_host":
+      return { ok: false, kind: "need_host" };
+    case "need_project":
+      return { ok: false, kind: "need_project" };
+    case "blocked_shared_home":
+      return { ok: false, kind: "blocked_shared_home" };
+    case "conflict":
+      return { ok: false, kind: "conflict" };
+    case "host_error":
+      return { ok: false, kind: "host_error", error: loaded.error };
+    default: {
+      const _never: never = loaded.reason;
+      return { ok: false, kind: "host_error", error: String(_never) };
+    }
+  }
+}
+
+/**
+ * Replace the cache from `.grok/software-works.json` even when local is dirty.
+ * Does not invent Host ids. Refuses shared `~/.grok`.
+ */
+export async function acceptSoftwareTeamPipelineFile(input: {
+  projectPath?: string | null;
+  host?: SoftwareTeamPipelineFileHost;
+  storage?: {
+    getItem: (k: string) => string | null;
+    setItem: (k: string, v: string) => void;
+  };
+}): Promise<SoftwareTeamPipelineReload> {
+  const loaded = await hydrateSoftwareTeamPipelineFromProject(input);
+  if (!loaded.ok) return fileReadFailToReload(loaded);
+  if (loaded.reason === "missing" || !loaded.store) {
+    return { ok: true, kind: "missing", mtimeMs: loaded.mtimeMs ?? null };
+  }
+  return {
+    ok: true,
+    kind: "replaced",
+    store: loaded.store,
+    mtimeMs: loaded.mtimeMs ?? null,
+  };
+}
+
+/**
+ * Keep the in-app board: backup the foreign project file, then write this store.
+ */
+export async function keepSoftwareTeamPipelineLocal(input: {
+  projectPath?: string | null;
+  store?: SoftwareTeamPipelineStore;
+  host?: SoftwareTeamPipelineFileHost;
+  storage?: {
+    getItem: (k: string) => string | null;
+    setItem: (k: string, v: string) => void;
+  };
+  now?: number;
+}): Promise<SoftwareTeamPipelineFileWrite> {
+  const store = input.store ?? loadSoftwareTeamPipelineStore(input.storage);
+  persistSoftwareTeamPipeline(store, input.storage);
+  return writeSoftwareTeamPipelineFile({
+    projectPath: input.projectPath,
+    store,
+    host: input.host,
+    now: input.now,
+    overwriteConflict: true,
+  });
 }

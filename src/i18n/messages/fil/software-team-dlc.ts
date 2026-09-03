@@ -304,4 +304,15 @@ export const filSoftwareTeamDlc = {
     "Nagdagdag ng {role} card. Ang card na ito ay nananatiling {from}.",
   "softwareTeamDlc.shipKept":
     "Binuksan ang Writer. Ang card na ito ay nananatiling {from}.",
+  "softwareTeamDlc.conflictTitle": "Salungatan ng pipeline ng proyek",
+  "softwareTeamDlc.conflictBody":
+    "Nagbago ang pipeline file ng proyek habang may hindi pa nase-save na pagbabago ang board na ito. Piliin kung aling kopya ang itatago. Ang isa ay maaaring manatili sa {file}.",
+  "softwareTeamDlc.conflictUseFile": "Gamitin ang file ng proyek",
+  "softwareTeamDlc.conflictKeepBoard": "Panatilihin ang board na ito",
+  "softwareTeamDlc.conflictUsedFile":
+    "Pinalitan ang board mula sa file ng proyek.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Naisulat ang board na ito sa file ng proyek. Ang kabilang kopya ay nasa {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Hindi maisulat ang board na ito sa file ng proyek.",
 } as const;

@@ -312,4 +312,14 @@ export const enSoftwareTeamDlc = {
     "Added a {role} card. This card stays {from}.",
   "softwareTeamDlc.shipKept":
     "Opened Writer. This card stays {from}.",
+  "softwareTeamDlc.conflictTitle": "Project pipeline conflict",
+  "softwareTeamDlc.conflictBody":
+    "This project’s pipeline file changed while this board still has unsaved edits. Choose which copy to keep. The other copy can stay in {file}.",
+  "softwareTeamDlc.conflictUseFile": "Use project file",
+  "softwareTeamDlc.conflictKeepBoard": "Keep this board",
+  "softwareTeamDlc.conflictUsedFile": "Board replaced from the project file.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "This board was written to the project file. The other copy is in {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Could not write this board over the project file.",
 } as const;

@@ -301,4 +301,15 @@ export const jaSoftwareTeamDlc = {
     "{role} カードを追加しました。このカードは {from} のままです。",
   "softwareTeamDlc.shipKept":
     "Writer を開きました。このカードは {from} のままです。",
+  "softwareTeamDlc.conflictTitle": "プロジェクトのパイプラインが競合しています",
+  "softwareTeamDlc.conflictBody":
+    "このボードに未保存の変更があるあいだに、プロジェクトのパイプラインファイルが変わりました。残すコピーを選んでください。もう一方は {file} に残せます。",
+  "softwareTeamDlc.conflictUseFile": "プロジェクトのファイルを使う",
+  "softwareTeamDlc.conflictKeepBoard": "このボードを残す",
+  "softwareTeamDlc.conflictUsedFile":
+    "ボードをプロジェクトのファイルで置き換えました。",
+  "softwareTeamDlc.conflictKeptBoard":
+    "このボードをプロジェクトのファイルに書きました。もう一方は {file} にあります。",
+  "softwareTeamDlc.conflictKeepFailed":
+    "このボードでプロジェクトのファイルを上書きできませんでした。",
 } as const;

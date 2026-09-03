@@ -43,7 +43,7 @@ Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) i
 
 | Host + project folder | Effect |
 |-----------------------|--------|
-| Load Studio | Read the file. Valid doc replaces a **clean** cache. Missing file keeps the cache (next mutate creates the file). Dirty local + newer file → conflict (keep memory). |
+| Load Studio | Read the file. Valid doc replaces a **clean** cache. Missing file keeps the cache (next mutate creates the file). Dirty local + newer file → conflict (keep memory until the user picks **Use project file** or **Keep this board**). |
 | Mutate (add / stage / handoff / notes / deliveryId) | Cache write **and** project file when allowed. |
 | Parse fail / newer schema | **Refuse overwrite.** Copy raw text to `.grok/software-works.json.bak` when possible. Keep the cache. |
 | No Host / no project / path *is* `~/.grok` | Cache only + honesty. Never rewrite shared GROK_HOME. |
@@ -56,7 +56,7 @@ Schema: `{ schema: "software-works.pipeline", version: 3, updatedAt, items, acti
 
 **Export:** detail pane writes project `docs/sdlc/<slug>-delivery.md` (title, stages, notes, roleHistory, recent activity). Host + project required. Shared `~/.grok` refused. Never writes this app’s `CHANGELOG.md`. Never fakes success. If Host cannot write (`need_host` / `need_project` / shared home / host error), Studio **copies the markdown** and says no file was written. **Copy summary** does the same on demand.
 
-**Reload:** there is **no** Host fs-watch / `watch_path` API. `fsReadFile` returns `mtimeMs`. Studio re-reads on open, window focus, and `visibilitychange` (coalesced, not polled). Newer file + **clean** local cache replaces items. **Dirty** local (mutated since last accepted file) **and** a newer/different file → **conflict**: keep memory, do not hydrate over it, honesty string. The next save backs up the foreign file to `.bak` and **refuses overwrite**. Parse fail keeps the cache + honesty.
+**Reload:** there is **no** Host fs-watch / `watch_path` API. `fsReadFile` returns `mtimeMs`. Studio re-reads on open, window focus, and `visibilitychange` (coalesced, not polled). Newer file + **clean** local cache replaces items. **Dirty** local (mutated since last accepted file) **and** a newer/different file → **conflict**: keep memory, do not hydrate over it, honesty string + `GlassModal` (Use project file / Keep this board / close). **Use project file** hydrates the cache from `.grok/software-works.json` (clears undo). **Keep this board** writes a `.bak` of the foreign file, then writes the local board. Implicit persist still refuses overwrite until one of those is chosen. Parse fail keeps the cache + honesty. Never writes shared `~/.grok`.
 
 Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef` + `roleHistory` + `reviewNote` / `qaNote`.
 

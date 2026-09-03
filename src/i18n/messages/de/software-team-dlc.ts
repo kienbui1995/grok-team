@@ -304,4 +304,14 @@ export const deSoftwareTeamDlc = {
     "{role}-Karte hinzugefügt. Diese Karte bleibt {from}.",
   "softwareTeamDlc.shipKept":
     "Writer geöffnet. Diese Karte bleibt {from}.",
+  "softwareTeamDlc.conflictTitle": "Konflikt in der Projekt-Pipeline",
+  "softwareTeamDlc.conflictBody":
+    "Die Pipeline-Datei des Projekts hat sich geändert, während dieses Board noch ungespeicherte Änderungen hat. Wählen Sie, welche Kopie bleiben soll. Die andere kann in {file} bleiben.",
+  "softwareTeamDlc.conflictUseFile": "Projektdatei verwenden",
+  "softwareTeamDlc.conflictKeepBoard": "Dieses Board behalten",
+  "softwareTeamDlc.conflictUsedFile": "Board aus der Projektdatei ersetzt.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Dieses Board wurde in die Projektdatei geschrieben. Die andere Kopie liegt in {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Dieses Board konnte nicht über die Projektdatei geschrieben werden.",
 } as const;

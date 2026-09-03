@@ -12,6 +12,7 @@ See `docs/llm-wiki/release.md`.
 ## [Unreleased]
 
 ### Added
+- **Software Works pipeline conflict resolve**: Dirty local + newer `.grok/software-works.json` still keeps memory and refuses a silent overwrite. Studio now asks in a `GlassModal` (and chips on the file-status line): **Use project file** hydrates the cache; **Keep this board** writes `.bak` then the local board. Implicit persist still refuses without that choice. No Host invent, no `~/.grok` rewrite.
 - **Software Works delivery handoff keeps the source card**: On a `deliveryId`, Handoff / Ship no longer rewrite that card’s role. They open the next-role sibling or create one (unbound; launch may create a session). Ungrouped cards still mutate in place. No Host invent, no `~/.grok` rewrite.
 - **Software Works studio memory + full roster + copy summary**: SDLC Studio remembers the last delivery filter and Show archived (`grok.softwareTeamDlc.studio`; deleted ids fall back to All). Missing-role chips cover the full Product→Writer chain (attach-chat still prefers Product / Engineer / Reviewer, max 3). Export that cannot write a project file copies the markdown instead and says no file was written. **Copy summary** is always available. Still no Host invent, no `~/.grok` rewrite.
 - **Software Works delivery-wide Ship + shared slice refs**: Reviewer and QA notes on sibling cards unlock Ship on the Engineer/Product card (`softwareTeamDeliveryShipGate`). Plan/goal/artifact stay aligned across the same `deliveryId` (board edit, add, move, or the detail pane). The delivery pane can edit those refs and Review/QA notes; notes stay on the Reviewer/QA card. Steal-bind logs `session_unbound`. Still no Host plan/goal invent, no `~/.grok` rewrite.
@@ -30,6 +31,7 @@ See `docs/llm-wiki/release.md`.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
+- **Software Works 流水线冲突可选择**：本地未保存且项目 `.grok/software-works.json` 更新时，仍先保留内存、拒绝默默覆盖。工坊用 `GlassModal`（以及文件状态旁的芯片）询问：**使用项目文件**会灌入缓存；**保留本看板**先写 `.bak` 再写入本地看板。未选择前，隐式保存仍拒绝覆盖。不编造 Host，不改写 `~/.grok`。
 - **Software Works 交付交接保留原卡片**：有 `deliveryId` 时，交接 / 发布不再改写该卡角色，而是打开下一角色的兄弟卡（没有就新建、未绑定；打开时才建会话）。未分组卡片仍就地改角色。不编造 Host，不改写 `~/.grok`。
 - **Software Works 工坊记忆 + 完整名单 + 复制摘要**：SDLC Studio 记住上次交付筛选和「显示已归档」（`grok.softwareTeamDlc.studio`；已删 id 回落到全部）。缺角色芯片覆盖 Product→Writer 全链（attach-chat 仍优先 Product / Engineer / Reviewer，最多 3）。无法写入项目文件时改为复制 markdown，并说明没有写文件。**复制摘要**随时可用。仍不编造 Host，不改写 `~/.grok`。
 - **Software Works 整次交付的发布门槛 + 共享切片引用**：同一次交付上评审/测试卡片的备注可解锁工程师/产品卡片的发布（`softwareTeamDeliveryShipGate`）。同一 `deliveryId` 的计划/目标/产物保持对齐（看板编辑、新增、挪卡或详情）。详情可改这些引用和评审/测试备注；备注仍落在评审/测试卡上。抢绑会记 `session_unbound`。仍不编造 Host 计划/目标，不改写 `~/.grok`。

@@ -17,6 +17,8 @@ import {
   loadSoftwareTeamPipelineStore,
   persistSoftwareTeamPipeline,
   pipelineItemForSession,
+  acceptSoftwareTeamPipelineFile,
+  keepSoftwareTeamPipelineLocal,
   queueSoftwareTeamPipelineProjectPersist,
   projectSessionTagsFromPipeline,
   removeSoftwareTeamPipelineItem,
@@ -52,6 +54,7 @@ import {
   setSoftwareTeamDeliveryNote,
   syncSoftwareTeamDeliverySliceRefs,
   type SoftwareTeamDeliveryNoteKind,
+  type SoftwareTeamPipelineFileWrite,
   type SoftwareTeamPipelineReload,
 } from "@/lib/softwareTeamDlc";
 import type { AgentKanbanColumnId } from "@/lib/kanbanBoard";
@@ -125,6 +128,8 @@ export function useSoftwareTeamPipeline(): {
     placements: ReadonlyArray<{ sessionId: string; column: AgentKanbanColumnId }>,
   ) => void;
   reloadFromProject: (projectPath?: string | null) => Promise<SoftwareTeamPipelineReload>;
+  acceptProjectFile: (projectPath?: string | null) => Promise<SoftwareTeamPipelineReload>;
+  keepLocalBoard: (projectPath?: string | null) => Promise<SoftwareTeamPipelineFileWrite>;
   setDeliveryArchived: (deliveryId: string, archived: boolean) => void;
   setItemArchived: (itemId: string, archived: boolean) => void;
   setDeliveryGitBranch: (deliveryId: string, branch: string) => boolean;
@@ -378,6 +383,25 @@ export function useSoftwareTeamPipeline(): {
     return result;
   }, [rememberHistory]);
 
+  const acceptProjectFile = useCallback(async (projectPath?: string | null) => {
+    const result = await acceptSoftwareTeamPipelineFile({
+      projectPath: projectPath ?? boundSoftwareTeamPipelineProjectPath(),
+    });
+    if (result.ok && result.kind === "replaced") {
+      clearSoftwareTeamUndoStack();
+      rememberHistory();
+      setStore(result.store);
+    }
+    return result;
+  }, [rememberHistory]);
+
+  const keepLocalBoard = useCallback(async (projectPath?: string | null) => {
+    return keepSoftwareTeamPipelineLocal({
+      projectPath: projectPath ?? boundSoftwareTeamPipelineProjectPath(),
+      store: loadSoftwareTeamPipelineStore(),
+    });
+  }, []);
+
   const applySessionKanbanBoard = useCallback(
     (
       placements: ReadonlyArray<{
@@ -410,6 +434,8 @@ export function useSoftwareTeamPipeline(): {
     applySessionKanban,
     applySessionKanbanBoard,
     reloadFromProject,
+    acceptProjectFile,
+    keepLocalBoard,
     setDeliveryArchived,
     setItemArchived,
     setDeliveryGitBranch,

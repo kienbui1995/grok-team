@@ -78,6 +78,7 @@ import {
   softwareTeamAttachRefs,
   SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
   SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+  SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
   SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
   SOFTWARE_TEAM_PIPELINE_SCHEMA,
   SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION,
@@ -96,6 +97,8 @@ import {
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
   softwareTeamRoleHistoryIds,
+  acceptSoftwareTeamPipelineFile,
+  keepSoftwareTeamPipelineLocal,
   writeSoftwareTeamPipelineFile,
   buildSoftwareTeamDeliveryDetail,
   composeSoftwareTeamDeliveryMarkdown,
@@ -2271,7 +2274,174 @@ describe("Software Works archive, studio filter, export, conflict", () => {
     });
     expect(save).toMatchObject({ ok: false, reason: "conflict" });
     expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
-    expect(files[".grok/software-works.json.bak"]).toContain("Foreign");
+    expect(files[SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE]).toContain("Foreign");
+  });
+
+  it("accepts the project file over a dirty local cache", async () => {
+    const first = createSoftwareTeamPipelineItem({
+      id: "cf-a1",
+      roleId: "product",
+      title: "Local",
+      deliveryId: "d-cfa",
+    })!;
+    const { host, files, mtimes } = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: JSON.stringify({
+          schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+          version: 2,
+          updatedAt: 1,
+          items: [first],
+          activity: [],
+        }),
+      },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: 10 },
+    });
+    const storage = memoryStore();
+    const loaded = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(loaded).toMatchObject({ ok: true, kind: "replaced" });
+    if (!loaded.ok || loaded.kind !== "replaced") return;
+    const dirty = addSoftwareTeamPipelineItem(loaded.store, {
+      id: "cf-a2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-cfa",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = JSON.stringify({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: 3,
+      updatedAt: 2,
+      items: [
+        createSoftwareTeamPipelineItem({
+          id: "cf-a1",
+          roleId: "product",
+          title: "Foreign",
+          deliveryId: "d-cfa",
+        }),
+      ],
+      activity: [],
+      archivedDeliveryIds: [],
+    });
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    const conflict = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    expect(conflict).toMatchObject({ ok: false, kind: "conflict" });
+    const accepted = await acceptSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(accepted).toMatchObject({ ok: true, kind: "replaced" });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Foreign"],
+    );
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Unsaved");
+
+    const blocked = await acceptSoftwareTeamPipelineFile({
+      projectPath: "/home/u/.grok",
+      host,
+      storage,
+    });
+    expect(blocked).toMatchObject({ ok: false, kind: "blocked_shared_home" });
+  });
+
+  it("keeps the local board by overwriting after backup", async () => {
+    const first = createSoftwareTeamPipelineItem({
+      id: "cf-k1",
+      roleId: "product",
+      title: "Local",
+      deliveryId: "d-cfk",
+    })!;
+    const { host, files, mtimes } = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: JSON.stringify({
+          schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+          version: 2,
+          updatedAt: 1,
+          items: [first],
+          activity: [],
+        }),
+      },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: 10 },
+    });
+    const storage = memoryStore();
+    const loaded = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(loaded).toMatchObject({ ok: true, kind: "replaced" });
+    if (!loaded.ok || loaded.kind !== "replaced") return;
+    const dirty = addSoftwareTeamPipelineItem(loaded.store, {
+      id: "cf-k2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-cfk",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = JSON.stringify({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: 3,
+      updatedAt: 2,
+      items: [
+        createSoftwareTeamPipelineItem({
+          id: "cf-k1",
+          roleId: "product",
+          title: "Foreign",
+          deliveryId: "d-cfk",
+        }),
+      ],
+      activity: [],
+      archivedDeliveryIds: [],
+    });
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    const conflict = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    expect(conflict).toMatchObject({ ok: false, kind: "conflict" });
+
+    const refused = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+    });
+    expect(refused).toMatchObject({ ok: false, reason: "conflict" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
+
+    const kept = await keepSoftwareTeamPipelineLocal({
+      projectPath: "/repo",
+      store: dirty,
+      host,
+      storage,
+    });
+    expect(kept).toMatchObject({ ok: true, reason: "ok_project" });
+    expect(files[SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE]).toContain("Foreign");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Unsaved");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Local");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Foreign");
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title)).toEqual(
+      ["Local", "Unsaved"],
+    );
+
+    const blocked = await keepSoftwareTeamPipelineLocal({
+      projectPath: "~/.grok",
+      store: dirty,
+      host,
+      storage,
+    });
+    expect(blocked).toMatchObject({ ok: false, reason: "blocked_shared_home" });
   });
 });
 

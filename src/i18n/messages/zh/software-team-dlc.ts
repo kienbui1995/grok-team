@@ -273,4 +273,13 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.handoffKept": "已打开 {role}。此卡片仍是 {from}。",
   "softwareTeamDlc.handoffCreated": "已添加 {role} 卡片。此卡片仍是 {from}。",
   "softwareTeamDlc.shipKept": "已打开 Writer。此卡片仍是 {from}。",
+  "softwareTeamDlc.conflictTitle": "项目流水线文件冲突",
+  "softwareTeamDlc.conflictBody":
+    "项目流水线文件已在别处更改，而本窗口看板仍有未保存改动。请选择保留哪一份。另一份可留在 {file}。",
+  "softwareTeamDlc.conflictUseFile": "使用项目文件",
+  "softwareTeamDlc.conflictKeepBoard": "保留本看板",
+  "softwareTeamDlc.conflictUsedFile": "已用项目文件替换看板。",
+  "softwareTeamDlc.conflictKeptBoard":
+    "已把本看板写入项目文件。另一份在 {file}。",
+  "softwareTeamDlc.conflictKeepFailed": "无法用本看板覆盖项目文件。",
 } as const;

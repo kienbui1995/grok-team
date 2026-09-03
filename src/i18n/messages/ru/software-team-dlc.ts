@@ -303,4 +303,14 @@ export const ruSoftwareTeamDlc = {
     "Добавлена карточка {role}. Эта карточка остаётся {from}.",
   "softwareTeamDlc.shipKept":
     "Открыт Writer. Эта карточка остаётся {from}.",
+  "softwareTeamDlc.conflictTitle": "Конфликт файла конвейера проекта",
+  "softwareTeamDlc.conflictBody":
+    "Файл конвейера проекта изменился, а на этой доске есть несохранённые правки. Выберите, какую копию оставить. Другая может остаться в {file}.",
+  "softwareTeamDlc.conflictUseFile": "Взять файл проекта",
+  "softwareTeamDlc.conflictKeepBoard": "Оставить эту доску",
+  "softwareTeamDlc.conflictUsedFile": "Доска заменена файлом проекта.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Эта доска записана в файл проекта. Другая копия — в {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Не удалось записать эту доску поверх файла проекта.",
 } as const;

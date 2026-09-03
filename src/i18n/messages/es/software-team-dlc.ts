@@ -303,4 +303,15 @@ export const esSoftwareTeamDlc = {
     "Se añadió una tarjeta {role}. Esta tarjeta sigue siendo {from}.",
   "softwareTeamDlc.shipKept":
     "Se abrió Writer. Esta tarjeta sigue siendo {from}.",
+  "softwareTeamDlc.conflictTitle": "Conflicto del pipeline del proyecto",
+  "softwareTeamDlc.conflictBody":
+    "El archivo de pipeline del proyecto cambió mientras este tablero aún tiene cambios sin guardar. Elige qué copia conservar. La otra puede quedar en {file}.",
+  "softwareTeamDlc.conflictUseFile": "Usar archivo del proyecto",
+  "softwareTeamDlc.conflictKeepBoard": "Conservar este tablero",
+  "softwareTeamDlc.conflictUsedFile":
+    "Tablero reemplazado desde el archivo del proyecto.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Este tablero se escribió en el archivo del proyecto. La otra copia está en {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "No se pudo escribir este tablero sobre el archivo del proyecto.",
 } as const;

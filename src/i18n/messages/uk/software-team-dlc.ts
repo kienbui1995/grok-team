@@ -303,4 +303,14 @@ export const ukSoftwareTeamDlc = {
     "Додано картку {role}. Ця картка лишається {from}.",
   "softwareTeamDlc.shipKept":
     "Відкрито Writer. Ця картка лишається {from}.",
+  "softwareTeamDlc.conflictTitle": "Конфлікт файлу конвеєра проєкту",
+  "softwareTeamDlc.conflictBody":
+    "Файл конвеєра проєкту змінився, а на цій дошці є незбережені зміни. Оберіть, яку копію залишити. Інша може лишитися в {file}.",
+  "softwareTeamDlc.conflictUseFile": "Взяти файл проєкту",
+  "softwareTeamDlc.conflictKeepBoard": "Залишити цю дошку",
+  "softwareTeamDlc.conflictUsedFile": "Дошку замінено файлом проєкту.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Цю дошку записано у файл проєкту. Інша копія — у {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Не вдалося записати цю дошку поверх файлу проєкту.",
 } as const;

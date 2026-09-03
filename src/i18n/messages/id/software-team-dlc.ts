@@ -304,4 +304,14 @@ export const idSoftwareTeamDlc = {
     "Kartu {role} ditambah. Kartu ini tetap {from}.",
   "softwareTeamDlc.shipKept":
     "Writer dibuka. Kartu ini tetap {from}.",
+  "softwareTeamDlc.conflictTitle": "Konflik file pipeline proyek",
+  "softwareTeamDlc.conflictBody":
+    "File pipeline proyek berubah sementara papan ini masih punya suntingan yang belum disimpan. Pilih salinan mana yang dipertahankan. Salinan lain bisa tetap di {file}.",
+  "softwareTeamDlc.conflictUseFile": "Gunakan file proyek",
+  "softwareTeamDlc.conflictKeepBoard": "Pertahankan papan ini",
+  "softwareTeamDlc.conflictUsedFile": "Papan diganti dari file proyek.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Papan ini ditulis ke file proyek. Salinan lain ada di {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Tidak bisa menimpa file proyek dengan papan ini.",
 } as const;

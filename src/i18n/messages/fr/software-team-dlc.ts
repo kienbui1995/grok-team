@@ -303,4 +303,15 @@ export const frSoftwareTeamDlc = {
     "Carte {role} ajoutée. Cette carte reste {from}.",
   "softwareTeamDlc.shipKept":
     "Writer ouvert. Cette carte reste {from}.",
+  "softwareTeamDlc.conflictTitle": "Conflit du pipeline du projet",
+  "softwareTeamDlc.conflictBody":
+    "Le fichier pipeline du projet a changé alors que ce tableau a encore des modifications non enregistrées. Choisissez quelle copie conserver. L’autre peut rester dans {file}.",
+  "softwareTeamDlc.conflictUseFile": "Utiliser le fichier du projet",
+  "softwareTeamDlc.conflictKeepBoard": "Garder ce tableau",
+  "softwareTeamDlc.conflictUsedFile":
+    "Tableau remplacé depuis le fichier du projet.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Ce tableau a été écrit dans le fichier du projet. L’autre copie est dans {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Impossible d’écrire ce tableau par-dessus le fichier du projet.",
 } as const;

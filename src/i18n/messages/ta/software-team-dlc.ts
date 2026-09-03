@@ -304,4 +304,15 @@ export const taSoftwareTeamDlc = {
     "{role} அட்டை சேர்க்கப்பட்டது. இந்த அட்டை {from} ஆகவே இருக்கும்.",
   "softwareTeamDlc.shipKept":
     "Writer திறக்கப்பட்டது. இந்த அட்டை {from} ஆகவே இருக்கும்.",
+  "softwareTeamDlc.conflictTitle": "திட்டப் பைப்லைன் முரண்",
+  "softwareTeamDlc.conflictBody":
+    "இந்த பலகையில் சேமிக்காத மாற்றங்கள் இருக்கும்போது திட்டப் பைப்லைன் கோப்பு மாறியது. எந்த நகலை வைக்க வேண்டும் என தேர்வு செய்யவும். மற்றது {file} இல் இருக்கலாம்.",
+  "softwareTeamDlc.conflictUseFile": "திட்டக் கோப்பைப் பயன்படுத்து",
+  "softwareTeamDlc.conflictKeepBoard": "இந்தப் பலகையை வை",
+  "softwareTeamDlc.conflictUsedFile":
+    "பலகை திட்டக் கோப்பிலிருந்து மாற்றப்பட்டது.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "இந்தப் பலகை திட்டக் கோப்பில் எழுதப்பட்டது. மற்ற நகல் {file} இல் உள்ளது.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "இந்தப் பலகையைத் திட்டக் கோப்பின் மேல் எழுத முடியவில்லை.",
 } as const;
