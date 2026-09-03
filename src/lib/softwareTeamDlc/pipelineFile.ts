@@ -9,10 +9,11 @@
  * v3. There is no Host fs-watch API — Studio reloads on open / window focus /
  * visibility using `mtimeMs` from `fsReadFile`.
  *
- * Dirty local + newer foreign file = conflict: keep memory, do not clobber
- * the file. The next save backs up the foreign file to `.bak` and refuses
- * unless the user picks **Keep this board** (`overwriteConflict`). **Use
- * project file** hydrates even when local is dirty.
+ * Dirty local + a different foreign file = conflict: keep memory, do not
+ * clobber the file. Implicit persist backs up the foreign file to `.bak`
+ * and refuses unless the user picks **Keep this board**
+ * (`overwriteConflict`). **Use project file** hydrates even when local is
+ * dirty. A never-accepted file is also foreign.
  */
 
 import * as api from "@/lib/api";
@@ -134,6 +135,10 @@ export function bindSoftwareTeamPipelineProjectPath(
   projectPath?: string | null,
 ): string | null {
   const next = (projectPath ?? "").trim() || null;
+  if (next !== boundProjectPath) {
+    lastSeenMtimeMs = null;
+    lastSeenFingerprint = null;
+  }
   boundProjectPath = next;
   return boundProjectPath;
 }
@@ -186,6 +191,29 @@ function rememberSeen(
   lastSeenFingerprint = storeFingerprint(store);
   if (typeof mtimeMs === "number" && Number.isFinite(mtimeMs)) {
     lastSeenMtimeMs = mtimeMs;
+  }
+}
+
+function mtimeFromWriteResult(result: unknown): number | null {
+  if (!result || typeof result !== "object") return null;
+  const mtimeMs = (result as { mtimeMs?: unknown }).mtimeMs;
+  return typeof mtimeMs === "number" && Number.isFinite(mtimeMs) ? mtimeMs : null;
+}
+
+async function backupRawPipelineFile(
+  host: SoftwareTeamPipelineFileHost,
+  projectPath: string,
+  raw: string,
+): Promise<boolean> {
+  try {
+    await host.writeFile(
+      projectPath,
+      SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+      raw,
+    );
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -442,17 +470,11 @@ export async function readSoftwareTeamPipelineFile(input: {
   }
   const parsed = parseSoftwareTeamPipelineFileDoc(raw.text);
   if (!parsed.ok) {
-    let backedUp = false;
-    try {
-      await host.writeFile(
-        plan.projectPath,
-        SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
-        raw.text,
-      );
-      backedUp = true;
-    } catch {
-      backedUp = false;
-    }
+    const backedUp = await backupRawPipelineFile(
+      host,
+      plan.projectPath,
+      raw.text,
+    );
     const fail: SoftwareTeamPipelineFileRead = {
       ok: false,
       reason: "parse_fail",
@@ -502,17 +524,32 @@ export async function writeSoftwareTeamPipelineFile(input: {
     plan.projectPath,
     SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
   );
+  if (existing.error && !existing.missing) {
+    const fail: SoftwareTeamPipelineFileWrite = {
+      ok: false,
+      reason: "host_error",
+      error: existing.error,
+    };
+    emitFileStatus(fail);
+    return fail;
+  }
   if (existing.text != null && !existing.missing) {
     const parsed = parseSoftwareTeamPipelineFileDoc(existing.text);
     if (!parsed.ok) {
-      const fail: SoftwareTeamPipelineFileWrite = {
-        ok: false,
-        reason: "parse_fail",
-      };
-      emitFileStatus(fail);
-      return fail;
-    }
-    if (pipelineFileItemsEqual(parsed.store, input.store)) {
+      const backedUp = await backupRawPipelineFile(
+        host,
+        plan.projectPath,
+        existing.text,
+      );
+      if (!(input.overwriteConflict && backedUp)) {
+        const fail: SoftwareTeamPipelineFileWrite = {
+          ok: false,
+          reason: "parse_fail",
+        };
+        emitFileStatus(fail);
+        return fail;
+      }
+    } else if (pipelineFileItemsEqual(parsed.store, input.store)) {
       rememberSeen(input.store, existing.mtimeMs);
       const skip: SoftwareTeamPipelineFileWrite = {
         ok: true,
@@ -521,42 +558,37 @@ export async function writeSoftwareTeamPipelineFile(input: {
       };
       emitFileStatus(skip);
       return skip;
-    }
-    const foreign =
-      lastSeenFingerprint != null &&
-      storeFingerprint(parsed.store) !== lastSeenFingerprint;
-    if (foreign) {
-      let backedUp = false;
-      try {
-        await host.writeFile(
+    } else {
+      const foreign =
+        lastSeenFingerprint == null ||
+        storeFingerprint(parsed.store) !== lastSeenFingerprint;
+      if (foreign) {
+        const backedUp = await backupRawPipelineFile(
+          host,
           plan.projectPath,
-          SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
           existing.text,
         );
-        backedUp = true;
-      } catch {
-        backedUp = false;
-      }
-      if (!input.overwriteConflict) {
-        const fail: SoftwareTeamPipelineFileWrite = {
-          ok: false,
-          reason: "conflict",
-          error: backedUp
-            ? SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE
-            : "foreign file unchanged",
-        };
-        emitFileStatus(fail);
-        return fail;
+        if (!backedUp || !input.overwriteConflict) {
+          const fail: SoftwareTeamPipelineFileWrite = {
+            ok: false,
+            reason: "conflict",
+            error: backedUp
+              ? SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE
+              : "foreign file unchanged",
+          };
+          emitFileStatus(fail);
+          return fail;
+        }
       }
     }
   }
   try {
-    await host.writeFile(
+    const written = await host.writeFile(
       plan.projectPath,
       SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
       serializeSoftwareTeamPipelineFile(input.store, input.now),
     );
-    rememberSeen(input.store, input.now ?? Date.now());
+    rememberSeen(input.store, mtimeFromWriteResult(written));
     const ok: SoftwareTeamPipelineFileWrite = { ok: true, reason: "ok_project" };
     emitFileStatus(ok);
     return ok;
@@ -579,9 +611,26 @@ export async function hydrateSoftwareTeamPipelineFromProject(input: {
   projectPath?: string | null;
   host?: SoftwareTeamPipelineFileHost;
   storage?: { getItem: (k: string) => string | null; setItem: (k: string, v: string) => void };
+  /** Accept path: replace even when the in-app cache is dirty. */
+  overwriteDirty?: boolean;
 }): Promise<SoftwareTeamPipelineFileRead> {
   const loaded = await readSoftwareTeamPipelineFile(input);
   if (loaded.ok && loaded.store) {
+    const cached = loadSoftwareTeamPipelineStore(input.storage);
+    const dirty = isSoftwareTeamPipelineLocalDirty(cached);
+    if (
+      dirty &&
+      !input.overwriteDirty &&
+      !pipelineFileItemsEqual(loaded.store, cached)
+    ) {
+      const fail: SoftwareTeamPipelineFileRead = {
+        ok: false,
+        reason: "conflict",
+        error: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+      };
+      emitFileStatus(fail);
+      return fail;
+    }
     persistSoftwareTeamPipeline(loaded.store, input.storage);
     rememberSeen(loaded.store, loaded.mtimeMs);
   }
@@ -639,7 +688,8 @@ export type SoftwareTeamPipelineReload =
 
 /**
  * Re-read `.grok/software-works.json` when Host + project are available.
- * Newer mtime (or unknown mtime with different contents) replaces the cache.
+ * A different file replaces a clean cache. Dirty local + a different file
+ * is a conflict even when mtime is missing or did not increase.
  * Parse failure keeps the cache and writes `.bak`. No polling.
  */
 export async function reloadSoftwareTeamPipelineIfNewer(input: {
@@ -673,7 +723,6 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
   }
   const cached =
     input.cached ?? loadSoftwareTeamPipelineStore(input.storage);
-  const prevMtime = lastSeenMtimeMs;
   const prevFingerprint = lastSeenFingerprint;
   const loaded = await readSoftwareTeamPipelineFile({
     projectPath: plan.projectPath,
@@ -700,13 +749,9 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
   const fingerprint = storeFingerprint(loaded.store);
   const sameAsCache = pipelineFileItemsEqual(loaded.store, cached);
   const sameAsSeen = prevFingerprint != null && prevFingerprint === fingerprint;
-  const newer =
-    mtimeMs != null
-      ? prevMtime == null || mtimeMs > prevMtime
-      : !sameAsCache && !sameAsSeen;
   const dirty =
     prevFingerprint != null && storeFingerprint(cached) !== prevFingerprint;
-  if (!newer || sameAsCache || sameAsSeen) {
+  if (sameAsCache || sameAsSeen) {
     if (!dirty) rememberSeen(loaded.store, mtimeMs);
     return { ok: true, kind: "unchanged", mtimeMs };
   }
@@ -768,7 +813,10 @@ export async function acceptSoftwareTeamPipelineFile(input: {
     setItem: (k: string, v: string) => void;
   };
 }): Promise<SoftwareTeamPipelineReload> {
-  const loaded = await hydrateSoftwareTeamPipelineFromProject(input);
+  const loaded = await hydrateSoftwareTeamPipelineFromProject({
+    ...input,
+    overwriteDirty: true,
+  });
   if (!loaded.ok) return fileReadFailToReload(loaded);
   if (loaded.reason === "missing" || !loaded.store) {
     return { ok: true, kind: "missing", mtimeMs: loaded.mtimeMs ?? null };
