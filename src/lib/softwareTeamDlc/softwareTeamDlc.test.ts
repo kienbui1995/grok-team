@@ -579,6 +579,26 @@ describe("Software Team DLC pack + install plan", () => {
       }).reason,
     ).toBe("need_project");
   });
+
+  it("refuses project-target writes when the folder is shared ~/.grok", () => {
+    for (const projectPath of ["~/.grok", "~/.grok/", "/home/u/.grok", "C:\\Users\\u\\.grok"]) {
+      const plan = planSoftwareTeamDlcPackWrite({
+        sessionDataMode: "shared",
+        target: "project",
+        projectPath,
+      });
+      expect(plan.allowed).toBe(false);
+      expect(plan.reason).toBe("blocked_shared_user");
+      expect(plan.rewritesSharedGrokHome).toBe(true);
+    }
+    const independentHome = planSoftwareTeamDlcPackWrite({
+      sessionDataMode: "independent",
+      target: "user",
+      projectPath: "~/.grok-app/agent-home",
+    });
+    expect(independentHome.allowed).toBe(true);
+    expect(independentHome.rewritesSharedGrokHome).toBe(false);
+  });
 });
 
 function fakePackHost(
@@ -735,6 +755,18 @@ describe("Software Team DLC pack install", () => {
     if (result.ok) return;
     expect(result.reason).toBe("host_error");
     expect(result.error).toMatch(/boom/);
+  });
+
+  it("does not write the pack into shared ~/.grok as a project folder", async () => {
+    const host = fakePackHost();
+    const result = await installSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "~/.grok/",
+      host,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "blocked_shared_user" });
+    expect(host.calls).toEqual([]);
   });
 });
 
@@ -1049,6 +1081,27 @@ describe("Software Team DLC pack status + repair", () => {
     expect(write.calls).toEqual([]);
   });
 
+  it("probe and repair refuse a project path that is ~/.grok", async () => {
+    const write = fakePackHost();
+    const probe = await probeSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/home/u/.grok",
+      host: fakeProbeHost(listedPack("project")),
+    });
+    expect(probe.kind).toBe("blocked_shared");
+    expect(probe.present).toEqual([]);
+    const repaired = await repairSoftwareTeamDlcPack({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "~/.grok",
+      probeHost: fakeProbeHost(listedPack("project")),
+      writeHost: write,
+    });
+    expect(repaired).toMatchObject({ ok: false, reason: "blocked_shared_user" });
+    expect(write.calls).toEqual([]);
+  });
+
   it("install onlyNames writes a subset", async () => {
     const host = fakePackHost();
     const result = await installSoftwareTeamDlcPack({
@@ -1226,6 +1279,7 @@ describe("Software Team DLC plan / goal launch honesty", () => {
     expect(hostEntityIdFromUnknown({ id: "plan-1" })).toBe("plan-1");
     expect(hostEntityIdFromUnknown({ planId: "p2" })).toBe("p2");
     expect(hostEntityIdFromUnknown({ title: "SDLC", body: "x" })).toBeNull();
+    expect(hostEntityIdFromUnknown({})).toBeNull();
     expect(hostEntityIdFromUnknown(undefined)).toBeNull();
     expect(softwareTeamLaunchItemPatch({ ok: false, reason: "need_host" })).toBeNull();
   });
@@ -1287,6 +1341,31 @@ describe("Software Team DLC plan / goal launch honesty", () => {
     expect(softwareTeamLaunchItemPatch(result)).toBeNull();
   });
 
+  it("does not invent a plan id when sessionPlanChromeSet returns {}", async () => {
+    const host: SoftwareTeamLaunchHost = {
+      hasHost: () => true,
+      sessionCreate: async () => ({ id: "nope" }),
+      canWritePlanChrome: () => true,
+      sessionPlanChromeSet: async () => ({}),
+      setDraft: () => {},
+    };
+    const result = await launchSoftwareTeamWorkItem({
+      item: {
+        roleId: "product",
+        sessionId: "s1",
+        planRef: "/plan billing",
+      },
+      currentSessionId: "s1",
+      host,
+      storage: memoryStore(),
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.planChrome).toBe("set");
+    expect(result.hostPlanId).toBeNull();
+    expect(softwareTeamLaunchItemPatch(result)).toBeNull();
+  });
+
   it("writes a Host goal id only when createGoalEntity returns one", async () => {
     const host: SoftwareTeamLaunchHost = {
       hasHost: () => true,
@@ -1319,9 +1398,15 @@ describe("Software Team DLC plan / goal launch honesty", () => {
 describe("Software Works start a delivery + workspace bootstrap", () => {
   it("refuses shared ~/.grok and does not write", async () => {
     expect(isSoftwareTeamSharedHomePath("~/.grok")).toBe(true);
+    expect(isSoftwareTeamSharedHomePath("~/.grok/")).toBe(true);
     expect(isSoftwareTeamSharedHomePath("/home/u/.grok")).toBe(true);
+    expect(isSoftwareTeamSharedHomePath("/home/u/.grok/")).toBe(true);
     expect(isSoftwareTeamSharedHomePath("C:\\Users\\u\\.grok")).toBe(true);
     expect(isSoftwareTeamSharedHomePath("/repo")).toBe(false);
+    expect(isSoftwareTeamSharedHomePath("~/.grok-app/agent-home")).toBe(false);
+    expect(isSoftwareTeamSharedHomePath("/home/u/.grok-app/agent-home")).toBe(
+      false,
+    );
     expect(
       planSoftwareTeamWorkspaceBootstrap({
         projectPath: "/home/u/.grok",
@@ -1373,6 +1458,21 @@ describe("Software Works start a delivery + workspace bootstrap", () => {
       },
     });
     expect(skip).toEqual({ ok: true, reason: "skipped", files: [] });
+    const threw = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: "/repo",
+      title: "Auth",
+      bootstrap: true,
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ error: "missing" }),
+        writeFile: async () => {
+          throw new Error("write boom");
+        },
+      },
+    });
+    expect(threw).toMatchObject({ ok: false, reason: "host_error" });
+    if (threw.ok) return;
+    expect(threw.error).toMatch(/write boom/);
   });
 
   it("writes only missing docs/sdlc placeholders under the project", async () => {
@@ -1697,6 +1797,15 @@ describe("Software Works project pipeline file SoT", () => {
         host: { isDesktopHost: () => true },
       }).reason,
     ).toBe("need_project");
+    const { host } = fileHost({ failWrite: SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE });
+    const threw = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: createEmptySoftwareTeamPipelineStore(),
+      host,
+    });
+    expect(threw).toMatchObject({ ok: false, reason: "host_error" });
+    if (threw.ok) return;
+    expect(threw.error).toMatch(/write boom/);
   });
 });
 
@@ -2205,6 +2314,19 @@ describe("Software Works archive, studio filter, export, conflict", () => {
       },
     });
     expect(blocked).toMatchObject({ ok: false, reason: "blocked_shared_home" });
+    const threw = await exportSoftwareTeamDeliverySummary({
+      projectPath: "/repo",
+      detail,
+      host: {
+        isDesktopHost: () => true,
+        writeFile: async () => {
+          throw new Error("write boom");
+        },
+      },
+    });
+    expect(threw).toMatchObject({ ok: false, reason: "host_error" });
+    if (threw.ok) return;
+    expect(threw.error).toMatch(/write boom/);
   });
 
   it("does not clobber dirty local when the project file is newer", async () => {

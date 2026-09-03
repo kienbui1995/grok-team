@@ -93,7 +93,7 @@ Button: SDLC Studio toolbar and Settings → Extensions → Agents (when the edi
 
 Sequence (desktop Host only — `api.isDesktopHost()`):
 
-1. Planner gate (shared + `user` → `blocked_shared_user`; project without path → `need_project`).
+1. Planner gate (shared + `user` → `blocked_shared_user`; project without path → `need_project`; project path *is* `~/.grok` → `blocked_shared_user`).
 2. `agentsScaffold` (force) then `fsWriteAbsolute` with pack body (file must already exist).
 3. `skillCreate` (idempotent) then `skillWrite` with pack `SKILL.md`.
 4. `workflowsCreate` (force) then `fsWriteAbsolute` for `team-handoff.rhai`.
