@@ -95,6 +95,7 @@ import {
   resolveSoftwareTeamDeliveryId,
   resolveSoftwareTeamStudioDeliveryId,
   missingSoftwareTeamTeammateRoles,
+  setSoftwareTeamItemArchived,
   serializeSoftwareTeamPipelineFile,
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
