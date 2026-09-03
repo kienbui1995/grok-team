@@ -140,6 +140,8 @@ import {
   parseSoftwareTeamStudioPrefs,
   resolveSoftwareTeamStudioPrefs,
   saveSoftwareTeamStudioPrefs,
+  decideEmptyStudioWizard,
+  shouldAutoOpenEmptyStudioWizard,
   softwareTeamExportShouldCopyInstead,
   SOFTWARE_TEAM_BOOTSTRAP_RELATIVE,
   softwareTeamRoleChecklist,
@@ -2936,6 +2938,51 @@ describe("Software Works studio prefs + full roster + copy export", () => {
         [keep],
       ),
     ).toEqual({ deliveryFilter: "d-keep", showArchived: false });
+  });
+
+  it("does not auto-open the empty wizard while a pipeline conflict is open", () => {
+    expect(
+      shouldAutoOpenEmptyStudioWizard({
+        itemCount: 0,
+        inConflict: true,
+        alreadyOffered: false,
+      }),
+    ).toBe(false);
+    expect(
+      shouldAutoOpenEmptyStudioWizard({
+        itemCount: 0,
+        inConflict: false,
+        alreadyOffered: false,
+      }),
+    ).toBe(true);
+    expect(
+      shouldAutoOpenEmptyStudioWizard({
+        itemCount: 0,
+        inConflict: false,
+        alreadyOffered: true,
+      }),
+    ).toBe(false);
+    expect(
+      shouldAutoOpenEmptyStudioWizard({
+        itemCount: 2,
+        inConflict: false,
+        alreadyOffered: false,
+      }),
+    ).toBe(false);
+    expect(
+      decideEmptyStudioWizard({
+        itemCount: 2,
+        inConflict: false,
+        alreadyOffered: false,
+      }),
+    ).toEqual({ open: false, markOffered: true });
+    expect(
+      decideEmptyStudioWizard({
+        itemCount: 0,
+        inConflict: true,
+        alreadyOffered: false,
+      }),
+    ).toEqual({ open: false, markOffered: false });
   });
 
   it("turns Show archived on when the remembered delivery is archived", () => {

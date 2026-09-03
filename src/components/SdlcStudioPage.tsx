@@ -41,6 +41,7 @@ import {
   loadSoftwareTeamStudioPrefs,
   resolveSoftwareTeamStudioPrefs,
   saveSoftwareTeamStudioPrefs,
+  decideEmptyStudioWizard,
   normalizeSoftwareTeamGitBranch,
   missingSoftwareTeamDeliveryRoles,
   nextSoftwareTeamRole,
@@ -334,16 +335,6 @@ export function SdlcStudioPage({
   }, [pipeline.reloadFromProject, t, workspace.projectPath]);
 
   useEffect(() => {
-    if (emptyWizardOffered.current) return;
-    if (pipeline.items.length > 0) {
-      emptyWizardOffered.current = true;
-      return;
-    }
-    emptyWizardOffered.current = true;
-    setWizard({ title: "", roleId: "product", bootstrap: false });
-  }, [pipeline.items.length]);
-
-  useEffect(() => {
     const sync = (ev: Event) => {
       const detail = (ev as CustomEvent).detail as
         | SoftwareTeamPipelineFileRead
@@ -357,6 +348,21 @@ export function SdlcStudioPage({
 
   const inConflict =
     fileStatus?.ok === false && fileStatus.reason === "conflict";
+
+  useEffect(() => {
+    if (inConflict) {
+      setWizard(null);
+    }
+    const decision = decideEmptyStudioWizard({
+      itemCount: pipeline.items.length,
+      inConflict,
+      alreadyOffered: emptyWizardOffered.current,
+    });
+    if (decision.markOffered) emptyWizardOffered.current = true;
+    if (decision.open) {
+      setWizard({ title: "", roleId: "product", bootstrap: false });
+    }
+  }, [inConflict, pipeline.items.length]);
 
   useEffect(() => {
     if (inConflict && !conflictPromptedRef.current) {

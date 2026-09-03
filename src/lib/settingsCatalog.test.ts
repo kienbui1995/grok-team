@@ -564,6 +564,28 @@ describe("settingsCatalog", () => {
     expect(exp.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     const zhHits = searchSettingsEntries("软件团队", tZh, tEn);
     expect(zhHits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const conflict = searchSettingsEntries("pipeline conflict", tZh, tEn);
+    expect(conflict.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const keepBoard = searchSettingsEntries("keep this board", tZh, tEn);
+    expect(keepBoard.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const useFile = searchSettingsEntries("use project file", tZh, tEn);
+    expect(useFile.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const showArchived = searchSettingsEntries("show archived", tZh, tEn);
+    expect(showArchived.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(
+      true,
+    );
+    const studioPrefs = searchSettingsEntries(
+      "grok.softwareTeamDlc.studio",
+      tZh,
+      tEn,
+    );
+    expect(studioPrefs.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(
+      true,
+    );
+    const zhConflict = searchSettingsEntries("流水线文件冲突", tZh, tEn);
+    expect(zhConflict.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(
+      true,
+    );
     expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(
       "#/settings/extensions/agents",
     );
