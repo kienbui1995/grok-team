@@ -16,7 +16,11 @@ import {
   type SoftwareTeamPipelineItemDraft,
   type SoftwareTeamPipelineStore,
 } from "./pipeline";
-import { softwareTeamDeliveryTitle } from "./deliveryFilter";
+import {
+  SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
+  SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+  softwareTeamDeliveryTitle,
+} from "./deliveryFilter";
 import { softwareTeamDeliveryGitBranch } from "./gitBranch";
 import { softwareTeamRoleById, type SoftwareTeamRoleId } from "./roles";
 import { firstSoftwareTeamNonEmptyField } from "./shipGate";
@@ -239,6 +243,19 @@ export function resolveSoftwareTeamDeliveryId(
   return inheritSoftwareTeamDeliveryId(items) || newSoftwareTeamDeliveryId();
 }
 
+/** New Studio cards follow the chip filter. Ungrouped stays unbound. */
+export function resolveSoftwareTeamStudioDeliveryId(
+  items: readonly Pick<SoftwareTeamPipelineItem, "deliveryId" | "updatedAt">[],
+  filter?: string | null,
+): string {
+  const id = (filter ?? "").trim();
+  if (id === SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED) return "";
+  if (!id || id === SOFTWARE_TEAM_DELIVERY_FILTER_ALL) {
+    return resolveSoftwareTeamDeliveryId(items);
+  }
+  return id;
+}
+
 export function ensureSoftwareTeamItemDeliveryId(
   item: SoftwareTeamPipelineItem,
 ): { item: SoftwareTeamPipelineItem; deliveryId: string; patched: boolean } {
@@ -261,6 +278,7 @@ export function softwareTeamDeliveryItemDraft(input: {
   const title = input.title.trim();
   return {
     title,
+    deliveryTitle: title,
     roleId: role.id,
     stageId: role.defaultStage,
     sessionId: (input.sessionId ?? "").trim(),
@@ -276,7 +294,12 @@ export function softwareTeamDeliveryItemDraft(input: {
 export function softwareTeamDeliverySiblingDraft(input: {
   source: Pick<
     SoftwareTeamPipelineItem,
-    "title" | "planRef" | "goalRef" | "artifactRef"
+    | "title"
+    | "deliveryTitle"
+    | "gitBranch"
+    | "planRef"
+    | "goalRef"
+    | "artifactRef"
   >;
   roleId: SoftwareTeamRoleId;
   deliveryId: string;
@@ -284,6 +307,8 @@ export function softwareTeamDeliverySiblingDraft(input: {
   const role = softwareTeamRoleById(input.roleId) ?? softwareTeamRoleById("product")!;
   return {
     title: input.source.title,
+    deliveryTitle: (input.source.deliveryTitle ?? "").trim(),
+    gitBranch: (input.source.gitBranch ?? "").trim(),
     roleId: role.id,
     stageId: role.defaultStage,
     sessionId: "",
@@ -376,7 +401,18 @@ export function setSoftwareTeamDeliveryNote(
     : undefined;
   const target = byRole ?? byNote ?? byFocus ?? members[0];
   if (!target) return store;
-  return updateSoftwareTeamPipelineItem(store, target.id, { [field]: text }, now);
+  let next = store;
+  for (const member of members) {
+    const value = member.id === target.id ? text : "";
+    if (member[field] === value) continue;
+    next = updateSoftwareTeamPipelineItem(
+      next,
+      member.id,
+      { [field]: value },
+      now,
+    );
+  }
+  return next;
 }
 
 export function renameSoftwareTeamDelivery(

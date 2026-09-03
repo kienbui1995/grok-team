@@ -117,14 +117,22 @@ export function missingSoftwareTeamDeliveryRoles(
   prefer: readonly SoftwareTeamRoleId[] = SOFTWARE_TEAM_ROSTER_ROLES,
 ): SoftwareTeamRoleId[] {
   const id = deliveryId.trim();
+  if (!id) return [...prefer];
   const present = new Set(
     items
-      .filter((item) =>
-        id
-          ? (item.deliveryId ?? "").trim() === id
-          : !(item.deliveryId ?? "").trim(),
-      )
+      .filter((item) => (item.deliveryId ?? "").trim() === id)
       .map((item) => item.roleId),
   );
   return prefer.filter((role) => !present.has(role));
+}
+
+/** Missing roster roles for Add teammate. Ungrouped cards are not one pool. */
+export function missingSoftwareTeamTeammateRoles(
+  items: readonly SoftwareTeamPipelineItem[],
+  item: Pick<SoftwareTeamPipelineItem, "roleId" | "deliveryId">,
+  prefer: readonly SoftwareTeamRoleId[] = SOFTWARE_TEAM_ROSTER_ROLES,
+): SoftwareTeamRoleId[] {
+  const missing = missingSoftwareTeamDeliveryRoles(items, item.deliveryId, prefer);
+  if (item.deliveryId.trim()) return missing;
+  return missing.filter((roleId) => roleId !== item.roleId);
 }

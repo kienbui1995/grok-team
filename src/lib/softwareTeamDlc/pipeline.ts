@@ -531,6 +531,14 @@ export function addSoftwareTeamPipelineItem(
       artifactRef:
         created.artifactRef.trim() ||
         firstSoftwareTeamNonEmptyField(siblings.map((row) => row.artifactRef)),
+      deliveryTitle:
+        created.deliveryTitle.trim() ||
+        firstSoftwareTeamNonEmptyField(
+          siblings.map((row) => row.deliveryTitle),
+        ),
+      gitBranch:
+        created.gitBranch.trim() ||
+        firstSoftwareTeamNonEmptyField(siblings.map((row) => row.gitBranch)),
     };
   }
   const cohort = siblings.length ? [...siblings, item] : [item];
