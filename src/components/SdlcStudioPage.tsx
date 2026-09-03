@@ -41,7 +41,6 @@ import {
   loadSoftwareTeamStudioPrefs,
   commitSoftwareTeamStudioPrefs,
   resolveSoftwareTeamStudioPrefs,
-  saveSoftwareTeamStudioPrefs,
   decideEmptyStudioWizard,
   pickSoftwareTeamStudioOverlay,
   normalizeSoftwareTeamGitBranch,

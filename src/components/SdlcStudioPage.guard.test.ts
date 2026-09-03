@@ -17,7 +17,7 @@ describe("SdlcStudioPage dialog / i18n guard", () => {
 
   it("resolves pipeline conflict with GlassModal copy (close stays unresolved)", () => {
     expect(SRC).toContain("<GlassModal");
-    expect(SRC).toContain("open={conflictOpen}");
+    expect(SRC).toContain('open={overlay === "conflict"}');
     expect(SRC).toContain('t("softwareTeamDlc.conflictTitle")');
     expect(SRC).toContain('t("softwareTeamDlc.conflictUseFile")');
     expect(SRC).toContain('t("softwareTeamDlc.conflictKeepBoard")');
