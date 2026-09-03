@@ -43,14 +43,16 @@ import {
   saveSoftwareTeamStudioPrefs,
   normalizeSoftwareTeamGitBranch,
   missingSoftwareTeamDeliveryRoles,
+  missingSoftwareTeamTeammateRoles,
   nextSoftwareTeamRole,
   decideSoftwareTeamBindThisChat,
+  firstSoftwareTeamNonEmptyField,
   openSoftwareTeamSdlcDoc,
   pickSoftwareTeamAttachSessions,
   planSoftwareTeamDlcPackWrite,
   planSoftwareTeamWorkspaceBootstrap,
   probeSoftwareTeamSdlcDocs,
-  resolveSoftwareTeamDeliveryId,
+  resolveSoftwareTeamStudioDeliveryId,
   softwareTeamBindThisChatMessageKey,
   softwareTeamBootstrapMessageKey,
   softwareTeamDeliveryItemDraft,
@@ -512,11 +514,13 @@ export function SdlcStudioPage({
         roleId: roleFilter,
         showArchived,
         archivedDeliveryIds: pipeline.store.archivedDeliveryIds,
-        titleOf: displayTitle,
+        titleOf: (item) =>
+          item.deliveryId.trim()
+            ? softwareTeamDeliveryTitle(pipeline.items, item.deliveryId)
+            : item.deliveryTitle,
       }),
     [
       deliveryFilter,
-      displayTitle,
       pipeline.items,
       pipeline.store.archivedDeliveryIds,
       query,
@@ -979,7 +983,10 @@ export function SdlcStudioPage({
       goalRef: editor.goalRef,
       artifactRef: editor.artifactRef,
       gitBranch,
-      deliveryId: resolveSoftwareTeamDeliveryId(pipeline.items),
+      deliveryId: resolveSoftwareTeamStudioDeliveryId(
+        pipeline.items,
+        deliveryFilter,
+      ),
       stageSource: "board",
     });
     return created?.id ?? null;
@@ -1066,7 +1073,9 @@ export function SdlcStudioPage({
         setNotesEditor({
           itemId: menuItem.id,
           kind: "review",
-          text: menuItem.reviewNote,
+          text: firstSoftwareTeamNonEmptyField(
+            deliveryCohort(pipeline.items, menuItem).map((row) => row.reviewNote),
+          ),
         }),
     });
     items.push({
@@ -1075,7 +1084,9 @@ export function SdlcStudioPage({
         setNotesEditor({
           itemId: menuItem.id,
           kind: "qa",
-          text: menuItem.qaNote,
+          text: firstSoftwareTeamNonEmptyField(
+            deliveryCohort(pipeline.items, menuItem).map((row) => row.qaNote),
+          ),
         }),
     });
     const archived = isSoftwareTeamItemArchived(
@@ -1109,9 +1120,9 @@ export function SdlcStudioPage({
         })),
       });
     }
-    const teammateRoles = missingSoftwareTeamDeliveryRoles(
+    const teammateRoles = missingSoftwareTeamTeammateRoles(
       pipeline.items,
-      menuItem.deliveryId,
+      menuItem,
     );
     if (teammateRoles.length) {
       items.push({
@@ -1310,7 +1321,10 @@ export function SdlcStudioPage({
                         const created = pipeline.addItem({
                           roleId: role.id,
                           sessionId: "",
-                          deliveryId: resolveSoftwareTeamDeliveryId(pipeline.items),
+                          deliveryId: resolveSoftwareTeamStudioDeliveryId(
+                            pipeline.items,
+                            deliveryFilter,
+                          ),
                           stageSource: "board",
                         });
                         if (created) void onOpenInComposer(created);
@@ -2182,12 +2196,15 @@ export function SdlcStudioPage({
               className="btn"
               onClick={() => {
                 if (!notesEditor) return;
-                const text = notesEditor.text.trim();
-                if (notesEditor.kind === "qa") {
-                  pipeline.updateItem(notesEditor.itemId, { qaNote: text });
-                } else {
-                  pipeline.updateItem(notesEditor.itemId, { reviewNote: text });
-                }
+                const focus = pipeline.items.find(
+                  (item) => item.id === notesEditor.itemId,
+                );
+                pipeline.setDeliveryNote({
+                  deliveryId: focus?.deliveryId,
+                  focusItemId: notesEditor.itemId,
+                  kind: notesEditor.kind,
+                  text: notesEditor.text,
+                });
                 setNotesEditor(null);
                 setStatus(t("softwareTeamDlc.notesSaved"));
               }}

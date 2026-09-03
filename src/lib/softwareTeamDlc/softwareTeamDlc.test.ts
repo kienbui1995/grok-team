@@ -93,6 +93,9 @@ import {
   reloadSoftwareTeamPipelineIfNewer,
   resetSoftwareTeamPipelineFileSeenState,
   resolveSoftwareTeamDeliveryId,
+  resolveSoftwareTeamStudioDeliveryId,
+  missingSoftwareTeamTeammateRoles,
+  setSoftwareTeamItemArchived,
   serializeSoftwareTeamPipelineFile,
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
@@ -3109,5 +3112,369 @@ describe("Software Works delivery handoff keeps the source card", () => {
     if (!again.ok) return;
     expect(again.mode).toBe("focus");
     expect(again.store.items.filter((item) => item.roleId === "writer")).toHaveLength(1);
+  });
+});
+
+describe("Software Works board adversarial cases", () => {
+  function deliveryWithNotes(id = "d-adv") {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "adv-eng",
+      roleId: "engineer",
+      stageId: "build",
+      title: "Card A",
+      deliveryId: id,
+      deliveryTitle: "Billing slice",
+      gitBranch: "feat/billing",
+      planRef: "docs/sdlc/spec.md",
+      roleHistory: ["engineer"],
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "adv-rev",
+      roleId: "reviewer",
+      deliveryId: id,
+      reviewNote: "nits only",
+      roleHistory: ["reviewer"],
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "adv-qa",
+      roleId: "qa",
+      deliveryId: id,
+      qaNote: "vitest pass",
+      roleHistory: ["qa"],
+    });
+    return store;
+  }
+
+  it("start-delivery draft stamps deliveryTitle and sibling drafts keep title + branch", () => {
+    const draft = softwareTeamDeliveryItemDraft({
+      title: "Billing slice",
+      roleId: "product",
+    });
+    expect(draft.deliveryTitle).toBe("Billing slice");
+    expect(draft.sessionId).toBe("");
+    const sibling = softwareTeamDeliverySiblingDraft({
+      source: {
+        title: "Card A",
+        deliveryTitle: "Billing slice",
+        gitBranch: "feat/billing",
+        planRef: "docs/sdlc/spec.md",
+        goalRef: "ship billing",
+        artifactRef: "pr-1",
+      },
+      roleId: "architect",
+      deliveryId: "d-adv",
+    });
+    expect(sibling).toMatchObject({
+      roleId: "architect",
+      sessionId: "",
+      deliveryId: "d-adv",
+      title: "Card A",
+      deliveryTitle: "Billing slice",
+      gitBranch: "feat/billing",
+      planRef: "docs/sdlc/spec.md",
+    });
+  });
+
+  it("rename + newer sibling without a title still shows the delivery name on chips", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "chip-prod",
+      roleId: "product",
+      title: "Card A",
+      deliveryId: "d-chip",
+    });
+    store = renameSoftwareTeamDelivery(store, "d-chip", "Billing slice", 10);
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "chip-arch",
+      roleId: "architect",
+      title: "Card A",
+      deliveryId: "d-chip",
+      updatedAt: 99,
+    });
+    const groups = listSoftwareTeamDeliveryGroups(store.items);
+    expect(groups.find((group) => group.id === "d-chip")?.title).toBe(
+      "Billing slice",
+    );
+    expect(softwareTeamDeliveryTitle(store.items, "d-chip")).toBe("Billing slice");
+    expect(pipelineItemById(store, "chip-arch")?.deliveryTitle).toBe(
+      "Billing slice",
+    );
+    expect(pipelineItemById(store, "chip-arch")?.gitBranch).toBe("");
+  });
+
+  it("handoff without deliveryId mutates; with deliveryId keeps the source card", () => {
+    const loose = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "loose-h",
+      roleId: "product",
+      title: "Loose",
+    });
+    const mutated = applySoftwareTeamHandoffToStore(loose, "loose-h", 3);
+    expect(mutated.mode).toBe("mutate");
+    expect(pipelineItemById(mutated.store, "loose-h")?.roleId).toBe("architect");
+
+    const bound = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "bound-h",
+      roleId: "product",
+      title: "Bound",
+      deliveryId: "d-h-keep",
+      deliveryTitle: "Keep me",
+      gitBranch: "feat/keep",
+    });
+    const created = applySoftwareTeamHandoffToStore(bound, "bound-h", 4);
+    expect(created.mode).toBe("created");
+    expect(pipelineItemById(created.store, "bound-h")?.roleId).toBe("product");
+    const sibling = created.store.items.find((item) => item.roleId === "architect");
+    expect(sibling?.deliveryTitle).toBe("Keep me");
+    expect(sibling?.gitBranch).toBe("feat/keep");
+    expect(sibling?.sessionId).toBe("");
+  });
+
+  it("QA→Writer handoff without notes stays on Review; ship without notes is blocked", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "qa-block",
+      roleId: "qa",
+      stageId: "review",
+      deliveryId: "d-block",
+      roleHistory: ["qa"],
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "rev-block",
+      roleId: "reviewer",
+      deliveryId: "d-block",
+      roleHistory: ["reviewer"],
+    });
+    const handed = applySoftwareTeamHandoffToStore(store, "qa-block", 7);
+    expect(handed.mode).toBe("created");
+    const writer = handed.store.items.find((item) => item.roleId === "writer");
+    expect(writer?.stageId).toBe("review");
+    expect(pipelineItemById(handed.store, "qa-block")?.roleId).toBe("qa");
+
+    const shipped = applySoftwareTeamDeliveryShipToStore(store, "qa-block", 8);
+    expect(shipped.ok).toBe(false);
+    if (shipped.ok) return;
+    expect(shipped.blocks.length).toBeGreaterThan(0);
+    expect(softwareTeamShipGate(pipelineItemById(store, "qa-block")!).ok).toBe(
+      false,
+    );
+    expect(softwareTeamDeliveryShipGate(store.items).ok).toBe(false);
+  });
+
+  it("writes notes onto the Reviewer/QA card and clears leftovers so the gate can close", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "note-eng",
+      roleId: "engineer",
+      deliveryId: "d-note-sot",
+      reviewNote: "stale engineer review",
+      qaNote: "stale engineer qa",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "note-rev",
+      roleId: "reviewer",
+      deliveryId: "d-note-sot",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "note-qa",
+      roleId: "qa",
+      deliveryId: "d-note-sot",
+    });
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-note-sot",
+      focusItemId: "note-eng",
+      kind: "review",
+      text: "real review",
+    });
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-note-sot",
+      focusItemId: "note-eng",
+      kind: "qa",
+      text: "real qa",
+    });
+    expect(pipelineItemById(store, "note-rev")?.reviewNote).toBe("real review");
+    expect(pipelineItemById(store, "note-qa")?.qaNote).toBe("real qa");
+    expect(pipelineItemById(store, "note-eng")?.reviewNote).toBe("");
+    expect(pipelineItemById(store, "note-eng")?.qaNote).toBe("");
+    expect(softwareTeamDeliveryShipGate(store.items).ok).toBe(true);
+
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-note-sot",
+      focusItemId: "note-eng",
+      kind: "review",
+      text: "   ",
+    });
+    expect(pipelineItemById(store, "note-rev")?.reviewNote).toBe("");
+    expect(pipelineItemById(store, "note-eng")?.reviewNote).toBe("");
+    expect(softwareTeamDeliveryShipGate(store.items).ok).toBe(false);
+  });
+
+  it("does not treat ungrouped cards as one roster for missing roles", () => {
+    const product = createSoftwareTeamPipelineItem({
+      id: "ug-p",
+      roleId: "product",
+    })!;
+    const engineer = createSoftwareTeamPipelineItem({
+      id: "ug-e",
+      roleId: "engineer",
+    })!;
+    expect(missingSoftwareTeamDeliveryRoles([product, engineer], "")).toEqual([
+      ...SOFTWARE_TEAM_ROSTER_ROLES,
+    ]);
+    expect(missingSoftwareTeamTeammateRoles([product, engineer], product)).toEqual([
+      "architect",
+      "engineer",
+      "reviewer",
+      "qa",
+      "writer",
+    ]);
+    expect(missingSoftwareTeamTeammateRoles([product], product)).toEqual([
+      "architect",
+      "engineer",
+      "reviewer",
+      "qa",
+      "writer",
+    ]);
+  });
+
+  it("studio new-item delivery id follows the chip filter, including Ungrouped", () => {
+    const a = createSoftwareTeamPipelineItem({
+      id: "flt-a",
+      roleId: "product",
+      deliveryId: "d-a",
+      updatedAt: 1,
+    })!;
+    const b = createSoftwareTeamPipelineItem({
+      id: "flt-b",
+      roleId: "engineer",
+      deliveryId: "d-b",
+      updatedAt: 9,
+    })!;
+    expect(
+      resolveSoftwareTeamStudioDeliveryId([a, b], SOFTWARE_TEAM_DELIVERY_FILTER_ALL),
+    ).toBe("d-b");
+    expect(resolveSoftwareTeamStudioDeliveryId([a, b], "d-a")).toBe("d-a");
+    expect(
+      resolveSoftwareTeamStudioDeliveryId(
+        [a, b],
+        SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+      ),
+    ).toBe("");
+  });
+
+  it("search can match the shared delivery title, not only the card title", () => {
+    const item = createSoftwareTeamPipelineItem({
+      id: "sr-1",
+      roleId: "engineer",
+      title: "Card A",
+      deliveryId: "d-sr",
+      deliveryTitle: "Billing slice",
+    })!;
+    expect(
+      filterSoftwareTeamStudioItems({
+        items: [item],
+        query: "billing",
+        titleOf: (row) => softwareTeamDeliveryTitle([item], row.deliveryId),
+      }).map((row) => row.id),
+    ).toEqual(["sr-1"]);
+    expect(
+      filterSoftwareTeamStudioItems({
+        items: [item],
+        query: "nope",
+        titleOf: (row) => softwareTeamDeliveryTitle([item], row.deliveryId),
+      }),
+    ).toEqual([]);
+  });
+
+  it("sync refs no-ops on a blank id and can clear a field across members", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "sync-a",
+      roleId: "product",
+      deliveryId: "d-sync",
+      planRef: "old-plan",
+      goalRef: "old-goal",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "sync-b",
+      roleId: "engineer",
+      deliveryId: "d-sync",
+    });
+    expect(syncSoftwareTeamDeliverySliceRefs(store, "  ", { planRef: "x" })).toBe(
+      store,
+    );
+    store = syncSoftwareTeamDeliverySliceRefs(store, "d-sync", { planRef: "" });
+    expect(store.items.every((item) => item.planRef === "")).toBe(true);
+    expect(pipelineItemById(store, "sync-b")?.goalRef).toBe("old-goal");
+  });
+
+  it("moves onto a missing delivery id without inventing a session", () => {
+    const store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      {
+        id: "mv-miss",
+        roleId: "qa",
+        title: "Orphan",
+        deliveryId: "d-old",
+        deliveryTitle: "Old",
+        sessionId: "sess-keep",
+        planRef: "docs/sdlc/spec.md",
+      },
+    );
+    const moved = moveSoftwareTeamItemDelivery(store, "mv-miss", "d-ghost", 11);
+    const card = pipelineItemById(moved, "mv-miss");
+    expect(card?.deliveryId).toBe("d-ghost");
+    expect(card?.deliveryTitle).toBe("Old");
+    expect(card?.sessionId).toBe("sess-keep");
+    expect(card?.planRef).toBe("docs/sdlc/spec.md");
+    expect(moved.activity.some((event) => event.type === "item_moved")).toBe(true);
+  });
+
+  it("duplicate then archive then ship still uses delivery-wide notes", () => {
+    const source = deliveryWithNotes("d-dup-src");
+    const dup = duplicateSoftwareTeamDelivery(source, "d-dup-src", " (copy)", 12);
+    expect(dup).not.toBeNull();
+    if (!dup) return;
+    const copies = dup.store.items.filter((item) => item.deliveryId === dup.deliveryId);
+    expect(copies.every((item) => item.sessionId === "")).toBe(true);
+    expect(softwareTeamDeliveryShipGate(copies).ok).toBe(true);
+
+    const archived = setSoftwareTeamDeliveryArchived(dup.store, dup.deliveryId, true, 13);
+    expect(
+      archived.items
+        .filter((item) => item.deliveryId === dup.deliveryId)
+        .every((item) => item.archived),
+    ).toBe(true);
+    const shipped = applySoftwareTeamDeliveryShipToStore(
+      archived,
+      copies.find((item) => item.roleId === "engineer")!.id,
+      14,
+    );
+    expect(shipped.ok).toBe(true);
+    if (!shipped.ok) return;
+    expect(shipped.item.roleId).toBe("writer");
+    expect(shipped.item.stageId).toBe("ship");
+
+    const archivedSource = setSoftwareTeamItemArchived(source, "adv-eng", true, 15);
+    const still = applySoftwareTeamDeliveryShipToStore(archivedSource, "adv-eng", 16);
+    expect(still.ok).toBe(true);
+  });
+
+  it("steal-bind records session_unbound on the previous owner", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "steal-a",
+      roleId: "product",
+      sessionId: "sess-steal",
+      deliveryId: "d-steal",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "steal-b",
+      roleId: "engineer",
+      deliveryId: "d-steal",
+    });
+    const bound = bindPipelineItemSession(store, "steal-b", "sess-steal", 17);
+    expect(pipelineItemById(bound, "steal-a")?.sessionId).toBe("");
+    expect(pipelineItemById(bound, "steal-b")?.sessionId).toBe("sess-steal");
+    expect(
+      bound.activity.filter((event) => event.type === "session_unbound"),
+    ).toHaveLength(1);
+    expect(
+      bound.activity.filter((event) => event.type === "session_bound"),
+    ).toHaveLength(1);
   });
 });

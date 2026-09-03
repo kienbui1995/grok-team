@@ -101,24 +101,21 @@ export function SdlcDeliveryDetailPane({
     detail?.reviewNotes[0]?.text ?? "",
   );
   const [qaDraft, setQaDraft] = useState(detail?.qaNotes[0]?.text ?? "");
+  const reviewText = detail?.reviewNotes[0]?.text ?? "";
+  const qaText = detail?.qaNotes[0]?.text ?? "";
   useEffect(() => {
-    setBranchDraft(detail?.gitBranch ?? "");
     setTitleDraft(detail?.title ?? "");
+    setBranchDraft(detail?.gitBranch ?? "");
+  }, [detail?.deliveryId, detail?.title, detail?.gitBranch]);
+  useEffect(() => {
     setPlanDraft(detail?.planRef ?? "");
     setGoalDraft(detail?.goalRef ?? "");
     setArtifactDraft(detail?.artifactRef ?? "");
-    setReviewDraft(detail?.reviewNotes[0]?.text ?? "");
-    setQaDraft(detail?.qaNotes[0]?.text ?? "");
-  }, [
-    detail?.deliveryId,
-    detail?.gitBranch,
-    detail?.title,
-    detail?.planRef,
-    detail?.goalRef,
-    detail?.artifactRef,
-    detail?.reviewNotes,
-    detail?.qaNotes,
-  ]);
+  }, [detail?.deliveryId, detail?.planRef, detail?.goalRef, detail?.artifactRef]);
+  useEffect(() => {
+    setReviewDraft(reviewText);
+    setQaDraft(qaText);
+  }, [detail?.deliveryId, reviewText, qaText]);
 
   return (
     <GlassModal

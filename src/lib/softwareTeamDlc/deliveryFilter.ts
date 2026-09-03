@@ -26,6 +26,7 @@ export function softwareTeamDeliveryTitle(
   const id = deliveryId.trim();
   if (!id) return "";
   const members = items.filter((item) => item.deliveryId.trim() === id);
+  if (!members.length) return "";
   const named = members.find((item) => item.deliveryTitle.trim());
   if (named?.deliveryTitle.trim()) return named.deliveryTitle.trim();
   const titled = members.find((item) => item.title.trim()) ?? members[0];
@@ -60,7 +61,12 @@ export function listSoftwareTeamDeliveryGroups(
       else if (item.title.trim()) prev.title = item.title.trim();
     }
   }
-  return [...map.values()].sort((a, b) => b.updatedAt - a.updatedAt);
+  return [...map.values()]
+    .map((group) => ({
+      ...group,
+      title: softwareTeamDeliveryTitle(items, group.id) || group.title,
+    }))
+    .sort((a, b) => b.updatedAt - a.updatedAt);
 }
 
 export function filterSoftwareTeamItemsByDelivery(
