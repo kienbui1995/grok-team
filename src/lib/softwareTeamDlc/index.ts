@@ -134,7 +134,10 @@ export {
   type SoftwareTeamPackKind,
 } from "./pack";
 
-export { softwareTeamSlashSkillInfos } from "./slash";
+export {
+  isSoftwareTeamSlashSkillName,
+  softwareTeamSlashSkillInfos,
+} from "./slash";
 
 export {
   SOFTWARE_TEAM_PACK_INSTALL_FAIL_REASONS,
@@ -389,9 +392,17 @@ export {
 export {
   DEFAULT_SOFTWARE_TEAM_STUDIO_PREFS,
   SOFTWARE_TEAM_DLC_STUDIO_PREFS_KEY,
+  commitSoftwareTeamStudioPrefs,
   loadSoftwareTeamStudioPrefs,
   parseSoftwareTeamStudioPrefs,
   resolveSoftwareTeamStudioPrefs,
   saveSoftwareTeamStudioPrefs,
   type SoftwareTeamStudioPrefs,
 } from "./studioPrefs";
+
+export {
+  SOFTWARE_TEAM_STUDIO_OVERLAYS,
+  pickSoftwareTeamStudioOverlay,
+  type SoftwareTeamStudioOverlay,
+  type SoftwareTeamStudioOverlayFlags,
+} from "./studioOverlay";
