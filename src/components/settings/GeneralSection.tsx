@@ -2265,6 +2265,7 @@ export function GeneralSection() {
                     { value: "id", label: "Bahasa Indonesia" },
                     { value: "it", label: "Italiano" },
                     { value: "pt-BR", label: "Português (Brasil)" },
+                    { value: "vi", label: "Tiếng Việt" },
                     { value: "ru", label: "Русский" },
                     { value: "uk", label: "Українська" },
                     { value: "ta", label: "தமிழ்" },

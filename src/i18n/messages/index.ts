@@ -24,6 +24,7 @@ export const LOCALES = [
   "ru",
   "ta",
   "uk",
+  "vi",
   "zh",
   "zh-TW",
 ] as const;
@@ -59,6 +60,7 @@ const loaders: Record<Exclude<Locale, "en">, () => Promise<Catalog>> = {
   ru: () => import("./ru").then((m) => m.ru),
   ta: () => import("./ta").then((m) => m.ta),
   uk: () => import("./uk").then((m) => m.uk),
+  vi: () => import("./vi").then((m) => m.vi),
   zh: () => import("./zh").then((m) => m.zh),
   "zh-TW": () => import("./zh-TW").then((m) => m.zhTW),
 };

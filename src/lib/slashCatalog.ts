@@ -4,6 +4,12 @@
  * or display strings for dynamic skills.
  */
 
+import { isSoftwareTeamDlcEnabled } from "@/lib/softwareTeamDlc/pref";
+import {
+  isSoftwareTeamSlashSkillName,
+  softwareTeamSlashSkillInfos,
+} from "@/lib/softwareTeamDlc/slash";
+
 export type SlashKind = "mode" | "skill" | "action" | "prompt";
 
 export type SlashItem = {
@@ -519,13 +525,24 @@ export function filterSlashItems(
 }
 
 /** Full catalog split into built-in commands and skill items. */
-export function buildSlashCatalog(skills: SkillInfo[]): {
+export function buildSlashCatalog(
+  skills: SkillInfo[],
+  opts?: { includeSoftwareTeamSkills?: boolean },
+): {
   commands: SlashItem[];
   skills: SlashItem[];
 } {
+  const includeTeam =
+    opts?.includeSoftwareTeamSkills ?? isSoftwareTeamDlcEnabled();
+  const extras = includeTeam ? softwareTeamSlashSkillInfos() : [];
+  const visibleSkills = includeTeam
+    ? skills
+    : skills.filter((skill) => !isSoftwareTeamSlashSkillName(skill.name));
   return {
     commands: builtinSlashItems(),
-    skills: skillsToSlashItems(skills),
+    skills: skillsToSlashItems(
+      extras.length > 0 ? [...extras, ...visibleSkills] : visibleSkills,
+    ),
   };
 }
 

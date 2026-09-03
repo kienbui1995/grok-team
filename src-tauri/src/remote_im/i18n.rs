@@ -98,6 +98,12 @@ pub fn t(lang: &str, key: MessageKey) -> &'static str {
             "У цьому екземплярі немає доступного проєкту. Надішліть /p або зверніться до адміністратора."
         }
 
+        (Locale::Vi, MessageKey::StopSignalSent) => "Đã gửi tín hiệu dừng.",
+        (Locale::Vi, MessageKey::NoInFlightTurn) => "Không có lượt đang chạy.",
+        (Locale::Vi, MessageKey::NoAvailableProject) => {
+            "Phiên này không có dự án khả dụng. Gửi /p hoặc liên hệ quản trị viên."
+        }
+
         (Locale::Zh, MessageKey::StopSignalSent) => "已发送中断信号。",
         (Locale::Zh, MessageKey::NoInFlightTurn) => "当前没有进行中的任务。",
         (Locale::Zh, MessageKey::NoAvailableProject) => "当前实例没有可用项目，请发送 /p 或联系管理员。",
@@ -120,8 +126,8 @@ pub fn t(lang: &str, key: MessageKey) -> &'static str {
 mod tests {
     use super::*;
 
-    const ALL_TAGS: [&str; 15] = [
-        "en", "de", "es", "fil", "fr", "id", "it", "ja", "ko", "pt-BR", "ru", "ta", "uk", "zh",
+    const ALL_TAGS: [&str; 16] = [
+        "en", "de", "es", "fil", "fr", "id", "it", "ja", "ko", "pt-BR", "ru", "ta", "uk", "vi", "zh",
         "zh-TW",
     ];
 
@@ -163,6 +169,14 @@ mod tests {
         assert_eq!(
             t("uk", MessageKey::StopSignalSent),
             "Сигнал зупинки надіслано."
+        );
+        assert_eq!(
+            t("vi", MessageKey::StopSignalSent),
+            "Đã gửi tín hiệu dừng."
+        );
+        assert_eq!(
+            t("vi-VN", MessageKey::NoInFlightTurn),
+            "Không có lượt đang chạy."
         );
     }
 

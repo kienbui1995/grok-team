@@ -1,0 +1,317 @@
+/** pt-BR messages — domain: Software Works / SDLC Studio */
+export const ptBRSoftwareTeamDlc = {
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Ativar Software Works",
+  "softwareTeamDlc.enableDesc":
+    "Quando ligado, o painel de agentes vira um estúdio SDLC: elenco, quadro de pipeline e handoff de papéis no Grok Build. Desligado por padrão. Não rebatiza o app desligado nem inicia agentes CLI extras.",
+  "softwareTeamDlc.optInNote":
+    "Software Works é a edição de entrega de software do Grok Build — não um segundo runtime de agentes.",
+  "softwareTeamDlc.noSkinAutoApply":
+    "Skins de aparência nunca são aplicadas sozinhas. Escolha um .grokskin em Configurações → Aparência se quiser um.",
+  "softwareTeamDlc.sharedHomeNote":
+    "Os dados de sessão compartilhados (GROK_HOME=~/.grok) nunca são reescritos. Os presets ficam no app até você instalá-los num projeto ou no agent-home Independente.",
+  "softwareTeamDlc.rosterTitle": "Elenco da equipe",
+  "softwareTeamDlc.rosterHint":
+    "Uma sessão Grok Build por papel. Abra um cartão para colocar o starter no compositor. O handoff avança o próximo papel e carrega o starter lá.",
+  "softwareTeamDlc.role.product": "Product",
+  "softwareTeamDlc.role.product.desc": "Escopo, aceite e backlog. Entrega um único recorte enviável.",
+  "softwareTeamDlc.role.architect": "Architect",
+  "softwareTeamDlc.role.architect.desc": "Desenho adequado a este repositório: módulos, riscos e um plano de Build concreto.",
+  "softwareTeamDlc.role.engineer": "Engineer",
+  "softwareTeamDlc.role.engineer.desc": "Implemente o recorte combinado. Siga o estilo existente. Resuma como verificar.",
+  "softwareTeamDlc.role.reviewer": "Reviewer",
+  "softwareTeamDlc.role.reviewer.desc": "Revise o diff. Obrigatórios vs nits. Não reescreva sem pedido.",
+  "softwareTeamDlc.role.qa": "QA",
+  "softwareTeamDlc.role.qa.desc": "Casos de teste, comandos e passa/falha honesto. Sem execução de navegador inventada.",
+  "softwareTeamDlc.role.writer": "Tech Writer",
+  "softwareTeamDlc.role.writer.desc": "Wiki e i18n só quando a mudança precisa. Mantenha os identificadores exatos.",
+  "softwareTeamDlc.slashHint": "Dica de barra: {slash}",
+  "softwareTeamDlc.copyStarter": "Copiar starter",
+  "softwareTeamDlc.copied": "Copiado",
+  "softwareTeamDlc.copyFailed": "Não foi possível copiar — selecione o starter e copie manualmente.",
+  "softwareTeamDlc.sdlcTitle": "Etapas SDLC",
+  "softwareTeamDlc.sdlcHint":
+    "O quadro do estúdio (Backlog → Design → Build → Review → Ship) é a fonte da verdade. As colunas de agentes ao vivo ficam informativas.",
+  "softwareTeamDlc.stage.backlog": "Backlog",
+  "softwareTeamDlc.stage.design": "Design",
+  "softwareTeamDlc.stage.build": "Build",
+  "softwareTeamDlc.stage.review": "Review",
+  "softwareTeamDlc.stage.ship": "Ship",
+  "softwareTeamDlc.columnMap.needsYou": "Backlog · Design · Review",
+  "softwareTeamDlc.columnMap.working": "Build",
+  "softwareTeamDlc.columnMap.done": "Ship",
+  "softwareTeamDlc.columnMap.idle": "Backlog (ocioso)",
+  "softwareTeamDlc.assignRole": "Atribuir papel",
+  "softwareTeamDlc.assignStage": "Atribuir etapa SDLC",
+  "softwareTeamDlc.clearTag": "Desvincular sessão",
+  "softwareTeamDlc.packTitle": "Modelos de papel",
+  "softwareTeamDlc.packHint":
+    "Os presets vêm no app. Instalar grava 6 agentes, 6 skills e team-handoff.rhai no .grok do projeto ou no agent-home Independente — nunca o ~/.grok compartilhado.",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "Não inicia agentes CLI em paralelo. Equipe = sessões vinculadas + attach-chat + starters de handoff.",
+  "softwareTeamDlc.honesty.grokBuildOnly": "O workbench e o Remote IM ainda controlam só o Grok Build.",
+  "softwareTeamDlc.kanbanHint":
+    "O SDLC Studio é o pipeline. Clique com o botão direito num cartão para mudar a etapa ou passar o próximo papel.",
+  "softwareTeamDlc.install.blockedShared":
+    "Não é possível gravar modelos na home do usuário com dados de sessão Compartilhados — isso reescreveria ~/.grok.",
+  "softwareTeamDlc.install.needProject":
+    "Selecione uma pasta de projeto para instalar os modelos no .grok desse projeto.",
+  "softwareTeamDlc.install.independentOk":
+    "O modo Independente pode gravar modelos no agent-home do App (não ~/.grok).",
+  "softwareTeamDlc.install.action": "Instalar pacote de papéis",
+  "softwareTeamDlc.install.installing": "Instalando pacote…",
+  "softwareTeamDlc.install.ok": "Instalados {n} arquivos do pacote ({target}).",
+  "softwareTeamDlc.install.targetProject": ".grok do projeto",
+  "softwareTeamDlc.install.targetUser": "agent-home Independente",
+  "softwareTeamDlc.install.needHost":
+    "A instalação precisa do Host do desktop. Esta prévia não grava arquivos e não finge sucesso.",
+  "softwareTeamDlc.install.hostError": "Falha na instalação: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Destino da instalação",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "Vincule ou crie uma sessão, carregue o starter no compositor, mova a etapa, passe o próximo papel.",
+  "softwareTeamDlc.pipelineTitle": "Pipeline",
+  "softwareTeamDlc.liveAgents": "Agentes ao vivo",
+  "softwareTeamDlc.addItem": "Adicionar item",
+  "softwareTeamDlc.editItem": "Editar item",
+  "softwareTeamDlc.itemTitle": "Título",
+  "softwareTeamDlc.itemTitlePlaceholder": "Nome do recorte",
+  "softwareTeamDlc.planRef": "Plano",
+  "softwareTeamDlc.goalRef": "Meta",
+  "softwareTeamDlc.artifactRef": "Artefato",
+  "softwareTeamDlc.planPlaceholder": "Plano ou nota /plan",
+  "softwareTeamDlc.goalPlaceholder": "Meta ou nota /goal",
+  "softwareTeamDlc.artifactPlaceholder": "PR, caminho ou entregável",
+  "softwareTeamDlc.bindSession": "Vincular sessão",
+  "softwareTeamDlc.unbound": "Sem sessão",
+  "softwareTeamDlc.sessionLabel": "Sessão",
+  "softwareTeamDlc.handoff": "Passar",
+  "softwareTeamDlc.handoffTo": "Passar para {role}",
+  "softwareTeamDlc.handoffDone":
+    "Pipeline concluído — Tech Writer é o último papel. Ship ainda precisa das notas de Reviewer e QA.",
+  "softwareTeamDlc.handoffCopied": "Starter do próximo papel copiado",
+  "softwareTeamDlc.handoffLoaded": "O starter do próximo papel está no compositor.",
+  "softwareTeamDlc.openInComposer": "Abrir no compositor",
+  "softwareTeamDlc.createAndOpen": "Criar sessão e abrir",
+  "softwareTeamDlc.saveAndOpen": "Salvar e abrir",
+  "softwareTeamDlc.starterLoaded": "O starter do papel está no compositor.",
+  "softwareTeamDlc.needHostCreate":
+    "Sem o Host não dá para criar uma sessão. Vincule uma existente ou abra o app desktop.",
+  "softwareTeamDlc.createFailed": "Não foi possível criar a sessão: {error}",
+  "softwareTeamDlc.planChromeSet": "Nota de plano anexada a esta sessão.",
+  "softwareTeamDlc.planChromeSkipped":
+    "O campo de plano fica no cartão. O Host não persistiu o chrome de plano.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Depois de instalar o pacote, /team-* insere o chip de skill. Antes, abra uma sessão pelo quadro.",
+  "softwareTeamDlc.noNextRole": "Este papel não tem mais handoff.",
+  "softwareTeamDlc.moveStage": "Mover para {stage}",
+  "softwareTeamDlc.removeItem": "Remover do quadro",
+  "softwareTeamDlc.emptyBoard":
+    "Ainda não há itens. Adicione um recorte ou vincule uma sessão a um papel.",
+  "softwareTeamDlc.openStudio": "Abra o SDLC Studio na barra lateral (Agentes).",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} de {total} arquivos do pacote estão neste destino.",
+  "softwareTeamDlc.install.status.missing":
+    "Faltam {n} arquivos do pacote neste destino.",
+  "softwareTeamDlc.install.status.checking":
+    "Verificando os arquivos do pacote no destino escolhido…",
+  "softwareTeamDlc.install.repair": "Reparar arquivos ausentes",
+  "softwareTeamDlc.install.repairing": "Reparando o pacote…",
+  "softwareTeamDlc.install.repaired": "Foram gravados {n} arquivos ausentes do pacote.",
+  "softwareTeamDlc.install.repairNone":
+    "Nada a reparar — os arquivos do pacote já estão presentes.",
+  "softwareTeamDlc.goalModeSet": "O modo de objetivo está ativo neste rascunho.",
+  "softwareTeamDlc.goalModeSkipped":
+    "O objetivo fica no cartão. O host não tem API para criar objetivo.",
+  "softwareTeamDlc.shipLocked":
+    "Ship fica bloqueado até esta entrega ter notas de Reviewer e QA.",
+  "softwareTeamDlc.shipNeedReviewer": "Esta fatia não passou pelo Reviewer.",
+  "softwareTeamDlc.shipNeedQa": "Esta fatia não passou pelo QA.",
+  "softwareTeamDlc.shipNeedReviewNote": "Salve as notas de Reviewer antes do Ship.",
+  "softwareTeamDlc.shipNeedQaNote": "Salve as notas de QA antes do Ship.",
+  "softwareTeamDlc.markReviewNote": "Marcar notas de Reviewer",
+  "softwareTeamDlc.markQaNote": "Marcar notas de QA",
+  "softwareTeamDlc.reviewNote": "Notas de Reviewer",
+  "softwareTeamDlc.qaNote": "Notas de QA",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, correções obrigatórias vs nits, risco.",
+  "softwareTeamDlc.qaNotePlaceholder": "Casos, comandos, passou/falhou.",
+  "softwareTeamDlc.notesSaved":
+    "Notas salvas. Ship destrava quando esta entrega tiver notas de Reviewer e de QA.",
+  "softwareTeamDlc.startDelivery": "Começar uma entrega",
+  "softwareTeamDlc.startDeliveryHint":
+    "Cria um item do pipeline e abre uma sessão Grok Build com o starter do papel. Placeholders de docs/sdlc ficam nesta pasta do projeto — nunca ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Título da fatia",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "O que vamos entregar?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Dê um nome à fatia antes de começar.",
+  "softwareTeamDlc.startDeliveryRole": "Primeiro papel",
+  "softwareTeamDlc.startDeliveryBootstrap": "Adicionar placeholders docs/sdlc",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Grava spec.md, design.md e review.md em docs/sdlc deste projeto se faltarem. Precisa do Host desktop e de uma pasta de projeto.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Escolha uma pasta de projeto para gravar docs/sdlc.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Os placeholders precisam do Host desktop. Esta prévia não finge tê-los gravado.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Não é possível iniciar em ~/.grok compartilhado. Escolha uma pasta de projeto.",
+  "softwareTeamDlc.startDeliveryHostError": "Não foi possível gravar os placeholders: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "Foram gravados {n} arquivos docs/sdlc no projeto.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Placeholders do workspace ignorados.",
+  "softwareTeamDlc.startDeliveryStarted": "Entrega iniciada.",
+  "softwareTeamDlc.handoffCta": "Passar para {role}",
+  "softwareTeamDlc.shipCta": "Ship · starter de Writer",
+  "softwareTeamDlc.sessionDoneHint":
+    "Sessão concluída. Passe ou Ship — o quadro não avança sozinho.",
+  "softwareTeamDlc.attachSeeded":
+    "{n} sessões attach-chat semeadas no rascunho (máx. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Adicionar sessão da equipe",
+  "softwareTeamDlc.addTeammate": "Adicionar sessão de {role}",
+  "softwareTeamDlc.attachedHint":
+    "{n} chats da equipe nesta entrega (attach-chat, máx. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline salvo neste projeto (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Ainda sem arquivo de pipeline. A próxima mudança grava .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Sem escrita Host no projeto — o pipeline fica só no cache do app.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "O pipeline do projeto precisa do Host desktop. Esta prévia não finge ter salvo.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Escolha uma pasta de projeto para salvar o pipeline no repositório.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Não é possível gravar o pipeline no ~/.grok compartilhado.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Arquivo de pipeline ilegível. Mantido intacto (backup {file}). Usando o cache do app.",
+  "softwareTeamDlc.pipelineFileHostError": "Não foi possível salvar o pipeline: {error}",
+  "softwareTeamDlc.deliveryFilter": "Entrega",
+  "softwareTeamDlc.deliveryFilterAll": "Todas as entregas",
+  "softwareTeamDlc.deliveryUnscoped": "Sem grupo",
+  "softwareTeamDlc.roleHistory": "Papéis: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "Abrir docs/sdlc",
+  "softwareTeamDlc.openSdlcDoc": "Abrir {file}",
+  "softwareTeamDlc.openSdlcDocOpened": "Arquivo aberto no editor.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Caminho copiado. O Host não abriu um editor para este arquivo.",
+  "softwareTeamDlc.openSdlcDocMissing": "Esse arquivo docs/sdlc não está neste projeto.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Abrir no editor precisa do Host desktop.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Escolha uma pasta de projeto para abrir docs/sdlc.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "Não é possível abrir docs/sdlc a partir do ~/.grok compartilhado.",
+  "softwareTeamDlc.openSdlcDocHostError": "Não foi possível abrir o arquivo: {error}",
+  "softwareTeamDlc.deliveryDetail": "Entrega",
+  "softwareTeamDlc.deliveryDetailHint":
+    "Título, refs de recorte compartilhadas, histórico de papéis, notas de Review/QA (Ship da entrega inteira), próximo passo, docs/sdlc e sessões deste recorte.",
+  "softwareTeamDlc.openDelivery": "Abrir entrega",
+  "softwareTeamDlc.deliverySessions": "Sessões desta entrega",
+  "softwareTeamDlc.deliveryNoSessions": "Ainda não há sessões vinculadas.",
+  "softwareTeamDlc.activityLog": "Atividade",
+  "softwareTeamDlc.activityEmpty": "Ainda não há atividade.",
+  "softwareTeamDlc.activity.item_added": "Item de trabalho adicionado",
+  "softwareTeamDlc.activity.stage_changed": "Estágio movido",
+  "softwareTeamDlc.activity.handoff": "Passado adiante",
+  "softwareTeamDlc.activity.notes": "Notas atualizadas",
+  "softwareTeamDlc.activity.delivery_started": "Esta entrega foi iniciada",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "O arquivo de pipeline do projeto é mais novo — quadro atualizado.",
+  "softwareTeamDlc.notesEmpty": "Ainda não",
+  "softwareTeamDlc.searchTitle": "Buscar por título",
+  "softwareTeamDlc.stageFilter": "Estágio",
+  "softwareTeamDlc.stageFilterAll": "Todos os estágios",
+  "softwareTeamDlc.roleFilter": "Papel",
+  "softwareTeamDlc.roleFilterAll": "Todos os papéis",
+  "softwareTeamDlc.showArchived": "Mostrar arquivadas",
+  "softwareTeamDlc.archiveDelivery": "Arquivar entrega",
+  "softwareTeamDlc.unarchiveDelivery": "Desarquivar entrega",
+  "softwareTeamDlc.archived": "Arquivada. Oculta no quadro padrão.",
+  "softwareTeamDlc.unarchived": "A entrega voltou ao quadro.",
+  "softwareTeamDlc.activity.archived": "Arquivada",
+  "softwareTeamDlc.activity.unarchived": "Desarquivada",
+  "softwareTeamDlc.exportSummary": "Exportar resumo",
+  "softwareTeamDlc.exportOk": "Gravou {file} neste projeto.",
+  "softwareTeamDlc.exportNeedHost":
+    "A exportação precisa do Host desktop. Esta prévia não vai fingir que gravou.",
+  "softwareTeamDlc.exportNeedProject":
+    "Escolha uma pasta de projeto para exportar docs/sdlc.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Não é possível exportar o resumo para o ~/.grok compartilhado.",
+  "softwareTeamDlc.exportBadSlug": "Esse título não pode virar nome de arquivo.",
+  "softwareTeamDlc.exportHostError": "Não foi possível exportar o resumo: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "O arquivo de pipeline mudou em outro lugar. Permaneceu intacto. O quadro fica no app. O próximo salvamento grava um backup {file} em vez de substituir o arquivo.",
+  "softwareTeamDlc.undo": "Desfazer última alteração",
+  "softwareTeamDlc.undone": "Última alteração do quadro desfeita.",
+  "softwareTeamDlc.undoEmpty": "Nada para desfazer.",
+  "softwareTeamDlc.removeItemConfirm": "Remover este cartão?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "Remover “{title}” do quadro SDLC. A sessão do Grok Build permanece. Desfazer pode restaurar o cartão nesta janela.",
+  "softwareTeamDlc.removeItemConfirmAction": "Remover cartão",
+  "softwareTeamDlc.gitBranch": "Rótulo do branch git",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Só um rótulo. O Software Works não cria worktree, não faz checkout e não reescreve ~/.grok.",
+  "softwareTeamDlc.gitBranchSave": "Salvar rótulo do branch",
+  "softwareTeamDlc.gitBranchSaved": "Rótulo do branch salvo nesta entrega.",
+  "softwareTeamDlc.gitBranchInvalid": "Use letras, dígitos, '.', '_' ou '-' e '/' — sem espaços nem hífen no início.",
+  "softwareTeamDlc.gitBranchSuggest": "Sugerir a partir do título",
+  "softwareTeamDlc.gitBranchCopy": "Copiar rótulo do branch",
+  "softwareTeamDlc.gitBranchCopied": "Rótulo do branch copiado.",
+  "softwareTeamDlc.activity.item_removed": "Item de trabalho removido",
+  "softwareTeamDlc.activity.git_branch": "Rótulo do branch git atualizado",
+  "softwareTeamDlc.redo": "Refazer",
+  "softwareTeamDlc.redone": "Alteração do quadro refeita.",
+  "softwareTeamDlc.redoEmpty": "Nada para refazer.",
+  "softwareTeamDlc.duplicateDelivery": "Duplicar entrega",
+  "softwareTeamDlc.duplicateSuffix": " (cópia)",
+  "softwareTeamDlc.duplicated": "Entrega duplicada. Os novos cartões não estão vinculados.",
+  "softwareTeamDlc.duplicateFailed": "Não foi possível duplicar esta entrega.",
+  "softwareTeamDlc.deliveryName": "Nome da entrega",
+  "softwareTeamDlc.deliveryRename": "Salvar nome",
+  "softwareTeamDlc.deliveryRenamed": "Nome da entrega salvo.",
+  "softwareTeamDlc.deliveryRenameNeedTitle": "Dê um nome antes de salvar.",
+  "softwareTeamDlc.activity.delivery_renamed": "Entrega renomeada",
+  "softwareTeamDlc.activity.delivery_duplicated": "Entrega duplicada",
+  "softwareTeamDlc.bindThisChat": "Vincular este chat",
+  "softwareTeamDlc.bindThisChatDone": "Este chat está vinculado ao cartão.",
+  "softwareTeamDlc.bindThisChatNeedSession": "Abra um chat primeiro e depois vincule.",
+  "softwareTeamDlc.bindThisChatAlready": "Este chat já está neste cartão.",
+  "softwareTeamDlc.unbindSessionDone": "Sessão desvinculada. O chat permanece.",
+  "softwareTeamDlc.moveToDelivery": "Mover para a entrega",
+  "softwareTeamDlc.movedToDelivery": "Cartão movido para {title}.",
+  "softwareTeamDlc.movedUngrouped": "O cartão ficou sem grupo.",
+  "softwareTeamDlc.activity.item_moved": "Movido para outra entrega",
+  "softwareTeamDlc.activity.session_bound": "Sessão vinculada",
+  "softwareTeamDlc.activity.session_unbound": "Sessão desvinculada",
+  "softwareTeamDlc.missingRoles": "Sessões de equipe em falta: {roles}",
+  "softwareTeamDlc.teamComplete":
+    "Os cartões Product, Architect, Engineer, Reviewer, QA e Writer estão nesta entrega.",
+  "softwareTeamDlc.addSdlcDocs": "Adicionar arquivos docs/sdlc ausentes",
+  "softwareTeamDlc.sliceRefsHint":
+    "Plano, meta e artefato são compartilhados em todos os cartões desta entrega. Salvar atualiza todos.",
+  "softwareTeamDlc.sliceRefsSaved": "Refs do recorte salvas em todos os cartões desta entrega.",
+  "softwareTeamDlc.saveSliceRefs": "Salvar refs do recorte",
+  "softwareTeamDlc.copySummary": "Copiar resumo",
+  "softwareTeamDlc.copySummaryOk": "Resumo copiado.",
+  "softwareTeamDlc.copySummaryFailed": "Não foi possível copiar o resumo.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Resumo copiado. Nenhum arquivo do projeto foi gravado.",
+  "softwareTeamDlc.handoffKept":
+    "{role} aberto. Este cartão continua {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "Cartão {role} adicionado. Este cartão continua {from}.",
+  "softwareTeamDlc.shipKept":
+    "Writer aberto. Este cartão continua {from}.",
+  "softwareTeamDlc.conflictTitle": "Conflito do pipeline do projeto",
+  "softwareTeamDlc.conflictBody":
+    "O arquivo de pipeline do projeto mudou enquanto este quadro ainda tem alterações não salvas. Escolha qual cópia manter. A outra pode ficar em {file}.",
+  "softwareTeamDlc.conflictUseFile": "Usar arquivo do projeto",
+  "softwareTeamDlc.conflictKeepBoard": "Manter este quadro",
+  "softwareTeamDlc.conflictUsedFile":
+    "Quadro substituído pelo arquivo do projeto.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Este quadro foi gravado no arquivo do projeto. A outra cópia está em {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Não foi possível gravar este quadro sobre o arquivo do projeto.",
+} as const;

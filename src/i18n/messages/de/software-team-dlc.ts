@@ -1,0 +1,317 @@
+/** de messages — domain: Software Works / SDLC Studio */
+export const deSoftwareTeamDlc = {
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Software Works aktivieren",
+  "softwareTeamDlc.enableDesc":
+    "Wenn an, ist die Agenten-Ansicht ein SDLC-Studio: Besetzung, Pipeline-Board und Rollenübergabe auf Grok Build. Standard aus. Benennt die App nicht um, solange aus, und startet keine extra CLI-Agenten.",
+  "softwareTeamDlc.optInNote":
+    "Software Works ist die Software-Lieferedition für Grok Build — keine zweite Agent-Laufzeit.",
+  "softwareTeamDlc.noSkinAutoApply":
+    "Oberflächen-Skins werden nie automatisch angewendet. Wählen Sie bei Bedarf ein .grokskin unter Einstellungen → Erscheinungsbild.",
+  "softwareTeamDlc.sharedHomeNote":
+    "Geteilte Sitzungsdaten (GROK_HOME=~/.grok) werden nie umgeschrieben. Vorgaben bleiben in der App, bis Sie sie in ein Projekt oder das unabhängige Agent-Home installieren.",
+  "softwareTeamDlc.rosterTitle": "Team-Besetzung",
+  "softwareTeamDlc.rosterHint":
+    "Eine Grok-Build-Sitzung pro Rolle. Karte öffnen, damit der Rollenstarter im Composer liegt. Übergabe rückt die nächste Rolle vor und lädt deren Starter dort.",
+  "softwareTeamDlc.role.product": "Product",
+  "softwareTeamDlc.role.product.desc": "Umfang, Abnahme und Backlog. Übergibt eine lieferbare Scheibe.",
+  "softwareTeamDlc.role.architect": "Architect",
+  "softwareTeamDlc.role.architect.desc": "Design passend zu diesem Repo: Module, Risiken und ein konkreter Build-Plan.",
+  "softwareTeamDlc.role.engineer": "Engineer",
+  "softwareTeamDlc.role.engineer.desc": "Die vereinbarte Scheibe umsetzen. Vorhandenen Stil treffen. Verifikation zusammenfassen.",
+  "softwareTeamDlc.role.reviewer": "Reviewer",
+  "softwareTeamDlc.role.reviewer.desc": "Diff prüfen. Pflichtfix vs. Nits. Nicht umschreiben, außer danach gefragt.",
+  "softwareTeamDlc.role.qa": "QA",
+  "softwareTeamDlc.role.qa.desc": "Testfälle, Befehle und ehrliches Bestanden/Fehlgeschlagen. Keine erfundenen Browser-Läufe.",
+  "softwareTeamDlc.role.writer": "Tech Writer",
+  "softwareTeamDlc.role.writer.desc": "Wiki und i18n nur wenn die Änderung es braucht. Kennungen exakt lassen.",
+  "softwareTeamDlc.slashHint": "Slash-Hinweis: {slash}",
+  "softwareTeamDlc.copyStarter": "Starter kopieren",
+  "softwareTeamDlc.copied": "Kopiert",
+  "softwareTeamDlc.copyFailed": "Kopieren fehlgeschlagen — Starter markieren und manuell kopieren.",
+  "softwareTeamDlc.sdlcTitle": "SDLC-Stufen",
+  "softwareTeamDlc.sdlcHint":
+    "Das Studio-Board (Backlog → Design → Build → Review → Ship) ist die Quelle der Wahrheit. Live-Agent-Spalten bleiben informativ.",
+  "softwareTeamDlc.stage.backlog": "Backlog",
+  "softwareTeamDlc.stage.design": "Design",
+  "softwareTeamDlc.stage.build": "Build",
+  "softwareTeamDlc.stage.review": "Review",
+  "softwareTeamDlc.stage.ship": "Ship",
+  "softwareTeamDlc.columnMap.needsYou": "Backlog · Design · Review",
+  "softwareTeamDlc.columnMap.working": "Build",
+  "softwareTeamDlc.columnMap.done": "Ship",
+  "softwareTeamDlc.columnMap.idle": "Backlog (inaktiv)",
+  "softwareTeamDlc.assignRole": "Rolle zuweisen",
+  "softwareTeamDlc.assignStage": "SDLC-Stufe zuweisen",
+  "softwareTeamDlc.clearTag": "Sitzung lösen",
+  "softwareTeamDlc.packTitle": "Rollenvorlagen",
+  "softwareTeamDlc.packHint":
+    "Vorgaben sind in der App gebündelt. Installieren schreibt 6 Agents, 6 Skills und team-handoff.rhai ins Projekt-.grok oder das unabhängige Agent-Home — nie ins geteilte ~/.grok.",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "Startet keine parallelen CLI-Agenten. Team = gebundene Sitzungen + attach-chat + Übergabe-Starter.",
+  "softwareTeamDlc.honesty.grokBuildOnly": "Workbench und Remote IM steuern weiter nur Grok Build.",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio ist die Pipeline. Rechtsklick auf eine Karte verschiebt die Stufe oder übergibt die nächste Rolle.",
+  "softwareTeamDlc.install.blockedShared":
+    "Benutzer-Home-Vorlagen können im geteilten Sitzungsmodus nicht geschrieben werden — das würde ~/.grok umschreiben.",
+  "softwareTeamDlc.install.needProject":
+    "Wählen Sie einen Projektordner, um Vorlagen unter dessen .grok-Verzeichnis zu installieren.",
+  "softwareTeamDlc.install.independentOk":
+    "Der unabhängige Modus darf Vorlagen ins App-Agent-Home schreiben (nicht ~/.grok).",
+  "softwareTeamDlc.install.action": "Rollenpaket installieren",
+  "softwareTeamDlc.install.installing": "Paket wird installiert…",
+  "softwareTeamDlc.install.ok": "{n} Paketdateien installiert ({target}).",
+  "softwareTeamDlc.install.targetProject": "Projekt-.grok",
+  "softwareTeamDlc.install.targetUser": "Unabhängiges Agent-Home",
+  "softwareTeamDlc.install.needHost":
+    "Installieren braucht den Desktop-Host. Diese Vorschau kann keine Dateien schreiben — sie täuscht keinen Erfolg vor.",
+  "softwareTeamDlc.install.hostError": "Installation fehlgeschlagen: {error}",
+  "softwareTeamDlc.install.chooseTarget": "Installationsziel",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "Sitzung binden oder anlegen, Rollenstarter in den Composer laden, Stufe verschieben, nächste Rolle übergeben.",
+  "softwareTeamDlc.pipelineTitle": "Pipeline",
+  "softwareTeamDlc.liveAgents": "Live-Agenten",
+  "softwareTeamDlc.addItem": "Arbeitselement hinzufügen",
+  "softwareTeamDlc.editItem": "Arbeitselement bearbeiten",
+  "softwareTeamDlc.itemTitle": "Titel",
+  "softwareTeamDlc.itemTitlePlaceholder": "Name der Scheibe",
+  "softwareTeamDlc.planRef": "Plan",
+  "softwareTeamDlc.goalRef": "Ziel",
+  "softwareTeamDlc.artifactRef": "Artefakt",
+  "softwareTeamDlc.planPlaceholder": "Plan oder /plan-Notiz",
+  "softwareTeamDlc.goalPlaceholder": "Ziel oder /goal-Notiz",
+  "softwareTeamDlc.artifactPlaceholder": "PR, Pfad oder Liefergegenstand",
+  "softwareTeamDlc.bindSession": "Sitzung binden",
+  "softwareTeamDlc.unbound": "Keine Sitzung",
+  "softwareTeamDlc.sessionLabel": "Sitzung",
+  "softwareTeamDlc.handoff": "Übergeben",
+  "softwareTeamDlc.handoffTo": "Übergeben an {role}",
+  "softwareTeamDlc.handoffDone":
+    "Pipeline fertig — Tech Writer ist die letzte Rolle. Ship braucht noch Reviewer- und QA-Notizen.",
+  "softwareTeamDlc.handoffCopied": "Starter der nächsten Rolle kopiert",
+  "softwareTeamDlc.handoffLoaded": "Starter der nächsten Rolle liegt im Composer.",
+  "softwareTeamDlc.openInComposer": "Im Composer öffnen",
+  "softwareTeamDlc.createAndOpen": "Sitzung anlegen und öffnen",
+  "softwareTeamDlc.saveAndOpen": "Speichern und öffnen",
+  "softwareTeamDlc.starterLoaded": "Rollenstarter liegt im Composer.",
+  "softwareTeamDlc.needHostCreate":
+    "Ohne Host kann keine Sitzung angelegt werden. Binden Sie eine vorhandene Sitzung oder öffnen Sie die Desktop-App.",
+  "softwareTeamDlc.createFailed": "Sitzung konnte nicht angelegt werden: {error}",
+  "softwareTeamDlc.planChromeSet": "Plannotiz an dieser Sitzung angehängt.",
+  "softwareTeamDlc.planChromeSkipped":
+    "Planfeld bleibt auf der Karte. Der Host hat kein Plan-Chrome geschrieben.",
+  "softwareTeamDlc.slashAfterInstall":
+    "Nach der Paketinstallation fügt /team-* den Skill-Chip ein. Davor Sitzung vom Board öffnen.",
+  "softwareTeamDlc.noNextRole": "Diese Rolle hat keine weitere Übergabe.",
+  "softwareTeamDlc.moveStage": "Nach {stage} verschieben",
+  "softwareTeamDlc.removeItem": "Vom Board entfernen",
+  "softwareTeamDlc.emptyBoard":
+    "Noch keine Arbeitselemente. Eine Scheibe anlegen oder eine Sitzung an eine Rolle binden.",
+  "softwareTeamDlc.openStudio": "SDLC Studio über die Seitenleiste (Agenten) öffnen.",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "{n} von {total} Pack-Dateien sind auf diesem Ziel.",
+  "softwareTeamDlc.install.status.missing":
+    "{n} Pack-Dateien fehlen auf diesem Ziel.",
+  "softwareTeamDlc.install.status.checking":
+    "Pack-Dateien auf dem gewählten Ziel werden geprüft…",
+  "softwareTeamDlc.install.repair": "Fehlende Dateien reparieren",
+  "softwareTeamDlc.install.repairing": "Pack wird repariert…",
+  "softwareTeamDlc.install.repaired": "{n} fehlende Pack-Dateien geschrieben.",
+  "softwareTeamDlc.install.repairNone":
+    "Nichts zu reparieren — Pack-Dateien sind schon da.",
+  "softwareTeamDlc.goalModeSet": "Goal-Modus ist für diesen Entwurf an.",
+  "softwareTeamDlc.goalModeSkipped":
+    "Goal bleibt auf der Karte. Host hat keine Goal-Erzeugungs-API.",
+  "softwareTeamDlc.shipLocked":
+    "Ship ist gesperrt, bis diese Lieferung Reviewer- und QA-Notizen hat.",
+  "softwareTeamDlc.shipNeedReviewer": "Diese Scheibe ist nicht durch Reviewer gegangen.",
+  "softwareTeamDlc.shipNeedQa": "Diese Scheibe ist nicht durch QA gegangen.",
+  "softwareTeamDlc.shipNeedReviewNote": "Reviewer-Notizen vor Ship speichern.",
+  "softwareTeamDlc.shipNeedQaNote": "QA-Notizen vor Ship speichern.",
+  "softwareTeamDlc.markReviewNote": "Reviewer-Notizen eintragen",
+  "softwareTeamDlc.markQaNote": "QA-Notizen eintragen",
+  "softwareTeamDlc.reviewNote": "Reviewer-Notizen",
+  "softwareTeamDlc.qaNote": "QA-Notizen",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff, Muss-Fixes vs. Nits, Risiko.",
+  "softwareTeamDlc.qaNotePlaceholder": "Fälle, Befehle, Bestanden/Fehlschlag.",
+  "softwareTeamDlc.notesSaved":
+    "Notizen gespeichert. Ship öffnet, wenn diese Lieferung Reviewer- und QA-Notizen hat.",
+  "softwareTeamDlc.startDelivery": "Lieferung starten",
+  "softwareTeamDlc.startDeliveryHint":
+    "Legt ein Pipeline-Element an und öffnet eine Grok-Build-Sitzung mit dem Rollenstarter. Optionale docs/sdlc-Platzhalter bleiben in diesem Projektordner — nie ~/.grok.",
+  "softwareTeamDlc.startDeliveryTitle": "Scheiben-Titel",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "Was liefern wir?",
+  "softwareTeamDlc.startDeliveryNeedTitle": "Bitte zuerst die Scheibe benennen.",
+  "softwareTeamDlc.startDeliveryRole": "Erste Rolle",
+  "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc-Platzhalter anlegen",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "Schreibt spec.md, design.md und review.md unter docs/sdlc dieses Projekts, wenn sie fehlen. Braucht Desktop-Host und Projektordner.",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "Projektordner wählen, um docs/sdlc-Platzhalter zu schreiben.",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "Arbeitsplatzhalter brauchen den Desktop-Host. Diese Vorschau tut nicht so, als hätte sie geschrieben.",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "Kein Bootstrap in gemeinsames ~/.grok. Bitte einen Projektordner wählen.",
+  "softwareTeamDlc.startDeliveryHostError": "Platzhalter nicht geschrieben: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "{n} docs/sdlc-Platzhalter im Projekt geschrieben.",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "Arbeitsplatzhalter übersprungen.",
+  "softwareTeamDlc.startDeliveryStarted": "Lieferung gestartet.",
+  "softwareTeamDlc.handoffCta": "Übergeben an {role}",
+  "softwareTeamDlc.shipCta": "Ship · Writer-Starter",
+  "softwareTeamDlc.sessionDoneHint":
+    "Sitzung fertig. Übergeben oder Ship — das Board rückt nicht von selbst vor.",
+  "softwareTeamDlc.attachSeeded":
+    "{n} attach-chat-Sitzungen im Composer-Entwurf vorgemerkt (max. 3).",
+  "softwareTeamDlc.addTeammateGroup": "Teamsitzung hinzufügen",
+  "softwareTeamDlc.addTeammate": "{role}-Sitzung hinzufügen",
+  "softwareTeamDlc.attachedHint":
+    "{n} Team-Chats in dieser Lieferung (attach-chat, max. 3)",
+  "softwareTeamDlc.pipelineFileOk":
+    "Pipeline im Projekt gespeichert (.grok/software-works.json).",
+  "softwareTeamDlc.pipelineFileMissing":
+    "Noch keine Projekt-Pipeline. Die nächste Änderung schreibt .grok/software-works.json.",
+  "softwareTeamDlc.pipelineFileCache":
+    "Kein Host-Schreiben ins Projekt — Pipeline bleibt nur im App-Cache.",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "Projekt-Pipeline braucht den Desktop-Host. Diese Vorschau tut nicht so, als hätte sie gespeichert.",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "Projektordner wählen, um die Pipeline im Repo zu speichern.",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "Pipeline nicht ins gemeinsame ~/.grok schreiben.",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "Projekt-Pipeline unlesbar. Datei unangetastet (Sicherung {file}). App-Cache wird genutzt.",
+  "softwareTeamDlc.pipelineFileHostError": "Projekt-Pipeline nicht gespeichert: {error}",
+  "softwareTeamDlc.deliveryFilter": "Lieferung",
+  "softwareTeamDlc.deliveryFilterAll": "Alle Lieferungen",
+  "softwareTeamDlc.deliveryUnscoped": "Ohne Gruppe",
+  "softwareTeamDlc.roleHistory": "Rollen: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "docs/sdlc öffnen",
+  "softwareTeamDlc.openSdlcDoc": "{file} öffnen",
+  "softwareTeamDlc.openSdlcDocOpened": "Datei im Editor geöffnet.",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "Pfad kopiert. Host hat keinen Editor für diese Datei geöffnet.",
+  "softwareTeamDlc.openSdlcDocMissing": "Diese docs/sdlc-Datei ist nicht im Projekt.",
+  "softwareTeamDlc.openSdlcDocNeedHost": "Im Editor öffnen braucht den Desktop-Host.",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "Projektordner wählen, um docs/sdlc-Dateien zu öffnen.",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "docs/sdlc nicht aus gemeinsamem ~/.grok öffnen.",
+  "softwareTeamDlc.openSdlcDocHostError": "Datei nicht geöffnet: {error}",
+  "softwareTeamDlc.deliveryDetail": "Lieferung",
+  "softwareTeamDlc.deliveryDetailHint":
+    "Titel, gemeinsame Scheiben-Refs, Rollenverlauf, Review-/QA-Notizen (Ship für die ganze Lieferung), nächster Schritt, docs/sdlc und Sitzungen dieser Scheibe.",
+  "softwareTeamDlc.openDelivery": "Lieferung öffnen",
+  "softwareTeamDlc.deliverySessions": "Sitzungen dieser Lieferung",
+  "softwareTeamDlc.deliveryNoSessions": "Noch keine gebundenen Sitzungen.",
+  "softwareTeamDlc.activityLog": "Aktivität",
+  "softwareTeamDlc.activityEmpty": "Noch keine Aktivität.",
+  "softwareTeamDlc.activity.item_added": "Arbeitselement hinzugefügt",
+  "softwareTeamDlc.activity.stage_changed": "Stufe verschoben",
+  "softwareTeamDlc.activity.handoff": "Übergeben",
+  "softwareTeamDlc.activity.notes": "Notizen aktualisiert",
+  "softwareTeamDlc.activity.delivery_started": "Diese Lieferung gestartet",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "Die Projekt-Pipeline-Datei ist neuer — Board aktualisiert.",
+  "softwareTeamDlc.notesEmpty": "Noch keine",
+  "softwareTeamDlc.searchTitle": "Nach Titel suchen",
+  "softwareTeamDlc.stageFilter": "Stufe",
+  "softwareTeamDlc.stageFilterAll": "Alle Stufen",
+  "softwareTeamDlc.roleFilter": "Rolle",
+  "softwareTeamDlc.roleFilterAll": "Alle Rollen",
+  "softwareTeamDlc.showArchived": "Archivierte zeigen",
+  "softwareTeamDlc.archiveDelivery": "Lieferung archivieren",
+  "softwareTeamDlc.unarchiveDelivery": "Archivierung aufheben",
+  "softwareTeamDlc.archived": "Archiviert. Auf dem Standardboard ausgeblendet.",
+  "softwareTeamDlc.unarchived": "Die Lieferung ist wieder auf dem Board.",
+  "softwareTeamDlc.activity.archived": "Archiviert",
+  "softwareTeamDlc.activity.unarchived": "Archivierung aufgehoben",
+  "softwareTeamDlc.exportSummary": "Kurzfassung exportieren",
+  "softwareTeamDlc.exportOk": "{file} ins Projekt geschrieben.",
+  "softwareTeamDlc.exportNeedHost":
+    "Export braucht den Desktop-Host. Diese Vorschau tut nicht so, als hätte sie geschrieben.",
+  "softwareTeamDlc.exportNeedProject":
+    "Projektordner wählen, um docs/sdlc zu exportieren.",
+  "softwareTeamDlc.exportBlockedHome":
+    "Kurzfassung nicht ins gemeinsame ~/.grok exportieren.",
+  "softwareTeamDlc.exportBadSlug": "Dieser Titel wird kein gültiger Dateiname.",
+  "softwareTeamDlc.exportHostError": "Kurzfassung nicht exportiert: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "Projekt-Pipeline wurde anderswo geändert. Datei unangetastet. Board bleibt in der App. Der nächste Speichern schreibt eine Sicherung {file} statt die Datei zu ersetzen.",
+  "softwareTeamDlc.undo": "Letzte Änderung rückgängig",
+  "softwareTeamDlc.undone": "Letzte Board-Änderung rückgängig gemacht.",
+  "softwareTeamDlc.undoEmpty": "Nichts rückgängig zu machen.",
+  "softwareTeamDlc.removeItemConfirm": "Diese Karte entfernen?",
+  "softwareTeamDlc.removeItemConfirmBody":
+    "„{title}“ vom SDLC-Board entfernen. Die Grok-Build-Sitzung bleibt. Rückgängig stellt die Karte in diesem Fenster wieder her.",
+  "softwareTeamDlc.removeItemConfirmAction": "Karte entfernen",
+  "softwareTeamDlc.gitBranch": "Git-Branch-Label",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint":
+    "Nur ein Label. Software Works erstellt keinen Worktree, checkt keinen Branch aus und schreibt ~/.grok nicht um.",
+  "softwareTeamDlc.gitBranchSave": "Branch-Label speichern",
+  "softwareTeamDlc.gitBranchSaved": "Branch-Label für diese Lieferung gespeichert.",
+  "softwareTeamDlc.gitBranchInvalid":
+    "Buchstaben, Ziffern, '.', '_' oder '-' und '/' — keine Leerzeichen, kein führender Bindestrich.",
+  "softwareTeamDlc.gitBranchSuggest": "Aus Titel vorschlagen",
+  "softwareTeamDlc.gitBranchCopy": "Branch-Label kopieren",
+  "softwareTeamDlc.gitBranchCopied": "Branch-Label kopiert.",
+  "softwareTeamDlc.activity.item_removed": "Arbeitselement entfernt",
+  "softwareTeamDlc.activity.git_branch": "Git-Branch-Label aktualisiert",
+  "softwareTeamDlc.redo": "Wiederholen",
+  "softwareTeamDlc.redone": "Board-Änderung wiederholt.",
+  "softwareTeamDlc.redoEmpty": "Nichts zu wiederholen.",
+  "softwareTeamDlc.duplicateDelivery": "Lieferung duplizieren",
+  "softwareTeamDlc.duplicateSuffix": " (Kopie)",
+  "softwareTeamDlc.duplicated": "Lieferung dupliziert. Neue Karten sind ungebunden.",
+  "softwareTeamDlc.duplicateFailed": "Lieferung nicht dupliziert.",
+  "softwareTeamDlc.deliveryName": "Name der Lieferung",
+  "softwareTeamDlc.deliveryRename": "Name speichern",
+  "softwareTeamDlc.deliveryRenamed": "Name der Lieferung gespeichert.",
+  "softwareTeamDlc.deliveryRenameNeedTitle": "Vor dem Speichern einen Namen vergeben.",
+  "softwareTeamDlc.activity.delivery_renamed": "Lieferung umbenannt",
+  "softwareTeamDlc.activity.delivery_duplicated": "Lieferung dupliziert",
+  "softwareTeamDlc.bindThisChat": "Diesen Chat binden",
+  "softwareTeamDlc.bindThisChatDone": "Dieser Chat ist an die Karte gebunden.",
+  "softwareTeamDlc.bindThisChatNeedSession": "Öffne zuerst einen Chat, dann binde ihn.",
+  "softwareTeamDlc.bindThisChatAlready": "Dieser Chat liegt bereits auf dieser Karte.",
+  "softwareTeamDlc.unbindSessionDone": "Sitzung gelöst. Der Chat bleibt.",
+  "softwareTeamDlc.moveToDelivery": "Zu Lieferung verschieben",
+  "softwareTeamDlc.movedToDelivery": "Karte nach {title} verschoben.",
+  "softwareTeamDlc.movedUngrouped": "Karte ist ungruppiert.",
+  "softwareTeamDlc.activity.item_moved": "Zu einer anderen Lieferung verschoben",
+  "softwareTeamDlc.activity.session_bound": "Sitzung gebunden",
+  "softwareTeamDlc.activity.session_unbound": "Sitzung gelöst",
+  "softwareTeamDlc.missingRoles": "Fehlende Teamsitzungen: {roles}",
+  "softwareTeamDlc.teamComplete":
+    "Karten für Product, Architect, Engineer, Reviewer, QA und Writer sind auf dieser Lieferung.",
+  "softwareTeamDlc.addSdlcDocs": "Fehlende docs/sdlc-Dateien anlegen",
+  "softwareTeamDlc.sliceRefsHint":
+    "Plan, Ziel und Artefakt gelten für jede Karte dieser Lieferung. Speichern aktualisiert alle.",
+  "softwareTeamDlc.sliceRefsSaved": "Scheiben-Refs auf allen Karten dieser Lieferung gespeichert.",
+  "softwareTeamDlc.saveSliceRefs": "Scheiben-Refs speichern",
+  "softwareTeamDlc.copySummary": "Zusammenfassung kopieren",
+  "softwareTeamDlc.copySummaryOk": "Zusammenfassung kopiert.",
+  "softwareTeamDlc.copySummaryFailed": "Zusammenfassung konnte nicht kopiert werden.",
+  "softwareTeamDlc.exportCopiedInstead":
+    "Zusammenfassung kopiert. Es wurde keine Projektdatei geschrieben.",
+  "softwareTeamDlc.handoffKept":
+    "{role} geöffnet. Diese Karte bleibt {from}.",
+  "softwareTeamDlc.handoffCreated":
+    "{role}-Karte hinzugefügt. Diese Karte bleibt {from}.",
+  "softwareTeamDlc.shipKept":
+    "Writer geöffnet. Diese Karte bleibt {from}.",
+  "softwareTeamDlc.conflictTitle": "Konflikt in der Projekt-Pipeline",
+  "softwareTeamDlc.conflictBody":
+    "Die Pipeline-Datei des Projekts hat sich geändert, während dieses Board noch ungespeicherte Änderungen hat. Wählen Sie, welche Kopie bleiben soll. Die andere kann in {file} bleiben.",
+  "softwareTeamDlc.conflictUseFile": "Projektdatei verwenden",
+  "softwareTeamDlc.conflictKeepBoard": "Dieses Board behalten",
+  "softwareTeamDlc.conflictUsedFile": "Board aus der Projektdatei ersetzt.",
+  "softwareTeamDlc.conflictKeptBoard":
+    "Dieses Board wurde in die Projektdatei geschrieben. Die andere Kopie liegt in {file}.",
+  "softwareTeamDlc.conflictKeepFailed":
+    "Dieses Board konnte nicht über die Projektdatei geschrieben werden.",
+} as const;

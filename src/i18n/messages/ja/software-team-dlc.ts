@@ -1,0 +1,315 @@
+/** ja messages — domain: Software Works / SDLC Studio */
+export const jaSoftwareTeamDlc = {
+  "softwareTeamDlc.title": "Software Works",
+  "softwareTeamDlc.uiName": "SDLC Studio",
+  "softwareTeamDlc.enable": "Software Works を有効にする",
+  "softwareTeamDlc.enableDesc":
+    "オンにするとエージェント欄は SDLC スタジオになります。編成、パイプライン盤、役割の受け渡しは Grok Build 上です。既定はオフ。オフのときはアプリを再ブランドせず、追加 CLI エージェントも起動しません。",
+  "softwareTeamDlc.optInNote":
+    "Software Works は Grok Build 向けのソフトウエア納品エディションです。第二のエージェントランタイムではありません。",
+  "softwareTeamDlc.noSkinAutoApply":
+    "外観スキンは自動適用しません。必要なときだけ設定 → 外観で .grokskin を選んでください。",
+  "softwareTeamDlc.sharedHomeNote":
+    "共有セッションデータ（GROK_HOME=~/.grok）は書き換えません。プリセットはアプリ内に留まり、プロジェクトまたは独立 agent-home へ入れたときだけディスクに出ます。",
+  "softwareTeamDlc.rosterTitle": "チーム編成",
+  "softwareTeamDlc.rosterHint":
+    "役割ごとに 1 つの Grok Build セッション。カードを開くと役割スターターが入力欄に入ります。受け渡しは次の役割へ進め、そのスターターを入力欄に載せます。",
+  "softwareTeamDlc.role.product": "Product",
+  "softwareTeamDlc.role.product.desc": "範囲・受け入れ・バックログ。出荷できる一切片を渡します。",
+  "softwareTeamDlc.role.architect": "Architect",
+  "softwareTeamDlc.role.architect.desc": "このリポジトリに合う設計：モジュール、リスク、具体的な Build 計画。",
+  "softwareTeamDlc.role.engineer": "Engineer",
+  "softwareTeamDlc.role.engineer.desc": "合意した一切片を実装。既存スタイルに合わせ、確認方法を要約します。",
+  "softwareTeamDlc.role.reviewer": "Reviewer",
+  "softwareTeamDlc.role.reviewer.desc": "差分をレビュー。必須修正と nits。求められない限り書き直しません。",
+  "softwareTeamDlc.role.qa": "QA",
+  "softwareTeamDlc.role.qa.desc": "テストケース、コマンド、正直な合否。存在しないブラウザ実行は言いません。",
+  "softwareTeamDlc.role.writer": "Tech Writer",
+  "softwareTeamDlc.role.writer.desc": "変更が必要なときだけ wiki と i18n。識別子はそのまま。",
+  "softwareTeamDlc.slashHint": "スラッシュヒント: {slash}",
+  "softwareTeamDlc.copyStarter": "スターターをコピー",
+  "softwareTeamDlc.copied": "コピーしました",
+  "softwareTeamDlc.copyFailed": "コピーできませんでした — スターターを選択して手動でコピーしてください。",
+  "softwareTeamDlc.sdlcTitle": "SDLC 段階",
+  "softwareTeamDlc.sdlcHint":
+    "スタジオ盤（Backlog → Design → Build → Review → Ship）が唯一の真実です。ライブエージェント列は参考情報です。",
+  "softwareTeamDlc.stage.backlog": "Backlog",
+  "softwareTeamDlc.stage.design": "Design",
+  "softwareTeamDlc.stage.build": "Build",
+  "softwareTeamDlc.stage.review": "Review",
+  "softwareTeamDlc.stage.ship": "Ship",
+  "softwareTeamDlc.columnMap.needsYou": "Backlog · Design · Review",
+  "softwareTeamDlc.columnMap.working": "Build",
+  "softwareTeamDlc.columnMap.done": "Ship",
+  "softwareTeamDlc.columnMap.idle": "Backlog（待機）",
+  "softwareTeamDlc.assignRole": "役割を割り当て",
+  "softwareTeamDlc.assignStage": "SDLC 段階を割り当て",
+  "softwareTeamDlc.clearTag": "セッションの結びを解除",
+  "softwareTeamDlc.packTitle": "役割テンプレート",
+  "softwareTeamDlc.packHint":
+    "プリセットはアプリに同梱。インストールは 6 エージェント、6 スキル、team-handoff.rhai をプロジェクトの .grok または独立 agent-home に書き、共有 ~/.grok は触りません。",
+  "softwareTeamDlc.honesty.noParallelAgents":
+    "並列 CLI エージェントは起動しません。チーム = 結んだセッション + attach-chat + 受け渡しスターター。",
+  "softwareTeamDlc.honesty.grokBuildOnly": "ワークベンチと Remote IM が操るのはこれまでどおり Grok Build だけです。",
+  "softwareTeamDlc.kanbanHint":
+    "SDLC Studio がパイプラインです。カードを右クリックして段階を動かすか、次の役割へ渡します。",
+  "softwareTeamDlc.install.blockedShared":
+    "セッションデータが共有のときはユーザーホームへ書けません — ~/.grok を書き換えてしまいます。",
+  "softwareTeamDlc.install.needProject":
+    "そのプロジェクトの .grok にテンプレートを入れるには、プロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.install.independentOk":
+    "独立モードは App の agent-home に書けます（~/.grok ではありません）。",
+  "softwareTeamDlc.install.action": "役割パックをインストール",
+  "softwareTeamDlc.install.installing": "パックをインストール中…",
+  "softwareTeamDlc.install.ok": "{n} 個のパックファイルをインストールしました（{target}）。",
+  "softwareTeamDlc.install.targetProject": "プロジェクト .grok",
+  "softwareTeamDlc.install.targetUser": "独立 agent-home",
+  "softwareTeamDlc.install.needHost":
+    "インストールにはデスクトップ Host が必要です。このプレビューはファイルを書けず、成功したふりもしません。",
+  "softwareTeamDlc.install.hostError": "インストール失敗: {error}",
+  "softwareTeamDlc.install.chooseTarget": "インストール先",
+  "softwareTeamDlc.studioTitle": "SDLC Studio",
+  "softwareTeamDlc.studioHint":
+    "セッションを結ぶか作成し、役割スターターを入力欄へ載せ、段階を動かし、次の役割へ渡す。",
+  "softwareTeamDlc.pipelineTitle": "パイプライン",
+  "softwareTeamDlc.liveAgents": "ライブエージェント",
+  "softwareTeamDlc.addItem": "作業項目を追加",
+  "softwareTeamDlc.editItem": "作業項目を編集",
+  "softwareTeamDlc.itemTitle": "タイトル",
+  "softwareTeamDlc.itemTitlePlaceholder": "スライス名",
+  "softwareTeamDlc.planRef": "プラン",
+  "softwareTeamDlc.goalRef": "ゴール",
+  "softwareTeamDlc.artifactRef": "成果物",
+  "softwareTeamDlc.planPlaceholder": "プランまたは /plan メモ",
+  "softwareTeamDlc.goalPlaceholder": "ゴールまたは /goal メモ",
+  "softwareTeamDlc.artifactPlaceholder": "PR、パス、納品物",
+  "softwareTeamDlc.bindSession": "セッションを結ぶ",
+  "softwareTeamDlc.unbound": "セッションなし",
+  "softwareTeamDlc.sessionLabel": "セッション",
+  "softwareTeamDlc.handoff": "受け渡し",
+  "softwareTeamDlc.handoffTo": "{role} へ渡す",
+  "softwareTeamDlc.handoffDone":
+    "パイプライン完了 — Tech Writer が最後の役割です。Ship には Reviewer と QA のメモが必要です。",
+  "softwareTeamDlc.handoffCopied": "次の役割のスターターをコピーしました",
+  "softwareTeamDlc.handoffLoaded": "次の役割のスターターが入力欄にあります。",
+  "softwareTeamDlc.openInComposer": "入力欄で開く",
+  "softwareTeamDlc.createAndOpen": "セッションを作成して開く",
+  "softwareTeamDlc.saveAndOpen": "保存して開く",
+  "softwareTeamDlc.starterLoaded": "役割スターターが入力欄にあります。",
+  "softwareTeamDlc.needHostCreate":
+    "Host がないとセッションを作れません。既存セッションを結ぶか、デスクトップアプリを開いてください。",
+  "softwareTeamDlc.createFailed": "セッションを作成できませんでした: {error}",
+  "softwareTeamDlc.planChromeSet": "このセッションにプランメモを付けました。",
+  "softwareTeamDlc.planChromeSkipped":
+    "プラン欄はカードに残します。Host はプランバーを書きませんでした。",
+  "softwareTeamDlc.slashAfterInstall":
+    "パック導入後、/team-* はスキルチップを挿入します。それまでは盤からセッションを開いてください。",
+  "softwareTeamDlc.noNextRole": "この役割にこれ以上の受け渡しはありません。",
+  "softwareTeamDlc.moveStage": "{stage} へ移動",
+  "softwareTeamDlc.removeItem": "盤から削除",
+  "softwareTeamDlc.emptyBoard":
+    "作業項目はまだありません。スライスを追加するか、セッションを役割に結んでください。",
+  "softwareTeamDlc.openStudio": "サイドバー（エージェント）から SDLC Studio を開きます。",
+  "softwareTeamDlc.roleOnStage": "{role} · {stage}",
+  "softwareTeamDlc.install.status.installed":
+    "この対象にパックファイルが {n} / {total} あります。",
+  "softwareTeamDlc.install.status.missing":
+    "この対象にパックファイルが {n} 不足しています。",
+  "softwareTeamDlc.install.status.checking":
+    "選択した対象のパックファイルを確認しています…",
+  "softwareTeamDlc.install.repair": "不足ファイルを修復",
+  "softwareTeamDlc.install.repairing": "修復中…",
+  "softwareTeamDlc.install.repaired": "不足していたパックファイルを {n} 件書きました。",
+  "softwareTeamDlc.install.repairNone":
+    "修復不要 — パックファイルは既にあります。",
+  "softwareTeamDlc.goalModeSet": "この下書きで Goal モードをオンにしました。",
+  "softwareTeamDlc.goalModeSkipped":
+    "Goal はカードに残します。Host に Goal 作成 API はありません。",
+  "softwareTeamDlc.shipLocked":
+    "このデリバリーに Reviewer と QA のメモがあるまで Ship はロックされます。",
+  "softwareTeamDlc.shipNeedReviewer": "このスライスは Reviewer を通っていません。",
+  "softwareTeamDlc.shipNeedQa": "このスライスは QA を通っていません。",
+  "softwareTeamDlc.shipNeedReviewNote": "Ship の前に Reviewer メモを保存してください。",
+  "softwareTeamDlc.shipNeedQaNote": "Ship の前に QA メモを保存してください。",
+  "softwareTeamDlc.markReviewNote": "Reviewer メモを記入",
+  "softwareTeamDlc.markQaNote": "QA メモを記入",
+  "softwareTeamDlc.reviewNote": "Reviewer メモ",
+  "softwareTeamDlc.qaNote": "QA メモ",
+  "softwareTeamDlc.reviewNotePlaceholder": "Diff、必須修正と nits、リスク。",
+  "softwareTeamDlc.qaNotePlaceholder": "ケース、コマンド、合否。",
+  "softwareTeamDlc.notesSaved":
+    "メモを保存しました。このデリバリーに Reviewer と QA のメモが揃うと Ship が開きます。",
+  "softwareTeamDlc.startDelivery": "デリバリーを開始",
+  "softwareTeamDlc.startDeliveryHint":
+    "パイプライン項目を作り、役割スターター付きで Grok Build セッションを開きます。docs/sdlc のプレースホルダはこのプロジェクト内だけ — ~/.grok には書きません。",
+  "softwareTeamDlc.startDeliveryTitle": "スライス名",
+  "softwareTeamDlc.startDeliveryTitlePlaceholder": "何を出荷しますか？",
+  "softwareTeamDlc.startDeliveryNeedTitle": "開始前にスライス名を入れてください。",
+  "softwareTeamDlc.startDeliveryRole": "最初の役割",
+  "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc プレースホルダを追加",
+  "softwareTeamDlc.startDeliveryBootstrapHint":
+    "無い場合、このプロジェクトの docs/sdlc に spec.md / design.md / review.md を書きます。デスクトップ Host とプロジェクトフォルダが必要です。",
+  "softwareTeamDlc.startDeliveryNeedProject":
+    "docs/sdlc を書くにはプロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.startDeliveryNeedHost":
+    "ワークスペースのプレースホルダにはデスクトップ Host が必要です。このプレビューは書いたふりをしません。",
+  "softwareTeamDlc.startDeliveryBlockedHome":
+    "共有 ~/.grok にはブートストラップできません。プロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.startDeliveryHostError": "プレースホルダを書けませんでした: {error}",
+  "softwareTeamDlc.startDeliveryBootstrapped":
+    "プロジェクトに docs/sdlc プレースホルダを {n} 件書きました。",
+  "softwareTeamDlc.startDeliveryBootstrapSkip": "ワークスペースのプレースホルダをスキップしました。",
+  "softwareTeamDlc.startDeliveryStarted": "デリバリーを開始しました。",
+  "softwareTeamDlc.handoffCta": "{role} へ渡す",
+  "softwareTeamDlc.shipCta": "Ship · Writer スターター",
+  "softwareTeamDlc.sessionDoneHint":
+    "セッション終了。受け渡すか Ship — 盤は自動では進みません。",
+  "softwareTeamDlc.attachSeeded":
+    "下書きに attach-chat セッションを {n} 件載せました（最大 3）。",
+  "softwareTeamDlc.addTeammateGroup": "チームセッションを追加",
+  "softwareTeamDlc.addTeammate": "{role} セッションを追加",
+  "softwareTeamDlc.attachedHint":
+    "このデリバリーにチームチャット {n} 件（attach-chat、最大 3）",
+  "softwareTeamDlc.pipelineFileOk":
+    "パイプラインをこのプロジェクトに保存しました（.grok/software-works.json）。",
+  "softwareTeamDlc.pipelineFileMissing":
+    "まだプロジェクトのパイプラインファイルはありません。次の変更で .grok/software-works.json を書きます。",
+  "softwareTeamDlc.pipelineFileCache":
+    "プロジェクトへの Host 書き込みなし — パイプラインはこのアプリのキャッシュだけです。",
+  "softwareTeamDlc.pipelineFileNeedHost":
+    "プロジェクトのパイプラインにはデスクトップ Host が必要です。このプレビューは保存したふりをしません。",
+  "softwareTeamDlc.pipelineFileNeedProject":
+    "リポジトリにパイプラインを保存するにはプロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.pipelineFileBlockedHome":
+    "共有の ~/.grok にパイプラインは書けません。",
+  "softwareTeamDlc.pipelineFileParseFail":
+    "パイプラインファイルが読めません。元ファイルはそのまま（バックアップ {file}）。アプリのキャッシュを使います。",
+  "softwareTeamDlc.pipelineFileHostError": "パイプラインを保存できませんでした: {error}",
+  "softwareTeamDlc.deliveryFilter": "デリバリー",
+  "softwareTeamDlc.deliveryFilterAll": "すべてのデリバリー",
+  "softwareTeamDlc.deliveryUnscoped": "未グループ",
+  "softwareTeamDlc.roleHistory": "役割: {roles}",
+  "softwareTeamDlc.openSdlcDocs": "docs/sdlc を開く",
+  "softwareTeamDlc.openSdlcDoc": "{file} を開く",
+  "softwareTeamDlc.openSdlcDocOpened": "エディタでファイルを開きました。",
+  "softwareTeamDlc.openSdlcDocCopied":
+    "パスをコピーしました。Host はこのファイル用のエディタを開きませんでした。",
+  "softwareTeamDlc.openSdlcDocMissing": "その docs/sdlc ファイルはこのプロジェクトにありません。",
+  "softwareTeamDlc.openSdlcDocNeedHost": "エディタで開くにはデスクトップ Host が必要です。",
+  "softwareTeamDlc.openSdlcDocNeedProject":
+    "docs/sdlc を開くにはプロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.openSdlcDocBlockedHome":
+    "共有の ~/.grok から docs/sdlc は開けません。",
+  "softwareTeamDlc.openSdlcDocHostError": "ファイルを開けませんでした: {error}",
+  "softwareTeamDlc.deliveryDetail": "デリバリー",
+  "softwareTeamDlc.deliveryDetailHint":
+    "タイトル、共有スライス参照、役割履歴、レビュー/QA メモ（デリバリー全体の Ship）、次の手順、docs/sdlc、このスライスのセッション。",
+  "softwareTeamDlc.openDelivery": "デリバリーを開く",
+  "softwareTeamDlc.deliverySessions": "このデリバリーのセッション",
+  "softwareTeamDlc.deliveryNoSessions": "まだ紐づくセッションはありません。",
+  "softwareTeamDlc.activityLog": "アクティビティ",
+  "softwareTeamDlc.activityEmpty": "まだ記録がありません。",
+  "softwareTeamDlc.activity.item_added": "作業項目を追加しました",
+  "softwareTeamDlc.activity.stage_changed": "ステージを移動しました",
+  "softwareTeamDlc.activity.handoff": "引き継ぎました",
+  "softwareTeamDlc.activity.notes": "メモを更新しました",
+  "softwareTeamDlc.activity.delivery_started": "このデリバリーを開始しました",
+  "softwareTeamDlc.pipelineFileReloaded":
+    "プロジェクトのパイプラインファイルが新しいため、ボードを更新しました。",
+  "softwareTeamDlc.notesEmpty": "まだありません",
+  "softwareTeamDlc.searchTitle": "タイトルで検索",
+  "softwareTeamDlc.stageFilter": "ステージ",
+  "softwareTeamDlc.stageFilterAll": "すべてのステージ",
+  "softwareTeamDlc.roleFilter": "役割",
+  "softwareTeamDlc.roleFilterAll": "すべての役割",
+  "softwareTeamDlc.showArchived": "アーカイブを表示",
+  "softwareTeamDlc.archiveDelivery": "デリバリーをアーカイブ",
+  "softwareTeamDlc.unarchiveDelivery": "アーカイブを解除",
+  "softwareTeamDlc.archived": "アーカイブ済み。既定のボードでは非表示です。",
+  "softwareTeamDlc.unarchived": "デリバリーがボードに戻りました。",
+  "softwareTeamDlc.activity.archived": "アーカイブしました",
+  "softwareTeamDlc.activity.unarchived": "アーカイブを解除しました",
+  "softwareTeamDlc.exportSummary": "要約を書き出す",
+  "softwareTeamDlc.exportOk": "このプロジェクトに {file} を書きました。",
+  "softwareTeamDlc.exportNeedHost":
+    "書き出しにはデスクトップ Host が必要です。このプレビューは書いたふりをしません。",
+  "softwareTeamDlc.exportNeedProject":
+    "docs/sdlc を書き出すにはプロジェクトフォルダを選んでください。",
+  "softwareTeamDlc.exportBlockedHome":
+    "共有の ~/.grok に要約は書き出せません。",
+  "softwareTeamDlc.exportBadSlug": "このタイトルはファイル名にできません。",
+  "softwareTeamDlc.exportHostError": "要約を書き出せませんでした: {error}",
+  "softwareTeamDlc.pipelineFileConflict":
+    "プロジェクトのパイプラインが他で変わりました。ファイルはそのままです。ボードはアプリ内に残します。次の保存はファイルを上書きせず、バックアップ {file} を書き込みます。",
+  "softwareTeamDlc.undo": "直前の変更を取り消す",
+  "softwareTeamDlc.undone": "ボードの直前の変更を取り消しました。",
+  "softwareTeamDlc.undoEmpty": "取り消す変更はありません。",
+  "softwareTeamDlc.removeItemConfirm": "このカードを外しますか？",
+  "softwareTeamDlc.removeItemConfirmBody": "「{title}」を SDLC ボードから外します。Grok Build セッションは残ります。このウィンドウでは取り消しで戻せます。",
+  "softwareTeamDlc.removeItemConfirmAction": "カードを外す",
+  "softwareTeamDlc.gitBranch": "Git ブランチラベル",
+  "softwareTeamDlc.gitBranchPlaceholder": "feat/slice-name",
+  "softwareTeamDlc.gitBranchHint": "ラベルだけです。Software Works は worktree を作らず、チェックアウトせず、~/.grok も書き換えません。",
+  "softwareTeamDlc.gitBranchSave": "ブランチラベルを保存",
+  "softwareTeamDlc.gitBranchSaved": "このデリバリーにブランチラベルを保存しました。",
+  "softwareTeamDlc.gitBranchInvalid": "英数字と '.', '_' '-' '/' のみ。空白や先頭のハイフンは不可。",
+  "softwareTeamDlc.gitBranchSuggest": "タイトルから提案",
+  "softwareTeamDlc.gitBranchCopy": "ブランチラベルをコピー",
+  "softwareTeamDlc.gitBranchCopied": "ブランチラベルをコピーしました。",
+  "softwareTeamDlc.activity.item_removed": "作業項目を外しました",
+  "softwareTeamDlc.activity.git_branch": "Git ブランチラベルを更新しました",
+  "softwareTeamDlc.redo": "やり直す",
+  "softwareTeamDlc.redone": "ボードの変更をやり直しました。",
+  "softwareTeamDlc.redoEmpty": "やり直す変更はありません。",
+  "softwareTeamDlc.duplicateDelivery": "デリバリーを複製",
+  "softwareTeamDlc.duplicateSuffix": " (コピー)",
+  "softwareTeamDlc.duplicated": "デリバリーを複製しました。新しいカードは未バインドです。",
+  "softwareTeamDlc.duplicateFailed": "このデリバリーを複製できませんでした。",
+  "softwareTeamDlc.deliveryName": "デリバリー名",
+  "softwareTeamDlc.deliveryRename": "名前を保存",
+  "softwareTeamDlc.deliveryRenamed": "デリバリー名を保存しました。",
+  "softwareTeamDlc.deliveryRenameNeedTitle": "保存する前に名前を付けてください。",
+  "softwareTeamDlc.activity.delivery_renamed": "デリバリー名を変更しました",
+  "softwareTeamDlc.activity.delivery_duplicated": "デリバリーを複製しました",
+  "softwareTeamDlc.bindThisChat": "このチャットを結ぶ",
+  "softwareTeamDlc.bindThisChatDone": "このチャットをカードに結びました。",
+  "softwareTeamDlc.bindThisChatNeedSession": "先にチャットを開いてから結んでください。",
+  "softwareTeamDlc.bindThisChatAlready": "このチャットはすでにこのカードにあります。",
+  "softwareTeamDlc.unbindSessionDone": "結びを解除しました。チャットはそのままです。",
+  "softwareTeamDlc.moveToDelivery": "デリバリーへ移動",
+  "softwareTeamDlc.movedToDelivery": "カードを {title} へ移動しました。",
+  "softwareTeamDlc.movedUngrouped": "カードのグループを外しました。",
+  "softwareTeamDlc.activity.item_moved": "別のデリバリーへ移動",
+  "softwareTeamDlc.activity.session_bound": "セッションを結びました",
+  "softwareTeamDlc.activity.session_unbound": "セッションの結びを解除",
+  "softwareTeamDlc.missingRoles": "足りないチームセッション: {roles}",
+  "softwareTeamDlc.teamComplete":
+    "このデリバリーに Product / Architect / Engineer / Reviewer / QA / Writer のカードがあります。",
+  "softwareTeamDlc.addSdlcDocs": "足りない docs/sdlc ファイルを追加",
+  "softwareTeamDlc.sliceRefsHint":
+    "プラン・ゴール・成果物はこのデリバリーの全カードで共有されます。保存するとすべて更新されます。",
+  "softwareTeamDlc.sliceRefsSaved": "スライス参照をこのデリバリーの全カードに保存しました。",
+  "softwareTeamDlc.saveSliceRefs": "スライス参照を保存",
+  "softwareTeamDlc.copySummary": "要約をコピー",
+  "softwareTeamDlc.copySummaryOk": "要約をコピーしました。",
+  "softwareTeamDlc.copySummaryFailed": "要約をコピーできませんでした。",
+  "softwareTeamDlc.exportCopiedInstead":
+    "要約をコピーしました。プロジェクトファイルは書いていません。",
+  "softwareTeamDlc.handoffKept":
+    "{role} を開きました。このカードは {from} のままです。",
+  "softwareTeamDlc.handoffCreated":
+    "{role} カードを追加しました。このカードは {from} のままです。",
+  "softwareTeamDlc.shipKept":
+    "Writer を開きました。このカードは {from} のままです。",
+  "softwareTeamDlc.conflictTitle": "プロジェクトのパイプラインが競合しています",
+  "softwareTeamDlc.conflictBody":
+    "このボードに未保存の変更があるあいだに、プロジェクトのパイプラインファイルが変わりました。残すコピーを選んでください。もう一方は {file} に残せます。",
+  "softwareTeamDlc.conflictUseFile": "プロジェクトのファイルを使う",
+  "softwareTeamDlc.conflictKeepBoard": "このボードを残す",
+  "softwareTeamDlc.conflictUsedFile":
+    "ボードをプロジェクトのファイルで置き換えました。",
+  "softwareTeamDlc.conflictKeptBoard":
+    "このボードをプロジェクトのファイルに書きました。もう一方は {file} にあります。",
+  "softwareTeamDlc.conflictKeepFailed":
+    "このボードでプロジェクトのファイルを上書きできませんでした。",
+} as const;

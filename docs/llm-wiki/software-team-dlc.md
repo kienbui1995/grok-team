@@ -1,0 +1,221 @@
+# Software Works / SDLC Studio
+
+Opt-in **software-delivery edition** for Grok App. When on, the Agents pane **is** the product for making software: roster, pipeline board, role handoff, pack install, and opening a Grok Build session with the role starter already in the composer. When off, ordinary Grok App is unchanged.
+
+Internal pref key stays `grok.softwareTeamDlc.*` (stable). UI says **Software Works** / **SDLC Studio**.
+
+This is **not** a rebrand of the whole app, and **not** a second agent runtime (Claude / Codex). Remote IM and the workbench still control **Grok Build** only.
+
+## What it is
+
+A single pipeline for a slice of software:
+
+1. Install the role pack (optional, honest Host write) into **project `.grok/`** or **Independent** agent-home.
+2. Add a work item or click a card: **open or create** a Grok Build session and put the role starter **in the composer** (not clipboard-only).
+3. Move the item on the SDLC board (Backlog → Design → Build → Review → Ship).
+4. Hand off Product → Architect → Engineer → Reviewer → QA → Writer. **Ungrouped** cards still change role in place. Cards with a `deliveryId` **keep their role**; handoff opens the next-role sibling (or creates one, unbound) and loads that starter. Same for Ship → Writer.
+
+Plan / goal / artifact fields live on the work item so the next role sees the same slice. When cards share a `deliveryId`, those three refs stay aligned (edit one card or the detail pane, the others update). Reviewer / QA notes stay on their own cards; the Ship gate reads the first non-empty note across the delivery.
+
+- **Off by default.** Ordinary Grok App users are unchanged.
+- **Never auto-applies** an appearance skin (see [appearance-skins.md](./appearance-skins.md)).
+- **Never rewrites** shared `GROK_HOME=~/.grok`. Pack files stay in-app unless the user installs to a **project** `.grok/` or **Independent** agent-home.
+
+## Enable
+
+| Surface | Detail |
+|---------|--------|
+| Setting | Settings → Extensions → **Agents** |
+| Toggle | `Enable Software Works` |
+| Pref key | `grok.softwareTeamDlc.enabled` (`localStorage`, `"1"` / `"0"`) |
+| Catalog id | `ext.softwareTeamDlc` |
+| Anchor | `settings-anchor-software-team-dlc` |
+| Deep link | `#/settings/extensions/agents` |
+| Studio | Sidebar **Agents** (Kanban pane) becomes **SDLC Studio** |
+
+No Host `AppSettings` field — same pattern as Developer mode. Changing the toggle does not spawn agents and does not write `config.toml`.
+
+## Pipeline (source of truth)
+
+Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) is the **in-app cache**, keyed by the bound project path.
+
+| Bind | Cache key |
+|------|-----------|
+| No project / browser preview | `grok.softwareTeamDlc.pipeline` (unbound, honest cache-only) |
+| Project folder (`/repo`, `/repo/.grok`, Independent `~/.grok-app/agent-home`) | `grok.softwareTeamDlc.pipeline:<normalized-path>` |
+| Shared user GROK_HOME (`~/.grok`, `/home/u/.grok`, `C:\Users\u\.grok`) | Unbound key — **never** a cache key or write target |
+
+Switching folders persists/loads that project’s cache and resets pipeline-file `lastSeen`. It must not write project A’s items into project B’s `.grok/software-works.json`. Session-tag projection uses the same scope (`grok.softwareTeamDlc.sessionTags` / `…sessionTags:<path>`).
+
+**Project SoT:** `.grok/software-works.json` (`src/lib/softwareTeamDlc/pipelineFile.ts`). Chosen over `docs/sdlc/pipeline.json` so human spec/design/review stay separate from machine board state. Project `.grok/` already holds agents/skills/workflows; this JSON is a sibling, not inside those folders.
+
+| Host + project folder | Effect |
+|-----------------------|--------|
+| Load Studio | Read the file. Valid doc replaces a **clean** cache. Missing file keeps the cache (next mutate creates the file). Dirty local + newer file → conflict (keep memory until the user picks **Use project file** or **Keep this board**). |
+| Mutate (add / stage / handoff / notes / deliveryId) | Cache write **and** project file when allowed. |
+| Parse fail / newer schema | **Refuse overwrite.** Copy raw text to `.grok/software-works.json.bak` when possible. Keep the cache. |
+| No Host / no project / path *is* `~/.grok` | Cache only + honesty. Never rewrite shared GROK_HOME. |
+
+Schema: `{ schema: "software-works.pipeline", version: 3, updatedAt, items, activity, archivedDeliveryIds }`. **v1–v2 still load** (`activity` / `archivedDeliveryIds` hydrate to `[]`; item `archived` missing = false). Writes are v3. Host `fs_write_file` may **create** this allowlisted path, docs/sdlc placeholders, and `docs/sdlc/<slug>-delivery.md` when missing. Parse failure still refuses overwrite and may write `.grok/software-works.json.bak`.
+
+`activity[]` events: `{ at, type, deliveryId, itemId, … }` for add, stage, handoff, notes, start delivery, archive, unarchive, `item_removed`, `item_moved`, `session_bound`, `session_unbound`, `delivery_renamed`, `delivery_duplicated`, `git_branch`. Unknown types are skipped. Cap 200. Old items without activity still hydrate.
+
+**Archive:** `archivedDeliveryIds` plus item `archived`. Does not delete items or activity. Default Studio filter hides archived deliveries; **Show archived** reveals them. Unarchive is the same field flipped.
+
+**Export:** detail pane writes project `docs/sdlc/<slug>-delivery.md` (title, stages, notes, roleHistory, recent activity). Host + project required. Shared `~/.grok` refused. Never writes this app’s `CHANGELOG.md`. Never fakes success. If Host cannot write (`need_host` / `need_project` / shared home / host error), Studio **copies the markdown** and says no file was written. **Copy summary** does the same on demand.
+
+**Reload:** there is **no** Host fs-watch / `watch_path` API. `fsReadFile` returns `mtimeMs`. Studio re-reads on open, window focus, and `visibilitychange` (coalesced, not polled). Bind of a different project path resets `lastSeen` and loads **that** project’s cache (dirty board A stays under A’s key). Newer file + **clean** local cache for **this** project replaces items. **Dirty** local (mutated since last accepted file) **and** a newer/different file → **conflict**: keep memory, do not hydrate over it, honesty string + `GlassModal` (Use project file / Keep this board / close). **Use project file** hydrates the cache from `.grok/software-works.json` (clears undo). **Keep this board** writes a `.bak` of the foreign file, then writes the local board. Implicit persist still refuses overwrite until one of those is chosen. Parse fail keeps the cache + honesty. Never writes shared `~/.grok`. `isSoftwareTeamSharedHomePath` matches only user GROK_HOME, not `/repo/.grok`.
+
+Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef` + `roleHistory` + `reviewNote` / `qaNote`.
+
+| Write | Effect |
+|-------|--------|
+| Board stage change | Updates the item (`stageSource: board`) and **rewrites** session tags from the store. |
+| Live session `working` / `done` | `working` → Build. `done` **never auto-Ships** — sets `sessionDonePending` and shows a Handoff / Ship CTA. `needs_you` / `idle` do **not** overwrite Design / Review / Backlog. |
+| Handoff | Ungrouped: next role + that role’s default stage on the **same** card (`stageSource: handoff`). Delivery: keep the source card; focus or create the next-role sibling (new session on launch). Starter goes into that session’s composer. |
+| Session tags | Projection only (`grok.softwareTeamDlc.sessionTags`). Never a second dead overlay. Legacy tags hydrate into items on first load. |
+
+Does not change Host session schema. Does not spawn CLI processes.
+
+## Open session + composer (not copy-paste)
+
+Helpers: `src/lib/softwareTeamDlc/sessionLaunch.ts`.
+
+| Step | API / store | Honesty |
+|------|-------------|---------|
+| Create session | `api.sessionCreate` when `api.hasHost()` | Browser preview without Host → refuse (`need_host`). Does not fake an id. |
+| Seed composer | `saveComposerSessionDraft` + live `setDraft` when already on that session | Same-session **must not** call `openSession` — `stashLeaving` would overwrite the starter. |
+| Switch session | existing `onSelectSession` / `openSessionById` | Stash the *other* session, restore ours (draft already saved). |
+| Go to chat (same session) | `window.location.hash = "#/workbench"` | `resolveWorkbenchHash` → chat pane. No AppWorkbench growth. |
+| Plan attach | `api.sessionPlanChromeSet` when Tauri/mirror | Chrome is void (no plan document id). If the invoke later returns `{ id }` / `{ planId }`, that id is written to `planRef`. Otherwise keep the card text. Do not invent a Host plan document. |
+| Goal | session draft `goalMode: true` when `goalRef` is set | No Host “create goal” API in production (`createGoalEntity` is optional and omitted). Field + starter line stay honest. A Host goal id is written to `goalRef` only if that optional hook returns one. |
+| Artifact | field + starter line | No fake Host write. |
+
+Handoff uses the same launch path with the next-role starter. On a delivery it launches the **sibling** card (create if missing), not a second CLI process. Ungrouped cards still mutate in place.
+
+## Install pack (honesty)
+
+Helpers: `src/lib/softwareTeamDlc/install.ts` + planner `planSoftwareTeamDlcPackWrite`.
+
+Button: SDLC Studio toolbar and Settings → Extensions → Agents (when the edition is on).
+
+Sequence (desktop Host only — `api.isDesktopHost()`):
+
+1. Planner gate (shared + `user` → `blocked_shared_user`; project without path → `need_project`; project path *is* `~/.grok` → `blocked_shared_user`).
+2. `agentsScaffold` (force) then `fsWriteAbsolute` with pack body (file must already exist).
+3. `skillCreate` (idempotent) then `skillWrite` with pack `SKILL.md`.
+4. `workflowsCreate` (force) then `fsWriteAbsolute` for `team-handoff.rhai`.
+
+| Result | Meaning |
+|--------|---------|
+| `ok` | All 13 files written through Host APIs. |
+| `need_host` | Not desktop Tauri. **Never** reports success. |
+| `blocked_shared_user` / `need_project` | Planner refuse; no Host calls. |
+| `host_error` | A Host call threw; partial file list is returned, success is **false**. |
+
+Do **not** call `agentsScaffold` / `skillCreate` with `scope: "user"` while session data is **shared**.
+
+## Install status + repair
+
+Helpers: `src/lib/softwareTeamDlc/installStatus.ts`.
+
+On every Studio open (and Settings when the edition is on), probe Host `agentsList` / `skillsList` / `workflowsList` for the **chosen target**. A file counts as present only when the listed name matches **and** the listed scope matches the target (`project` / `workspace` / `local` vs `user` / `agent-home` / `independent`). Empty lists are **missing**, never installed.
+
+| Status | Meaning |
+|--------|---------|
+| `installed` | All 13 files listed on that target. |
+| `missing` | Some names absent or wrong scope. Repair writes **only** those names (`onlyNames`). |
+| `blocked_shared` | Shared `~/.grok` + user target. No Host write. |
+| `need_project` | Project target with no folder. |
+| `need_host` | Not desktop Tauri. Does not fake success. |
+| `host_error` | List/write threw. Success is false. |
+
+Repair is idempotent. Shared user writes still refuse.
+
+## Review → QA → Ship gate
+
+Helpers: `src/lib/softwareTeamDlc/shipGate.ts`.
+
+`softwareTeamShipGate` is still the **single-item** check (unit tests stay on that helper). Studio, board moves, live `done`, and QA→Writer handoff use **`softwareTeamDeliveryShipGate`** when the card has a `deliveryId`: union `roleId` + `roleHistory` across members, first non-empty `reviewNote` / `qaNote`. Sibling Reviewer + QA notes unlock Ship on the Engineer / Product card.
+
+Ship is blocked (UI chips / context menu **and** `setPipelineItemStage` / live `done` / QA→Writer handoff) until **this delivery** has:
+
+1. Visited **Reviewer** and **QA** (`roleId` or `roleHistory` on any member).
+2. Non-empty **`reviewNote`** and **`qaNote`** (first non-empty across members). Notes stay on the Reviewer / QA card; they are **not** copied to every card. Ship / Writer handoff merges them onto the **focus** card only.
+
+Legacy items already stored as `ship` stay there. New writes and handoff to Writer without delivery-wide notes stay on **Review**.
+
+Reviewer / QA starters (open + handoff) include an English checklist: **diff / test / risk**. Notes are edited in `GlassModal` (Mark Reviewer notes / Mark QA notes) or on the delivery detail pane — no `window.prompt`.
+
+Live `done` + gate fail → CTA **Handoff to {next role}**. Live `done` + gate ok → CTA **Ship · Writer starter** (user click only). Ship seeds the Writer starter in the composer. It does **not** write this app’s `CHANGELOG.md` or any file. Do not invent Host plan/goal ids.
+
+## Start a delivery
+
+Helpers: `src/lib/softwareTeamDlc/delivery.ts`.
+
+Empty board or toolbar **Start a delivery** (`GlassModal`): slice title, first role (default Product), optional `docs/sdlc/{spec,design,review}.md` placeholders.
+
+| Rule | Honesty |
+|------|---------|
+| Writes | Project folder only (`fsWriteFile` relative). Skip files that already exist. |
+| Refuse | No project path (`need_project`), path *is* `~/.grok` (`blocked_shared_home`), no desktop Host (`need_host`). |
+| Never | Shared GROK_HOME, fake success in the browser preview. |
+
+Then: create a pipeline item (`deliveryId`) + **new** session launch (starter in composer). Does **not** bind the currently open chat.
+
+Empty Studio auto-opens this modal once per visit; the toolbar button opens it any time.
+
+## Attach-chat (max 3)
+
+Existing domain: `src/lib/chatAttach.ts` (`MAX_ATTACHED_CHATS = 3`). Workbench chips live in `useAttachChat` / composer restore — **not** extended in AppWorkbench.
+
+Studio helper `deliveryAttach.ts` picks up to 3 **other** bound session UUIDs on the **same** `deliveryId` (prefer Product / Engineer / Reviewer for attach ranking) and seeds `composerSessionDraft.chatAttachments` plus `[[chat:]]` tokens on launch. Items with a different or empty delivery id are not mixed in. Non-UUID ids are skipped. There is **no** Host “team attach” RPC. Live chips appear when Workbench restores that session draft.
+
+Context menu **Add team session** and the detail pane create an unbound sibling card (same slice refs + `deliveryId`) and open a **new** Grok Build session for any missing role on the Product→Writer chain (`SOFTWARE_TEAM_ROSTER_ROLES`). **Handoff / Ship on a delivery** do the same for the next role (or Writer) instead of rewriting the source card. Attach-chat ranking stays Product / Engineer / Reviewer. New work items inherit the board’s delivery id when one exists.
+
+## Slash `/team-*`
+
+`buildSlashCatalog` (domain module, **not** `AppWorkbench.applySlashItem`) merges six skill rows when the edition is on (`src/lib/softwareTeamDlc/slash.ts`). Existing `applySlashItem` `kind: "skill"` inserts `[[skill:team-product]]`.
+
+- After pack install, Grok Build can resolve the skill from disk.
+- Before install, the chip is a palette hint only. First-class entry is **Open in composer** on the board.
+- `builtinSlashItems()` is unchanged (growth freeze + catalog tests).
+- `AppWorkbench.tsx` is not extended.
+
+## Roles
+
+| Role | Pack / slash | Default stage | Next handoff |
+|------|--------------|---------------|--------------|
+| Product | `team-product` · `/team-product` | Backlog | Architect |
+| Architect | `team-architect` · `/team-architect` | Design | Engineer |
+| Engineer | `team-engineer` · `/team-engineer` | Build | Reviewer |
+| Reviewer | `team-reviewer` · `/team-reviewer` | Review | QA |
+| QA | `team-qa` · `/team-qa` | Review | Writer |
+| Tech Writer | `team-writer` · `/team-writer` | Ship | (done) |
+
+**Team = bound Grok Build sessions** plus existing **attach-chat**. Do not spawn parallel CLI processes.
+
+## UI
+
+- Settings card: `src/components/SoftwareTeamDlcPanel.tsx` (enable + honesty + install + status/repair).
+- Studio: `src/components/SdlcStudioPage.tsx` from `KanbanBoardPage` when the edition is on. Live agent columns remain a second tab. Pack status + Repair on the toolbar. Start a delivery + Reviewer/QA notes via `GlassModal`. Done CTA on the card. Delivery chips filter the board (last filter + **Show archived** persist in `grok.softwareTeamDlc.studio`; a deleted id falls back to All; an archived remembered delivery turns Show archived on). Title search + stage/role chips combine with that filter; archived deliveries are hidden unless **Show archived**. Click a delivery chip or card to open `SdlcDeliveryDetailPane` (title, **editable** shared plan/goal/artifact, role history, **editable** Review/QA notes, next Handoff/Ship CTA, `docs/sdlc` links, same-`deliveryId` sessions, activity, archive, export summary, **Copy summary**, git branch **label**). Saving slice refs syncs every member of the delivery; saving notes writes onto the Reviewer / QA card when present (`setSoftwareTeamDeliveryNote`). Existing `docs/sdlc` files open via Host `openInEditor` or a copied path. Toolbar **Undo** / **Redo** (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y when focus is not in an input) restore the last in-window board mutate; stacks are memory-only and cleared when the project file replaces the cache. Remove card uses a `GlassModal` confirm (session is kept). Git branch is a label only — no worktree, no checkout, no `~/.grok` write. Detail pane can **rename** a delivery (`deliveryTitle` on members) and **duplicate** it (new `deliveryId`, cards unbound). **Bind this chat** attaches the open workbench session to a card (one card per session; does not create a chat). Steal-bind appends `session_unbound` on the previous card. Context menu can **unbind** or **move** a card to another delivery / ungrouped (move inherits destination title, branch, and slice refs). Detail pane lists missing Product→Writer sessions and can add those teammates or write missing `docs/sdlc` placeholders (same Host honesty as Start a delivery).
+- Sidebar / title: `WorkbenchSidebar` / `WorkbenchMain` relabel Agents → SDLC Studio when on.
+- Controls: chips, `ContextMenu`, `GlassModal` — no `window.confirm`, no native `<select>`. See [dialogs.md](./dialogs.md).
+- Strings: `src/i18n/messages/*/software-team-dlc.ts` (16 locales, `en` authority).
+
+## Forbidden
+
+- New `useState` / feature blocks in `src/App.tsx` or `src/app/AppWorkbench.tsx`.
+- Auto-apply `.grokskin`.
+- Claude / Codex runtime, Remote IM, Session API scope creep.
+- Claiming parallel multi-agent execution that the Host does not provide.
+- Faking Host install or session-create success in the browser preview.
+- Full-repo rebrand while the edition is off.
+
+## Related
+
+- Settings IA: [settings-ia.md](./settings-ia.md)
+- Kanban columns: `src/lib/kanbanBoard.ts`
+- Appearance: [appearance-skins.md](./appearance-skins.md)
+- Dialogs: [dialogs.md](./dialogs.md)
+- i18n: [i18n.md](./i18n.md)

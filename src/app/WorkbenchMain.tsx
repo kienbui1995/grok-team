@@ -19,6 +19,7 @@ import {
   IconUser,
 } from "@/components/icons";
 import { createT, type Locale, type MessageKey } from "@/i18n";
+import { useSoftwareTeamDlcEnabled } from "@/hooks/useSoftwareTeamDlc";
 import {
   projectDisplayName,
   type Project,
@@ -138,6 +139,7 @@ export function WorkbenchMain(props: WorkbenchMainProps) {
     showToast,
   } = props;
 
+  const softwareWorksOn = useSoftwareTeamDlcEnabled();
   const cur = sessions.find((s) => s.id === session.sessionId);
   const title =
     cur?.title || session.title || activeProject?.name || tr("session.new");
@@ -243,7 +245,9 @@ export function WorkbenchMain(props: WorkbenchMainProps) {
                 </span>
               ) : null}
               <h1 className="main__title" data-tauri-drag-region={dragRegion}>
-                {tr("kanban.title")}
+                {softwareWorksOn
+                  ? tr("softwareTeamDlc.studioTitle")
+                  : tr("kanban.title")}
               </h1>
             </>
           ) : (
