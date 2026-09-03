@@ -435,11 +435,11 @@ import {
   type ExecuteSendFromQueue,
 } from "@/hooks/useSendQueue";
 import {
-  buildSlashCatalog,
   countSlashByKind,
   flattenFilteredCatalog,
   type SlashItem,
 } from "@/lib/slashCatalog";
+import { useSoftwareTeamSlashCatalog } from "@/hooks/useSoftwareTeamSlashCatalog";
 import {
   leftoverWorkflowArgs,
   resolveWorkflowSlashAction,
@@ -6545,10 +6545,7 @@ export function AppWorkbench() {
     };
   }, [activeProject?.path, skillsReloadToken]);
 
-  const slashCatalog = useMemo(
-    () => buildSlashCatalog(skillInfos),
-    [skillInfos],
-  );
+  const slashCatalog = useSoftwareTeamSlashCatalog(skillInfos);
   const resolveSlashTitle = useCallback(
     (item: SlashItem) => {
       if (item.titleKey) {

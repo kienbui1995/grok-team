@@ -116,3 +116,19 @@ export function resolveSoftwareTeamStudioPrefs(
   }
   return { deliveryFilter, showArchived };
 }
+
+/** Resolve against live items, then write the fallback (deleted id → All). */
+export function commitSoftwareTeamStudioPrefs(
+  prefs: SoftwareTeamStudioPrefs,
+  items: readonly SoftwareTeamPipelineItem[],
+  archivedDeliveryIds: readonly string[] = [],
+  storage: SoftwareTeamDlcStorage = defaultStorage(),
+): SoftwareTeamStudioPrefs {
+  const resolved = resolveSoftwareTeamStudioPrefs(
+    prefs,
+    items,
+    archivedDeliveryIds,
+  );
+  saveSoftwareTeamStudioPrefs(resolved, storage);
+  return resolved;
+}

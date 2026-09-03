@@ -39,9 +39,11 @@ import {
   lastSoftwareTeamPipelineFileStatus,
   listSoftwareTeamDeliveryGroups,
   loadSoftwareTeamStudioPrefs,
+  commitSoftwareTeamStudioPrefs,
   resolveSoftwareTeamStudioPrefs,
   saveSoftwareTeamStudioPrefs,
   decideEmptyStudioWizard,
+  pickSoftwareTeamStudioOverlay,
   normalizeSoftwareTeamGitBranch,
   missingSoftwareTeamDeliveryRoles,
   missingSoftwareTeamTeammateRoles,
@@ -269,7 +271,7 @@ export function SdlcStudioPage({
       deliveryFilter?: SoftwareTeamDeliveryFilterId;
       showArchived?: boolean;
     }) => {
-      const prefs = resolveSoftwareTeamStudioPrefs(
+      const prefs = commitSoftwareTeamStudioPrefs(
         {
           deliveryFilter: next.deliveryFilter ?? deliveryFilter,
           showArchived: next.showArchived ?? showArchived,
@@ -279,7 +281,6 @@ export function SdlcStudioPage({
       );
       setDeliveryFilter(prefs.deliveryFilter);
       setShowArchived(prefs.showArchived);
-      saveSoftwareTeamStudioPrefs(prefs);
     },
     [deliveryFilter, pipeline.items, pipeline.store.archivedDeliveryIds, showArchived],
   );
@@ -1024,6 +1025,15 @@ export function SdlcStudioPage({
     setStatus(actions.describeLaunch(launched));
     if (launched.ok) actions.applyLaunchNav(launched);
   };
+
+  const overlay = pickSoftwareTeamStudioOverlay({
+    conflict: conflictOpen,
+    remove: !!pendingRemove,
+    notes: !!notesEditor,
+    editor: !!editor,
+    wizard: !!wizard,
+    detail: !!deliveryDetail,
+  });
 
   const menuItem = menu ? pipeline.items.find((i) => i.id === menu.itemId) : null;
   const menuItems: ContextMenuItem[] = useMemo(() => {
@@ -1898,7 +1908,7 @@ export function SdlcStudioPage({
       />
 
       <SdlcDeliveryDetailPane
-        open={!!deliveryDetail}
+        open={overlay === "detail"}
         locale={locale}
         detail={deliveryDetail}
         sdlcDocs={sdlcDocs}
@@ -2014,7 +2024,7 @@ export function SdlcStudioPage({
       />
 
       <GlassModal
-        open={!!editor}
+        open={overlay === "editor"}
         onClose={() => setEditor(null)}
         title={editor?.id ? t("softwareTeamDlc.editItem") : t("softwareTeamDlc.addItem")}
         closeLabel={t("window.close")}
@@ -2179,7 +2189,7 @@ export function SdlcStudioPage({
       </GlassModal>
 
       <GlassModal
-        open={!!notesEditor}
+        open={overlay === "notes"}
         onClose={() => setNotesEditor(null)}
         title={
           notesEditor?.kind === "qa"
@@ -2245,7 +2255,7 @@ export function SdlcStudioPage({
       </GlassModal>
 
       <GlassModal
-        open={!!wizard}
+        open={overlay === "wizard"}
         onClose={() => setWizard(null)}
         title={t("softwareTeamDlc.startDelivery")}
         closeLabel={t("window.close")}
@@ -2348,7 +2358,7 @@ export function SdlcStudioPage({
       </GlassModal>
 
       <GlassModal
-        open={conflictOpen}
+        open={overlay === "conflict"}
         onClose={() => setConflictOpen(false)}
         title={t("softwareTeamDlc.conflictTitle")}
         closeLabel={t("window.close")}
@@ -2390,7 +2400,7 @@ export function SdlcStudioPage({
       </GlassModal>
 
       <GlassModal
-        open={!!pendingRemove}
+        open={overlay === "remove"}
         onClose={() => setPendingRemove(null)}
         title={t("softwareTeamDlc.removeItemConfirm")}
         closeLabel={t("window.close")}

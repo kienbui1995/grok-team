@@ -151,6 +151,8 @@ import {
   saveSoftwareTeamStudioPrefs,
   decideEmptyStudioWizard,
   shouldAutoOpenEmptyStudioWizard,
+  commitSoftwareTeamStudioPrefs,
+  pickSoftwareTeamStudioOverlay,
   softwareTeamExportShouldCopyInstead,
   SOFTWARE_TEAM_BOOTSTRAP_RELATIVE,
   softwareTeamRoleChecklist,
@@ -1942,6 +1944,27 @@ describe("Software Team DLC slash extras", () => {
       "skill",
     );
   });
+
+  it("hides Host team-* skills when the edition is off", () => {
+    const hostSkill = {
+      name: "team-product",
+      description: "from disk",
+      source: "project",
+    };
+    const off = buildSlashCatalog([hostSkill], {
+      includeSoftwareTeamSkills: false,
+    });
+    expect(off.skills.some((s) => s.name === "team-product")).toBe(false);
+    expect(
+      buildSlashCatalog([{ name: "review-commit", description: "ok" }], {
+        includeSoftwareTeamSkills: false,
+      }).skills.some((s) => s.name === "review-commit"),
+    ).toBe(true);
+    const on = buildSlashCatalog([hostSkill], {
+      includeSoftwareTeamSkills: true,
+    });
+    expect(on.skills.some((s) => s.name === "team-product")).toBe(true);
+  });
 });
 
 describe("Software Works activity + delivery detail + reload", () => {
@@ -2430,6 +2453,72 @@ describe("Software Works archive, studio filter, export, conflict", () => {
     expect(save).toMatchObject({ ok: false, reason: "conflict" });
     expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Foreign");
     expect(files[SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE]).toContain("Foreign");
+  });
+
+  it("conflict reload emits only conflict, not a transient ok_project", async () => {
+    const first = createSoftwareTeamPipelineItem({
+      id: "cf-emit-1",
+      roleId: "product",
+      title: "Local",
+      deliveryId: "d-cfe",
+    })!;
+    const { host, files, mtimes } = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: JSON.stringify({
+          schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+          version: 2,
+          updatedAt: 1,
+          items: [first],
+          activity: [],
+        }),
+      },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: 10 },
+    });
+    const storage = memoryStore();
+    const loaded = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+    });
+    expect(loaded).toMatchObject({ ok: true, kind: "replaced" });
+    if (!loaded.ok || loaded.kind !== "replaced") return;
+    const dirty = addSoftwareTeamPipelineItem(loaded.store, {
+      id: "cf-emit-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-cfe",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = JSON.stringify({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: 3,
+      updatedAt: 2,
+      items: [
+        createSoftwareTeamPipelineItem({
+          id: "cf-emit-1",
+          roleId: "product",
+          title: "Foreign",
+          deliveryId: "d-cfe",
+        }),
+      ],
+      activity: [],
+      archivedDeliveryIds: [],
+    });
+    mtimes[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] = 99;
+    const dispatch = vi.fn();
+    vi.stubGlobal("window", { dispatchEvent: dispatch });
+    const conflict = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo",
+      host,
+      storage,
+      cached: dirty,
+    });
+    const reasons = dispatch.mock.calls
+      .map((call) => (call[0] as CustomEvent<{ reason?: string }> | undefined)?.detail?.reason)
+      .filter((reason): reason is string => typeof reason === "string");
+    vi.unstubAllGlobals();
+    expect(conflict).toMatchObject({ ok: false, kind: "conflict" });
+    expect(reasons).toEqual(["conflict"]);
   });
 
   it("accepts the project file over a dirty local cache", async () => {
@@ -3154,6 +3243,45 @@ describe("Software Works studio prefs + full roster + copy export", () => {
       deliveryFilter: "d-arch",
       showArchived: true,
     });
+  });
+
+  it("persists All when the remembered delivery id was deleted", () => {
+    const storage = memoryStore();
+    const keep = createSoftwareTeamPipelineItem({
+      id: "sp-persist",
+      roleId: "product",
+      deliveryId: "d-keep",
+    })!;
+    const next = commitSoftwareTeamStudioPrefs(
+      { deliveryFilter: "d-gone", showArchived: false },
+      [keep],
+      [],
+      storage,
+    );
+    expect(next.deliveryFilter).toBe(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
+    expect(loadSoftwareTeamStudioPrefs(storage).deliveryFilter).toBe(
+      SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
+    );
+  });
+
+  it("shows only one Studio overlay and lets conflict win", () => {
+    expect(
+      pickSoftwareTeamStudioOverlay({
+        conflict: true,
+        remove: true,
+        notes: true,
+        editor: true,
+        wizard: true,
+        detail: true,
+      }),
+    ).toBe("conflict");
+    expect(
+      pickSoftwareTeamStudioOverlay({
+        wizard: true,
+        detail: true,
+      }),
+    ).toBe("wizard");
+    expect(pickSoftwareTeamStudioOverlay({})).toBeNull();
   });
 
   it("lists the full Product→Writer roster as missing roles", () => {

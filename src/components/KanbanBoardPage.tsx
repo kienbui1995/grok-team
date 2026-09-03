@@ -42,7 +42,7 @@ import {
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGES,
   bindSoftwareTeamPipelineProjectPath,
-  hydrateSoftwareTeamPipelineFromProject,
+  reloadSoftwareTeamPipelineIfNewer,
   kanbanColumnSdlcAliasKey,
   resolveSoftwareTeamWorkspace,
   softwareTeamRoleById,
@@ -202,6 +202,14 @@ export function KanbanBoardPage({
   const [view, setView] = useState<"dashboard" | "map" | "studio">(() =>
     teamEnabled ? "studio" : "dashboard",
   );
+
+  useEffect(() => {
+    if (teamEnabled) {
+      setView("studio");
+      return;
+    }
+    setView((current) => (current === "studio" ? "dashboard" : current));
+  }, [teamEnabled]);
   const teamTags = useSoftwareTeamSessionTags();
   const [teamMenu, setTeamMenu] = useState<{
     sessionId: string;
@@ -224,9 +232,12 @@ export function KanbanBoardPage({
   }, [storage]);
 
   useEffect(() => {
+    if (!teamEnabled) {
+      bindSoftwareTeamPipelineProjectPath(null);
+      return;
+    }
     bindSoftwareTeamPipelineProjectPath(pipelineWorkspace.projectPath);
-    if (!teamEnabled) return;
-    void hydrateSoftwareTeamPipelineFromProject({
+    void reloadSoftwareTeamPipelineIfNewer({
       projectPath: pipelineWorkspace.projectPath,
     });
   }, [pipelineWorkspace.projectPath, teamEnabled]);

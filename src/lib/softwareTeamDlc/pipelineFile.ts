@@ -430,8 +430,13 @@ async function readRaw(
 export async function readSoftwareTeamPipelineFile(input: {
   projectPath?: string | null;
   host?: SoftwareTeamPipelineFileHost;
+  /** Default true. Reload sets false so only the final status is emitted. */
+  emitStatus?: boolean;
 }): Promise<SoftwareTeamPipelineFileRead> {
   const host = input.host ?? defaultSoftwareTeamPipelineFileHost();
+  const publish = (status: SoftwareTeamPipelineFileRead) => {
+    if (input.emitStatus !== false) emitFileStatus(status);
+  };
   const plan = planSoftwareTeamPipelineFileWrite({
     projectPath: input.projectPath,
     host,
@@ -444,7 +449,7 @@ export async function readSoftwareTeamPipelineFile(input: {
         "ok_project" | "missing" | "cache_only"
       >,
     };
-    emitFileStatus(fail);
+    publish(fail);
     return fail;
   }
   const raw = await readRaw(host, plan.projectPath, SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE);
@@ -456,7 +461,7 @@ export async function readSoftwareTeamPipelineFile(input: {
       raw: "",
       mtimeMs: raw.mtimeMs ?? null,
     };
-    emitFileStatus(result);
+    publish(result);
     return result;
   }
   if (raw.error || raw.text == null) {
@@ -465,7 +470,7 @@ export async function readSoftwareTeamPipelineFile(input: {
       reason: "host_error",
       error: raw.error,
     };
-    emitFileStatus(fail);
+    publish(fail);
     return fail;
   }
   const parsed = parseSoftwareTeamPipelineFileDoc(raw.text);
@@ -481,7 +486,7 @@ export async function readSoftwareTeamPipelineFile(input: {
       raw: raw.text,
       backedUp,
     };
-    emitFileStatus(fail);
+    publish(fail);
     return fail;
   }
   const result: SoftwareTeamPipelineFileRead = {
@@ -491,7 +496,7 @@ export async function readSoftwareTeamPipelineFile(input: {
     raw: raw.text,
     mtimeMs: raw.mtimeMs ?? null,
   };
-  emitFileStatus(result);
+  publish(result);
   return result;
 }
 
@@ -727,8 +732,10 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
   const loaded = await readSoftwareTeamPipelineFile({
     projectPath: plan.projectPath,
     host,
+    emitStatus: false,
   });
   if (!loaded.ok) {
+    emitFileStatus(loaded);
     if (loaded.reason === "parse_fail") {
       return {
         ok: false,
@@ -743,6 +750,7 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
     };
   }
   if (loaded.reason === "missing" || !loaded.store) {
+    emitFileStatus(loaded);
     return { ok: true, kind: "missing", mtimeMs: loaded.mtimeMs ?? null };
   }
   const mtimeMs = loaded.mtimeMs ?? null;
@@ -753,6 +761,7 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
     prevFingerprint != null && storeFingerprint(cached) !== prevFingerprint;
   if (sameAsCache || sameAsSeen) {
     if (!dirty) rememberSeen(loaded.store, mtimeMs);
+    emitFileStatus(loaded);
     return { ok: true, kind: "unchanged", mtimeMs };
   }
   if (dirty) {
@@ -766,6 +775,7 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
   }
   persistSoftwareTeamPipeline(loaded.store, input.storage);
   rememberSeen(loaded.store, mtimeMs);
+  emitFileStatus(loaded);
   return {
     ok: true,
     kind: "replaced",

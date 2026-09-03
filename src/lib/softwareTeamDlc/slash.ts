@@ -10,6 +10,12 @@
 import { softwareTeamRoleStarterPrompt } from "./pack";
 import { SOFTWARE_TEAM_ROLES } from "./roles";
 
+/** Pack / slash stems (`team-product`). Used to hide Host rows when off. */
+export function isSoftwareTeamSlashSkillName(name: string): boolean {
+  const key = name.trim().toLowerCase();
+  return SOFTWARE_TEAM_ROLES.some((role) => role.packName === key);
+}
+
 /** Host-shaped skill rows so `buildSlashCatalog` can merge them. */
 export function softwareTeamSlashSkillInfos(): Array<{
   name: string;

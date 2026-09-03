@@ -5,7 +5,10 @@
  */
 
 import { isSoftwareTeamDlcEnabled } from "@/lib/softwareTeamDlc/pref";
-import { softwareTeamSlashSkillInfos } from "@/lib/softwareTeamDlc/slash";
+import {
+  isSoftwareTeamSlashSkillName,
+  softwareTeamSlashSkillInfos,
+} from "@/lib/softwareTeamDlc/slash";
 
 export type SlashKind = "mode" | "skill" | "action" | "prompt";
 
@@ -532,10 +535,13 @@ export function buildSlashCatalog(
   const includeTeam =
     opts?.includeSoftwareTeamSkills ?? isSoftwareTeamDlcEnabled();
   const extras = includeTeam ? softwareTeamSlashSkillInfos() : [];
+  const visibleSkills = includeTeam
+    ? skills
+    : skills.filter((skill) => !isSoftwareTeamSlashSkillName(skill.name));
   return {
     commands: builtinSlashItems(),
     skills: skillsToSlashItems(
-      extras.length > 0 ? [...extras, ...skills] : skills,
+      extras.length > 0 ? [...extras, ...visibleSkills] : visibleSkills,
     ),
   };
 }
