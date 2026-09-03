@@ -395,3 +395,8 @@ export {
   saveSoftwareTeamStudioPrefs,
   type SoftwareTeamStudioPrefs,
 } from "./studioPrefs";
+
+export {
+  decideEmptyStudioWizard,
+  shouldAutoOpenEmptyStudioWizard,
+} from "./studioOverlays";
