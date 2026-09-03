@@ -1,12 +1,15 @@
 /**
- * Software Works / SDLC Studio — pipeline work items (single source of truth).
+ * Software Works / SDLC Studio — pipeline work items (in-app cache).
  *
  * Board stage, role, and plan/goal/artifact live here. Session tags are a
  * projection written on every persist so they cannot drift from the board.
+ * The localStorage key is unbound (`grok.softwareTeamDlc.pipeline`) or
+ * per bound project path — never shared `~/.grok`.
  */
 
 import type { AgentKanbanColumnId } from "@/lib/kanbanBoard";
 import type { SoftwareTeamDlcStorage } from "./pref";
+import { softwareTeamPipelineCacheScope } from "./paths";
 import {
   isSoftwareTeamRoleId,
   softwareTeamRoleById,
@@ -41,6 +44,46 @@ export const SOFTWARE_TEAM_DLC_PIPELINE_KEY = "grok.softwareTeamDlc.pipeline";
 /** Fired on `window` after a successful pipeline persist. */
 export const SOFTWARE_TEAM_DLC_PIPELINE_CHANGE_EVENT =
   "grok-software-team-dlc-pipeline-change";
+
+/** Bound project path used to key the in-app cache. `null` = unbound. */
+let boundCacheProjectPath: string | null = null;
+
+export function boundSoftwareTeamPipelineCacheProjectPath(): string | null {
+  return boundCacheProjectPath;
+}
+
+/**
+ * Point load/persist at this project's cache. Shared `~/.grok` and empty
+ * paths use the unbound key (honest cache-only).
+ */
+export function setSoftwareTeamPipelineCacheProjectPath(
+  projectPath?: string | null,
+): string | null {
+  const next = softwareTeamPipelineCacheScope(projectPath);
+  const changed = next !== boundCacheProjectPath;
+  boundCacheProjectPath = next;
+  if (changed) emitPipelineChange();
+  return boundCacheProjectPath;
+}
+
+/** `grok.softwareTeamDlc.pipeline` or `…pipeline:<normalized-path>`. */
+export function softwareTeamPipelineCacheKey(
+  projectPath: string | null | undefined = boundCacheProjectPath,
+): string {
+  const scope = softwareTeamPipelineCacheScope(projectPath);
+  return scope
+    ? `${SOFTWARE_TEAM_DLC_PIPELINE_KEY}:${scope}`
+    : SOFTWARE_TEAM_DLC_PIPELINE_KEY;
+}
+
+function softwareTeamSessionTagsCacheKey(
+  projectPath: string | null | undefined = boundCacheProjectPath,
+): string {
+  const scope = softwareTeamPipelineCacheScope(projectPath);
+  return scope
+    ? `${SOFTWARE_TEAM_DLC_TAGS_KEY}:${scope}`
+    : SOFTWARE_TEAM_DLC_TAGS_KEY;
+}
 
 export const SOFTWARE_TEAM_STAGE_SOURCES = [
   "board",
@@ -362,10 +405,10 @@ export function loadSoftwareTeamPipelineStore(
   storage: SoftwareTeamDlcStorage = defaultStorage(),
 ): SoftwareTeamPipelineStore {
   try {
-    const raw = storage.getItem(SOFTWARE_TEAM_DLC_PIPELINE_KEY);
+    const raw = storage.getItem(softwareTeamPipelineCacheKey());
     const parsed = parseSoftwareTeamPipelineStore(raw);
     if (parsed.items.length > 0) return parsed;
-    const tagRaw = storage.getItem(SOFTWARE_TEAM_DLC_TAGS_KEY);
+    const tagRaw = storage.getItem(softwareTeamSessionTagsCacheKey());
     if (!tagRaw) return createEmptySoftwareTeamPipelineStore();
     return hydratePipelineFromSessionTags(parseSoftwareTeamSessionTagMap(tagRaw));
   } catch {
@@ -407,13 +450,17 @@ export function persistSoftwareTeamPipeline(
 ): void {
   try {
     storage.setItem(
-      SOFTWARE_TEAM_DLC_PIPELINE_KEY,
+      softwareTeamPipelineCacheKey(),
       serializeSoftwareTeamPipelineStore(store),
     );
   } catch {
     /* private mode / quota */
   }
-  saveSoftwareTeamSessionTagMap(projectSessionTagsFromPipeline(store), storage);
+  saveSoftwareTeamSessionTagMap(
+    projectSessionTagsFromPipeline(store),
+    storage,
+    softwareTeamSessionTagsCacheKey(),
+  );
   emitPipelineChange();
 }
 

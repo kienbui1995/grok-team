@@ -16,6 +16,7 @@ import {
   type SoftwareTeamPipelineItemDraft,
   type SoftwareTeamPipelineStore,
 } from "./pipeline";
+import { isSoftwareTeamSharedHomePath } from "./paths";
 import {
   SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
   SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
@@ -39,6 +40,12 @@ export const SOFTWARE_TEAM_BOOTSTRAP_REASONS = [
   "blocked_shared_home",
   "host_error",
 ] as const;
+
+export {
+  isSoftwareTeamSharedHomePath,
+  normalizeSoftwareTeamProjectPath,
+  softwareTeamPipelineCacheScope,
+} from "./paths";
 
 export type SoftwareTeamBootstrapReason =
   (typeof SOFTWARE_TEAM_BOOTSTRAP_REASONS)[number];
@@ -73,17 +80,6 @@ export type SoftwareTeamBootstrapResult =
       error?: string;
       files: SoftwareTeamBootstrapFileResult[];
     };
-
-/** True when `projectPath` *is* shared GROK_HOME (`~/.grok`), not a normal repo. */
-export function isSoftwareTeamSharedHomePath(
-  raw: string | null | undefined,
-): boolean {
-  const p = (raw ?? "").trim().replace(/\\/g, "/").replace(/\/+$/, "");
-  if (!p) return false;
-  const lower = p.toLowerCase();
-  if (lower === "~/.grok" || lower === "~/.grok/") return true;
-  return /(?:^|\/)\.grok$/.test(lower);
-}
 
 export function newSoftwareTeamDeliveryId(): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {

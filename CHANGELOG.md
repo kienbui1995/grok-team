@@ -15,6 +15,7 @@ See `docs/llm-wiki/release.md`.
 - **Software Works pack install shared-home leak**: Project-target pack install / repair / probe now refuse when the workbench folder *is* shared `~/.grok` (including `/home/u/.grok` and a trailing slash). Independent `~/.grok-app/agent-home` stays allowed. No Host write, no fake success.
 
 ### Added
+- **Software Works per-project pipeline cache**: The in-app board cache is keyed by the bound project path (`grok.softwareTeamDlc.pipeline:<path>`). Switching folders keeps project A’s dirty board and does not write A’s items into B’s `.grok/software-works.json`. Browser / no-project stays on the unbound key. Shared `~/.grok` is never a cache key or write target. Project `.grok` (`/repo/.grok`) and Independent `~/.grok-app/agent-home` stay allowed. `lastSeen` still resets on path bind. No Host invent.
 - **Software Works pipeline conflict resolve**: Dirty local + newer `.grok/software-works.json` still keeps memory and refuses a silent overwrite. Studio now asks in a `GlassModal` (and chips on the file-status line): **Use project file** hydrates the cache; **Keep this board** writes `.bak` then the local board. Implicit persist still refuses without that choice. No Host invent, no `~/.grok` rewrite.
 - **Software Works delivery handoff keeps the source card**: On a `deliveryId`, Handoff / Ship no longer rewrite that card’s role. They open the next-role sibling or create one (unbound; launch may create a session). Ungrouped cards still mutate in place. No Host invent, no `~/.grok` rewrite.
 - **Software Works studio memory + full roster + copy summary**: SDLC Studio remembers the last delivery filter and Show archived (`grok.softwareTeamDlc.studio`; deleted ids fall back to All). Missing-role chips cover the full Product→Writer chain (attach-chat still prefers Product / Engineer / Reviewer, max 3). Export that cannot write a project file copies the markdown instead and says no file was written. **Copy summary** is always available. Still no Host invent, no `~/.grok` rewrite.
@@ -37,6 +38,7 @@ See `docs/llm-wiki/release.md`.
 - **Software Works 安装包共享家目录泄漏**：项目目标的安装 / 补写 / 探测在工作台目录就是共享 `~/.grok` 时拒绝（含 `/home/u/.grok` 和末尾斜杠）。独立 `~/.grok-app/agent-home` 仍允许。不写 Host，不假装成功。
 
 **中文 · 新增**
+- **Software Works 按项目流水线缓存**：应用内看板缓存按绑定的项目路径分键（`grok.softwareTeamDlc.pipeline:<path>`）。换文件夹时保留项目 A 未保存的看板，也不会把 A 的条目写入 B 的 `.grok/software-works.json`。浏览器 / 无项目仍用未绑定键。共享 `~/.grok` 不能当缓存键或写入目标。项目 `.grok`（`/repo/.grok`）和独立 `~/.grok-app/agent-home` 仍允许。绑定路径时仍重置 `lastSeen`。不编造 Host。
 - **Software Works 流水线冲突可选择**：本地未保存且项目 `.grok/software-works.json` 更新时，仍先保留内存、拒绝默默覆盖。工坊用 `GlassModal`（以及文件状态旁的芯片）询问：**使用项目文件**会灌入缓存；**保留本看板**先写 `.bak` 再写入本地看板。未选择前，隐式保存仍拒绝覆盖。不编造 Host，不改写 `~/.grok`。
 - **Software Works 交付交接保留原卡片**：有 `deliveryId` 时，交接 / 发布不再改写该卡角色，而是打开下一角色的兄弟卡（没有就新建、未绑定；打开时才建会话）。未分组卡片仍就地改角色。不编造 Host，不改写 `~/.grok`。
 - **Software Works 工坊记忆 + 完整名单 + 复制摘要**：SDLC Studio 记住上次交付筛选和「显示已归档」（`grok.softwareTeamDlc.studio`；已删 id 回落到全部）。缺角色芯片覆盖 Product→Writer 全链（attach-chat 仍优先 Product / Engineer / Reviewer，最多 3）。无法写入项目文件时改为复制 markdown，并说明没有写文件。**复制摘要**随时可用。仍不编造 Host，不改写 `~/.grok`。

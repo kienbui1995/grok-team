@@ -631,6 +631,13 @@ describe("Software Team DLC pack + install plan", () => {
     });
     expect(independentHome.allowed).toBe(true);
     expect(independentHome.rewritesSharedGrokHome).toBe(false);
+    const projectGrok = planSoftwareTeamDlcPackWrite({
+      sessionDataMode: "shared",
+      target: "project",
+      projectPath: "/repo/.grok",
+    });
+    expect(projectGrok.allowed).toBe(true);
+    expect(projectGrok.rewritesSharedGrokHome).toBe(false);
   });
 });
 
@@ -1435,7 +1442,11 @@ describe("Software Works start a delivery + workspace bootstrap", () => {
     expect(isSoftwareTeamSharedHomePath("/home/u/.grok")).toBe(true);
     expect(isSoftwareTeamSharedHomePath("/home/u/.grok/")).toBe(true);
     expect(isSoftwareTeamSharedHomePath("C:\\Users\\u\\.grok")).toBe(true);
+    expect(isSoftwareTeamSharedHomePath("/Users/u/.grok")).toBe(true);
     expect(isSoftwareTeamSharedHomePath("/repo")).toBe(false);
+    expect(isSoftwareTeamSharedHomePath("/repo/.grok")).toBe(false);
+    expect(isSoftwareTeamSharedHomePath("/repo/.grok/")).toBe(false);
+    expect(isSoftwareTeamSharedHomePath("/home/u/code/app/.grok")).toBe(false);
     expect(isSoftwareTeamSharedHomePath("~/.grok-app/agent-home")).toBe(false);
     expect(isSoftwareTeamSharedHomePath("/home/u/.grok-app/agent-home")).toBe(
       false,
@@ -1733,6 +1744,7 @@ describe("Software Works attach-chat seed (max 3)", () => {
 
 describe("Software Works project pipeline file SoT", () => {
   afterEach(() => {
+    bindSoftwareTeamPipelineProjectPath(null);
     resetSoftwareTeamPipelineFileSeenState();
   });
 
@@ -1751,6 +1763,12 @@ describe("Software Works project pipeline file SoT", () => {
     });
     expect(result).toMatchObject({ ok: false, reason: "blocked_shared_home" });
     expect(writes).toEqual([]);
+    expect(
+      planSoftwareTeamPipelineFileWrite({
+        projectPath: "/repo/.grok",
+        host: { isDesktopHost: () => true },
+      }).reason,
+    ).toBe("ok_project");
   });
 
   it("round-trips versioned JSON and is idempotent", async () => {
@@ -3437,6 +3455,179 @@ describe("Software Works delivery handoff keeps the source card", () => {
     if (!again.ok) return;
     expect(again.mode).toBe("focus");
     expect(again.store.items.filter((item) => item.roleId === "writer")).toHaveLength(1);
+  });
+});
+
+describe("Software Works per-project pipeline cache", () => {
+  afterEach(() => {
+    bindSoftwareTeamPipelineProjectPath(null);
+    resetSoftwareTeamPipelineFileSeenState();
+  });
+
+  function board(id: string, title: string, roleId: "product" | "engineer" = "product") {
+    return addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id,
+      roleId,
+      title,
+      deliveryId: `d-${id}`,
+    });
+  }
+
+  it("keeps project A cache and file when switching to B", async () => {
+    const storage = memoryStore();
+    const storeA = board("item-a", "Board A");
+    const dirtyA = addSoftwareTeamPipelineItem(storeA, {
+      id: "item-a-dirty",
+      roleId: "architect",
+      title: "Unsaved A",
+      deliveryId: "d-item-a",
+    });
+    const storeB = board("item-b", "Board B", "engineer");
+    const aDisk = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: serializeSoftwareTeamPipelineFile(
+          storeA,
+          1,
+        ),
+      },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: 10 },
+    });
+    const bDisk = fileHost({
+      files: {
+        [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: serializeSoftwareTeamPipelineFile(
+          storeB,
+          1,
+        ),
+      },
+      mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: 10 },
+    });
+
+    bindSoftwareTeamPipelineProjectPath("/repo-a");
+    persistSoftwareTeamPipeline(dirtyA, storage);
+    expect(storage.getItem(`${SOFTWARE_TEAM_DLC_PIPELINE_KEY}:/repo-a`)).toContain(
+      "Unsaved A",
+    );
+
+    bindSoftwareTeamPipelineProjectPath("/repo-b");
+    expect(
+      loadSoftwareTeamPipelineStore(storage).items.map((item) => item.title),
+    ).not.toContain("Unsaved A");
+    expect(storage.getItem(`${SOFTWARE_TEAM_DLC_PIPELINE_KEY}:/repo-a`)).toContain(
+      "Unsaved A",
+    );
+
+    const reloaded = await reloadSoftwareTeamPipelineIfNewer({
+      projectPath: "/repo-b",
+      host: bDisk.host,
+      storage,
+    });
+    expect(reloaded).toMatchObject({ ok: true, kind: "replaced" });
+    expect(loadSoftwareTeamPipelineStore(storage).items.map((item) => item.title)).toEqual(
+      ["Board B"],
+    );
+    expect(aDisk.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Board A");
+    expect(aDisk.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Unsaved A");
+    expect(bDisk.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Board B");
+    expect(bDisk.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Unsaved A");
+    expect(bDisk.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Board A");
+    expect(storage.getItem(`${SOFTWARE_TEAM_DLC_PIPELINE_KEY}:/repo-a`)).toContain(
+      "Unsaved A",
+    );
+
+    bindSoftwareTeamPipelineProjectPath("/repo-a");
+    expect(
+      loadSoftwareTeamPipelineStore(storage).items.map((item) => item.title).sort(),
+    ).toEqual(["Board A", "Unsaved A"]);
+
+    bindSoftwareTeamPipelineProjectPath("/repo-b");
+    const writeB = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo-b",
+      store: loadSoftwareTeamPipelineStore(storage),
+      host: bDisk.host,
+    });
+    expect(writeB.ok).toBe(true);
+    expect(bDisk.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Unsaved A");
+    expect(aDisk.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Board B");
+  });
+
+  it("does not write A's dirty board into B's missing project file", async () => {
+    const storage = memoryStore();
+    const dirtyA = addSoftwareTeamPipelineItem(board("item-a", "Board A"), {
+      id: "item-a-dirty",
+      roleId: "architect",
+      title: "Unsaved A",
+      deliveryId: "d-item-a",
+    });
+    const bEmpty = fileHost();
+
+    bindSoftwareTeamPipelineProjectPath("/repo-a");
+    persistSoftwareTeamPipeline(dirtyA, storage);
+    bindSoftwareTeamPipelineProjectPath("/repo-b");
+    queueSoftwareTeamPipelineProjectPersist(
+      loadSoftwareTeamPipelineStore(storage),
+      bEmpty.host,
+    );
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(bEmpty.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] ?? "").not.toContain(
+      "Unsaved A",
+    );
+    expect(bEmpty.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE] ?? "").not.toContain(
+      "Board A",
+    );
+    bindSoftwareTeamPipelineProjectPath("/repo-a");
+    expect(
+      loadSoftwareTeamPipelineStore(storage).items.map((item) => item.title),
+    ).toContain("Unsaved A");
+  });
+
+  it("uses the unbound cache for browser/no-project and refuses ~/.grok as a cache key", () => {
+    const storage = memoryStore();
+    const unbound = board("item-u", "Browser board");
+    const storeA = board("item-a", "Board A");
+    persistSoftwareTeamPipeline(unbound, storage);
+    expect(storage.getItem(SOFTWARE_TEAM_DLC_PIPELINE_KEY)).toContain("Browser board");
+
+    bindSoftwareTeamPipelineProjectPath("/repo-a");
+    persistSoftwareTeamPipeline(storeA, storage);
+    expect(storage.getItem(`${SOFTWARE_TEAM_DLC_PIPELINE_KEY}:/repo-a`)).toContain(
+      "Board A",
+    );
+    expect(storage.getItem(SOFTWARE_TEAM_DLC_PIPELINE_KEY)).toContain("Browser board");
+
+    bindSoftwareTeamPipelineProjectPath("~/.grok");
+    persistSoftwareTeamPipeline(board("item-home", "Shared home board"), storage);
+    const keys = [...storage.dump().keys()];
+    expect(keys.some((key) => key.includes("pipeline:~/.grok"))).toBe(false);
+    expect(keys.some((key) => key.includes("pipeline:/home/"))).toBe(false);
+    expect(storage.getItem(SOFTWARE_TEAM_DLC_PIPELINE_KEY)).toContain("Shared home board");
+    expect(storage.getItem(`${SOFTWARE_TEAM_DLC_PIPELINE_KEY}:/repo-a`)).toContain(
+      "Board A",
+    );
+
+    bindSoftwareTeamPipelineProjectPath(null);
+    expect(loadSoftwareTeamPipelineStore(storage).items[0]?.title).toBe(
+      "Shared home board",
+    );
+  });
+
+  it("normalizes trailing slashes and Windows separators for the cache key", () => {
+    const storage = memoryStore();
+    bindSoftwareTeamPipelineProjectPath("/repo-a/");
+    persistSoftwareTeamPipeline(board("item-a", "Slash A"), storage);
+    bindSoftwareTeamPipelineProjectPath("/repo-a");
+    expect(loadSoftwareTeamPipelineStore(storage).items[0]?.title).toBe("Slash A");
+    expect(storage.getItem(`${SOFTWARE_TEAM_DLC_PIPELINE_KEY}:/repo-a`)).toContain(
+      "Slash A",
+    );
+
+    bindSoftwareTeamPipelineProjectPath("C:\\work\\proj");
+    persistSoftwareTeamPipeline(board("item-w", "Win A"), storage);
+    bindSoftwareTeamPipelineProjectPath("C:/work/proj");
+    expect(loadSoftwareTeamPipelineStore(storage).items[0]?.title).toBe("Win A");
+    expect(storage.getItem(`${SOFTWARE_TEAM_DLC_PIPELINE_KEY}:C:/work/proj`)).toContain(
+      "Win A",
+    );
   });
 });
 

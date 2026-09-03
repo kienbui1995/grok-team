@@ -101,12 +101,10 @@ export function loadSoftwareTeamSessionTagMap(
 export function saveSoftwareTeamSessionTagMap(
   map: SoftwareTeamSessionTagMap,
   storage: SoftwareTeamDlcStorage = defaultStorage(),
+  key: string = SOFTWARE_TEAM_DLC_TAGS_KEY,
 ): void {
   try {
-    storage.setItem(
-      SOFTWARE_TEAM_DLC_TAGS_KEY,
-      serializeSoftwareTeamSessionTagMap(map),
-    );
+    storage.setItem(key, serializeSoftwareTeamSessionTagMap(map));
   } catch {
     /* private mode / quota */
   }

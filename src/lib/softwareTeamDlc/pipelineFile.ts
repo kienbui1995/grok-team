@@ -1,9 +1,10 @@
 /**
  * Software Works — project pipeline SoT (`.grok/software-works.json`).
  *
- * localStorage remains a cache. With Host + a real project folder the board
- * reads/writes this file. Never writes shared `~/.grok`. Parse failure
- * refuses overwrite (optional `.bak`) so unknown items are not wiped.
+ * localStorage remains a per-project cache (keyed by the bound path). With
+ * Host + a real project folder the board reads/writes this file. Never
+ * writes shared `~/.grok`. Parse failure refuses overwrite (optional `.bak`)
+ * so unknown items are not wiped.
  *
  * Schema v1–v2 are still readable (no `activity` / no archive map). Writes are
  * v3. There is no Host fs-watch API — Studio reloads on open / window focus /
@@ -24,15 +25,18 @@ import {
   type SoftwareTeamActivityEvent,
 } from "./activity";
 import {
+  boundSoftwareTeamPipelineCacheProjectPath,
   createEmptySoftwareTeamPipelineStore,
   loadSoftwareTeamPipelineStore,
   parseSoftwareTeamArchivedDeliveryIds,
   parseSoftwareTeamPipelineItem,
   persistSoftwareTeamPipeline,
+  setSoftwareTeamPipelineCacheProjectPath,
   softwareTeamArchivedDeliveryIds,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamPipelineStore,
 } from "./pipeline";
+import { clearSoftwareTeamUndoStack } from "./undo";
 
 export const SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE =
   ".grok/software-works.json";
@@ -135,11 +139,17 @@ export function bindSoftwareTeamPipelineProjectPath(
   projectPath?: string | null,
 ): string | null {
   const next = (projectPath ?? "").trim() || null;
-  if (next !== boundProjectPath) {
+  const pathChanged = next !== boundProjectPath;
+  if (pathChanged) {
     lastSeenMtimeMs = null;
     lastSeenFingerprint = null;
   }
+  const prevScope = boundSoftwareTeamPipelineCacheProjectPath();
   boundProjectPath = next;
+  const nextScope = setSoftwareTeamPipelineCacheProjectPath(next);
+  if (pathChanged || prevScope !== nextScope) {
+    clearSoftwareTeamUndoStack();
+  }
   return boundProjectPath;
 }
 

@@ -37,7 +37,15 @@ No Host `AppSettings` field — same pattern as Developer mode. Changing the tog
 
 ## Pipeline (source of truth)
 
-Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) is the **in-app cache**.
+Store: `grok.softwareTeamDlc.pipeline` (`src/lib/softwareTeamDlc/pipeline.ts`) is the **in-app cache**, keyed by the bound project path.
+
+| Bind | Cache key |
+|------|-----------|
+| No project / browser preview | `grok.softwareTeamDlc.pipeline` (unbound, honest cache-only) |
+| Project folder (`/repo`, `/repo/.grok`, Independent `~/.grok-app/agent-home`) | `grok.softwareTeamDlc.pipeline:<normalized-path>` |
+| Shared user GROK_HOME (`~/.grok`, `/home/u/.grok`, `C:\Users\u\.grok`) | Unbound key — **never** a cache key or write target |
+
+Switching folders persists/loads that project’s cache and resets pipeline-file `lastSeen`. It must not write project A’s items into project B’s `.grok/software-works.json`. Session-tag projection uses the same scope (`grok.softwareTeamDlc.sessionTags` / `…sessionTags:<path>`).
 
 **Project SoT:** `.grok/software-works.json` (`src/lib/softwareTeamDlc/pipelineFile.ts`). Chosen over `docs/sdlc/pipeline.json` so human spec/design/review stay separate from machine board state. Project `.grok/` already holds agents/skills/workflows; this JSON is a sibling, not inside those folders.
 
@@ -56,7 +64,7 @@ Schema: `{ schema: "software-works.pipeline", version: 3, updatedAt, items, acti
 
 **Export:** detail pane writes project `docs/sdlc/<slug>-delivery.md` (title, stages, notes, roleHistory, recent activity). Host + project required. Shared `~/.grok` refused. Never writes this app’s `CHANGELOG.md`. Never fakes success. If Host cannot write (`need_host` / `need_project` / shared home / host error), Studio **copies the markdown** and says no file was written. **Copy summary** does the same on demand.
 
-**Reload:** there is **no** Host fs-watch / `watch_path` API. `fsReadFile` returns `mtimeMs`. Studio re-reads on open, window focus, and `visibilitychange` (coalesced, not polled). Newer file + **clean** local cache replaces items. **Dirty** local (mutated since last accepted file) **and** a newer/different file → **conflict**: keep memory, do not hydrate over it, honesty string + `GlassModal` (Use project file / Keep this board / close). **Use project file** hydrates the cache from `.grok/software-works.json` (clears undo). **Keep this board** writes a `.bak` of the foreign file, then writes the local board. Implicit persist still refuses overwrite until one of those is chosen. Parse fail keeps the cache + honesty. Never writes shared `~/.grok`.
+**Reload:** there is **no** Host fs-watch / `watch_path` API. `fsReadFile` returns `mtimeMs`. Studio re-reads on open, window focus, and `visibilitychange` (coalesced, not polled). Bind of a different project path resets `lastSeen` and loads **that** project’s cache (dirty board A stays under A’s key). Newer file + **clean** local cache for **this** project replaces items. **Dirty** local (mutated since last accepted file) **and** a newer/different file → **conflict**: keep memory, do not hydrate over it, honesty string + `GlassModal` (Use project file / Keep this board / close). **Use project file** hydrates the cache from `.grok/software-works.json` (clears undo). **Keep this board** writes a `.bak` of the foreign file, then writes the local board. Implicit persist still refuses overwrite until one of those is chosen. Parse fail keeps the cache + honesty. Never writes shared `~/.grok`. `isSoftwareTeamSharedHomePath` matches only user GROK_HOME, not `/repo/.grok`.
 
 Each work item: `sessionId` + `roleId` + `stageId` + title + `planRef` / `goalRef` / `artifactRef` + `roleHistory` + `reviewNote` / `qaNote`.
 
