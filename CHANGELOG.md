@@ -11,6 +11,9 @@ See `docs/llm-wiki/release.md`.
 
 ## [Unreleased]
 
+### Fixed
+- **Software Works pack install shared-home leak**: Project-target pack install / repair / probe now refuse when the workbench folder *is* shared `~/.grok` (including `/home/u/.grok` and a trailing slash). Independent `~/.grok-app/agent-home` stays allowed. No Host write, no fake success.
+
 ### Added
 - **Software Works pipeline conflict resolve**: Dirty local + newer `.grok/software-works.json` still keeps memory and refuses a silent overwrite. Studio now asks in a `GlassModal` (and chips on the file-status line): **Use project file** hydrates the cache; **Keep this board** writes `.bak` then the local board. Implicit persist still refuses without that choice. No Host invent, no `~/.grok` rewrite.
 - **Software Works delivery handoff keeps the source card**: On a `deliveryId`, Handoff / Ship no longer rewrite that card’s role. They open the next-role sibling or create one (unbound; launch may create a session). Ungrouped cards still mutate in place. No Host invent, no `~/.grok` rewrite.
@@ -29,6 +32,9 @@ See `docs/llm-wiki/release.md`.
 - **Software Works undo, remove confirm, git branch label**: Studio can undo the last in-window board mutate (toolbar or Ctrl/Cmd+Z outside inputs; stack is memory-only and cleared when the project file replaces the cache). Removing a card asks in a `GlassModal` and does not delete the Grok Build session. A delivery can store a git branch **label** (suggest from title, copy, export); Software Works does not create a worktree, check out a branch, or rewrite `~/.grok`.
 - **Software Works redo, rename, duplicate**: Redo (toolbar, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y) replays the last undone board mutate. The delivery pane can rename the slice (`deliveryTitle`) and duplicate it as unbound cards on a new `deliveryId`. Branch labels show on cards.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
+
+**中文 · 修复**
+- **Software Works 安装包共享家目录泄漏**：项目目标的安装 / 补写 / 探测在工作台目录就是共享 `~/.grok` 时拒绝（含 `/home/u/.grok` 和末尾斜杠）。独立 `~/.grok-app/agent-home` 仍允许。不写 Host，不假装成功。
 
 **中文 · 新增**
 - **Software Works 流水线冲突可选择**：本地未保存且项目 `.grok/software-works.json` 更新时，仍先保留内存、拒绝默默覆盖。工坊用 `GlassModal`（以及文件状态旁的芯片）询问：**使用项目文件**会灌入缓存；**保留本看板**先写 `.bak` 再写入本地看板。未选择前，隐式保存仍拒绝覆盖。不编造 Host，不改写 `~/.grok`。

@@ -9,6 +9,7 @@ import {
   normalizeSessionDataMode,
   type SessionDataMode,
 } from "@/lib/sessionDataMode";
+import { isSoftwareTeamSharedHomePath } from "./delivery";
 
 export const SOFTWARE_TEAM_DLC_INSTALL_TARGETS = ["project", "user"] as const;
 
@@ -26,7 +27,7 @@ export type SoftwareTeamDlcInstallPlan = {
   sessionDataMode: SessionDataMode;
   allowed: boolean;
   reason: SoftwareTeamDlcInstallReason;
-  /** True only when a user-scope write would touch shared CLI home. */
+  /** True when the write would touch shared CLI home (`user` + shared, or project path *is* `~/.grok`). */
   rewritesSharedGrokHome: boolean;
 };
 
@@ -34,6 +35,7 @@ export type SoftwareTeamDlcInstallPlan = {
  * Decide whether a pack write is allowed.
  *
  * - `project` — `.grok/` under the workbench project (not GROK_HOME).
+ *   A project path that *is* shared `~/.grok` is refused.
  * - `user` — Independent agent-home only. Shared mode is refused.
  */
 export function planSoftwareTeamDlcPackWrite(input: {
@@ -53,6 +55,15 @@ export function planSoftwareTeamDlcPackWrite(input: {
         allowed: false,
         reason: "need_project",
         rewritesSharedGrokHome: false,
+      };
+    }
+    if (isSoftwareTeamSharedHomePath(project)) {
+      return {
+        target,
+        sessionDataMode,
+        allowed: false,
+        reason: "blocked_shared_user",
+        rewritesSharedGrokHome: true,
       };
     }
     return {
@@ -87,6 +98,7 @@ export function planSoftwareTeamDlcPackWrite(input: {
 export function softwareTeamDlcWouldRewriteSharedGrokHome(input: {
   sessionDataMode?: string | null;
   target: SoftwareTeamDlcInstallTarget;
+  projectPath?: string | null;
 }): boolean {
   return planSoftwareTeamDlcPackWrite(input).rewritesSharedGrokHome;
 }
