@@ -50,7 +50,7 @@ export type StoryGate = {
   kind: StoryGateKind;
   /** Repo-relative file name, or the literal "diff" for G3. */
   artifact: string;
-  /** G5 only: steps-toward-ship checklist (CEO / Kien gate). */
+  /** G5 only: steps-toward-ship checklist (maintainer / repo-owner gate). */
   checklist?: string;
 };
 

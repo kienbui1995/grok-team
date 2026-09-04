@@ -21,7 +21,7 @@ export const deStoryGates = {
   "storyGates.openChecklist": "Weg zur Freigabe öffnen {path}",
   "storyGates.g5.failMissingDemo": "Demo-Notiz fehlt",
   "storyGates.g5.failMissingChecklist": "Checkliste für den Weg zur Freigabe fehlt",
-  "storyGates.g5.shipPathAria": "Schritte Richtung Freigabe (CEO-/Kien-Tor): {path}",
+  "storyGates.g5.shipPathAria": "Schritte Richtung Freigabe (Maintainer-/Repo-Inhaber-Tor): {path}",
   "storyGates.listLabel": "Story-Gates",
   "storyGates.previewTitle": "Artefakt",
   "storyGates.previewEmpty": "Wähle ein Gate, um das Artefakt zu öffnen.",

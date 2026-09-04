@@ -21,7 +21,7 @@ export const taStoryGates = {
   "storyGates.openChecklist": "ஷிப் நோக்கிய படிகள் {path} திற",
   "storyGates.g5.failMissingDemo": "டெமோ குறிப்பு இல்லை",
   "storyGates.g5.failMissingChecklist": "ஷிப்-பாதை சரிபார்ப்புப் பட்டியல் இல்லை",
-  "storyGates.g5.shipPathAria": "ஷிப் நோக்கிய படிகள் (CEO / Kien நுழைவாயில்): {path}",
+  "storyGates.g5.shipPathAria": "ஷிப் நோக்கிய படிகள் (பராமரிப்பாளர் / களஞ்சிய உரிமையாளர் நுழைவாயில்): {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "கலைப்பொருள்",
   "storyGates.previewEmpty": "கலைப்பொருளைத் திறக்க ஒரு வாயிலைத் தேர்ந்தெடுக்கவும்.",

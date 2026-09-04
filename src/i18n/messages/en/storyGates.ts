@@ -21,7 +21,7 @@ export const enStoryGates = {
   "storyGates.openChecklist": "Open steps-toward-ship {path}",
   "storyGates.g5.failMissingDemo": "Missing demo note",
   "storyGates.g5.failMissingChecklist": "Missing ship-path checklist",
-  "storyGates.g5.shipPathAria": "Steps toward ship (CEO / Kien gate): {path}",
+  "storyGates.g5.shipPathAria": "Steps toward ship (maintainer / repo-owner gate): {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "Artifact",
   "storyGates.previewEmpty": "Select a gate to open its artifact.",

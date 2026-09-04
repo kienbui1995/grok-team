@@ -21,7 +21,7 @@ export const frStoryGates = {
   "storyGates.openChecklist": "Ouvrir le chemin vers le ship {path}",
   "storyGates.g5.failMissingDemo": "Note de démo manquante",
   "storyGates.g5.failMissingChecklist": "Checklist du chemin vers le ship manquante",
-  "storyGates.g5.shipPathAria": "Étapes vers le ship (porte CEO / Kien) : {path}",
+  "storyGates.g5.shipPathAria": "Étapes vers le ship (porte maintainer / propriétaire du dépôt) : {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "Artefact",
   "storyGates.previewEmpty": "Choisissez une porte pour ouvrir l’artefact.",

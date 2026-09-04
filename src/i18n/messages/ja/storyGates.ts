@@ -21,7 +21,7 @@ export const jaStoryGates = {
   "storyGates.openChecklist": "出荷への手順 {path} を開く",
   "storyGates.g5.failMissingDemo": "デモノートがありません",
   "storyGates.g5.failMissingChecklist": "出荷経路チェックリストがありません",
-  "storyGates.g5.shipPathAria": "出荷への手順（CEO / Kien ゲート）: {path}",
+  "storyGates.g5.shipPathAria": "出荷への手順（メンテナー / リポジトリ所有者ゲート）: {path}",
   "storyGates.listLabel": "ストーリーゲート",
   "storyGates.previewTitle": "成果物",
   "storyGates.previewEmpty": "ゲートを選ぶと成果物が開きます。",

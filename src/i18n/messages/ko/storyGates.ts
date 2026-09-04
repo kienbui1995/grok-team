@@ -21,7 +21,7 @@ export const koStoryGates = {
   "storyGates.openChecklist": "출시 경로 {path} 열기",
   "storyGates.g5.failMissingDemo": "데모 노트 없음",
   "storyGates.g5.failMissingChecklist": "출시 경로 체크리스트 없음",
-  "storyGates.g5.shipPathAria": "출시로 가는 단계(CEO / Kien 게이트): {path}",
+  "storyGates.g5.shipPathAria": "출시로 가는 단계(유지관리자 / 저장소 소유자 게이트): {path}",
   "storyGates.listLabel": "스토리 게이트",
   "storyGates.previewTitle": "산출물",
   "storyGates.previewEmpty": "게이트를 선택하면 산출물이 열립니다.",

@@ -21,7 +21,7 @@ export const ukStoryGates = {
   "storyGates.openChecklist": "Відкрити кроки до поставки {path}",
   "storyGates.g5.failMissingDemo": "Немає демо-нотатки",
   "storyGates.g5.failMissingChecklist": "Немає чекліста шляху до поставки",
-  "storyGates.g5.shipPathAria": "Кроки до поставки (шлюз CEO / Kien): {path}",
+  "storyGates.g5.shipPathAria": "Кроки до поставки (шлюз мейнтейнера / власника репозиторію): {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "Артефакт",
   "storyGates.previewEmpty": "Оберіть шлюз, щоб відкрити артефакт.",

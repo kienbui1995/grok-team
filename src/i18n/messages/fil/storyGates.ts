@@ -21,7 +21,7 @@ export const filStoryGates = {
   "storyGates.openChecklist": "Buksan ang steps-toward-ship {path}",
   "storyGates.g5.failMissingDemo": "Walang demo note",
   "storyGates.g5.failMissingChecklist": "Walang ship-path checklist",
-  "storyGates.g5.shipPathAria": "Mga hakbang patungo sa ship (CEO / Kien gate): {path}",
+  "storyGates.g5.shipPathAria": "Mga hakbang patungo sa ship (gate ng maintainer / may-ari ng repo): {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "Artifact",
   "storyGates.previewEmpty": "Pumili ng gate para buksan ang artifact.",

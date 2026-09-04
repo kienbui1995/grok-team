@@ -21,7 +21,7 @@ export const zhStoryGates = {
   "storyGates.openChecklist": "打开通向发布的步骤 {path}",
   "storyGates.g5.failMissingDemo": "缺少演示说明",
   "storyGates.g5.failMissingChecklist": "缺少通向发布的清单",
-  "storyGates.g5.shipPathAria": "通向发布的步骤（CEO / Kien 门禁）：{path}",
+  "storyGates.g5.shipPathAria": "通向发布的步骤（维护者 / 仓库所有者门禁）：{path}",
   "storyGates.listLabel": "故事门禁",
   "storyGates.previewTitle": "产物",
   "storyGates.previewEmpty": "选择一个门禁以打开产物。",

@@ -21,7 +21,7 @@ export const ptBRStoryGates = {
   "storyGates.openChecklist": "Abrir passos rumo ao envio {path}",
   "storyGates.g5.failMissingDemo": "Falta a nota de demo",
   "storyGates.g5.failMissingChecklist": "Falta o checklist do caminho ao envio",
-  "storyGates.g5.shipPathAria": "Passos rumo ao envio (portão CEO / Kien): {path}",
+  "storyGates.g5.shipPathAria": "Passos rumo ao envio (portão do maintainer / dono do repositório): {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "Artefato",
   "storyGates.previewEmpty": "Escolha um gate para abrir o artefato.",

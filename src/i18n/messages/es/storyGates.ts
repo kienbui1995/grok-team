@@ -21,7 +21,7 @@ export const esStoryGates = {
   "storyGates.openChecklist": "Abrir pasos hacia el envío {path}",
   "storyGates.g5.failMissingDemo": "Falta la nota de demo",
   "storyGates.g5.failMissingChecklist": "Falta la lista hacia el envío",
-  "storyGates.g5.shipPathAria": "Pasos hacia el envío (puerta CEO / Kien): {path}",
+  "storyGates.g5.shipPathAria": "Pasos hacia el envío (puerta del mantenedor / propietario del repo): {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "Artefacto",
   "storyGates.previewEmpty": "Elige una puerta para abrir su artefacto.",

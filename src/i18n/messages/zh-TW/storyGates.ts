@@ -21,7 +21,7 @@ export const zhTWStoryGates = {
   "storyGates.openChecklist": "開啟通向發布的步驟 {path}",
   "storyGates.g5.failMissingDemo": "缺少演示說明",
   "storyGates.g5.failMissingChecklist": "缺少通向發布的清單",
-  "storyGates.g5.shipPathAria": "通向發布的步驟（CEO / Kien 門禁）：{path}",
+  "storyGates.g5.shipPathAria": "通向發布的步驟（維護者 / 倉庫擁有者門禁）：{path}",
   "storyGates.listLabel": "故事門禁",
   "storyGates.previewTitle": "產物",
   "storyGates.previewEmpty": "選擇一個門禁以開啟產物。",

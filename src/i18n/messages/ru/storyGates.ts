@@ -21,7 +21,7 @@ export const ruStoryGates = {
   "storyGates.openChecklist": "Открыть шаги к поставке {path}",
   "storyGates.g5.failMissingDemo": "Нет демо-заметки",
   "storyGates.g5.failMissingChecklist": "Нет чеклиста пути к поставке",
-  "storyGates.g5.shipPathAria": "Шаги к поставке (шлюз CEO / Kien): {path}",
+  "storyGates.g5.shipPathAria": "Шаги к поставке (шлюз мейнтейнера / владельца репозитория): {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "Артефакт",
   "storyGates.previewEmpty": "Выберите шлюз, чтобы открыть артефакт.",

@@ -21,7 +21,7 @@ export const idStoryGates = {
   "storyGates.openChecklist": "Buka langkah menuju ship {path}",
   "storyGates.g5.failMissingDemo": "Catatan demo hilang",
   "storyGates.g5.failMissingChecklist": "Checklist jalur ship hilang",
-  "storyGates.g5.shipPathAria": "Langkah menuju ship (gerbang CEO / Kien): {path}",
+  "storyGates.g5.shipPathAria": "Langkah menuju ship (gerbang maintainer / pemilik repo): {path}",
   "storyGates.listLabel": "Story gates",
   "storyGates.previewTitle": "Artefak",
   "storyGates.previewEmpty": "Pilih gerbang untuk membuka artefaknya.",
