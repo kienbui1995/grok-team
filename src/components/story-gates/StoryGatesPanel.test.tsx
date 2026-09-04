@@ -11,7 +11,7 @@ import {
   DEFAULT_STORY_GATES,
   STORY_GATE_IDS,
   STORY_GATES_G5_MIDDLE_LABEL,
-  STORY_GATES_LEAN_POC_ROOT,
+  STORY_GATES_LIVE_ROOT,
   type StoryGatesConfig,
 } from "@/lib/storyGates";
 import { StoryGatesHost } from "./StoryGatesHost";
@@ -66,7 +66,7 @@ describe("StoryGatesPanel", () => {
       "pass",
     );
     expect(screen.getByTestId("story-gates-artifact-G1")).toHaveTextContent(
-      "artifacts/engineering/grok-team-lean-poc/g1-spec.md",
+      "artifacts/engineering/grok-team-story-gates-live/g1-spec.md",
     );
     expect(screen.getByTestId("story-gates-artifact-G3")).toHaveTextContent(
       "diff",
@@ -82,10 +82,10 @@ describe("StoryGatesPanel", () => {
       "Demo non-prod",
     );
     expect(screen.getByTestId("story-gates-artifact-G5")).toHaveTextContent(
-      `${STORY_GATES_LEAN_POC_ROOT}/g5-demo-note.md`,
+      `${STORY_GATES_LIVE_ROOT}/g5-demo.md`,
     );
     expect(screen.getByTestId("story-gates-checklist-G5")).toHaveTextContent(
-      `${STORY_GATES_LEAN_POC_ROOT}/g5-ship-path.md`,
+      `${STORY_GATES_LIVE_ROOT}/g5-ship-path.md`,
     );
     expect(screen.getAllByTestId(/story-gates-chip-G/)).toHaveLength(5);
   });
@@ -148,14 +148,14 @@ describe("StoryGatesHost", () => {
 
     await user.click(screen.getByTestId("story-gates-checklist-G5"));
     expect(onOpenArtifact).toHaveBeenCalledWith(
-      `${STORY_GATES_LEAN_POC_ROOT}/g5-ship-path.md`,
+      `${STORY_GATES_LIVE_ROOT}/g5-ship-path.md`,
     );
 
     await user.click(screen.getByTestId("story-gates-close"));
     expect(screen.queryByTestId("story-gates-panel")).not.toBeInTheDocument();
   });
 
-  it("opens a Lean file artifact path for G1", async () => {
+  it("opens a live file artifact path for G1", async () => {
     const user = userEvent.setup();
     const onOpenArtifact = vi.fn();
     vi.stubGlobal(
@@ -175,7 +175,7 @@ describe("StoryGatesHost", () => {
     );
     await user.click(screen.getByTestId("story-gates-artifact-G1"));
     expect(onOpenArtifact).toHaveBeenCalledWith(
-      "artifacts/engineering/grok-team-lean-poc/g1-spec.md",
+      "artifacts/engineering/grok-team-story-gates-live/g1-spec.md",
     );
     expect(await screen.findByText("# G1 Spec")).toBeInTheDocument();
   });

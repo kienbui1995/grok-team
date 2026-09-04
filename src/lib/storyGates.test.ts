@@ -5,12 +5,13 @@ import { LOCALES, loadAllLocaleCatalogs, messages } from "@/i18n";
 import {
   DEFAULT_STORY_GATES,
   LEAN_POC_STORY_GATES_JSON,
+  LIVE_STORY_GATES_JSON,
   STORY_GATE_IDS,
   STORY_GATES_DEFAULT_CONFIG_URL,
   STORY_GATES_G5_CHECKLIST_FILE,
-  STORY_GATES_G5_DEMO_FILE,
   STORY_GATES_G5_MIDDLE_LABEL,
   STORY_GATES_LEAN_POC_ROOT,
+  STORY_GATES_LIVE_ROOT,
   evaluateG5Status,
   gateChecklistPath,
   gateDisplayPath,
@@ -38,14 +39,38 @@ afterEach(() => {
 });
 
 describe("parseStoryGatesConfig", () => {
-  it("accepts the Lean POC JSON on disk and the bundled default", () => {
+  it("accepts Lean POC JSON on disk and the Lean bundled sample", () => {
     const disk = JSON.parse(readFileSync(CONFIG_FILE, "utf8"));
     const fromDisk = parseStoryGatesConfig(disk);
-    const fromBundle = parseStoryGatesConfig(LEAN_POC_STORY_GATES_JSON);
+    const leanParsed = parseStoryGatesConfig(LEAN_POC_STORY_GATES_JSON);
+    expect(leanParsed.ok).toBe(true);
+    if (!leanParsed.ok) return;
+    expect(fromDisk).toEqual(leanParsed);
+    expect(leanParsed.config.id).toBe("grok-team-lean-poc");
+    expect(leanParsed.config.gates[2]?.status).toBe("open");
+    expect(leanParsed.config.gates[3]?.status).toBe("open");
+    expect(leanParsed.config.gates[4]?.status).toBe("open");
+  });
+
+  it("accepts the live Story gates JSON on disk as the runtime default", () => {
+    const liveFile = resolve(
+      process.cwd(),
+      "artifacts/engineering/grok-team-story-gates-live/story-gates.config.json",
+    );
+    const disk = JSON.parse(readFileSync(liveFile, "utf8"));
+    const fromDisk = parseStoryGatesConfig(disk);
+    const fromBundle = parseStoryGatesConfig(LIVE_STORY_GATES_JSON);
     expect(fromDisk).toEqual({ ok: true, config: DEFAULT_STORY_GATES });
     expect(fromBundle).toEqual({ ok: true, config: DEFAULT_STORY_GATES });
-    expect(DEFAULT_STORY_GATES.artifactRoot).toBe(STORY_GATES_LEAN_POC_ROOT);
+    expect(DEFAULT_STORY_GATES.artifactRoot).toBe(STORY_GATES_LIVE_ROOT);
+    expect(DEFAULT_STORY_GATES.id).toBe("grok-team-story-gates-live");
     expect(DEFAULT_STORY_GATES.gates.map((g) => g.id)).toEqual([...STORY_GATE_IDS]);
+    expect(DEFAULT_STORY_GATES.gates.every((g) => g.status === "pass")).toBe(
+      true,
+    );
+    expect(STORY_GATES_DEFAULT_CONFIG_URL).toBe(
+      `/${STORY_GATES_LIVE_ROOT}/story-gates.config.json`,
+    );
     expect(messages.en["storyGates.demoNonProd"]).toBe("Demo non-prod");
     expect(messages.en["storyGates.demoNonProd"]).not.toMatch(/Ship prod/i);
     expect(messages.en["storyGates.gate.demo"]).toBe(STORY_GATES_G5_MIDDLE_LABEL);
@@ -61,13 +86,13 @@ describe("parseStoryGatesConfig", () => {
     expect(gatePublicUrl(DEFAULT_STORY_GATES, g3)).toBeNull();
     expect(g5.name).toBe("demo");
     expect(g5.kind).toBe("file");
-    expect(g5.artifact).toBe(STORY_GATES_G5_DEMO_FILE);
+    expect(g5.artifact).toBe("g5-demo.md");
     expect(g5.checklist).toBe(STORY_GATES_G5_CHECKLIST_FILE);
     expect(gateDisplayPath(DEFAULT_STORY_GATES, g5)).toBe(
-      `${STORY_GATES_LEAN_POC_ROOT}/${STORY_GATES_G5_DEMO_FILE}`,
+      `${STORY_GATES_LIVE_ROOT}/g5-demo.md`,
     );
     expect(gateChecklistPath(DEFAULT_STORY_GATES, g5)).toBe(
-      `${STORY_GATES_LEAN_POC_ROOT}/${STORY_GATES_G5_CHECKLIST_FILE}`,
+      `${STORY_GATES_LIVE_ROOT}/${STORY_GATES_G5_CHECKLIST_FILE}`,
     );
   });
 
@@ -183,7 +208,7 @@ describe("story gates path guards", () => {
 });
 
 describe("loadStoryGatesConfig", () => {
-  it("falls back to the Lean default when fetch fails", async () => {
+  it("falls back to the live default when fetch fails", async () => {
     const fetchImpl = vi.fn(async () => {
       throw new Error("offline");
     }) as typeof fetch;

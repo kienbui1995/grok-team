@@ -93,6 +93,50 @@ export const LEAN_POC_STORY_GATES_JSON = {
     {
       id: "G3",
       name: "dev",
+      status: "open",
+      kind: "diff",
+      artifact: "diff",
+    },
+    {
+      id: "G4",
+      name: "qc",
+      status: "open",
+      kind: "file",
+      artifact: "g4-qc-note.md",
+    },
+    {
+      id: "G5",
+      name: "demo",
+      status: "open",
+      kind: "file",
+      artifact: STORY_GATES_G5_DEMO_FILE,
+      checklist: STORY_GATES_G5_CHECKLIST_FILE,
+    },
+  ],
+} as const;
+
+/** Runtime default — Phase 1 T3 Story gates live (all Pass). */
+export const LIVE_STORY_GATES_JSON = {
+  id: "grok-team-story-gates-live",
+  artifactRoot: STORY_GATES_LIVE_ROOT,
+  gates: [
+    {
+      id: "G1",
+      name: "spec",
+      status: "pass",
+      kind: "file",
+      artifact: "g1-spec.md",
+    },
+    {
+      id: "G2",
+      name: "adr",
+      status: "pass",
+      kind: "file",
+      artifact: "g2-adr.md",
+    },
+    {
+      id: "G3",
+      name: "dev",
       status: "pass",
       kind: "diff",
       artifact: "diff",
@@ -102,14 +146,14 @@ export const LEAN_POC_STORY_GATES_JSON = {
       name: "qc",
       status: "pass",
       kind: "file",
-      artifact: "g4-qc-note.md",
+      artifact: "g4-qc.md",
     },
     {
       id: "G5",
       name: "demo",
       status: "pass",
       kind: "file",
-      artifact: STORY_GATES_G5_DEMO_FILE,
+      artifact: "g5-demo.md",
       checklist: STORY_GATES_G5_CHECKLIST_FILE,
     },
   ],
@@ -285,7 +329,7 @@ export function parseStoryGatesConfig(raw: unknown): ParseStoryGatesResult {
   };
 }
 
-const defaultParsed = parseStoryGatesConfig(LEAN_POC_STORY_GATES_JSON);
+const defaultParsed = parseStoryGatesConfig(LIVE_STORY_GATES_JSON);
 if (!defaultParsed.ok) {
   throw new Error(`default Story gates config is invalid: ${defaultParsed.error}`);
 }
