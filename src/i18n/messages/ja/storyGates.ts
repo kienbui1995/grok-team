@@ -1,0 +1,27 @@
+/** Japanese messages — domain: Story gates workbench rail */
+export const jaStoryGates = {
+  "storyGates.title": "ストーリーゲート",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "ストーリーゲートを開く",
+  "storyGates.toggleHide": "ストーリーゲートを閉じる",
+  "storyGates.close": "閉じる",
+  "storyGates.unofficial": "非公式",
+  "storyGates.legal": "非公式 · MIT ライセンス · RongleCat",
+  "storyGates.status.pass": "合格",
+  "storyGates.status.fail": "不合格",
+  "storyGates.status.open": "未完了",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "{path} を開く",
+  "storyGates.openDiff": "ワークベンチの diff を開く",
+  "storyGates.listLabel": "ストーリーゲート",
+  "storyGates.previewTitle": "成果物",
+  "storyGates.previewEmpty": "ゲートを選ぶと成果物が開きます。",
+  "storyGates.previewUnavailable":
+    "成果物を読み込めませんでした。パスは上に表示されています。",
+  "storyGates.chipAria": "{id} {name}、{status}",
+};

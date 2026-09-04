@@ -1,0 +1,27 @@
+/** Portuguese (Brazil) messages — domain: Story gates workbench rail */
+export const ptBRStoryGates = {
+  "storyGates.title": "Story gates",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "Abrir Story gates",
+  "storyGates.toggleHide": "Fechar Story gates",
+  "storyGates.close": "Fechar",
+  "storyGates.unofficial": "não oficial",
+  "storyGates.legal": "Não oficial · Licença MIT · RongleCat",
+  "storyGates.status.pass": "Aprovado",
+  "storyGates.status.fail": "Reprovado",
+  "storyGates.status.open": "Aberto",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "Abrir {path}",
+  "storyGates.openDiff": "Abrir o diff do workbench",
+  "storyGates.listLabel": "Story gates",
+  "storyGates.previewTitle": "Artefato",
+  "storyGates.previewEmpty": "Escolha um gate para abrir o artefato.",
+  "storyGates.previewUnavailable":
+    "Não foi possível carregar o artefato. O caminho continua visível acima.",
+  "storyGates.chipAria": "{id} {name}, {status}",
+};

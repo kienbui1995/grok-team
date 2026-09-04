@@ -1,0 +1,27 @@
+/** Indonesian messages — domain: Story gates workbench rail */
+export const idStoryGates = {
+  "storyGates.title": "Story gates",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "Buka Story gates",
+  "storyGates.toggleHide": "Tutup Story gates",
+  "storyGates.close": "Tutup",
+  "storyGates.unofficial": "tidak resmi",
+  "storyGates.legal": "Tidak resmi · Lisensi MIT · RongleCat",
+  "storyGates.status.pass": "Lulus",
+  "storyGates.status.fail": "Gagal",
+  "storyGates.status.open": "Terbuka",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "Buka {path}",
+  "storyGates.openDiff": "Buka diff workbench",
+  "storyGates.listLabel": "Story gates",
+  "storyGates.previewTitle": "Artefak",
+  "storyGates.previewEmpty": "Pilih gerbang untuk membuka artefaknya.",
+  "storyGates.previewUnavailable":
+    "Artefak tidak dapat dimuat. Jalurnya tetap ditampilkan di atas.",
+  "storyGates.chipAria": "{id} {name}, {status}",
+};

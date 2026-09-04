@@ -1,0 +1,27 @@
+/** Russian messages — domain: Story gates workbench rail */
+export const ruStoryGates = {
+  "storyGates.title": "Story gates",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "Открыть Story gates",
+  "storyGates.toggleHide": "Закрыть Story gates",
+  "storyGates.close": "Закрыть",
+  "storyGates.unofficial": "неофициально",
+  "storyGates.legal": "Неофициально · лицензия MIT · RongleCat",
+  "storyGates.status.pass": "Пройдено",
+  "storyGates.status.fail": "Провалено",
+  "storyGates.status.open": "Открыто",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "Открыть {path}",
+  "storyGates.openDiff": "Открыть diff рабочей области",
+  "storyGates.listLabel": "Story gates",
+  "storyGates.previewTitle": "Артефакт",
+  "storyGates.previewEmpty": "Выберите шлюз, чтобы открыть артефакт.",
+  "storyGates.previewUnavailable":
+    "Не удалось загрузить артефакт. Путь по-прежнему показан выше.",
+  "storyGates.chipAria": "{id} {name}, {status}",
+};

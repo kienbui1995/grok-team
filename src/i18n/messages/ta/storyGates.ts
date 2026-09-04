@@ -1,0 +1,27 @@
+/** Tamil messages — domain: Story gates workbench rail */
+export const taStoryGates = {
+  "storyGates.title": "Story gates",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "Story gates திற",
+  "storyGates.toggleHide": "Story gates மூடு",
+  "storyGates.close": "மூடு",
+  "storyGates.unofficial": "அதிகாரப்பூர்வமற்றது",
+  "storyGates.legal": "அதிகாரப்பூர்வமற்றது · MIT உரிமம் · RongleCat",
+  "storyGates.status.pass": "தேர்ச்சி",
+  "storyGates.status.fail": "தோல்வி",
+  "storyGates.status.open": "திறந்தது",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "{path} திற",
+  "storyGates.openDiff": "வொர்க்பெஞ்ச் diff திற",
+  "storyGates.listLabel": "Story gates",
+  "storyGates.previewTitle": "கலைப்பொருள்",
+  "storyGates.previewEmpty": "கலைப்பொருளைத் திறக்க ஒரு வாயிலைத் தேர்ந்தெடுக்கவும்.",
+  "storyGates.previewUnavailable":
+    "கலைப்பொருளை ஏற்ற முடியவில்லை. பாதை மேலே காட்டப்பட்டுள்ளது.",
+  "storyGates.chipAria": "{id} {name}, {status}",
+};

@@ -1,0 +1,27 @@
+/** English messages — domain: Story gates workbench rail */
+export const enStoryGates = {
+  "storyGates.title": "Story gates",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "Open Story gates",
+  "storyGates.toggleHide": "Close Story gates",
+  "storyGates.close": "Close",
+  "storyGates.unofficial": "unofficial",
+  "storyGates.legal": "Unofficial · MIT License · RongleCat",
+  "storyGates.status.pass": "Pass",
+  "storyGates.status.fail": "Fail",
+  "storyGates.status.open": "Open",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "Open {path}",
+  "storyGates.openDiff": "Open workbench diff",
+  "storyGates.listLabel": "Story gates",
+  "storyGates.previewTitle": "Artifact",
+  "storyGates.previewEmpty": "Select a gate to open its artifact.",
+  "storyGates.previewUnavailable":
+    "Could not load this artifact. The path is still shown above.",
+  "storyGates.chipAria": "{id} {name}, {status}",
+};

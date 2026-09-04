@@ -1,0 +1,27 @@
+/** Korean messages — domain: Story gates workbench rail */
+export const koStoryGates = {
+  "storyGates.title": "스토리 게이트",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "스토리 게이트 열기",
+  "storyGates.toggleHide": "스토리 게이트 닫기",
+  "storyGates.close": "닫기",
+  "storyGates.unofficial": "비공식",
+  "storyGates.legal": "비공식 · MIT 라이선스 · RongleCat",
+  "storyGates.status.pass": "통과",
+  "storyGates.status.fail": "실패",
+  "storyGates.status.open": "열림",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "{path} 열기",
+  "storyGates.openDiff": "워크벤치 diff 열기",
+  "storyGates.listLabel": "스토리 게이트",
+  "storyGates.previewTitle": "산출물",
+  "storyGates.previewEmpty": "게이트를 선택하면 산출물이 열립니다.",
+  "storyGates.previewUnavailable":
+    "산출물을 불러오지 못했습니다. 경로는 위에 그대로 표시됩니다.",
+  "storyGates.chipAria": "{id} {name}, {status}",
+};

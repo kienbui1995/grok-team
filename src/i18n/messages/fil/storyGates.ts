@@ -1,0 +1,27 @@
+/** Filipino messages — domain: Story gates workbench rail */
+export const filStoryGates = {
+  "storyGates.title": "Story gates",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "Buksan ang Story gates",
+  "storyGates.toggleHide": "Isara ang Story gates",
+  "storyGates.close": "Isara",
+  "storyGates.unofficial": "hindi opisyal",
+  "storyGates.legal": "Hindi opisyal · MIT License · RongleCat",
+  "storyGates.status.pass": "Pass",
+  "storyGates.status.fail": "Fail",
+  "storyGates.status.open": "Open",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "Buksan ang {path}",
+  "storyGates.openDiff": "Buksan ang workbench diff",
+  "storyGates.listLabel": "Story gates",
+  "storyGates.previewTitle": "Artifact",
+  "storyGates.previewEmpty": "Pumili ng gate para buksan ang artifact.",
+  "storyGates.previewUnavailable":
+    "Hindi ma-load ang artifact. Nakikita pa rin ang path sa itaas.",
+  "storyGates.chipAria": "{id} {name}, {status}",
+};

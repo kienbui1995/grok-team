@@ -1,0 +1,27 @@
+/** Ukrainian messages — domain: Story gates workbench rail */
+export const ukStoryGates = {
+  "storyGates.title": "Story gates",
+  "storyGates.demoNonProd": "Demo non-prod",
+  "storyGates.toggleShow": "Відкрити Story gates",
+  "storyGates.toggleHide": "Закрити Story gates",
+  "storyGates.close": "Закрити",
+  "storyGates.unofficial": "неофіційно",
+  "storyGates.legal": "Неофіційно · ліцензія MIT · RongleCat",
+  "storyGates.status.pass": "Пройдено",
+  "storyGates.status.fail": "Провалено",
+  "storyGates.status.open": "Відкрито",
+  "storyGates.gate.spec": "Spec",
+  "storyGates.gate.adr": "ADR",
+  "storyGates.gate.dev": "Dev",
+  "storyGates.gate.qc": "QC",
+  "storyGates.gate.demo": "Demo",
+  "storyGates.artifactDiff": "diff",
+  "storyGates.openArtifact": "Відкрити {path}",
+  "storyGates.openDiff": "Відкрити diff робочої області",
+  "storyGates.listLabel": "Story gates",
+  "storyGates.previewTitle": "Артефакт",
+  "storyGates.previewEmpty": "Оберіть шлюз, щоб відкрити артефакт.",
+  "storyGates.previewUnavailable":
+    "Не вдалося завантажити артефакт. Шлях досі показано вище.",
+  "storyGates.chipAria": "{id} {name}, {status}",
+};
