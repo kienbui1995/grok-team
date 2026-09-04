@@ -1,5 +1,5 @@
 {
-  "id": "grok-team-lean-poc",
+  "id": "grok-team-story-gates-live",
   "artifactRoot": "artifacts/engineering/grok-team-lean-poc",
   "gates": [
     {
@@ -19,21 +19,21 @@
     {
       "id": "G3",
       "name": "dev",
-      "status": "open",
+      "status": "pass",
       "kind": "diff",
       "artifact": "diff"
     },
     {
       "id": "G4",
       "name": "qc",
-      "status": "open",
+      "status": "pass",
       "kind": "file",
       "artifact": "g4-qc-note.md"
     },
     {
       "id": "G5",
       "name": "demo",
-      "status": "open",
+      "status": "pass",
       "kind": "file",
       "artifact": "g5-demo-note.md",
       "checklist": "g5-ship-path.md"
