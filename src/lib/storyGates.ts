@@ -21,6 +21,18 @@ export const STORY_GATES_LEAN_POC_ROOT =
 
 export const STORY_GATES_DEFAULT_CONFIG_URL = `/${STORY_GATES_LEAN_POC_ROOT}/story-gates.config.json`;
 
+/** 04-design v1.1 — G5 is a middle gate, never the final destination. */
+export const STORY_GATES_G5_MIDDLE_LABEL =
+  "G5 · cổng giữa — không phải đích cuối";
+
+export const STORY_GATES_G5_CHECKLIST_FILE = "g5-ship-path.md";
+
+export const STORY_GATES_G5_DEMO_FILE = "g5-demo-note.md";
+
+/** Fail UI / copy lock — G5 must never read as a finished ship. */
+export const G5_FORBIDDEN_COPY =
+  /Ship prod|AI tư vấn|Ship complete|\bDone\b|\bFinished\b/i;
+
 /** Same-origin relative URL only; used by Vite UI / tests. */
 export const STORY_GATES_CONFIG_URL_STORAGE_KEY = "grok.storyGates.configUrl";
 
@@ -29,6 +41,8 @@ export const STORY_GATES_OPEN_STORAGE_KEY = "grok.storyGates.open";
 const FORBIDDEN_CONFIG_KEYS =
   /^(secret|secrets|token|password|passwd|api[_-]?key|authorization|private[_-]?key|access[_-]?key|refresh[_-]?token|email|phone|ssn|credential|credentials)$/i;
 
+export type StoryGateOpenTarget = "artifact" | "checklist";
+
 export type StoryGate = {
   id: StoryGateId;
   name: StoryGateName;
@@ -36,6 +50,13 @@ export type StoryGate = {
   kind: StoryGateKind;
   /** Repo-relative file name, or the literal "diff" for G3. */
   artifact: string;
+  /** G5 only: steps-toward-ship checklist (CEO / Kien gate). */
+  checklist?: string;
+};
+
+export type G5Availability = {
+  demo: boolean;
+  checklist: boolean;
 };
 
 export type StoryGatesConfig = {
@@ -85,7 +106,8 @@ export const LEAN_POC_STORY_GATES_JSON = {
       name: "demo",
       status: "open",
       kind: "file",
-      artifact: "g5-demo-note.md",
+      artifact: STORY_GATES_G5_DEMO_FILE,
+      checklist: STORY_GATES_G5_CHECKLIST_FILE,
     },
   ],
 } as const;
@@ -211,21 +233,47 @@ export function parseStoryGatesConfig(raw: unknown): ParseStoryGatesResult {
     } else if (gate.artifact === "diff") {
       return { ok: false, error: `${expectedId} file artifact cannot be "diff"` };
     }
-    parsed.push({
-      id: gate.id,
-      name: gate.name,
-      status: gate.status,
-      kind: gate.kind,
-      artifact: gate.artifact,
-    });
+    const checklistRaw = gate.checklist;
+    if (expectedId === "G5") {
+      if (
+        typeof checklistRaw !== "string" ||
+        !isSafeArtifactName(checklistRaw) ||
+        checklistRaw === "diff" ||
+        checklistRaw === gate.artifact
+      ) {
+        return {
+          ok: false,
+          error: "G5 must include a distinct ship-path checklist",
+        };
+      }
+      parsed.push({
+        id: gate.id,
+        name: gate.name,
+        status: gate.status,
+        kind: gate.kind,
+        artifact: gate.artifact,
+        checklist: checklistRaw,
+      });
+    } else if (checklistRaw != null) {
+      return { ok: false, error: `${expectedId} cannot have a checklist` };
+    } else {
+      parsed.push({
+        id: gate.id,
+        name: gate.name,
+        status: gate.status,
+        kind: gate.kind,
+        artifact: gate.artifact,
+      });
+    }
   }
 
   const g3 = parsed[2];
   if (g3.kind !== "diff" || g3.artifact !== "diff") {
     return { ok: false, error: "G3 must point at workbench diff" };
   }
-  if (parsed[4].name !== "demo") {
-    return { ok: false, error: "G5 must be the Demo gate" };
+  const g5 = parsed[4];
+  if (g5.name !== "demo" || g5.kind !== "file" || !g5.checklist) {
+    return { ok: false, error: "G5 must be the middle-gate demo + ship-path" };
   }
 
   return {
@@ -255,6 +303,55 @@ export function gatePublicUrl(
 ): string | null {
   if (gate.kind === "diff") return null;
   return `/${config.artifactRoot}/${gate.artifact}`;
+}
+
+export function gateChecklistPath(
+  config: StoryGatesConfig,
+  gate: StoryGate,
+): string | null {
+  if (gate.id !== "G5" || !gate.checklist) return null;
+  return `${config.artifactRoot}/${gate.checklist}`;
+}
+
+export function gateChecklistUrl(
+  config: StoryGatesConfig,
+  gate: StoryGate,
+): string | null {
+  const path = gateChecklistPath(config, gate);
+  return path ? `/${path}` : null;
+}
+
+export function isForbiddenG5Copy(text: string): boolean {
+  return G5_FORBIDDEN_COPY.test(text);
+}
+
+export function evaluateG5Status(input: {
+  hasDemo: boolean;
+  hasChecklist: boolean;
+  configured: StoryGateStatus;
+}): StoryGateStatus {
+  if (!input.hasDemo || !input.hasChecklist) return "fail";
+  return input.configured;
+}
+
+export function applyG5Availability(
+  config: StoryGatesConfig,
+  availability: G5Availability,
+): StoryGatesConfig {
+  return {
+    ...config,
+    gates: config.gates.map((gate) => {
+      if (gate.id !== "G5") return gate;
+      return {
+        ...gate,
+        status: evaluateG5Status({
+          hasDemo: availability.demo && gate.kind === "file" && !!gate.artifact,
+          hasChecklist: availability.checklist && !!gate.checklist,
+          configured: gate.status,
+        }),
+      };
+    }),
+  };
 }
 
 export function isSafeConfigUrl(url: string): boolean {

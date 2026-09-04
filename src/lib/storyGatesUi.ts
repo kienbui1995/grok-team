@@ -10,7 +10,7 @@ import type {
   StoryGateStatus,
   StoryGatesConfig,
 } from "@/lib/storyGates";
-import { gateDisplayPath } from "@/lib/storyGates";
+import { gateChecklistPath, gateDisplayPath } from "@/lib/storyGates";
 
 export function storyGateNameKey(name: StoryGateName): MessageKey {
   switch (name) {
@@ -73,4 +73,11 @@ export function assertStoryGateKind(kind: StoryGateKind): StoryGateKind {
       return _exhaustive;
     }
   }
+}
+
+export function storyGateChecklistLabel(
+  config: StoryGatesConfig,
+  gate: StoryGate,
+): string | null {
+  return gateChecklistPath(config, gate);
 }

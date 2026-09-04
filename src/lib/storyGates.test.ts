@@ -1,15 +1,21 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { messages } from "@/i18n";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { LOCALES, loadAllLocaleCatalogs, messages } from "@/i18n";
 import {
   DEFAULT_STORY_GATES,
   LEAN_POC_STORY_GATES_JSON,
   STORY_GATE_IDS,
   STORY_GATES_DEFAULT_CONFIG_URL,
+  STORY_GATES_G5_CHECKLIST_FILE,
+  STORY_GATES_G5_DEMO_FILE,
+  STORY_GATES_G5_MIDDLE_LABEL,
   STORY_GATES_LEAN_POC_ROOT,
+  evaluateG5Status,
+  gateChecklistPath,
   gateDisplayPath,
   gatePublicUrl,
+  isForbiddenG5Copy,
   isSafeArtifactName,
   isSafeArtifactRoot,
   isSafeConfigUrl,
@@ -22,6 +28,10 @@ const CONFIG_FILE = resolve(
   process.cwd(),
   "artifacts/engineering/grok-team-lean-poc/story-gates.config.json",
 );
+
+beforeAll(async () => {
+  await loadAllLocaleCatalogs();
+});
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -38,9 +48,10 @@ describe("parseStoryGatesConfig", () => {
     expect(DEFAULT_STORY_GATES.gates.map((g) => g.id)).toEqual([...STORY_GATE_IDS]);
     expect(messages.en["storyGates.demoNonProd"]).toBe("Demo non-prod");
     expect(messages.en["storyGates.demoNonProd"]).not.toMatch(/Ship prod/i);
+    expect(messages.en["storyGates.gate.demo"]).toBe(STORY_GATES_G5_MIDDLE_LABEL);
   });
 
-  it("requires G3 to be the workbench diff and G5 to be Demo", () => {
+  it("requires G3 to be the workbench diff and G5 to be a middle gate", () => {
     const g3 = DEFAULT_STORY_GATES.gates[2];
     const g5 = DEFAULT_STORY_GATES.gates[4];
     expect(g3.id).toBe("G3");
@@ -50,9 +61,65 @@ describe("parseStoryGatesConfig", () => {
     expect(gatePublicUrl(DEFAULT_STORY_GATES, g3)).toBeNull();
     expect(g5.name).toBe("demo");
     expect(g5.kind).toBe("file");
+    expect(g5.artifact).toBe(STORY_GATES_G5_DEMO_FILE);
+    expect(g5.checklist).toBe(STORY_GATES_G5_CHECKLIST_FILE);
     expect(gateDisplayPath(DEFAULT_STORY_GATES, g5)).toBe(
-      `${STORY_GATES_LEAN_POC_ROOT}/g5-demo-note.md`,
+      `${STORY_GATES_LEAN_POC_ROOT}/${STORY_GATES_G5_DEMO_FILE}`,
     );
+    expect(gateChecklistPath(DEFAULT_STORY_GATES, g5)).toBe(
+      `${STORY_GATES_LEAN_POC_ROOT}/${STORY_GATES_G5_CHECKLIST_FILE}`,
+    );
+  });
+
+  it("locks G5 copy as a middle gate (04-design v1.1) in every locale", () => {
+    for (const loc of LOCALES) {
+      expect(messages[loc]["storyGates.gate.demo"]).toBe(
+        STORY_GATES_G5_MIDDLE_LABEL,
+      );
+      expect(messages[loc]["storyGates.demoNonProd"]).toBe("Demo non-prod");
+      for (const [key, value] of Object.entries(messages[loc])) {
+        if (!key.startsWith("storyGates.")) continue;
+        expect(isForbiddenG5Copy(value), `${loc}.${key}`).toBe(false);
+      }
+    }
+  });
+
+  it("fails G5 when demo or ship-path is missing", () => {
+    expect(
+      evaluateG5Status({
+        hasDemo: true,
+        hasChecklist: true,
+        configured: "pass",
+      }),
+    ).toBe("pass");
+    expect(
+      evaluateG5Status({
+        hasDemo: false,
+        hasChecklist: true,
+        configured: "pass",
+      }),
+    ).toBe("fail");
+    expect(
+      evaluateG5Status({
+        hasDemo: true,
+        hasChecklist: false,
+        configured: "open",
+      }),
+    ).toBe("fail");
+    expect(isForbiddenG5Copy("Ship prod")).toBe(true);
+    expect(isForbiddenG5Copy("Ship complete")).toBe(true);
+    expect(isForbiddenG5Copy("Done")).toBe(true);
+    expect(isForbiddenG5Copy("Finished")).toBe(true);
+    expect(isForbiddenG5Copy("AI tư vấn")).toBe(true);
+    expect(isForbiddenG5Copy(STORY_GATES_G5_MIDDLE_LABEL)).toBe(false);
+    expect(
+      parseStoryGatesConfig({
+        ...LEAN_POC_STORY_GATES_JSON,
+        gates: LEAN_POC_STORY_GATES_JSON.gates.map((gate) =>
+          gate.id === "G5" ? { ...gate, checklist: undefined } : gate,
+        ),
+      }).ok,
+    ).toBe(false);
   });
 
   it("rejects secrets, PII keys, traversal, and missing chips", () => {

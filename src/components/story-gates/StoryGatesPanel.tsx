@@ -11,12 +11,18 @@ import {
   IconClose,
   IconFileDiff,
   IconFileText,
+  IconListCheck,
 } from "@/components/icons";
 import { createT, type Locale } from "@/i18n";
-import type { StoryGate, StoryGatesConfig } from "@/lib/storyGates";
+import type {
+  StoryGate,
+  StoryGateOpenTarget,
+  StoryGatesConfig,
+} from "@/lib/storyGates";
 import {
   assertStoryGateKind,
   storyGateArtifactLabel,
+  storyGateChecklistLabel,
   storyGateNameKey,
   storyGateStatusKey,
 } from "@/lib/storyGatesUi";
@@ -27,7 +33,7 @@ export type StoryGatesPanelProps = {
   previewText: string | null;
   previewBusy?: boolean;
   onClose: () => void;
-  onSelectGate: (gate: StoryGate) => void;
+  onSelectGate: (gate: StoryGate, target: StoryGateOpenTarget) => void;
 };
 
 export function StoryGatesPanel({
@@ -84,19 +90,25 @@ export function StoryGatesPanel({
           const name = tr(storyGateNameKey(gate.name));
           const status = tr(storyGateStatusKey(gate.status));
           const kind = assertStoryGateKind(gate.kind);
+          const isG5 = gate.id === "G5";
           const artifact = storyGateArtifactLabel(
             config,
             gate,
             tr("storyGates.artifactDiff"),
           );
+          const checklist = storyGateChecklistLabel(config, gate);
           const openLabel =
             kind === "diff"
               ? tr("storyGates.openDiff")
               : tr("storyGates.openArtifact", { path: artifact });
+          const missingDemo = isG5 && !artifact;
+          const missingChecklist = isG5 && !checklist;
           return (
             <li
               key={gate.id}
-              className="story-gates-chip"
+              className={
+                "story-gates-chip" + (isG5 ? " story-gates-chip--g5" : "")
+              }
               data-testid={`story-gates-chip-${gate.id}`}
               data-gate-id={gate.id}
               data-gate-status={gate.status}
@@ -105,28 +117,75 @@ export function StoryGatesPanel({
               <span className="story-gates-chip__id" aria-hidden>
                 {gate.id}
               </span>
-              <span className="story-gates-chip__name">{name}</span>
-              <button
-                type="button"
-                className="story-gates-chip__artifact"
-                data-testid={`story-gates-artifact-${gate.id}`}
-                aria-label={tr("storyGates.chipAria", {
-                  id: gate.id,
-                  name,
-                  status,
-                })}
-                title={openLabel}
-                onClick={() => onSelectGate(gate)}
+              <span
+                className="story-gates-chip__name"
+                data-testid={isG5 ? "story-gates-g5-label" : undefined}
               >
-                {kind === "diff" ? (
-                  <IconFileDiff size={14} />
-                ) : (
-                  <IconFileText size={14} />
-                )}
-                <span className="story-gates-chip__artifact-label">
-                  {artifact}
+                {name}
+              </span>
+              {isG5 ? (
+                <span
+                  className="story-gates-chip__sub"
+                  data-testid="story-gates-g5-subtitle"
+                >
+                  {tr("storyGates.demoNonProd")}
                 </span>
-              </button>
+              ) : null}
+              {artifact ? (
+                <button
+                  type="button"
+                  className="story-gates-chip__artifact"
+                  data-testid={`story-gates-artifact-${gate.id}`}
+                  aria-label={tr("storyGates.chipAria", {
+                    id: gate.id,
+                    name,
+                    status,
+                  })}
+                  title={openLabel}
+                  onClick={() => onSelectGate(gate, "artifact")}
+                >
+                  {kind === "diff" ? (
+                    <IconFileDiff size={14} />
+                  ) : (
+                    <IconFileText size={14} />
+                  )}
+                  <span className="story-gates-chip__artifact-label">
+                    {artifact}
+                  </span>
+                </button>
+              ) : missingDemo ? (
+                <span
+                  className="story-gates-chip__missing"
+                  data-testid="story-gates-g5-missing-demo"
+                >
+                  {tr("storyGates.g5.failMissingDemo")}
+                </span>
+              ) : null}
+              {isG5 && checklist ? (
+                <button
+                  type="button"
+                  className="story-gates-chip__artifact story-gates-chip__checklist"
+                  data-testid="story-gates-checklist-G5"
+                  aria-label={tr("storyGates.g5.shipPathAria", {
+                    path: checklist,
+                  })}
+                  title={tr("storyGates.openChecklist", { path: checklist })}
+                  onClick={() => onSelectGate(gate, "checklist")}
+                >
+                  <IconListCheck size={14} />
+                  <span className="story-gates-chip__artifact-label">
+                    {checklist}
+                  </span>
+                </button>
+              ) : null}
+              {missingChecklist ? (
+                <span
+                  className="story-gates-chip__missing story-gates-chip__checklist"
+                  data-testid="story-gates-g5-missing-checklist"
+                >
+                  {tr("storyGates.g5.failMissingChecklist")}
+                </span>
+              ) : null}
               <span
                 className={`story-gates-chip__status story-gates-chip__status--${gate.status}`}
                 data-testid={`story-gates-status-${gate.id}`}

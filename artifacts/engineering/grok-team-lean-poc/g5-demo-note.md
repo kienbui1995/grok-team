@@ -1,7 +1,9 @@
 # G5 Demo note — Demo non-prod
 
-This gate is a non-production demo. Do not ship to prod from this panel.
+G5 is a **middle gate** (cổng giữa — không phải đích cuối), not the final destination.
 
-- Copy lock: **Demo non-prod**
-- Never: Ship prod, AI tư vấn, Grok official, App Store, GTM, YOLO-IM
+- Chip label: **G5 · cổng giữa — không phải đích cuối**
+- Subtitle: **Demo non-prod**
+- Pair this note with the ship-path checklist on the same chip
+- Production release stays a **CEO / Kien** decision — not this panel
 - License: MIT, attribution RongleCat (unofficial fork)

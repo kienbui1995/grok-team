@@ -9,11 +9,15 @@ import { Tip } from "@/components/ui/tooltip";
 import { createT, type Locale } from "@/i18n";
 import {
   DEFAULT_STORY_GATES,
+  applyG5Availability,
+  gateChecklistUrl,
   gatePublicUrl,
   loadStoryGatesConfig,
   readStoredOpen,
   writeStoredOpen,
+  type G5Availability,
   type StoryGate,
+  type StoryGateOpenTarget,
   type StoryGatesConfig,
 } from "@/lib/storyGates";
 import { StoryGatesPanel } from "./StoryGatesPanel";
@@ -48,6 +52,14 @@ export function StoryGatesHost({
   );
   const [previewText, setPreviewText] = useState<string | null>(null);
   const [previewBusy, setPreviewBusy] = useState(false);
+  const [g5Availability, setG5Availability] = useState<G5Availability>({
+    demo: true,
+    checklist: true,
+  });
+  const displayConfig = useMemo(
+    () => applyG5Availability(config, g5Availability),
+    [config, g5Availability],
+  );
 
   useEffect(() => {
     if (configProp) {
@@ -64,6 +76,32 @@ export function StoryGatesHost({
       cancelled = true;
     };
   }, [configProp]);
+
+  useEffect(() => {
+    const g5 = config.gates.find((gate) => gate.id === "G5");
+    if (!g5) return;
+    let cancelled = false;
+    const demoUrl = gatePublicUrl(config, g5);
+    const checklistUrl = gateChecklistUrl(config, g5);
+    const probe = async (url: string | null): Promise<boolean> => {
+      if (!url) return false;
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        return res.ok;
+      } catch {
+        // Unknown / offline (jsdom, no Vite) — do not flip the chip to Fail.
+        return true;
+      }
+    };
+    void Promise.all([probe(demoUrl), probe(checklistUrl)]).then(
+      ([demo, checklist]) => {
+        if (!cancelled) setG5Availability({ demo, checklist });
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [config]);
 
   const setOpenPersist = useCallback((next: boolean) => {
     setOpen(next);
@@ -86,15 +124,22 @@ export function StoryGatesHost({
   }, [open, setOpenPersist]);
 
   const onSelectGate = useCallback(
-    async (gate: StoryGate) => {
-      if (gate.kind === "diff") {
+    async (gate: StoryGate, target: StoryGateOpenTarget) => {
+      if (gate.kind === "diff" && target === "artifact") {
         setPreviewText(tr("storyGates.openDiff"));
         onOpenDiff?.();
         return;
       }
-      const path = `${config.artifactRoot}/${gate.artifact}`;
+      const fileName =
+        target === "checklist" && gate.checklist
+          ? gate.checklist
+          : gate.artifact;
+      const path = `${config.artifactRoot}/${fileName}`;
       onOpenArtifact?.(path);
-      const url = gatePublicUrl(config, gate);
+      const url =
+        target === "checklist"
+          ? gateChecklistUrl(config, gate)
+          : gatePublicUrl(config, gate);
       if (!url) return;
       setPreviewBusy(true);
       try {
@@ -138,12 +183,12 @@ export function StoryGatesHost({
       ? createPortal(
           <StoryGatesPanel
             locale={locale}
-            config={config}
+            config={displayConfig}
             previewText={previewText}
             previewBusy={previewBusy}
             onClose={() => setOpenPersist(false)}
-            onSelectGate={(gate) => {
-              void onSelectGate(gate);
+            onSelectGate={(gate, target) => {
+              void onSelectGate(gate, target);
             }}
           />,
           document.body,

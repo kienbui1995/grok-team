@@ -35,7 +35,8 @@
       "name": "demo",
       "status": "open",
       "kind": "file",
-      "artifact": "g5-demo-note.md"
+      "artifact": "g5-demo-note.md",
+      "checklist": "g5-ship-path.md"
     }
   ]
 }
