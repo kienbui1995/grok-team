@@ -19,7 +19,10 @@ export type StoryGateName = (typeof STORY_GATE_NAMES)[number];
 export const STORY_GATES_LEAN_POC_ROOT =
   "artifacts/engineering/grok-team-lean-poc";
 
-export const STORY_GATES_DEFAULT_CONFIG_URL = `/${STORY_GATES_LEAN_POC_ROOT}/story-gates.config.json`;
+export const STORY_GATES_LIVE_ROOT =
+  "artifacts/engineering/grok-team-story-gates-live";
+
+export const STORY_GATES_DEFAULT_CONFIG_URL = `/${STORY_GATES_LIVE_ROOT}/story-gates.config.json`;
 
 /** 04-design v1.1 — G5 is a middle gate, never the final destination. */
 export const STORY_GATES_G5_MIDDLE_LABEL =
@@ -90,21 +93,21 @@ export const LEAN_POC_STORY_GATES_JSON = {
     {
       id: "G3",
       name: "dev",
-      status: "open",
+      status: "pass",
       kind: "diff",
       artifact: "diff",
     },
     {
       id: "G4",
       name: "qc",
-      status: "open",
+      status: "pass",
       kind: "file",
       artifact: "g4-qc-note.md",
     },
     {
       id: "G5",
       name: "demo",
-      status: "open",
+      status: "pass",
       kind: "file",
       artifact: STORY_GATES_G5_DEMO_FILE,
       checklist: STORY_GATES_G5_CHECKLIST_FILE,
