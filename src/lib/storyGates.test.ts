@@ -80,11 +80,13 @@ describe("parseStoryGatesConfig", () => {
         gates: LEAN_POC_STORY_GATES_JSON.gates.slice(0, 4),
       }).ok,
     ).toBe(false);
-    const swapped = structuredClone(LEAN_POC_STORY_GATES_JSON);
-    swapped.gates[2] = {
-      ...swapped.gates[2],
-      kind: "file",
-      artifact: "g3-extra.md",
+    const swapped = {
+      ...LEAN_POC_STORY_GATES_JSON,
+      gates: LEAN_POC_STORY_GATES_JSON.gates.map((gate, index) =>
+        index === 2
+          ? { ...gate, kind: "file" as const, artifact: "g3-extra.md" }
+          : gate,
+      ),
     };
     expect(parseStoryGatesConfig(swapped).ok).toBe(false);
   });
@@ -117,7 +119,7 @@ describe("loadStoryGatesConfig", () => {
   it("falls back to the Lean default when fetch fails", async () => {
     const fetchImpl = vi.fn(async () => {
       throw new Error("offline");
-    });
+    }) as typeof fetch;
     await expect(loadStoryGatesConfig(fetchImpl, null)).resolves.toEqual(
       DEFAULT_STORY_GATES,
     );
@@ -131,8 +133,10 @@ describe("loadStoryGatesConfig", () => {
         g.id === "G4" ? { ...g, status: "fail" as const } : g,
       ),
     };
-    const fetchImpl = vi.fn(async (url: string) => {
-      expect(url).toBe("/artifacts/engineering/custom/story-gates.config.json");
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
+      expect(String(input)).toBe(
+        "/artifacts/engineering/custom/story-gates.config.json",
+      );
       return {
         ok: true,
         json: async () => ({
@@ -140,7 +144,7 @@ describe("loadStoryGatesConfig", () => {
           artifactRoot: "artifacts/engineering/custom",
         }),
       } as Response;
-    });
+    }) as typeof fetch;
     const loaded = await loadStoryGatesConfig(fetchImpl, {
       getItem: () => "/artifacts/engineering/custom/story-gates.config.json",
     });
