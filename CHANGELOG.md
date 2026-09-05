@@ -12,9 +12,11 @@ See `docs/llm-wiki/release.md`.
 ## [Unreleased]
 
 ### Added
+- **Story gates rail (Phase 1 / stack B, 04-design v1.1)**: workbench chrome toggles a G1–G5 overlay (Spec / ADR / Dev diff / QC / G5 middle gate) on the existing project–session–diff surface. G5 chip label is **G5 · cổng giữa — không phải đích cuối** (subtitle Demo non-prod) with two deep-links: demo note + ship-path checklist (maintainer / repo-owner gate). Lean sample paths come from `artifacts/engineering/grok-team-lean-poc` (overridable via same-origin `/artifacts/…` JSON). Unofficial MIT RongleCat footer; no third route, factory dashboard, or production-ship CTA.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 新增**
+- **Story gates 轨道（Phase 1 / stack B，04-design v1.1）**：在现有工作台（项目 / 会话 / diff）用顶栏开关打开 G1–G5 浮层，不新增路由。G5 是中间门（**G5 · cổng giữa — không phải đích cuối**，副标题 Demo non-prod），芯片上同时链到 demo 说明与通向发布的清单（维护者 / 仓库所有者门禁）。Lean 样例路径读 `artifacts/engineering/grok-team-lean-poc`（可用同源 `/artifacts/…` JSON 覆盖）。页脚 unofficial + MIT RongleCat；无工厂看板、无正式上线 CTA。
 - **自定义外观**：设置 → 外观 → 主题可改文字颜色（默认跟随浅/深色近黑/近白）和字体阴影（默认关）。「恢复默认」需二次确认，会把这两项恢复出厂。这两项会随 `.grokskin` 导入导出。
 
 ### Changed

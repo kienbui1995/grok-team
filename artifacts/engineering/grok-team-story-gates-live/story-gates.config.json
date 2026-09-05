@@ -1,0 +1,42 @@
+{
+  "id": "grok-team-story-gates-live",
+  "artifactRoot": "artifacts/engineering/grok-team-story-gates-live",
+  "gates": [
+    {
+      "id": "G1",
+      "name": "spec",
+      "status": "pass",
+      "kind": "file",
+      "artifact": "g1-spec.md"
+    },
+    {
+      "id": "G2",
+      "name": "adr",
+      "status": "pass",
+      "kind": "file",
+      "artifact": "g2-adr.md"
+    },
+    {
+      "id": "G3",
+      "name": "dev",
+      "status": "pass",
+      "kind": "diff",
+      "artifact": "diff"
+    },
+    {
+      "id": "G4",
+      "name": "qc",
+      "status": "pass",
+      "kind": "file",
+      "artifact": "g4-qc.md"
+    },
+    {
+      "id": "G5",
+      "name": "demo",
+      "status": "pass",
+      "kind": "file",
+      "artifact": "g5-demo.md",
+      "checklist": "g5-ship-path.md"
+    }
+  ]
+}
