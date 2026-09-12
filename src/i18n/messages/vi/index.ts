@@ -24,6 +24,7 @@ import { viSettingsCode } from "./settings-code";
 import { viSettingsRemoteIm } from "./settings-remoteIm";
 import { viSettingsPet } from "./settings-pet";
 import { viSoftwareTeamDlc } from "./software-team-dlc";
+import { viStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
 
@@ -53,4 +54,5 @@ export const vi: Record<MessageKey, string> = {
   ...viSettingsRemoteIm,
   ...viSettingsPet,
   ...viSoftwareTeamDlc,
+  ...viStoryGates,
 };
