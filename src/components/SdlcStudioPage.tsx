@@ -270,6 +270,9 @@ export function SdlcStudioPage({
     x: number;
     y: number;
   } | null>(null);
+  const [dragItemId, setDragItemId] = useState<string | null>(null);
+  const [dragOverStage, setDragOverStage] =
+    useState<SoftwareTeamSdlcStageId | null>(null);
   const emptyWizardOffered = useRef(false);
 
   const persistStudioPrefs = useCallback(
@@ -1823,12 +1826,69 @@ export function SdlcStudioPage({
                 filtered.filter((item) => item.stageId === stage.id),
                 sortMode,
               );
+              const dragged =
+                dragItemId != null
+                  ? pipeline.items.find((i) => i.id === dragItemId) ?? null
+                  : null;
+              const dragShipLocked =
+                dragged != null &&
+                stage.id === "ship" &&
+                !softwareTeamDeliveryShipGate(
+                  deliveryCohort(pipeline.items, dragged),
+                ).ok;
               return (
                 <section
                   key={stage.id}
-                  className={"agent-kanban__col " + stageToneClass(stage.id)}
+                  className={
+                    "agent-kanban__col " +
+                    stageToneClass(stage.id) +
+                    (dragItemId && dragOverStage === stage.id
+                      ? dragShipLocked
+                        ? " is-drag-over is-drag-locked"
+                        : " is-drag-over"
+                      : "")
+                  }
                   role="listitem"
                   aria-label={t(stage.titleKey)}
+                  onDragOver={(e) => {
+                    if (!dragItemId) return;
+                    e.preventDefault();
+                    if (e.dataTransfer) {
+                      e.dataTransfer.dropEffect = dragShipLocked
+                        ? "none"
+                        : "move";
+                    }
+                    setDragOverStage((cur) =>
+                      cur === stage.id ? cur : stage.id,
+                    );
+                  }}
+                  onDragLeave={(e) => {
+                    if (!dragItemId) return;
+                    const next = e.relatedTarget as Node | null;
+                    if (next && e.currentTarget.contains(next)) return;
+                    setDragOverStage((cur) => (cur === stage.id ? null : cur));
+                  }}
+                  onDrop={(e) => {
+                    if (!dragItemId) return;
+                    e.preventDefault();
+                    const draggedId = dragItemId;
+                    setDragItemId(null);
+                    setDragOverStage(null);
+                    const source = pipeline.items.find(
+                      (i) => i.id === draggedId,
+                    );
+                    if (!source || source.stageId === stage.id) return;
+                    if (
+                      stage.id === "ship" &&
+                      !softwareTeamDeliveryShipGate(
+                        deliveryCohort(pipeline.items, source),
+                      ).ok
+                    ) {
+                      setStatus(t("softwareTeamDlc.shipLocked"));
+                      return;
+                    }
+                    pipeline.setStage(draggedId, stage.id);
+                  }}
                 >
                   <header className="agent-kanban__col-head">
                     <span className="agent-kanban__col-title">{t(stage.titleKey)}</span>
@@ -1841,12 +1901,27 @@ export function SdlcStudioPage({
                       {cards.map((item) => (
                         <li
                           key={item.id}
+                          draggable
+                          onDragStart={(e) => {
+                            if (!e.dataTransfer) return;
+                            e.dataTransfer.setData(
+                              "text/plain",
+                              `sdlc-item:${item.id}`,
+                            );
+                            e.dataTransfer.effectAllowed = "move";
+                            setDragItemId(item.id);
+                          }}
+                          onDragEnd={() => {
+                            setDragItemId(null);
+                            setDragOverStage(null);
+                          }}
                           className={
                             "agent-kanban__card" +
                             (item.sessionId && item.sessionId === currentSessionId
                               ? " is-current"
                               : "") +
-                            (item.stageId === "ship" ? " is-done" : "")
+                            (item.stageId === "ship" ? " is-done" : "") +
+                            (dragItemId === item.id ? " is-dragging" : "")
                           }
                         >
                           <button

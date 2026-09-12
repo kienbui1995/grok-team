@@ -727,6 +727,20 @@ html[data-theme="dark"][data-wallpaper="1"]
   grid-template-columns: repeat(5, minmax(140px, 1fr));
 }
 
+.agent-kanban__col.is-drag-over {
+  border-color: color-mix(in srgb, var(--accent, #5b8def) 55%, transparent);
+  background: color-mix(in srgb, var(--accent, #5b8def) 8%, transparent);
+}
+
+.agent-kanban__col.is-drag-locked {
+  border-color: color-mix(in srgb, var(--danger, #e55) 55%, transparent);
+  background: color-mix(in srgb, var(--danger, #e55) 8%, transparent);
+}
+
+.agent-kanban__card.is-dragging {
+  opacity: 0.55;
+}
+
 .sdlc-studio__refs {
   font-size: 11px;
   color: var(--text-tertiary);
