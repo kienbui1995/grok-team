@@ -24,6 +24,7 @@ import { itSettingsCode } from "./settings-code";
 import { itSettingsRemoteIm } from "./settings-remoteIm";
 import { itSettingsPet } from "./settings-pet";
 import { itSoftwareTeamDlc } from "./software-team-dlc";
+import { itStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
 
@@ -53,4 +54,5 @@ export const it: Record<MessageKey, string> = {
   ...itSettingsRemoteIm,
   ...itSettingsPet,
   ...itSoftwareTeamDlc,
+  ...itStoryGates,
 };

@@ -1,0 +1,42 @@
+{
+  "id": "grok-team-lean-poc",
+  "artifactRoot": "artifacts/engineering/grok-team-lean-poc",
+  "gates": [
+    {
+      "id": "G1",
+      "name": "spec",
+      "status": "pass",
+      "kind": "file",
+      "artifact": "g1-spec.md"
+    },
+    {
+      "id": "G2",
+      "name": "adr",
+      "status": "pass",
+      "kind": "file",
+      "artifact": "g2-adr.md"
+    },
+    {
+      "id": "G3",
+      "name": "dev",
+      "status": "open",
+      "kind": "diff",
+      "artifact": "diff"
+    },
+    {
+      "id": "G4",
+      "name": "qc",
+      "status": "open",
+      "kind": "file",
+      "artifact": "g4-qc-note.md"
+    },
+    {
+      "id": "G5",
+      "name": "demo",
+      "status": "open",
+      "kind": "file",
+      "artifact": "g5-demo-note.md",
+      "checklist": "g5-ship-path.md"
+    }
+  ]
+}

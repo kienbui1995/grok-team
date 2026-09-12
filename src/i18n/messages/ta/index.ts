@@ -24,6 +24,7 @@ import { taSettingsCode } from "./settings-code";
 import { taSettingsRemoteIm } from "./settings-remoteIm";
 import { taSettingsPet } from "./settings-pet";
 import { taSoftwareTeamDlc } from "./software-team-dlc";
+import { taStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
 
@@ -53,4 +54,5 @@ export const ta: Record<MessageKey, string> = {
   ...taSettingsRemoteIm,
   ...taSettingsPet,
   ...taSoftwareTeamDlc,
+  ...taStoryGates,
 };

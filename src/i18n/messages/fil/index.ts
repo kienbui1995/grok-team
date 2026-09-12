@@ -24,6 +24,7 @@ import { filSettingsCode } from "./settings-code";
 import { filSettingsRemoteIm } from "./settings-remoteIm";
 import { filSettingsPet } from "./settings-pet";
 import { filSoftwareTeamDlc } from "./software-team-dlc";
+import { filStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
 
@@ -53,4 +54,5 @@ export const fil: Record<MessageKey, string> = {
   ...filSettingsRemoteIm,
   ...filSettingsPet,
   ...filSoftwareTeamDlc,
+  ...filStoryGates,
 };

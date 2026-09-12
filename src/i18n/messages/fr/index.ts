@@ -24,6 +24,7 @@ import { frSettingsCode } from "./settings-code";
 import { frSettingsRemoteIm } from "./settings-remoteIm";
 import { frSettingsPet } from "./settings-pet";
 import { frSoftwareTeamDlc } from "./software-team-dlc";
+import { frStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
 
@@ -53,4 +54,5 @@ export const fr: Record<MessageKey, string> = {
   ...frSettingsRemoteIm,
   ...frSettingsPet,
   ...frSoftwareTeamDlc,
+  ...frStoryGates,
 };

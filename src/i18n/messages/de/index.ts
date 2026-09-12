@@ -24,6 +24,7 @@ import { deSettingsCode } from "./settings-code";
 import { deSettingsRemoteIm } from "./settings-remoteIm";
 import { deSettingsPet } from "./settings-pet";
 import { deSoftwareTeamDlc } from "./software-team-dlc";
+import { deStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
 
@@ -53,4 +54,5 @@ export const de: Record<MessageKey, string> = {
   ...deSettingsRemoteIm,
   ...deSettingsPet,
   ...deSoftwareTeamDlc,
+  ...deStoryGates,
 };

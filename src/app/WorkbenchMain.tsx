@@ -8,6 +8,7 @@ import { Tip } from "@/components/ui/tooltip";
 import { OpenLocationButton } from "@/components/OpenLocationButton";
 import { EnvInfoButton } from "@/components/side-workbench/EnvInfoButton";
 import { BottomTerminalToggle } from "@/components/bottom-terminal/BottomTerminalToggle";
+import { StoryGatesHost } from "@/components/story-gates/StoryGatesHost";
 import { PaneToggleButton } from "@/components/PaneToggleButton";
 import {
   IconAttach,
@@ -149,6 +150,24 @@ export function WorkbenchMain(props: WorkbenchMainProps) {
       (m) =>
         m.role === "user" && !!parseScheduledUserContent(m.content || ""),
     );
+
+  const storyGates = (
+    <StoryGatesHost
+      locale={locale}
+      onOpenDiff={() => {
+        setSideWorkbench(openSideTab(sideWorkbench, "review"));
+        openAsidePane();
+      }}
+      onOpenArtifact={(path) => {
+        const name = path.split(/[\\/]/).pop() || path;
+        setSideWorkbench({
+          ...openSideTab(sideWorkbench, "file", { path, name }),
+          treeVisible: true,
+        });
+        openAsidePane();
+      }}
+    />
+  );
 
   return (
     <>
@@ -297,6 +316,7 @@ export function WorkbenchMain(props: WorkbenchMainProps) {
               >
                 <IconUser size={20} />
               </button>
+              {storyGates}
               <BottomTerminalToggle
                 locale={locale}
                 open={bottomTerminalOpen}
@@ -430,6 +450,7 @@ export function WorkbenchMain(props: WorkbenchMainProps) {
                   }}
                 />
               ) : null}
+              {storyGates}
               <BottomTerminalToggle
                 locale={locale}
                 open={bottomTerminalOpen}
