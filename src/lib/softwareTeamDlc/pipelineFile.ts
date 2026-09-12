@@ -204,6 +204,17 @@ function rememberSeen(
   }
 }
 
+/**
+ * True when the bind moved to another project while an async read/write was
+ * in flight. Seen state and file status are global, so a completing write
+ * for the old project must not describe the newly bound one. Unbound
+ * context (tests, explicit calls without a bind) keeps prior behavior.
+ */
+function bindMovedSince(projectPath: string): boolean {
+  if (boundProjectPath == null) return false;
+  return boundProjectPath !== projectPath;
+}
+
 function mtimeFromWriteResult(result: unknown): number | null {
   if (!result || typeof result !== "object") return null;
   const mtimeMs = (result as { mtimeMs?: unknown }).mtimeMs;
@@ -444,13 +455,14 @@ export async function readSoftwareTeamPipelineFile(input: {
   emitStatus?: boolean;
 }): Promise<SoftwareTeamPipelineFileRead> {
   const host = input.host ?? defaultSoftwareTeamPipelineFileHost();
-  const publish = (status: SoftwareTeamPipelineFileRead) => {
-    if (input.emitStatus !== false) emitFileStatus(status);
-  };
   const plan = planSoftwareTeamPipelineFileWrite({
     projectPath: input.projectPath,
     host,
   });
+  const publish = (status: SoftwareTeamPipelineFileRead) => {
+    if (bindMovedSince(plan.projectPath)) return;
+    if (input.emitStatus !== false) emitFileStatus(status);
+  };
   if (!plan.allowed) {
     const fail: SoftwareTeamPipelineFileRead = {
       ok: false,
@@ -539,13 +551,16 @@ export async function writeSoftwareTeamPipelineFile(input: {
     plan.projectPath,
     SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
   );
+  // The bind may have moved while the read was in flight. The write itself
+  // still belongs to its own project; only global seen/status is skipped.
+  const stale = () => bindMovedSince(plan.projectPath);
   if (existing.error && !existing.missing) {
     const fail: SoftwareTeamPipelineFileWrite = {
       ok: false,
       reason: "host_error",
       error: existing.error,
     };
-    emitFileStatus(fail);
+    if (!stale()) emitFileStatus(fail);
     return fail;
   }
   if (existing.text != null && !existing.missing) {
@@ -561,17 +576,17 @@ export async function writeSoftwareTeamPipelineFile(input: {
           ok: false,
           reason: "parse_fail",
         };
-        emitFileStatus(fail);
+        if (!stale()) emitFileStatus(fail);
         return fail;
       }
     } else if (pipelineFileItemsEqual(parsed.store, input.store)) {
-      rememberSeen(input.store, existing.mtimeMs);
+      if (!stale()) rememberSeen(input.store, existing.mtimeMs);
       const skip: SoftwareTeamPipelineFileWrite = {
         ok: true,
         reason: "ok_project",
         skipped: true,
       };
-      emitFileStatus(skip);
+      if (!stale()) emitFileStatus(skip);
       return skip;
     } else {
       const foreign =
@@ -591,7 +606,7 @@ export async function writeSoftwareTeamPipelineFile(input: {
               ? SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE
               : "foreign file unchanged",
           };
-          emitFileStatus(fail);
+          if (!stale()) emitFileStatus(fail);
           return fail;
         }
       }
@@ -603,9 +618,9 @@ export async function writeSoftwareTeamPipelineFile(input: {
       SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
       serializeSoftwareTeamPipelineFile(input.store, input.now),
     );
-    rememberSeen(input.store, mtimeFromWriteResult(written));
+    if (!stale()) rememberSeen(input.store, mtimeFromWriteResult(written));
     const ok: SoftwareTeamPipelineFileWrite = { ok: true, reason: "ok_project" };
-    emitFileStatus(ok);
+    if (!stale()) emitFileStatus(ok);
     return ok;
   } catch (err) {
     const error =
@@ -617,6 +632,7 @@ export async function writeSoftwareTeamPipelineFile(input: {
       reason: "host_error",
       error,
     };
+    if (!stale()) emitFileStatus(fail);
     emitFileStatus(fail);
     return fail;
   }
@@ -630,25 +646,30 @@ export async function hydrateSoftwareTeamPipelineFromProject(input: {
   overwriteDirty?: boolean;
 }): Promise<SoftwareTeamPipelineFileRead> {
   const loaded = await readSoftwareTeamPipelineFile(input);
-  if (loaded.ok && loaded.store) {
-    const cached = loadSoftwareTeamPipelineStore(input.storage);
-    const dirty = isSoftwareTeamPipelineLocalDirty(cached);
-    if (
-      dirty &&
-      !input.overwriteDirty &&
-      !pipelineFileItemsEqual(loaded.store, cached)
-    ) {
-      const fail: SoftwareTeamPipelineFileRead = {
-        ok: false,
-        reason: "conflict",
-        error: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
-      };
-      emitFileStatus(fail);
-      return fail;
-    }
-    persistSoftwareTeamPipeline(loaded.store, input.storage);
-    rememberSeen(loaded.store, loaded.mtimeMs);
+  if (
+    bindMovedSince((input.projectPath ?? "").trim()) ||
+    !loaded.ok ||
+    !loaded.store
+  ) {
+    return loaded;
   }
+  const cached = loadSoftwareTeamPipelineStore(input.storage);
+  const dirty = isSoftwareTeamPipelineLocalDirty(cached);
+  if (
+    dirty &&
+    !input.overwriteDirty &&
+    !pipelineFileItemsEqual(loaded.store, cached)
+  ) {
+    const fail: SoftwareTeamPipelineFileRead = {
+      ok: false,
+      reason: "conflict",
+      error: SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
+    };
+    emitFileStatus(fail);
+    return fail;
+  }
+  persistSoftwareTeamPipeline(loaded.store, input.storage);
+  rememberSeen(loaded.store, loaded.mtimeMs);
   return loaded;
 }
 
@@ -744,6 +765,15 @@ export async function reloadSoftwareTeamPipelineIfNewer(input: {
     host,
     emitStatus: false,
   });
+  if (bindMovedSince(plan.projectPath)) {
+    // The bind moved while the read was in flight: apply nothing (no cache
+    // persist, no seen state, no status) for the old project.
+    return {
+      ok: true,
+      kind: "unchanged",
+      mtimeMs: loaded.ok ? loaded.mtimeMs ?? null : null,
+    };
+  }
   if (!loaded.ok) {
     emitFileStatus(loaded);
     if (loaded.reason === "parse_fail") {

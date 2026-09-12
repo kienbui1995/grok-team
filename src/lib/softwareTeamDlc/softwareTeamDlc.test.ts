@@ -4284,6 +4284,41 @@ describe("Software Works pipeline file adversarial persist/conflict", () => {
     expect(b.files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Unsaved");
   });
 
+  it("in-flight write completing after a later bind writes its own project but touches no global seen state", async () => {
+    bindSoftwareTeamPipelineProjectPath("/repo-a");
+    const statusBefore = lastSoftwareTeamPipelineFileStatus();
+    let releaseRead: (() => void) | null = null;
+    const gate = new Promise<{
+      error?: string | null;
+      text?: string | null;
+      mtimeMs?: number | null;
+    }>((resolve) => {
+      releaseRead = () => resolve({ error: null, text: null });
+    });
+    const writes: string[] = [];
+    const host = {
+      isDesktopHost: () => true,
+      readFile: () => gate,
+      writeFile: async (_p: string, relative: string) => {
+        writes.push(relative);
+        return { mtimeMs: 99 };
+      },
+    };
+    const pending = writeSoftwareTeamPipelineFile({
+      projectPath: "/repo-a",
+      store: createEmptySoftwareTeamPipelineStore(),
+      host,
+    });
+    await Promise.resolve();
+    bindSoftwareTeamPipelineProjectPath("/repo-b");
+    releaseRead?.();
+    const result = await pending;
+    expect(result).toMatchObject({ ok: true, reason: "ok_project" });
+    expect(writes).toEqual([SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]);
+    expect(lastSoftwareTeamPipelineFileStatus()).toBe(statusBefore);
+    expect(lastSoftwareTeamPipelineFileMtimeMs()).toBe(null);
+  });
+
   it("shared ~/.grok and /home/u/.grok refuse accept/keep/write/queue", async () => {
     const store = createEmptySoftwareTeamPipelineStore();
     const { host, writes } = fileHost();
