@@ -343,6 +343,17 @@ export {
 } from "./archive";
 
 export {
+  SOFTWARE_TEAM_ITEM_PRIORITIES,
+  SOFTWARE_TEAM_STUDIO_SORT_MODES,
+  isSoftwareTeamStudioSortMode,
+  normalizeSoftwareTeamItemPriority,
+  setSoftwareTeamItemPriority,
+  sortSoftwareTeamPipelineItems,
+  type SoftwareTeamItemPriority,
+  type SoftwareTeamStudioSortMode,
+} from "./priority";
+
+export {
   SOFTWARE_TEAM_ROLE_FILTER_ALL,
   SOFTWARE_TEAM_STAGE_FILTER_ALL,
   filterSoftwareTeamStudioItems,

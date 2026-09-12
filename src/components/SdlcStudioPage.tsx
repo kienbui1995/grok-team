@@ -8,6 +8,7 @@ import type { Locale, MessageKey } from "@/i18n";
 import { createT } from "@/i18n";
 import { ContextMenu, type ContextMenuItem } from "@/components/ContextMenu";
 import { GlassModal } from "@/components/GlassModal";
+import { Select } from "@/components/Select";
 import { SdlcDeliveryDetailPane } from "@/components/SdlcDeliveryDetailPane";
 import { useSoftwareTeamPipeline } from "@/hooks/useSoftwareTeamDlc";
 import {
@@ -36,11 +37,13 @@ import {
   exportSoftwareTeamDeliverySummary,
   filterSoftwareTeamStudioItems,
   isSoftwareTeamItemArchived,
+  isSoftwareTeamStudioSortMode,
   lastSoftwareTeamPipelineFileStatus,
   listSoftwareTeamDeliveryGroups,
   loadSoftwareTeamStudioPrefs,
   commitSoftwareTeamStudioPrefs,
   resolveSoftwareTeamStudioPrefs,
+  sortSoftwareTeamPipelineItems,
   decideEmptyStudioWizard,
   pickSoftwareTeamStudioOverlay,
   normalizeSoftwareTeamGitBranch,
@@ -82,6 +85,7 @@ import {
   type SoftwareTeamRoleId,
   type SoftwareTeamSdlcDocProbe,
   type SoftwareTeamSdlcStageId,
+  type SoftwareTeamStudioSortMode,
 } from "@/lib/softwareTeamDlc";
 
 type TFn = (key: MessageKey, vars?: Record<string, string | number>) => string;
@@ -228,6 +232,9 @@ export function SdlcStudioPage({
   const [showArchived, setShowArchived] = useState(
     () => loadSoftwareTeamStudioPrefs().showArchived,
   );
+  const [sortMode, setSortMode] = useState<SoftwareTeamStudioSortMode>(
+    () => loadSoftwareTeamStudioPrefs().sortMode,
+  );
   const [stageFilter, setStageFilter] =
     useState<SoftwareTeamStageFilterId>(SOFTWARE_TEAM_STAGE_FILTER_ALL);
   const [roleFilter, setRoleFilter] =
@@ -269,36 +276,41 @@ export function SdlcStudioPage({
     (next: {
       deliveryFilter?: SoftwareTeamDeliveryFilterId;
       showArchived?: boolean;
+      sortMode?: SoftwareTeamStudioSortMode;
     }) => {
       const prefs = commitSoftwareTeamStudioPrefs(
         {
           deliveryFilter: next.deliveryFilter ?? deliveryFilter,
           showArchived: next.showArchived ?? showArchived,
+          sortMode: next.sortMode ?? sortMode,
         },
         pipeline.items,
         pipeline.store.archivedDeliveryIds,
       );
       setDeliveryFilter(prefs.deliveryFilter);
       setShowArchived(prefs.showArchived);
+      setSortMode(prefs.sortMode);
     },
-    [deliveryFilter, pipeline.items, pipeline.store.archivedDeliveryIds, showArchived],
+    [deliveryFilter, pipeline.items, pipeline.store.archivedDeliveryIds, showArchived, sortMode],
   );
 
   useEffect(() => {
     const resolved = resolveSoftwareTeamStudioPrefs(
-      { deliveryFilter, showArchived },
+      { deliveryFilter, showArchived, sortMode },
       pipeline.items,
       pipeline.store.archivedDeliveryIds,
     );
     if (
       resolved.deliveryFilter === deliveryFilter &&
-      resolved.showArchived === showArchived
+      resolved.showArchived === showArchived &&
+      resolved.sortMode === sortMode
     ) {
       return;
     }
     setDeliveryFilter(resolved.deliveryFilter);
     setShowArchived(resolved.showArchived);
-  }, [deliveryFilter, pipeline.items, pipeline.store.archivedDeliveryIds, showArchived]);
+    setSortMode(resolved.sortMode);
+  }, [deliveryFilter, pipeline.items, pipeline.store.archivedDeliveryIds, showArchived, sortMode]);
 
   useEffect(() => {
     let timer: number | null = null;
@@ -1069,6 +1081,35 @@ export function SdlcStudioPage({
           onClick: () => pipeline.setRole(menuItem.id, role.id),
         })),
       },
+      {
+        label: t("softwareTeamDlc.priorityMenu"),
+        children: [
+          {
+            id: "priority-p1",
+            label: t("softwareTeamDlc.priorityP1"),
+            disabled: menuItem.priority === "p1",
+            onClick: () => pipeline.setPriority(menuItem.id, "p1"),
+          },
+          {
+            id: "priority-p2",
+            label: t("softwareTeamDlc.priorityP2"),
+            disabled: menuItem.priority === "p2",
+            onClick: () => pipeline.setPriority(menuItem.id, "p2"),
+          },
+          {
+            id: "priority-p3",
+            label: t("softwareTeamDlc.priorityP3"),
+            disabled: menuItem.priority === "p3",
+            onClick: () => pipeline.setPriority(menuItem.id, "p3"),
+          },
+          {
+            id: "priority-clear",
+            label: t("softwareTeamDlc.priorityClear"),
+            disabled: !menuItem.priority,
+            onClick: () => pipeline.setPriority(menuItem.id, ""),
+          },
+        ],
+      },
     ];
     if (nextRole) {
       const roleTitle = t(softwareTeamRoleById(nextRole)?.titleKey ?? "softwareTeamDlc.handoff");
@@ -1415,6 +1456,21 @@ export function SdlcStudioPage({
             autoComplete="off"
             spellCheck={false}
             aria-label={t("softwareTeamDlc.searchTitle")}
+          />
+          <Select
+            value={sortMode}
+            options={[
+              { value: "newest", label: t("softwareTeamDlc.sortNewest") },
+              { value: "oldest", label: t("softwareTeamDlc.sortOldest") },
+              { value: "priority", label: t("softwareTeamDlc.sortPriority") },
+            ]}
+            onChange={(value) => {
+              if (isSoftwareTeamStudioSortMode(value)) {
+                persistStudioPrefs({ sortMode: value });
+              }
+            }}
+            aria-label={t("softwareTeamDlc.sortLabel")}
+            className="sdlc-studio__sort"
           />
           <div
             className="sdlc-studio__chips"
@@ -1763,7 +1819,10 @@ export function SdlcStudioPage({
             aria-label={t("softwareTeamDlc.sdlcTitle")}
           >
             {SOFTWARE_TEAM_SDLC_STAGES.map((stage) => {
-              const cards = filtered.filter((item) => item.stageId === stage.id);
+              const cards = sortSoftwareTeamPipelineItems(
+                filtered.filter((item) => item.stageId === stage.id),
+                sortMode,
+              );
               return (
                 <section
                   key={stage.id}
@@ -1802,6 +1861,22 @@ export function SdlcStudioPage({
                             <span className="agent-kanban__card-title">
                               {displayTitle(item)}
                             </span>
+                            {item.priority ? (
+                              <span
+                                className={
+                                  "sdlc-studio__priority sdlc-studio__priority--" +
+                                  item.priority
+                                }
+                              >
+                                {t(
+                                  item.priority === "p1"
+                                    ? "softwareTeamDlc.priorityP1"
+                                    : item.priority === "p2"
+                                      ? "softwareTeamDlc.priorityP2"
+                                      : "softwareTeamDlc.priorityP3",
+                                )}
+                              </span>
+                            ) : null}
                             {item.gitBranch.trim() ? (
                               <span className="sdlc-studio__refs">
                                 {t("softwareTeamDlc.gitBranch")}: {item.gitBranch.trim()}

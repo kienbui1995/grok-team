@@ -7,6 +7,10 @@
 
 import { isSoftwareTeamItemArchived } from "./archive";
 import {
+  isSoftwareTeamStudioSortMode,
+  type SoftwareTeamStudioSortMode,
+} from "./priority";
+import {
   SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
   SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
   type SoftwareTeamDeliveryFilterId,
@@ -19,11 +23,13 @@ export const SOFTWARE_TEAM_DLC_STUDIO_PREFS_KEY = "grok.softwareTeamDlc.studio";
 export type SoftwareTeamStudioPrefs = {
   deliveryFilter: SoftwareTeamDeliveryFilterId;
   showArchived: boolean;
+  sortMode: SoftwareTeamStudioSortMode;
 };
 
 export const DEFAULT_SOFTWARE_TEAM_STUDIO_PREFS: SoftwareTeamStudioPrefs = {
   deliveryFilter: SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
   showArchived: false,
+  sortMode: "newest",
 };
 
 function defaultStorage(): SoftwareTeamDlcStorage {
@@ -43,6 +49,10 @@ export function parseSoftwareTeamStudioPrefs(
   return {
     deliveryFilter: filter || SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
     showArchived: rec.showArchived === true,
+    sortMode:
+      typeof rec.sortMode === "string" && isSoftwareTeamStudioSortMode(rec.sortMode)
+        ? rec.sortMode
+        : DEFAULT_SOFTWARE_TEAM_STUDIO_PREFS.sortMode,
   };
 }
 
@@ -68,6 +78,7 @@ export function saveSoftwareTeamStudioPrefs(
       JSON.stringify({
         deliveryFilter: prefs.deliveryFilter,
         showArchived: prefs.showArchived === true,
+        sortMode: prefs.sortMode,
       }),
     );
   } catch {
@@ -114,7 +125,7 @@ export function resolveSoftwareTeamStudioPrefs(
     );
     if (archived) showArchived = true;
   }
-  return { deliveryFilter, showArchived };
+  return { deliveryFilter, showArchived, sortMode: prefs.sortMode };
 }
 
 /** Resolve against live items, then write the fallback (deleted id → All). */

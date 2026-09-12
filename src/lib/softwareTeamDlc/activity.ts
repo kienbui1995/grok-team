@@ -11,6 +11,9 @@ import {
   isSoftwareTeamSdlcStageId,
   type SoftwareTeamSdlcStageId,
 } from "./sdlc";
+// Type-only: priority.ts imports this module's append helper at runtime, so a
+// value import here would close a cycle.
+import type { SoftwareTeamItemPriority } from "./priority";
 
 export const SOFTWARE_TEAM_ACTIVITY_TYPES = [
   "item_added",
@@ -27,6 +30,7 @@ export const SOFTWARE_TEAM_ACTIVITY_TYPES = [
   "item_moved",
   "session_bound",
   "session_unbound",
+  "priority",
 ] as const;
 
 export type SoftwareTeamActivityType =
@@ -52,6 +56,7 @@ export type SoftwareTeamActivityEvent = {
   roleId?: SoftwareTeamRoleId;
   stageId?: SoftwareTeamSdlcStageId;
   noteKind?: SoftwareTeamActivityNoteKind;
+  priority?: SoftwareTeamItemPriority;
 };
 
 export function isSoftwareTeamActivityType(
@@ -94,6 +99,11 @@ export function parseSoftwareTeamActivityEvent(
   if (isSoftwareTeamSdlcStageId(stageRaw)) event.stageId = stageRaw;
   const noteRaw = typeof rec.noteKind === "string" ? rec.noteKind : null;
   if (isSoftwareTeamActivityNoteKind(noteRaw)) event.noteKind = noteRaw;
+  const priorityRaw =
+    typeof rec.priority === "string" ? rec.priority.trim().toLowerCase() : "";
+  if (priorityRaw === "p1" || priorityRaw === "p2" || priorityRaw === "p3") {
+    event.priority = priorityRaw;
+  }
   return event;
 }
 
@@ -165,6 +175,8 @@ export function softwareTeamActivityMessageKey(
       return "softwareTeamDlc.activity.session_bound";
     case "session_unbound":
       return "softwareTeamDlc.activity.session_unbound";
+    case "priority":
+      return "softwareTeamDlc.activity.priority";
     default: {
       const _never: never = type;
       return _never;

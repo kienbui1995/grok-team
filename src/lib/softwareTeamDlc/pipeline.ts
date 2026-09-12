@@ -32,6 +32,10 @@ import {
   softwareTeamDeliveryShipGate,
 } from "./shipGate";
 import {
+  normalizeSoftwareTeamItemPriority,
+  type SoftwareTeamItemPriority,
+} from "./priority";
+import {
   appendSoftwareTeamActivity,
   parseSoftwareTeamActivityList,
   type SoftwareTeamActivityEvent,
@@ -124,6 +128,8 @@ export type SoftwareTeamPipelineItem = {
   archived: boolean;
   /** Optional git branch *label*. Missing = "". Does not create a worktree. */
   gitBranch: string;
+  /** Triage label on the card. Missing = "". Informational, never gates Ship. */
+  priority: SoftwareTeamItemPriority;
 };
 
 export type SoftwareTeamPipelineStore = {
@@ -155,6 +161,8 @@ export type SoftwareTeamPipelineItemDraft = {
   stageSource?: SoftwareTeamStageSource;
   archived?: boolean;
   gitBranch?: string;
+  /** Triage label on the card. Missing = "". */
+  priority?: string;
 };
 
 function defaultStorage(): SoftwareTeamDlcStorage {
@@ -294,6 +302,7 @@ export function createSoftwareTeamPipelineItem(
     sessionDonePending: draft.sessionDonePending === true,
     archived: draft.archived === true,
     gitBranch: (draft.gitBranch ?? "").trim(),
+    priority: normalizeSoftwareTeamItemPriority(draft.priority),
     updatedAt:
       typeof draft.updatedAt === "number" && Number.isFinite(draft.updatedAt)
         ? draft.updatedAt
@@ -334,6 +343,7 @@ export function parseSoftwareTeamPipelineItem(
     sessionDonePending: rec.sessionDonePending === true,
     archived: rec.archived === true,
     gitBranch: typeof rec.gitBranch === "string" ? rec.gitBranch : "",
+    priority: typeof rec.priority === "string" ? rec.priority : "",
     updatedAt: typeof rec.updatedAt === "number" ? rec.updatedAt : undefined,
     stageSource: isSoftwareTeamStageSource(sourceRaw) ? sourceRaw : undefined,
   });

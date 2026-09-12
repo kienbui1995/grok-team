@@ -25,7 +25,9 @@ import {
   saveSoftwareTeamDlcEnabled,
   setPipelineItemRole,
   setPipelineItemStage,
+  setSoftwareTeamItemPriority,
   type SoftwareTeamHandoffStoreResult,
+  type SoftwareTeamItemPriority,
   type SoftwareTeamShipStoreResult,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamPipelineItemDraft,
@@ -114,6 +116,7 @@ export function useSoftwareTeamPipeline(): {
   ) => void;
   setStage: (itemId: string, stageId: SoftwareTeamSdlcStageId) => void;
   setRole: (itemId: string, roleId: SoftwareTeamRoleId) => void;
+  setPriority: (itemId: string, priority: SoftwareTeamItemPriority) => void;
   bindSession: (itemId: string, sessionId: string) => void;
   assignSession: (
     sessionId: string,
@@ -211,6 +214,17 @@ export function useSoftwareTeamPipeline(): {
   const setRole = useCallback((itemId: string, roleId: SoftwareTeamRoleId) => {
     setStore(rememberUndo(setPipelineItemRole(loadSoftwareTeamPipelineStore(), itemId, roleId)));
   }, [rememberUndo]);
+
+  const setPriority = useCallback(
+    (itemId: string, priority: SoftwareTeamItemPriority) => {
+      setStore(
+        rememberUndo(
+          setSoftwareTeamItemPriority(loadSoftwareTeamPipelineStore(), itemId, priority),
+        ),
+      );
+    },
+    [rememberUndo],
+  );
 
   const bindSession = useCallback((itemId: string, sessionId: string) => {
     setStore(
@@ -425,6 +439,7 @@ export function useSoftwareTeamPipeline(): {
     updateItem,
     setStage,
     setRole,
+    setPriority,
     bindSession,
     assignSession,
     clearSession,

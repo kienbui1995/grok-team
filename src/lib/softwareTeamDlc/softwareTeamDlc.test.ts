@@ -78,10 +78,12 @@ import {
   softwareTeamAttachRefs,
   SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
   SOFTWARE_TEAM_DELIVERY_FILTER_UNSCOPED,
+  SOFTWARE_TEAM_ITEM_PRIORITIES,
   SOFTWARE_TEAM_PIPELINE_BACKUP_RELATIVE,
   SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
   SOFTWARE_TEAM_PIPELINE_SCHEMA,
   SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION,
+  SOFTWARE_TEAM_STUDIO_SORT_MODES,
   filterSoftwareTeamItemsByDelivery,
   listSoftwareTeamDeliveryGroups,
   openSoftwareTeamSdlcDoc,
@@ -95,7 +97,10 @@ import {
   resolveSoftwareTeamDeliveryId,
   resolveSoftwareTeamStudioDeliveryId,
   missingSoftwareTeamTeammateRoles,
+  normalizeSoftwareTeamItemPriority,
   setSoftwareTeamItemArchived,
+  setSoftwareTeamItemPriority,
+  sortSoftwareTeamPipelineItems,
   serializeSoftwareTeamPipelineFile,
   softwareTeamDeliveryItemDraft,
   softwareTeamDeliverySiblingDraft,
@@ -3299,15 +3304,17 @@ describe("Software Works studio prefs + full roster + copy export", () => {
     expect(parseSoftwareTeamStudioPrefs(null)).toEqual({
       deliveryFilter: SOFTWARE_TEAM_DELIVERY_FILTER_ALL,
       showArchived: false,
+      sortMode: "newest",
     });
     saveSoftwareTeamStudioPrefs(
-      { deliveryFilter: "d-keep", showArchived: true },
+      { deliveryFilter: "d-keep", showArchived: true, sortMode: "newest" },
       storage,
     );
     expect(storage.getItem(SOFTWARE_TEAM_DLC_STUDIO_PREFS_KEY)).toContain("d-keep");
     expect(loadSoftwareTeamStudioPrefs(storage)).toEqual({
       deliveryFilter: "d-keep",
       showArchived: true,
+      sortMode: "newest",
     });
     const keep = createSoftwareTeamPipelineItem({
       id: "sp-1",
@@ -3316,16 +3323,16 @@ describe("Software Works studio prefs + full roster + copy export", () => {
     })!;
     expect(
       resolveSoftwareTeamStudioPrefs(
-        { deliveryFilter: "d-gone", showArchived: false },
+        { deliveryFilter: "d-gone", showArchived: false, sortMode: "newest" },
         [keep],
       ).deliveryFilter,
     ).toBe(SOFTWARE_TEAM_DELIVERY_FILTER_ALL);
     expect(
       resolveSoftwareTeamStudioPrefs(
-        { deliveryFilter: "d-keep", showArchived: false },
+        { deliveryFilter: "d-keep", showArchived: false, sortMode: "newest" },
         [keep],
       ),
-    ).toEqual({ deliveryFilter: "d-keep", showArchived: false });
+    ).toEqual({ deliveryFilter: "d-keep", showArchived: false, sortMode: "newest" });
   });
 
   it("does not auto-open the empty wizard while a pipeline conflict is open", () => {
@@ -3381,13 +3388,14 @@ describe("Software Works studio prefs + full roster + copy export", () => {
       archived: true,
     })!;
     const resolved = resolveSoftwareTeamStudioPrefs(
-      { deliveryFilter: "d-arch", showArchived: false },
+      { deliveryFilter: "d-arch", showArchived: false, sortMode: "newest" },
       [item],
       ["d-arch"],
     );
     expect(resolved).toEqual({
       deliveryFilter: "d-arch",
       showArchived: true,
+      sortMode: "newest",
     });
   });
 
@@ -3399,7 +3407,7 @@ describe("Software Works studio prefs + full roster + copy export", () => {
       deliveryId: "d-keep",
     })!;
     const next = commitSoftwareTeamStudioPrefs(
-      { deliveryFilter: "d-gone", showArchived: false },
+      { deliveryFilter: "d-gone", showArchived: false, sortMode: "newest" },
       [keep],
       [],
       storage,
@@ -4287,7 +4295,7 @@ describe("Software Works pipeline file adversarial persist/conflict", () => {
   it("in-flight write completing after a later bind writes its own project but touches no global seen state", async () => {
     bindSoftwareTeamPipelineProjectPath("/repo-a");
     const statusBefore = lastSoftwareTeamPipelineFileStatus();
-    let releaseRead: (() => void) | null = null;
+    let releaseRead: () => void = () => {};
     const gate = new Promise<{
       error?: string | null;
       text?: string | null;
@@ -4311,7 +4319,7 @@ describe("Software Works pipeline file adversarial persist/conflict", () => {
     });
     await Promise.resolve();
     bindSoftwareTeamPipelineProjectPath("/repo-b");
-    releaseRead?.();
+    releaseRead();
     const result = await pending;
     expect(result).toMatchObject({ ok: true, reason: "ok_project" });
     expect(writes).toEqual([SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]);
@@ -4704,5 +4712,144 @@ describe("Software Works board adversarial cases", () => {
     expect(
       bound.activity.filter((event) => event.type === "session_bound"),
     ).toHaveLength(1);
+  });
+});
+
+describe("Software Works item priority + board sort", () => {
+  it("normalizes priority labels and rejects unknown ones", () => {
+    expect(SOFTWARE_TEAM_ITEM_PRIORITIES).toEqual(["", "p1", "p2", "p3"]);
+    expect(normalizeSoftwareTeamItemPriority(" P2 ")).toBe("p2");
+    expect(normalizeSoftwareTeamItemPriority("P1")).toBe("p1");
+    expect(normalizeSoftwareTeamItemPriority("urgent")).toBe("");
+    expect(normalizeSoftwareTeamItemPriority("p4")).toBe("");
+    expect(normalizeSoftwareTeamItemPriority(null)).toBe("");
+  });
+
+  it("hydrates missing priority as empty and keeps valid v3 values", () => {
+    const bare = parseSoftwareTeamPipelineFileDoc({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION,
+      updatedAt: 1,
+      items: [{ id: "p-1", roleId: "product", title: "Bare" }],
+    });
+    expect(bare.ok).toBe(true);
+    if (!bare.ok) throw new Error("expected parse ok");
+    expect(bare.store.items[0]?.priority).toBe("");
+
+    const kept = parseSoftwareTeamPipelineFileDoc({
+      schema: SOFTWARE_TEAM_PIPELINE_SCHEMA,
+      version: SOFTWARE_TEAM_PIPELINE_SCHEMA_VERSION,
+      updatedAt: 1,
+      items: [
+        { id: "p-2", roleId: "product", title: "Kept", priority: "p2" },
+        { id: "p-3", roleId: "engineer", title: "Bogus", priority: "urgent" },
+      ],
+    });
+    expect(kept.ok).toBe(true);
+    if (!kept.ok) throw new Error("expected parse ok");
+    expect(kept.store.items[0]?.priority).toBe("p2");
+    expect(kept.store.items[1]?.priority).toBe("");
+  });
+
+  it("sets and clears priority with a priority activity event", () => {
+    const base = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "pri-1",
+      roleId: "product",
+      title: "Triage me",
+      deliveryId: "d-pri",
+    });
+    const raised = setSoftwareTeamItemPriority(base, "pri-1", "p1", 50);
+    const raisedItem = pipelineItemById(raised, "pri-1");
+    expect(raisedItem?.priority).toBe("p1");
+    expect(raisedItem?.updatedAt).toBe(50);
+    const event = raised.activity.find((e) => e.type === "priority");
+    expect(event).toMatchObject({
+      at: 50,
+      type: "priority",
+      deliveryId: "d-pri",
+      itemId: "pri-1",
+      priority: "p1",
+    });
+
+    // Same value → same store reference (no activity spam).
+    expect(setSoftwareTeamItemPriority(raised, "pri-1", "p1", 51)).toBe(raised);
+
+    const cleared = setSoftwareTeamItemPriority(raised, "pri-1", "", 52);
+    expect(pipelineItemById(cleared, "pri-1")?.priority).toBe("");
+    expect(cleared.activity.filter((e) => e.type === "priority")).toHaveLength(2);
+
+    expect(setSoftwareTeamItemPriority(base, "missing", "p1", 53)).toBe(base);
+  });
+
+  it("round-trips priority through the project file and drops unknown activity values", () => {
+    const withPriority = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      { id: "pri-io", roleId: "architect", title: "IO", priority: "p3" },
+    )!;
+    const text = serializeSoftwareTeamPipelineFile(withPriority, 77);
+    const parsed = parseSoftwareTeamPipelineFileDoc(text);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) throw new Error("expected parse ok");
+    expect(parsed.store.items[0]?.priority).toBe("p3");
+
+    const events = parseSoftwareTeamActivityList([
+      { at: 1, type: "priority", deliveryId: "d", itemId: "x", priority: "p9" },
+      { at: 2, type: "priority", deliveryId: "d", itemId: "x", priority: "p2" },
+    ]);
+    expect(events).toHaveLength(2);
+    expect(events[0]?.priority).toBeUndefined();
+    expect(events[1]?.priority).toBe("p2");
+  });
+
+  it("sorts columns by newest, oldest, and priority with recency tie-break", () => {
+    expect(SOFTWARE_TEAM_STUDIO_SORT_MODES).toEqual(["newest", "oldest", "priority"]);
+    const item = (id: string, updatedAt: number, priority = "") =>
+      createSoftwareTeamPipelineItem({ id, roleId: "product", updatedAt, priority })!;
+    const items = [
+      item("old-p3", 10, "p3"),
+      item("new-none", 40),
+      item("mid-p1", 20, "p1"),
+      item("new-p1", 30, "p1"),
+      item("mid-p2", 20, "p2"),
+    ];
+    expect(sortSoftwareTeamPipelineItems(items, "newest").map((i) => i.id)).toEqual([
+      "new-none",
+      "new-p1",
+      "mid-p1",
+      "mid-p2",
+      "old-p3",
+    ]);
+    expect(sortSoftwareTeamPipelineItems(items, "oldest").map((i) => i.id)).toEqual([
+      "old-p3",
+      "mid-p1",
+      "mid-p2",
+      "new-p1",
+      "new-none",
+    ]);
+    expect(sortSoftwareTeamPipelineItems(items, "priority").map((i) => i.id)).toEqual([
+      "new-p1",
+      "mid-p1",
+      "mid-p2",
+      "old-p3",
+      "new-none",
+    ]);
+  });
+
+  it("keeps the remembered sort mode and falls back on unknown values", () => {
+    expect(
+      parseSoftwareTeamStudioPrefs({
+        deliveryFilter: "all",
+        showArchived: false,
+        sortMode: "priority",
+      }).sortMode,
+    ).toBe("priority");
+    expect(
+      parseSoftwareTeamStudioPrefs({
+        deliveryFilter: "all",
+        showArchived: false,
+        sortMode: "alphabetical",
+      }).sortMode,
+    ).toBe("newest");
+    expect(parseSoftwareTeamStudioPrefs({}).sortMode).toBe("newest");
   });
 });
