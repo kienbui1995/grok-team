@@ -137,6 +137,12 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "Catatan QA",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, perbaikan wajib vs nits, risiko.",
   "softwareTeamDlc.qaNotePlaceholder": "Kasus, perintah, lulus/gagal.",
+  "softwareTeamDlc.markProductNote": "Tulis catatan Product",
+  "softwareTeamDlc.markArchitectNote": "Tulis catatan Architect",
+  "softwareTeamDlc.productNote": "Catatan Product",
+  "softwareTeamDlc.productNotePlaceholder": "Lingkup, pengguna, kriteria keberhasilan.",
+  "softwareTeamDlc.architectNote": "Catatan Architect",
+  "softwareTeamDlc.architectNotePlaceholder": "Keputusan desain, trade-off, batasan.",
   "softwareTeamDlc.notesSaved":
     "Catatan tersimpan. Ship terbuka jika pengiriman ini punya catatan Reviewer dan QA.",
   "softwareTeamDlc.startDelivery": "Mulai pengiriman",

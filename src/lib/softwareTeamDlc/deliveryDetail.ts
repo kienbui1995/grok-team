@@ -50,6 +50,8 @@ export type SoftwareTeamDeliveryDetail = {
   items: SoftwareTeamPipelineItem[];
   focusItem: SoftwareTeamPipelineItem | null;
   roleHistory: SoftwareTeamRoleId[];
+  productNotes: SoftwareTeamDeliveryNote[];
+  architectNotes: SoftwareTeamDeliveryNote[];
   reviewNotes: SoftwareTeamDeliveryNote[];
   qaNotes: SoftwareTeamDeliveryNote[];
   cta: SoftwareTeamDoneCta;
@@ -171,6 +173,12 @@ export function buildSoftwareTeamDeliveryDetail(input: {
     items: members,
     focusItem,
     roleHistory: unionSoftwareTeamDeliveryRoleHistory(members),
+    productNotes: members
+      .filter((item) => item.productNote.trim())
+      .map((item) => ({ itemId: item.id, text: item.productNote.trim() })),
+    architectNotes: members
+      .filter((item) => item.architectNote.trim())
+      .map((item) => ({ itemId: item.id, text: item.architectNote.trim() })),
     reviewNotes: members
       .filter((item) => item.reviewNote.trim())
       .map((item) => ({ itemId: item.id, text: item.reviewNote.trim() })),

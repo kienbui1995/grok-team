@@ -162,6 +162,8 @@ export function composeHandoffStarter(
   if (checklist.length) {
     lines.push("", ...checklist);
   }
+  if (from.productNote) lines.push(`Product notes: ${from.productNote}`);
+  if (from.architectNote) lines.push(`Architect notes: ${from.architectNote}`);
   if (from.reviewNote) lines.push(`Reviewer notes: ${from.reviewNote}`);
   if (from.qaNote) lines.push(`QA notes: ${from.qaNote}`);
   lines.push(

@@ -1,6 +1,7 @@
 /**
  * Software Works — delivery detail (GlassModal).
- * Title, role history, Review/QA notes, next CTA, docs/sdlc, same-delivery sessions.
+ * Title, role history, Product/Architect/Review/QA notes, next CTA, docs/sdlc,
+ * same-delivery sessions.
  */
 
 import { useEffect, useMemo, useState } from "react";
@@ -46,6 +47,8 @@ export type SdlcDeliveryDetailPaneProps = {
     goalRef: string;
     artifactRef: string;
   }) => boolean;
+  onSaveProductNote?: (text: string) => void;
+  onSaveArchitectNote?: (text: string) => void;
   onSaveReviewNote?: (text: string) => void;
   onSaveQaNote?: (text: string) => void;
 };
@@ -85,6 +88,8 @@ export function SdlcDeliveryDetailPane({
   onUnbindSession,
   onAddSdlcDocs,
   onSaveSliceRefs,
+  onSaveProductNote,
+  onSaveArchitectNote,
   onSaveReviewNote,
   onSaveQaNote,
 }: SdlcDeliveryDetailPaneProps) {
@@ -97,10 +102,18 @@ export function SdlcDeliveryDetailPane({
   const [planDraft, setPlanDraft] = useState(detail?.planRef ?? "");
   const [goalDraft, setGoalDraft] = useState(detail?.goalRef ?? "");
   const [artifactDraft, setArtifactDraft] = useState(detail?.artifactRef ?? "");
+  const [productDraft, setProductDraft] = useState(
+    detail?.productNotes[0]?.text ?? "",
+  );
+  const [architectDraft, setArchitectDraft] = useState(
+    detail?.architectNotes[0]?.text ?? "",
+  );
   const [reviewDraft, setReviewDraft] = useState(
     detail?.reviewNotes[0]?.text ?? "",
   );
   const [qaDraft, setQaDraft] = useState(detail?.qaNotes[0]?.text ?? "");
+  const productText = detail?.productNotes[0]?.text ?? "";
+  const architectText = detail?.architectNotes[0]?.text ?? "";
   const reviewText = detail?.reviewNotes[0]?.text ?? "";
   const qaText = detail?.qaNotes[0]?.text ?? "";
   useEffect(() => {
@@ -113,9 +126,17 @@ export function SdlcDeliveryDetailPane({
     setArtifactDraft(detail?.artifactRef ?? "");
   }, [detail?.deliveryId, detail?.planRef, detail?.goalRef, detail?.artifactRef]);
   useEffect(() => {
+    setProductDraft(productText);
+    setArchitectDraft(architectText);
     setReviewDraft(reviewText);
     setQaDraft(qaText);
-  }, [detail?.deliveryId, reviewText, qaText]);
+  }, [
+    detail?.deliveryId,
+    productText,
+    architectText,
+    reviewText,
+    qaText,
+  ]);
 
   return (
     <GlassModal
@@ -328,6 +349,46 @@ export function SdlcDeliveryDetailPane({
                 }
               >
                 {t("softwareTeamDlc.saveSliceRefs")}
+              </button>
+            ) : null}
+          </div>
+          <div className="sdlc-studio__field">
+            <span>{t("softwareTeamDlc.productNote")}</span>
+            <textarea
+              className="settings-input"
+              rows={4}
+              value={productDraft}
+              onChange={(e) => setProductDraft(e.target.value)}
+              placeholder={t("softwareTeamDlc.productNotePlaceholder")}
+              aria-label={t("softwareTeamDlc.productNote")}
+            />
+            {onSaveProductNote ? (
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => onSaveProductNote(productDraft)}
+              >
+                {t("common.save")}
+              </button>
+            ) : null}
+          </div>
+          <div className="sdlc-studio__field">
+            <span>{t("softwareTeamDlc.architectNote")}</span>
+            <textarea
+              className="settings-input"
+              rows={4}
+              value={architectDraft}
+              onChange={(e) => setArchitectDraft(e.target.value)}
+              placeholder={t("softwareTeamDlc.architectNotePlaceholder")}
+              aria-label={t("softwareTeamDlc.architectNote")}
+            />
+            {onSaveArchitectNote ? (
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => onSaveArchitectNote(architectDraft)}
+              >
+                {t("common.save")}
               </button>
             ) : null}
           </div>

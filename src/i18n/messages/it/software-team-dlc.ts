@@ -137,6 +137,12 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "Note QA",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, correzioni obbligatorie vs nits, rischio.",
   "softwareTeamDlc.qaNotePlaceholder": "Casi, comandi, esito.",
+  "softwareTeamDlc.markProductNote": "Segna le note Product",
+  "softwareTeamDlc.markArchitectNote": "Segna le note Architect",
+  "softwareTeamDlc.productNote": "Note Product",
+  "softwareTeamDlc.productNotePlaceholder": "Ambito, utenti, criteri di successo.",
+  "softwareTeamDlc.architectNote": "Note Architect",
+  "softwareTeamDlc.architectNotePlaceholder": "Decisioni di design, trade-off, vincoli.",
   "softwareTeamDlc.notesSaved":
     "Note salvate. Ship si sblocca quando questa consegna ha note Reviewer e QA.",
   "softwareTeamDlc.startDelivery": "Avvia una consegna",

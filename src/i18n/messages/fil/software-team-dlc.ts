@@ -137,6 +137,12 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "Notes ng QA",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, dapat ayusin vs nits, panganib.",
   "softwareTeamDlc.qaNotePlaceholder": "Mga case, command, pass/fail.",
+  "softwareTeamDlc.markProductNote": "Lagyan ng notes ng Product",
+  "softwareTeamDlc.markArchitectNote": "Lagyan ng notes ng Architect",
+  "softwareTeamDlc.productNote": "Notes ng Product",
+  "softwareTeamDlc.productNotePlaceholder": "Saklaw, mga user, pamantayan ng tagumpay.",
+  "softwareTeamDlc.architectNote": "Notes ng Architect",
+  "softwareTeamDlc.architectNotePlaceholder": "Mga desisyon sa disenyo, trade-offs, hangganan.",
   "softwareTeamDlc.notesSaved":
     "Nai-save ang notes. Mag-unlock ang Ship kapag may notes ng Reviewer at QA ang delivery na ito.",
   "softwareTeamDlc.startDelivery": "Magsimula ng delivery",

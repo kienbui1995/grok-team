@@ -137,6 +137,12 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "Нотатки QA",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, обов’язкові правки й дрібниці, ризик.",
   "softwareTeamDlc.qaNotePlaceholder": "Випадки, команди, успіх/провал.",
+  "softwareTeamDlc.markProductNote": "Записати нотатки Product",
+  "softwareTeamDlc.markArchitectNote": "Записати нотатки Architect",
+  "softwareTeamDlc.productNote": "Нотатки Product",
+  "softwareTeamDlc.productNotePlaceholder": "Обсяг, користувачі, критерії успіху.",
+  "softwareTeamDlc.architectNote": "Нотатки Architect",
+  "softwareTeamDlc.architectNotePlaceholder": "Проєктні рішення, компроміси, обмеження.",
   "softwareTeamDlc.notesSaved":
     "Нотатки збережено. Ship відкриється, коли в цієї поставки будуть і Reviewer, і QA.",
   "softwareTeamDlc.startDelivery": "Почати поставку",

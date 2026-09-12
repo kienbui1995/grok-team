@@ -137,6 +137,12 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "Notas de QA",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, correções obrigatórias vs nits, risco.",
   "softwareTeamDlc.qaNotePlaceholder": "Casos, comandos, passou/falhou.",
+  "softwareTeamDlc.markProductNote": "Marcar notas de Product",
+  "softwareTeamDlc.markArchitectNote": "Marcar notas de Architect",
+  "softwareTeamDlc.productNote": "Notas de Product",
+  "softwareTeamDlc.productNotePlaceholder": "Escopo, usuários, critérios de sucesso.",
+  "softwareTeamDlc.architectNote": "Notas de Architect",
+  "softwareTeamDlc.architectNotePlaceholder": "Decisões de design, trade-offs, limites.",
   "softwareTeamDlc.notesSaved":
     "Notas salvas. Ship destrava quando esta entrega tiver notas de Reviewer e de QA.",
   "softwareTeamDlc.startDelivery": "Começar uma entrega",

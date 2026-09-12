@@ -137,6 +137,12 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "QA 메모",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, 필수 수정과 nits, 위험.",
   "softwareTeamDlc.qaNotePlaceholder": "케이스, 명령, 합격/불합격.",
+  "softwareTeamDlc.markProductNote": "Product 메모 작성",
+  "softwareTeamDlc.markArchitectNote": "Architect 메모 작성",
+  "softwareTeamDlc.productNote": "Product 메모",
+  "softwareTeamDlc.productNotePlaceholder": "범위, 사용자, 성공 기준.",
+  "softwareTeamDlc.architectNote": "Architect 메모",
+  "softwareTeamDlc.architectNotePlaceholder": "설계 결정, 트레이드오프, 제약.",
   "softwareTeamDlc.notesSaved":
     "메모를 저장했습니다. 이 딜리버리에 Reviewer와 QA 메모가 모두 있으면 Ship이 열립니다.",
   "softwareTeamDlc.startDelivery": "딜리버리 시작",

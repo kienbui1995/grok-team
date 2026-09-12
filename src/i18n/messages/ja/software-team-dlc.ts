@@ -137,6 +137,12 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "QA メモ",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff、必須修正と nits、リスク。",
   "softwareTeamDlc.qaNotePlaceholder": "ケース、コマンド、合否。",
+  "softwareTeamDlc.markProductNote": "Product メモを記入",
+  "softwareTeamDlc.markArchitectNote": "Architect メモを記入",
+  "softwareTeamDlc.productNote": "Product メモ",
+  "softwareTeamDlc.productNotePlaceholder": "スコープ、ユーザー、成功基準。",
+  "softwareTeamDlc.architectNote": "Architect メモ",
+  "softwareTeamDlc.architectNotePlaceholder": "設計判断、トレードオフ、制約。",
   "softwareTeamDlc.notesSaved":
     "メモを保存しました。このデリバリーに Reviewer と QA のメモが揃うと Ship が開きます。",
   "softwareTeamDlc.startDelivery": "デリバリーを開始",

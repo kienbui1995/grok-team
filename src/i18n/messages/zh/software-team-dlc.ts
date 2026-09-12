@@ -130,6 +130,12 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "测试备注",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff、必改与吹毛求疵、风险。",
   "softwareTeamDlc.qaNotePlaceholder": "用例、命令、通过/失败。",
+  "softwareTeamDlc.markProductNote": "填写产品备注",
+  "softwareTeamDlc.markArchitectNote": "填写架构备注",
+  "softwareTeamDlc.productNote": "产品备注",
+  "softwareTeamDlc.productNotePlaceholder": "范围、用户、成功标准。",
+  "softwareTeamDlc.architectNote": "架构备注",
+  "softwareTeamDlc.architectNotePlaceholder": "设计决策、取舍、边界。",
   "softwareTeamDlc.notesSaved": "备注已保存。此交付同时有评审与测试备注后才能发布。",
   "softwareTeamDlc.startDelivery": "开始一次交付",
   "softwareTeamDlc.startDeliveryHint":

@@ -32,7 +32,12 @@ export const SOFTWARE_TEAM_ACTIVITY_TYPES = [
 export type SoftwareTeamActivityType =
   (typeof SOFTWARE_TEAM_ACTIVITY_TYPES)[number];
 
-export const SOFTWARE_TEAM_ACTIVITY_NOTE_KINDS = ["review", "qa"] as const;
+export const SOFTWARE_TEAM_ACTIVITY_NOTE_KINDS = [
+  "review",
+  "qa",
+  "product",
+  "architect",
+] as const;
 
 export type SoftwareTeamActivityNoteKind =
   (typeof SOFTWARE_TEAM_ACTIVITY_NOTE_KINDS)[number];

@@ -137,6 +137,12 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "Заметки QA",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, обязательные правки и мелочи, риск.",
   "softwareTeamDlc.qaNotePlaceholder": "Случаи, команды, успех/провал.",
+  "softwareTeamDlc.markProductNote": "Записать заметки Product",
+  "softwareTeamDlc.markArchitectNote": "Записать заметки Architect",
+  "softwareTeamDlc.productNote": "Заметки Product",
+  "softwareTeamDlc.productNotePlaceholder": "Объём, пользователи, критерии успеха.",
+  "softwareTeamDlc.architectNote": "Заметки Architect",
+  "softwareTeamDlc.architectNotePlaceholder": "Проектные решения, компромиссы, ограничения.",
   "softwareTeamDlc.notesSaved":
     "Заметки сохранены. Ship откроется, когда у этой поставки будут и Reviewer, и QA.",
   "softwareTeamDlc.startDelivery": "Начать поставку",

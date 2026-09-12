@@ -199,6 +199,12 @@ export function composeSoftwareTeamDeliveryMarkdown(
       lines.push(
         `- **${item.title || item.id}** · ${item.roleId} · ${item.stageId}`,
       );
+      if (item.productNote.trim()) {
+        lines.push(`  - Product notes: ${item.productNote.trim()}`);
+      }
+      if (item.architectNote.trim()) {
+        lines.push(`  - Architect notes: ${item.architectNote.trim()}`);
+      }
       if (item.reviewNote.trim()) {
         lines.push(`  - Reviewer notes: ${item.reviewNote.trim()}`);
       }
@@ -208,10 +214,21 @@ export function composeSoftwareTeamDeliveryMarkdown(
     }
   }
   lines.push("");
-  lines.push("## Review / QA notes");
-  if (!detail.reviewNotes.length && !detail.qaNotes.length) {
+  lines.push("## Decision notes");
+  if (
+    !detail.productNotes.length &&
+    !detail.architectNotes.length &&
+    !detail.reviewNotes.length &&
+    !detail.qaNotes.length
+  ) {
     lines.push("(none)");
   } else {
+    for (const note of detail.productNotes) {
+      lines.push(`- Product: ${note.text}`);
+    }
+    for (const note of detail.architectNotes) {
+      lines.push(`- Architect: ${note.text}`);
+    }
     for (const note of detail.reviewNotes) {
       lines.push(`- Reviewer: ${note.text}`);
     }

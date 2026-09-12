@@ -144,6 +144,12 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "QA notes",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, must-fix vs nits, risk.",
   "softwareTeamDlc.qaNotePlaceholder": "Cases, commands, pass/fail.",
+  "softwareTeamDlc.markProductNote": "Mark Product notes",
+  "softwareTeamDlc.markArchitectNote": "Mark Architect notes",
+  "softwareTeamDlc.productNote": "Product notes",
+  "softwareTeamDlc.productNotePlaceholder": "Scope, users, success criteria.",
+  "softwareTeamDlc.architectNote": "Architect notes",
+  "softwareTeamDlc.architectNotePlaceholder": "Design decisions, trade-offs, constraints.",
   "softwareTeamDlc.notesSaved":
     "Notes saved. Ship unlocks when this delivery has both Reviewer and QA notes.",
   "softwareTeamDlc.startDelivery": "Start a delivery",

@@ -345,7 +345,11 @@ export function syncSoftwareTeamDeliverySliceRefs(
   return next;
 }
 
-export type SoftwareTeamDeliveryNoteKind = "review" | "qa";
+export type SoftwareTeamDeliveryNoteKind =
+  | "review"
+  | "qa"
+  | "product"
+  | "architect";
 
 export function setSoftwareTeamDeliveryNote(
   store: SoftwareTeamPipelineStore,
@@ -363,6 +367,10 @@ export function setSoftwareTeamDeliveryNote(
         return "reviewNote" as const;
       case "qa":
         return "qaNote" as const;
+      case "product":
+        return "productNote" as const;
+      case "architect":
+        return "architectNote" as const;
       default: {
         const _never: never = input.kind;
         return _never;
@@ -375,6 +383,10 @@ export function setSoftwareTeamDeliveryNote(
         return "reviewer" as const;
       case "qa":
         return "qa" as const;
+      case "product":
+        return "product" as const;
+      case "architect":
+        return "architect" as const;
       default: {
         const _never: never = input.kind;
         return _never;

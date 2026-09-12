@@ -144,6 +144,12 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "Ghi chú QA",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, bắt buộc sửa so với nits, rủi ro.",
   "softwareTeamDlc.qaNotePlaceholder": "Trường hợp, lệnh, đạt/trượt.",
+  "softwareTeamDlc.markProductNote": "Đánh dấu ghi chú Product",
+  "softwareTeamDlc.markArchitectNote": "Đánh dấu ghi chú Architect",
+  "softwareTeamDlc.productNote": "Ghi chú Product",
+  "softwareTeamDlc.productNotePlaceholder": "Phạm vi, người dùng, tiêu chí thành công.",
+  "softwareTeamDlc.architectNote": "Ghi chú Architect",
+  "softwareTeamDlc.architectNotePlaceholder": "Quyết định thiết kế, đánh đổi, giới hạn.",
   "softwareTeamDlc.notesSaved":
     "Đã lưu ghi chú. Ship mở khóa khi đợt giao này có cả ghi chú Reviewer và QA.",
   "softwareTeamDlc.startDelivery": "Bắt đầu đợt giao",

@@ -249,7 +249,7 @@ export function SdlcStudioPage({
   } | null>(null);
   const [notesEditor, setNotesEditor] = useState<{
     itemId: string;
-    kind: "review" | "qa";
+    kind: "review" | "qa" | "product" | "architect";
     text: string;
   } | null>(null);
   const [pendingRemove, setPendingRemove] = useState<SoftwareTeamPipelineItem | null>(
@@ -1101,6 +1101,32 @@ export function SdlcStudioPage({
           kind: "qa",
           text: firstSoftwareTeamNonEmptyField(
             deliveryCohort(pipeline.items, menuItem).map((row) => row.qaNote),
+          ),
+        }),
+    });
+    items.push({
+      label: t("softwareTeamDlc.markProductNote"),
+      onClick: () =>
+        setNotesEditor({
+          itemId: menuItem.id,
+          kind: "product",
+          text: firstSoftwareTeamNonEmptyField(
+            deliveryCohort(pipeline.items, menuItem).map(
+              (row) => row.productNote,
+            ),
+          ),
+        }),
+    });
+    items.push({
+      label: t("softwareTeamDlc.markArchitectNote"),
+      onClick: () =>
+        setNotesEditor({
+          itemId: menuItem.id,
+          kind: "architect",
+          text: firstSoftwareTeamNonEmptyField(
+            deliveryCohort(pipeline.items, menuItem).map(
+              (row) => row.architectNote,
+            ),
           ),
         }),
     });
@@ -2002,6 +2028,24 @@ export function SdlcStudioPage({
           setStatus(t("softwareTeamDlc.sliceRefsSaved"));
           return true;
         }}
+        onSaveProductNote={(text) => {
+          pipeline.setDeliveryNote({
+            deliveryId: deliveryDetail?.deliveryId,
+            focusItemId: deliveryDetail?.focusItem?.id,
+            kind: "product",
+            text,
+          });
+          setStatus(t("softwareTeamDlc.notesSaved"));
+        }}
+        onSaveArchitectNote={(text) => {
+          pipeline.setDeliveryNote({
+            deliveryId: deliveryDetail?.deliveryId,
+            focusItemId: deliveryDetail?.focusItem?.id,
+            kind: "architect",
+            text,
+          });
+          setStatus(t("softwareTeamDlc.notesSaved"));
+        }}
         onSaveReviewNote={(text) => {
           pipeline.setDeliveryNote({
             deliveryId: deliveryDetail?.deliveryId,
@@ -2193,7 +2237,11 @@ export function SdlcStudioPage({
         title={
           notesEditor?.kind === "qa"
             ? t("softwareTeamDlc.markQaNote")
-            : t("softwareTeamDlc.markReviewNote")
+            : notesEditor?.kind === "product"
+              ? t("softwareTeamDlc.markProductNote")
+              : notesEditor?.kind === "architect"
+                ? t("softwareTeamDlc.markArchitectNote")
+                : t("softwareTeamDlc.markReviewNote")
         }
         closeLabel={t("window.close")}
         wrapBody
@@ -2232,9 +2280,13 @@ export function SdlcStudioPage({
         {notesEditor ? (
           <label className="sdlc-studio__field">
             <span>
-              {notesEditor.kind === "qa"
+              {notesEditor?.kind === "qa"
                 ? t("softwareTeamDlc.qaNote")
-                : t("softwareTeamDlc.reviewNote")}
+                : notesEditor?.kind === "product"
+                  ? t("softwareTeamDlc.productNote")
+                  : notesEditor?.kind === "architect"
+                    ? t("softwareTeamDlc.architectNote")
+                    : t("softwareTeamDlc.reviewNote")}
             </span>
             <textarea
               className="settings-input"
@@ -2246,7 +2298,11 @@ export function SdlcStudioPage({
               placeholder={
                 notesEditor.kind === "qa"
                   ? t("softwareTeamDlc.qaNotePlaceholder")
-                  : t("softwareTeamDlc.reviewNotePlaceholder")
+                  : notesEditor.kind === "product"
+                    ? t("softwareTeamDlc.productNotePlaceholder")
+                    : notesEditor.kind === "architect"
+                      ? t("softwareTeamDlc.architectNotePlaceholder")
+                      : t("softwareTeamDlc.reviewNotePlaceholder")
               }
             />
           </label>

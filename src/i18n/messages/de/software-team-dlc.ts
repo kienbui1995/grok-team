@@ -137,6 +137,12 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "QA-Notizen",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, Muss-Fixes vs. Nits, Risiko.",
   "softwareTeamDlc.qaNotePlaceholder": "Fälle, Befehle, Bestanden/Fehlschlag.",
+  "softwareTeamDlc.markProductNote": "Produkt-Notizen eintragen",
+  "softwareTeamDlc.markArchitectNote": "Architekt-Notizen eintragen",
+  "softwareTeamDlc.productNote": "Produkt-Notizen",
+  "softwareTeamDlc.productNotePlaceholder": "Umfang, Nutzer, Erfolgskriterien.",
+  "softwareTeamDlc.architectNote": "Architekt-Notizen",
+  "softwareTeamDlc.architectNotePlaceholder": "Entscheidungen, Trade-offs, Grenzen.",
   "softwareTeamDlc.notesSaved":
     "Notizen gespeichert. Ship öffnet, wenn diese Lieferung Reviewer- und QA-Notizen hat.",
   "softwareTeamDlc.startDelivery": "Lieferung starten",

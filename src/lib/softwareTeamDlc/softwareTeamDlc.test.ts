@@ -3091,6 +3091,134 @@ describe("Software Works delivery-wide Ship + slice refs", () => {
     expect(pipelineItemById(store, "note-eng")?.qaNote).toBe("");
   });
 
+  it("setSoftwareTeamDeliveryNote routes product/architect notes onto their role cards", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "pa-prod",
+      roleId: "product",
+      deliveryId: "d-pa",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "pa-arch",
+      roleId: "architect",
+      deliveryId: "d-pa",
+    });
+    store = addSoftwareTeamPipelineItem(store, {
+      id: "pa-eng",
+      roleId: "engineer",
+      deliveryId: "d-pa",
+    });
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-pa",
+      focusItemId: "pa-eng",
+      kind: "product",
+      text: "scope: sso only",
+    });
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-pa",
+      focusItemId: "pa-prod",
+      kind: "architect",
+      text: "jwt in httpOnly cookie",
+    });
+    expect(pipelineItemById(store, "pa-prod")?.productNote).toBe(
+      "scope: sso only",
+    );
+    expect(pipelineItemById(store, "pa-eng")?.productNote).toBe("");
+    expect(pipelineItemById(store, "pa-arch")?.architectNote).toBe(
+      "jwt in httpOnly cookie",
+    );
+    expect(pipelineItemById(store, "pa-prod")?.architectNote).toBe("");
+  });
+
+  it("product/architect notes log activity kinds and hydrate from v3 files", () => {
+    let store = addSoftwareTeamPipelineItem(createEmptySoftwareTeamPipelineStore(), {
+      id: "act-prod",
+      roleId: "product",
+      deliveryId: "d-act",
+    });
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-act",
+      kind: "product",
+      text: "launch with 3 tiers",
+    });
+    store = setSoftwareTeamDeliveryNote(store, {
+      deliveryId: "d-act",
+      kind: "architect",
+      text: "single region",
+    });
+    expect(
+      store.activity.some(
+        (event) => event.type === "notes" && event.noteKind === "product",
+      ),
+    ).toBe(true);
+    expect(
+      store.activity.some(
+        (event) => event.type === "notes" && event.noteKind === "architect",
+      ),
+    ).toBe(true);
+    const parsed = parseSoftwareTeamPipelineStore(
+      JSON.stringify({ schema: "software-works.pipeline", version: 3, items: [
+        {
+          id: "legacy-notes",
+          roleId: "product",
+          stageId: "backlog",
+          reviewNote: "kept",
+        },
+      ] }),
+    );
+    expect(parsed.items[0]?.productNote).toBe("");
+    expect(parsed.items[0]?.architectNote).toBe("");
+    expect(parsed.items[0]?.reviewNote).toBe("kept");
+  });
+
+  it("delivery detail exposes product/architect notes and export lists them", () => {
+    const prod = createSoftwareTeamPipelineItem({
+      id: "det-prod",
+      roleId: "product",
+      deliveryId: "d-det",
+      productNote: "audience: mobile",
+    })!;
+    const arch = createSoftwareTeamPipelineItem({
+      id: "det-arch",
+      roleId: "architect",
+      deliveryId: "d-det",
+      architectNote: "edge cache first",
+    })!;
+    const detail = buildSoftwareTeamDeliveryDetail({
+      items: [prod, arch],
+      target: { kind: "delivery", deliveryId: "d-det" },
+    })!;
+    expect(detail.productNotes).toEqual([
+      { itemId: "det-prod", text: "audience: mobile" },
+    ]);
+    expect(detail.architectNotes).toEqual([
+      { itemId: "det-arch", text: "edge cache first" },
+    ]);
+    const md = composeSoftwareTeamDeliveryMarkdown(detail, 1);
+    expect(md).toContain("## Decision notes");
+    expect(md).toContain("- Product: audience: mobile");
+    expect(md).toContain("- Architect: edge cache first");
+  });
+
+  it("handoff starter carries product/architect notes from the source card", () => {
+    const from = createSoftwareTeamPipelineItem({
+      id: "starter-prod",
+      roleId: "product",
+      stageId: "backlog",
+      productNote: "users asked for sso",
+      architectNote: "",
+      reviewNote: "",
+      qaNote: "",
+    })!;
+    const to = createSoftwareTeamPipelineItem({
+      id: "starter-arch",
+      roleId: "architect",
+      stageId: "design",
+    })!;
+    const starter = composeHandoffStarter(from, to);
+    expect(starter).toContain("Product notes: users asked for sso");
+    expect(starter).not.toContain("Architect notes:");
+  });
+
   it("QA→Writer handoff lands on ship when siblings unlock", () => {
     const qa = createSoftwareTeamPipelineItem({
       id: "qa-handoff",

@@ -137,6 +137,12 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "QA குறிப்புகள்",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, கட்டாய திருத்தங்கள் vs nits, ஆபத்து.",
   "softwareTeamDlc.qaNotePlaceholder": "வழக்குகள், கட்டளைகள், வெற்றி/தோல்வி.",
+  "softwareTeamDlc.markProductNote": "Product குறிப்புகளை எழுது",
+  "softwareTeamDlc.markArchitectNote": "Architect குறிப்புகளை எழுது",
+  "softwareTeamDlc.productNote": "Product குறிப்புகள்",
+  "softwareTeamDlc.productNotePlaceholder": "எல்லை, பயனர்கள், வெற்றி அளவுகோல்கள்.",
+  "softwareTeamDlc.architectNote": "Architect குறிப்புகள்",
+  "softwareTeamDlc.architectNotePlaceholder": "வடிவமைப்பு முடிவுகள், சமரசங்கள், வரம்புகள்.",
   "softwareTeamDlc.notesSaved":
     "குறிப்புகள் சேமிக்கப்பட்டன. இந்த விநியோகத்தில் Reviewer மற்றும் QA குறிப்புகள் இரண்டும் இருந்தால் Ship திறக்கும்.",
   "softwareTeamDlc.startDelivery": "ஒரு விநியோகத்தை தொடங்கு",

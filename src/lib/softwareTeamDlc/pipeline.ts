@@ -108,6 +108,10 @@ export type SoftwareTeamPipelineItem = {
   artifactRef: string;
   /** Roles this slice has occupied (Reviewer + QA required before Ship). */
   roleHistory: SoftwareTeamRoleId[];
+  /** Product decision trail. Lives on the Product card; informational only. */
+  productNote: string;
+  /** Architect decision trail. Lives on the Architect card; informational only. */
+  architectNote: string;
   reviewNote: string;
   qaNote: string;
   /** Groups items that belong to one Start-a-delivery slice. */
@@ -141,6 +145,8 @@ export type SoftwareTeamPipelineItemDraft = {
   goalRef?: string;
   artifactRef?: string;
   roleHistory?: SoftwareTeamRoleId[];
+  productNote?: string;
+  architectNote?: string;
   reviewNote?: string;
   qaNote?: string;
   deliveryId?: string;
@@ -280,6 +286,8 @@ export function createSoftwareTeamPipelineItem(
       draft.roleHistory,
       role.id,
     ),
+    productNote: (draft.productNote ?? "").trim(),
+    architectNote: (draft.architectNote ?? "").trim(),
     reviewNote: (draft.reviewNote ?? "").trim(),
     qaNote: (draft.qaNote ?? "").trim(),
     deliveryId: (draft.deliveryId ?? "").trim(),
@@ -318,6 +326,8 @@ export function parseSoftwareTeamPipelineItem(
     roleHistory: Array.isArray(rec.roleHistory)
       ? rec.roleHistory.filter(isSoftwareTeamRoleId)
       : undefined,
+    productNote: typeof rec.productNote === "string" ? rec.productNote : "",
+    architectNote: typeof rec.architectNote === "string" ? rec.architectNote : "",
     reviewNote: typeof rec.reviewNote === "string" ? rec.reviewNote : "",
     qaNote: typeof rec.qaNote === "string" ? rec.qaNote : "",
     deliveryId: typeof rec.deliveryId === "string" ? rec.deliveryId : "",
@@ -710,6 +720,8 @@ export function updateSoftwareTeamPipelineItem(
       prev.roleId,
       role.id,
     ),
+    productNote: patch.productNote ?? prev.productNote,
+    architectNote: patch.architectNote ?? prev.architectNote,
     reviewNote: patch.reviewNote ?? prev.reviewNote,
     qaNote: patch.qaNote ?? prev.qaNote,
     deliveryId: patch.deliveryId ?? prev.deliveryId,
@@ -730,6 +742,8 @@ export function updateSoftwareTeamPipelineItem(
     next.planRef === prev.planRef &&
     next.goalRef === prev.goalRef &&
     next.artifactRef === prev.artifactRef &&
+    next.productNote === prev.productNote &&
+    next.architectNote === prev.architectNote &&
     next.reviewNote === prev.reviewNote &&
     next.qaNote === prev.qaNote &&
     next.deliveryId === prev.deliveryId &&
@@ -793,11 +807,20 @@ export function updateSoftwareTeamPipelineItem(
       activityDraft("git_branch", next, { at: now }),
     );
   }
-  if (next.reviewNote !== prev.reviewNote || next.qaNote !== prev.qaNote) {
-    const noteKind: SoftwareTeamActivityNoteKind =
-      next.qaNote !== prev.qaNote && next.reviewNote === prev.reviewNote
-        ? "qa"
-        : "review";
+  if (
+    next.productNote !== prev.productNote ||
+    next.architectNote !== prev.architectNote ||
+    next.reviewNote !== prev.reviewNote ||
+    next.qaNote !== prev.qaNote
+  ) {
+    const noteKind =
+      ([
+        ["product", next.productNote, prev.productNote],
+        ["architect", next.architectNote, prev.architectNote],
+        ["review", next.reviewNote, prev.reviewNote],
+        ["qa", next.qaNote, prev.qaNote],
+      ] as const).find(([, nextValue, prevValue]) => nextValue !== prevValue)?.[0] ??
+      "review";
     out = appendSoftwareTeamPipelineActivity(
       out,
       activityDraft("notes", next, { at: now, noteKind }),

@@ -137,6 +137,12 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.qaNote": "Notas de QA",
   "softwareTeamDlc.reviewNotePlaceholder": "Diff, cambios obligatorios vs nits, riesgo.",
   "softwareTeamDlc.qaNotePlaceholder": "Casos, comandos, aprobado/fallo.",
+  "softwareTeamDlc.markProductNote": "Marcar notas de Product",
+  "softwareTeamDlc.markArchitectNote": "Marcar notas de Architect",
+  "softwareTeamDlc.productNote": "Notas de Product",
+  "softwareTeamDlc.productNotePlaceholder": "Alcance, usuarios, criterios de éxito.",
+  "softwareTeamDlc.architectNote": "Notas de Architect",
+  "softwareTeamDlc.architectNotePlaceholder": "Decisiones de diseño, trade-offs, límites.",
   "softwareTeamDlc.notesSaved":
     "Notas guardadas. Ship se desbloquea cuando esta entrega tiene notas de Reviewer y de QA.",
   "softwareTeamDlc.startDelivery": "Empezar una entrega",
