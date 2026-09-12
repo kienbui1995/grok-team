@@ -127,8 +127,8 @@ mod tests {
     use super::*;
 
     const ALL_TAGS: [&str; 16] = [
-        "en", "de", "es", "fil", "fr", "id", "it", "ja", "ko", "pt-BR", "ru", "ta", "uk", "vi", "zh",
-        "zh-TW",
+        "en", "de", "es", "fil", "fr", "id", "it", "ja", "ko", "pt-BR", "ru", "ta", "uk", "vi",
+        "zh", "zh-TW",
     ];
 
     #[test]
@@ -170,10 +170,7 @@ mod tests {
             t("uk", MessageKey::StopSignalSent),
             "Сигнал зупинки надіслано."
         );
-        assert_eq!(
-            t("vi", MessageKey::StopSignalSent),
-            "Đã gửi tín hiệu dừng."
-        );
+        assert_eq!(t("vi", MessageKey::StopSignalSent), "Đã gửi tín hiệu dừng.");
         assert_eq!(
             t("vi-VN", MessageKey::NoInFlightTurn),
             "Không có lượt đang chạy."

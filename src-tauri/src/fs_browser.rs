@@ -1837,7 +1837,10 @@ mod tests {
             None,
         )
         .unwrap_err();
-        assert!(escaped.contains("escape") || escaped.contains("not a file"), "{escaped}");
+        assert!(
+            escaped.contains("escape") || escaped.contains("not a file"),
+            "{escaped}"
+        );
         let _ = fs::remove_dir_all(&dir);
     }
 
