@@ -76,6 +76,7 @@ export type SoftwareTeamPipelineFileHost = {
     projectPath: string,
     relative: string,
     content: string,
+    expectedMtimeMs?: number | null,
   ) => Promise<unknown>;
 };
 
@@ -261,8 +262,8 @@ export function defaultSoftwareTeamPipelineFileHost(): SoftwareTeamPipelineFileH
   return {
     isDesktopHost: () => api.isDesktopHost(),
     readFile: (projectPath, relative) => api.fsReadFile(projectPath, relative),
-    writeFile: (projectPath, relative, content) =>
-      api.fsWriteFile(projectPath, relative, content),
+    writeFile: (projectPath, relative, content, expectedMtimeMs) =>
+      api.fsWriteFile(projectPath, relative, content, expectedMtimeMs),
   };
 }
 
@@ -613,10 +614,15 @@ export async function writeSoftwareTeamPipelineFile(input: {
     }
   }
   try {
+    // Optimistic concurrency: the mtime observed at read is the Host's
+    // expectedMtimeMs. A foreign write between read and write is refused by
+    // the Host ("CONFLICT: …") instead of clobbering the file silently.
+    // Missing file → null so the allowlisted create still succeeds.
     const written = await host.writeFile(
       plan.projectPath,
       SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE,
       serializeSoftwareTeamPipelineFile(input.store, input.now),
+      existing.mtimeMs ?? null,
     );
     if (!stale()) rememberSeen(input.store, mtimeFromWriteResult(written));
     const ok: SoftwareTeamPipelineFileWrite = { ok: true, reason: "ok_project" };
@@ -627,13 +633,21 @@ export async function writeSoftwareTeamPipelineFile(input: {
       err instanceof Error && err.message.trim()
         ? err.message.trim()
         : String(err ?? "pipeline write failed");
+    if (error.startsWith("CONFLICT:")) {
+      const fail: SoftwareTeamPipelineFileWrite = {
+        ok: false,
+        reason: "conflict",
+        error,
+      };
+      if (!stale()) emitFileStatus(fail);
+      return fail;
+    }
     const fail: SoftwareTeamPipelineFileWrite = {
       ok: false,
       reason: "host_error",
       error,
     };
     if (!stale()) emitFileStatus(fail);
-    emitFileStatus(fail);
     return fail;
   }
 }

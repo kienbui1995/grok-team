@@ -198,12 +198,15 @@ function fileHost(opts?: {
   failWrite?: string;
   omitMtime?: boolean;
   readError?: string;
+  conflictWrite?: string;
 }) {
   const files = { ...(opts?.files ?? {}) };
   const mtimes = { ...(opts?.mtimes ?? {}) };
   const writes: string[] = [];
+  const writeMtimes: Array<number | null | undefined> = [];
   return {
     writes,
+    writeMtimes,
     files,
     mtimes,
     host: {
@@ -222,8 +225,19 @@ function fileHost(opts?: {
         }
         return { error: `not a file: ${relative}` };
       },
-      writeFile: async (_p: string, relative: string, content: string) => {
+      writeFile: async (
+        _p: string,
+        relative: string,
+        content: string,
+        expectedMtimeMs?: number | null,
+      ) => {
         writes.push(relative);
+        writeMtimes.push(expectedMtimeMs);
+        if (opts?.conflictWrite === relative) {
+          throw new Error(
+            `CONFLICT: file changed on disk (mtime 999, expected ${String(expectedMtimeMs)})`,
+          );
+        }
         if (opts?.failWrite === relative) throw new Error("write boom");
         files[relative] = content;
         mtimes[relative] = (mtimes[relative] ?? 0) + 10;
@@ -3788,7 +3802,7 @@ describe("Software Works pipeline file adversarial persist/conflict", () => {
       title,
       deliveryId: "d-adv",
     })!;
-    const { host, files, mtimes } = fileHost({
+    const { host, files, mtimes, writeMtimes } = fileHost({
       files: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: pipelineDoc([item]) },
       mtimes: { [SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]: opts?.mtime ?? 10 },
       omitMtime: opts?.omitMtime,
@@ -3803,7 +3817,7 @@ describe("Software Works pipeline file adversarial persist/conflict", () => {
     if (!loaded.ok || loaded.kind !== "replaced") {
       throw new Error("expected first reload to replace");
     }
-    return { host, files, mtimes, storage, store: loaded.store, item };
+    return { host, files, mtimes, writeMtimes, storage, store: loaded.store, item };
   }
 
   it("conflicts on dirty local + different file when mtime is missing", async () => {
@@ -4330,6 +4344,92 @@ describe("Software Works pipeline file adversarial persist/conflict", () => {
     expect(writes).toEqual([SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]);
     expect(lastSoftwareTeamPipelineFileStatus()).toBe(statusBefore);
     expect(lastSoftwareTeamPipelineFileMtimeMs()).toBe(null);
+  });
+
+  it("persist passes the observed file mtime as expectedMtimeMs", async () => {
+    const { host, writeMtimes, storage, store } = await seenBoard("Local", {
+      mtime: 10,
+    });
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    expect(
+      await writeSoftwareTeamPipelineFile({
+        projectPath: "/repo",
+        store: dirty,
+        host,
+      }),
+    ).toMatchObject({ ok: true, reason: "ok_project" });
+    expect(writeMtimes).toEqual([10]);
+  });
+
+  it("persist of a missing project file passes no expected mtime", async () => {
+    const store = addSoftwareTeamPipelineItem(
+      createEmptySoftwareTeamPipelineStore(),
+      {
+        id: "adv-m1",
+        roleId: "product",
+        title: "Cache",
+        deliveryId: "d-adv",
+      },
+    );
+    const { host, writeMtimes } = fileHost();
+    expect(
+      await writeSoftwareTeamPipelineFile({
+        projectPath: "/repo",
+        store,
+        host,
+      }),
+    ).toMatchObject({ ok: true, reason: "ok_project" });
+    expect(writeMtimes).toEqual([null]);
+  });
+
+  it("a write-time mtime mismatch lands as conflict and leaves the file intact", async () => {
+    const { host, files, storage, store } = await seenBoard("Local", {
+      mtime: 10,
+    });
+    const dirty = addSoftwareTeamPipelineItem(store, {
+      id: "adv-2",
+      roleId: "engineer",
+      title: "Unsaved",
+      deliveryId: "d-adv",
+    });
+    persistSoftwareTeamPipeline(dirty, storage);
+    // Same content on disk (not foreign), but another writer touches the file
+    // between our read and our write — the Host refuses on the expected mtime.
+    const racingHost = {
+      ...host,
+      writeFile: async (
+        projectPath: string,
+        relative: string,
+        content: string,
+        expectedMtimeMs?: number | null,
+      ) => {
+        if (relative === SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE) {
+          throw new Error(
+            `CONFLICT: file changed on disk (mtime 999, expected ${String(expectedMtimeMs)})`,
+          );
+        }
+        return host.writeFile(projectPath, relative, content, expectedMtimeMs);
+      },
+    };
+    const write = await writeSoftwareTeamPipelineFile({
+      projectPath: "/repo",
+      store: dirty,
+      host: racingHost,
+    });
+    expect(write).toMatchObject({ ok: false, reason: "conflict" });
+    if (write.ok) throw new Error("expected a refused write");
+    expect(write.error).toContain("expected 10");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).toContain("Local");
+    expect(files[SOFTWARE_TEAM_PIPELINE_FILE_RELATIVE]).not.toContain("Unsaved");
+    expect(
+      loadSoftwareTeamPipelineStore(storage).items.map((i) => i.title),
+    ).toEqual(["Local", "Unsaved"]);
   });
 
   it("shared ~/.grok and /home/u/.grok refuse accept/keep/write/queue", async () => {
