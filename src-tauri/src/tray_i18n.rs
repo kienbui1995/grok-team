@@ -21,6 +21,7 @@ pub enum Locale {
     Ru,
     Ta,
     Uk,
+    Vi,
     Zh,
     ZhTw,
 }
@@ -78,6 +79,7 @@ impl Locale {
             "ru" => Locale::Ru,
             "ta" => Locale::Ta,
             "uk" => Locale::Uk,
+            "vi" => Locale::Vi,
             // Every Portuguese variant shares the pt-BR catalog.
             "pt" => Locale::PtBr,
             // `in` is Indonesian's retired ISO-639 code, still emitted by some
@@ -104,6 +106,7 @@ impl Locale {
             Locale::Ru => "ru",
             Locale::Ta => "ta",
             Locale::Uk => "uk",
+            Locale::Vi => "vi",
             Locale::Zh => "zh",
             Locale::ZhTw => "zh-TW",
         }
@@ -136,6 +139,7 @@ impl Locale {
             Locale::Ru => "Russian",
             Locale::Ta => "Tamil",
             Locale::Uk => "Ukrainian",
+            Locale::Vi => "Vietnamese",
             Locale::Zh => "Simplified Chinese",
             Locale::ZhTw => "Traditional Chinese",
         }
@@ -213,6 +217,7 @@ pub fn windows_langid_to_tag(id: u16) -> Option<&'static str> {
     const LANG_INDONESIAN: u16 = 0x21;
     const LANG_UKRAINIAN: u16 = 0x22;
     const LANG_TAMIL: u16 = 0x49;
+    const LANG_VIETNAMESE: u16 = 0x2a;
     const LANG_FILIPINO: u16 = 0x64;
 
     let primary = id & 0x3ff;
@@ -237,6 +242,7 @@ pub fn windows_langid_to_tag(id: u16) -> Option<&'static str> {
         LANG_UKRAINIAN => Some("uk"),
 
         LANG_TAMIL => Some("ta"),
+        LANG_VIETNAMESE => Some("vi"),
         LANG_FILIPINO => Some("fil"),
         _ => None,
     }
@@ -585,6 +591,25 @@ const UK: TrayStrings = TrayStrings {
     reset_time_fmt: "%d.%m %H:%M",
 };
 
+const VI: TrayStrings = TrayStrings {
+    recent: "Gần đây",
+    no_recent: "Chưa có trò chuyện gần đây",
+    untitled: "Chưa đặt tên",
+    more: "Thêm",
+    settings: "Cài đặt…",
+    doctor: "Doctor",
+    account: "Tài khoản",
+    new_chat: "Trò chuyện mới",
+    open_app: "Mở Grok",
+    quit: "Thoát Grok",
+    tooltip: "Grok",
+    close: "Đóng",
+    usage_with_reset: "Mức dùng  ·  còn {pct}%  ·  {time}",
+    usage_pct: "Mức dùng  ·  còn {pct}%",
+    usage_unknown: "Mức dùng  ·  —",
+    reset_time_fmt: "%d/%m %H:%M",
+};
+
 const ZH: TrayStrings = TrayStrings {
     recent: "最近",
     no_recent: "暂无最近会话",
@@ -638,6 +663,7 @@ pub fn strings(locale: Locale) -> &'static TrayStrings {
         Locale::Ru => &RU,
         Locale::Ta => &TA,
         Locale::Uk => &UK,
+        Locale::Vi => &VI,
         Locale::Zh => &ZH,
         Locale::ZhTw => &ZH_TW,
     }
@@ -665,7 +691,7 @@ pub fn format_usage(template: &str, pct: Option<f64>, time: Option<&str>) -> Str
 /// Public because anything that has to recognise copy the app itself wrote
 /// must walk the whole roster; a second hand-kept list goes stale the moment
 /// a locale is added.
-pub const ALL: [Locale; 15] = [
+pub const ALL: [Locale; 16] = [
     Locale::En,
     Locale::De,
     Locale::Es,
@@ -679,6 +705,7 @@ pub const ALL: [Locale; 15] = [
     Locale::Ru,
     Locale::Ta,
     Locale::Uk,
+    Locale::Vi,
     Locale::Zh,
     Locale::ZhTw,
 ];
@@ -728,6 +755,8 @@ mod tests {
         assert_eq!(Locale::parse("fil-PH"), Locale::Fil);
         assert_eq!(Locale::parse("in-ID"), Locale::Id);
         assert_eq!(Locale::parse("id-ID"), Locale::Id);
+        assert_eq!(Locale::parse("vi-VN"), Locale::Vi);
+        assert_eq!(Locale::parse("vi_VN"), Locale::Vi);
     }
 
     #[test]
@@ -763,7 +792,7 @@ mod tests {
 
     #[test]
     fn every_locale_renders_its_reset_clock() {
-        // chrono panics at Display time on a bad format spec, so render all 15
+        // chrono panics at Display time on a bad format spec, so render all 16
         // rather than trusting the table by inspection.
         let at = chrono::NaiveDate::from_ymd_opt(2026, 4, 15)
             .unwrap()
@@ -859,6 +888,7 @@ mod tests {
         assert_eq!(windows_langid_to_tag(0x0422), Some("uk"));
         assert_eq!(windows_langid_to_tag(0x0449), Some("ta"));
         assert_eq!(windows_langid_to_tag(0x0464), Some("fil"));
+        assert_eq!(windows_langid_to_tag(0x042A), Some("vi"));
         // Sanskrit / Hebrew LANGIDs are not product locales.
         assert_eq!(windows_langid_to_tag(0x044F), None);
         assert_eq!(windows_langid_to_tag(0x040D), None);
@@ -873,6 +903,7 @@ mod tests {
             (0x0816, Locale::PtBr),
             (0x0464, Locale::Fil),
             (0x0449, Locale::Ta),
+            (0x042A, Locale::Vi),
         ] {
             let tag = windows_langid_to_tag(id).expect("langid mapped");
             assert_eq!(Locale::from_lang_tag(tag), expected, "langid {id:#06x}");
@@ -892,6 +923,8 @@ mod tests {
         assert_eq!(Locale::from_lang_tag("ja_JP.UTF-8"), Locale::Ja);
         assert_eq!(Locale::from_lang_tag("fr_FR.UTF-8"), Locale::Fr);
         assert_eq!(Locale::from_lang_tag("pt_BR.UTF-8"), Locale::PtBr);
+        assert_eq!(Locale::from_lang_tag("vi-VN"), Locale::Vi);
+        assert_eq!(Locale::from_lang_tag("vi_VN.UTF-8"), Locale::Vi);
         // Still unsupported languages fall back to the product default.
         assert_eq!(Locale::from_lang_tag("he-IL"), Locale::En);
         assert_eq!(Locale::from_lang_tag("th-TH"), Locale::En);

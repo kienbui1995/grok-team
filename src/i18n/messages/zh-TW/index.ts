@@ -23,6 +23,7 @@ import { zhTWSettingsMemory } from "./settings-memory";
 import { zhTWSettingsCode } from "./settings-code";
 import { zhTWSettingsRemoteIm } from "./settings-remoteIm";
 import { zhTWSettingsPet } from "./settings-pet";
+import { zhTWSoftwareTeamDlc } from "./software-team-dlc";
 import { zhTWStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
@@ -52,6 +53,7 @@ export const zhTW: Record<MessageKey, string> = {
   ...zhTWSettingsCode,
   ...zhTWSettingsRemoteIm,
   ...zhTWSettingsPet,
+  ...zhTWSoftwareTeamDlc,
   ...zhTWStoryGates,
 };
 

@@ -23,6 +23,7 @@ import { jaSettingsMemory } from "./settings-memory";
 import { jaSettingsCode } from "./settings-code";
 import { jaSettingsRemoteIm } from "./settings-remoteIm";
 import { jaSettingsPet } from "./settings-pet";
+import { jaSoftwareTeamDlc } from "./software-team-dlc";
 import { jaStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
@@ -52,5 +53,6 @@ export const ja: Record<MessageKey, string> = {
   ...jaSettingsCode,
   ...jaSettingsRemoteIm,
   ...jaSettingsPet,
+  ...jaSoftwareTeamDlc,
   ...jaStoryGates,
 };

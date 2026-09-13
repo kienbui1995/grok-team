@@ -26,6 +26,7 @@ import {
   IconSearch,
 } from "@/components/icons";
 import { createT } from "@/i18n";
+import { useSoftwareTeamDlcEnabled } from "@/hooks/useSoftwareTeamDlc";
 import {
   isDesktopHost,
   type AccountStatus,
@@ -162,6 +163,7 @@ export function WorkbenchSidebar(props: WorkbenchSidebarProps) {
     onUserMenuOpened,
   } = props;
 
+  const softwareWorksOn = useSoftwareTeamDlcEnabled();
   const providerSupportsBalance =
     !!activeCustomProvider &&
     supportsProviderBalance({
@@ -316,7 +318,9 @@ export function WorkbenchSidebar(props: WorkbenchSidebarProps) {
             <span className="nav-item__icon">
               <IconList size={16} />
             </span>
-            {tr("sidebar.kanban")}
+            {softwareWorksOn
+              ? tr("softwareTeamDlc.studioTitle")
+              : tr("sidebar.kanban")}
           </button>
           {isDesktopHost() ? (
             <button

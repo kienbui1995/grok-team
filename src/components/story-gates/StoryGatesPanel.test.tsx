@@ -20,8 +20,10 @@ import { StoryGatesPanel } from "./StoryGatesPanel";
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
-  window.sessionStorage.clear();
-  window.localStorage.clear();
+  // Node ≥22.4 ships webstorage; its inert localStorage can shadow jsdom's in
+  // vitest, so `.clear` may be missing. Optional-call keeps cleanup honest.
+  window.sessionStorage.clear?.();
+  window.localStorage.clear?.();
 });
 
 const FORBIDDEN_COPY =

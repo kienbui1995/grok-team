@@ -161,6 +161,9 @@ setAppDialog({
 |------|----------------|
 | App 确认/输入 | `.modal.app-dialog` · `setAppDialog` |
 | Compact keep-note / Doctor / Status / MCP | `setAppDialog` prompt · `.modal` · `GlassModal` · `DoctorModal` |
+| SDLC Studio item editor + Reviewer/QA notes + Start a delivery + remove confirm | `GlassModal` on `SdlcStudioPage` (no `window.prompt` / `window.confirm`) |
+| SDLC Studio add team session | `ContextMenu` submenu (no native `<select>`) |
+| SDLC Studio delivery filter + open docs/sdlc | chips + `ContextMenu` (Host `openInEditor` or copy path) |
 | 文件详情 | `.modal.file-path-details` |
 | 搜索面板 | `.search-panel` |
 | 模型 / 权限 / 项目 / 用户 / 斜杠 / + | `.cmm__pop` · `.menu-panel` · `.slash-palette` · `.composer-plus` |
@@ -208,5 +211,6 @@ setAppDialog({
 - `src/components/ComposerModelMenu.tsx` / `ComposerProjectMenu.tsx` — composer 芯片菜单范例  
 - `src/components/StatusModal.tsx` / `McpStatusModal.tsx` — GlassModal 范例（MCP 弹窗可跳转 Settings → Extensions）
 - `src/components/ExtensionsPanel.tsx` — Settings → Extensions 全页技能 / MCP 管理  
+- `src/components/SdlcStudioPage.tsx` / `SdlcDeliveryDetailPane.tsx` / `SoftwareTeamDlcPanel.tsx` — Software Works：`GlassModal` + chips + `ContextMenu`（无原生 `<select>` / `window.confirm`）  
 - `src/components/AutomationsPage.tsx` — 子页面自建删除确认范例  
 - `src/i18n/messages.ts` — `common.cancel` / `common.confirm` / `common.close` 等  

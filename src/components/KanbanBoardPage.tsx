@@ -31,6 +31,23 @@ import {
   type AgentKanbanPrefs,
   type AgentKanbanStorage,
 } from "@/lib/kanbanBoard";
+import { ContextMenu, type ContextMenuItem } from "@/components/ContextMenu";
+import { SdlcStudioPage } from "@/components/SdlcStudioPage";
+import {
+  useSoftwareTeamDlcEnabled,
+  useSoftwareTeamPipeline,
+  useSoftwareTeamSessionTags,
+} from "@/hooks/useSoftwareTeamDlc";
+import {
+  SOFTWARE_TEAM_ROLES,
+  SOFTWARE_TEAM_SDLC_STAGES,
+  bindSoftwareTeamPipelineProjectPath,
+  reloadSoftwareTeamPipelineIfNewer,
+  kanbanColumnSdlcAliasKey,
+  resolveSoftwareTeamWorkspace,
+  softwareTeamRoleById,
+  type SoftwareTeamSessionTag,
+} from "@/lib/softwareTeamDlc";
 
 type TFn = (key: MessageKey, vars?: Record<string, string | number>) => string;
 
@@ -59,11 +76,17 @@ function AgentKanbanCardView({
   t,
   locale,
   onSelect,
+  teamTag,
+  teamEnabled,
+  onTeamMenu,
 }: {
   card: AgentKanbanCard;
   t: TFn;
   locale: Locale;
   onSelect?: (sessionId: string) => void;
+  teamTag?: SoftwareTeamSessionTag | null;
+  teamEnabled?: boolean;
+  onTeamMenu?: (sessionId: string, x: number, y: number) => void;
 }) {
   const metaParts: string[] = [];
   if (card.projectName) metaParts.push(card.projectName);
@@ -87,6 +110,11 @@ function AgentKanbanCardView({
         type="button"
         className="agent-kanban__card-btn"
         onClick={() => onSelect?.(card.sessionId)}
+        onContextMenu={(e) => {
+          if (!teamEnabled || !onTeamMenu) return;
+          e.preventDefault();
+          onTeamMenu(card.sessionId, e.clientX, e.clientY);
+        }}
         title={t("dashboard.openSession")}
       >
         <span className="agent-kanban__card-title" title={card.title}>
@@ -110,6 +138,16 @@ function AgentKanbanCardView({
         {activity ? (
           <span className="agent-kanban__card-age">
             {t("dashboard.lastActivity", { time: activity })}
+          </span>
+        ) : null}
+        {teamEnabled && teamTag ? (
+          <span className="agent-kanban__card-team">
+            {t(softwareTeamRoleById(teamTag.roleId)?.titleKey ?? "softwareTeamDlc.rosterTitle")}
+            {" · "}
+            {t(
+              SOFTWARE_TEAM_SDLC_STAGES.find((s) => s.id === teamTag.stageId)
+                ?.titleKey ?? "softwareTeamDlc.sdlcTitle",
+            )}
           </span>
         ) : null}
       </button>
@@ -159,11 +197,50 @@ export function KanbanBoardPage({
   const [query, setQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [view, setView] = useState<"dashboard" | "map">("dashboard");
+  const teamEnabled = useSoftwareTeamDlcEnabled();
+  const pipeline = useSoftwareTeamPipeline();
+  const [view, setView] = useState<"dashboard" | "map" | "studio">(() =>
+    teamEnabled ? "studio" : "dashboard",
+  );
+
+  useEffect(() => {
+    if (teamEnabled) {
+      setView("studio");
+      return;
+    }
+    setView((current) => (current === "studio" ? "dashboard" : current));
+  }, [teamEnabled]);
+  const teamTags = useSoftwareTeamSessionTags();
+  const [teamMenu, setTeamMenu] = useState<{
+    sessionId: string;
+    x: number;
+    y: number;
+  } | null>(null);
+  const pipelineWorkspace = useMemo(
+    () =>
+      resolveSoftwareTeamWorkspace({
+        projects,
+        sessions,
+        currentSessionId,
+        generalWorkspacePath,
+      }),
+    [projects, sessions, currentSessionId, generalWorkspacePath],
+  );
 
   useEffect(() => {
     setPrefs(loadAgentKanbanPrefs(storage));
   }, [storage]);
+
+  useEffect(() => {
+    if (!teamEnabled) {
+      bindSoftwareTeamPipelineProjectPath(null);
+      return;
+    }
+    bindSoftwareTeamPipelineProjectPath(pipelineWorkspace.projectPath);
+    void reloadSoftwareTeamPipelineIfNewer({
+      projectPath: pipelineWorkspace.projectPath,
+    });
+  }, [pipelineWorkspace.projectPath, teamEnabled]);
 
   const commitPrefs = (next: AgentKanbanPrefs) => {
     saveAgentKanbanPrefs(next, storage);
@@ -194,6 +271,20 @@ export function KanbanBoardPage({
     ],
   );
 
+  useEffect(() => {
+    if (!teamEnabled) return;
+    const placements: Array<{
+      sessionId: string;
+      column: AgentKanbanColumnId;
+    }> = [];
+    for (const colId of visibleAgentKanbanColumns(true)) {
+      for (const card of board[colId]) {
+        placements.push({ sessionId: card.sessionId, column: colId });
+      }
+    }
+    pipeline.applySessionKanbanBoard(placements);
+  }, [board, pipeline.applySessionKanbanBoard, teamEnabled]);
+
   const columns = visibleAgentKanbanColumns(prefs.showIdle);
   const filtered = useMemo(
     () => filterAgentKanban(board, { query, projectQuery }),
@@ -214,18 +305,100 @@ export function KanbanBoardPage({
     onSelectSession?.(sessionId);
   };
 
+  const onTeamMenu = (sessionId: string, x: number, y: number) => {
+    setTeamMenu({ sessionId, x, y });
+  };
+
+  const teamMenuItems: ContextMenuItem[] = useMemo(() => {
+    if (!teamMenu) return [];
+    const items: ContextMenuItem[] = [
+      {
+        label: tr("softwareTeamDlc.assignRole"),
+        children: SOFTWARE_TEAM_ROLES.map((role) => ({
+          id: `role-${role.id}`,
+          label: tr(role.titleKey),
+          onClick: () => teamTags.assign(teamMenu.sessionId, { roleId: role.id }),
+        })),
+      },
+      {
+        label: tr("softwareTeamDlc.assignStage"),
+        children: SOFTWARE_TEAM_SDLC_STAGES.map((stage) => ({
+          id: `stage-${stage.id}`,
+          label: tr(stage.titleKey),
+          onClick: () =>
+            teamTags.assign(teamMenu.sessionId, {
+              roleId:
+                teamTags.tagFor(teamMenu.sessionId)?.roleId ?? "engineer",
+              stageId: stage.id,
+            }),
+        })),
+      },
+    ];
+    if (teamTags.tagFor(teamMenu.sessionId)) {
+      items.push({ separator: true });
+      items.push({
+        label: tr("softwareTeamDlc.clearTag"),
+        onClick: () => teamTags.clear(teamMenu.sessionId),
+      });
+    }
+    return items;
+  }, [teamMenu, teamTags, tr]);
+
+  const renderCard = (card: AgentKanbanCard) => (
+    <AgentKanbanCardView
+      key={card.sessionId}
+      card={card}
+      t={tFn}
+      locale={locale}
+      onSelect={onOpenCard}
+      teamEnabled={teamEnabled}
+      teamTag={teamTags.tagFor(card.sessionId)}
+      onTeamMenu={onTeamMenu}
+    />
+  );
+
+  if (teamEnabled && view === "studio") {
+    return (
+      <SdlcStudioPage
+        locale={locale}
+        sessions={sessions}
+        projects={projects}
+        currentSessionId={currentSessionId}
+        untitledLabel={untitledLabel}
+        generalWorkspacePath={generalWorkspacePath}
+        onSelectSession={onOpenCard}
+        onShowLive={() => setView("dashboard")}
+      />
+    );
+  }
+
   return (
     <div className="auto-page agent-kanban-page">
       <div className="auto-page__head agent-kanban-page__head">
         <div className="auto-page__titles">
-          <h1 className="auto-page__title">{tr("kanban.title")}</h1>
+          <h1 className="auto-page__title">
+            {teamEnabled ? tr("softwareTeamDlc.studioTitle") : tr("kanban.title")}
+          </h1>
           <p className="auto-page__subtitle">
             {tr("kanban.total", { n: total })}
             {" · "}
-            {tr("kanban.hint")}
+            {teamEnabled ? tr("softwareTeamDlc.kanbanHint") : tr("kanban.hint")}
           </p>
         </div>
         <div className="agent-kanban__views" role="tablist">
+          {teamEnabled ? (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === "studio"}
+              className={
+                "agent-kanban__view-tab" + (view === "studio" ? " is-active" : "")
+              }
+              onClick={() => setView("studio")}
+            >
+              {tr("softwareTeamDlc.pipelineTitle")}
+            </button>
+          ) : null}
           <button
             type="button"
             role="tab"
@@ -236,7 +409,9 @@ export function KanbanBoardPage({
             }
             onClick={() => setView("dashboard")}
           >
-            {tr("kanban.view.dashboard")}
+            {teamEnabled
+              ? tr("softwareTeamDlc.liveAgents")
+              : tr("kanban.view.dashboard")}
           </button>
           <button
             type="button"
@@ -346,15 +521,7 @@ export function KanbanBoardPage({
                     </span>
                   </header>
                   <ul className="agent-kanban__cards" role="list">
-                    {group.cards.map((card) => (
-                      <AgentKanbanCardView
-                        key={card.sessionId}
-                        card={card}
-                        t={tFn}
-                        locale={locale}
-                        onSelect={onOpenCard}
-                      />
-                    ))}
+                    {group.cards.map((card) => renderCard(card))}
                   </ul>
                 </section>
               ))
@@ -369,15 +536,23 @@ export function KanbanBoardPage({
             {columns.map((colId) => {
               const cards = filtered[colId];
               const label = tr(COLUMN_LABEL_KEY[colId]);
+              const alias = teamEnabled
+                ? tr(kanbanColumnSdlcAliasKey(colId))
+                : null;
               return (
                 <section
                   key={colId}
                   className={"agent-kanban__col " + columnToneClass(colId)}
                   role="listitem"
-                  aria-label={label}
+                  aria-label={alias ? `${label} · ${alias}` : label}
                 >
                   <header className="agent-kanban__col-head">
-                    <span className="agent-kanban__col-title">{label}</span>
+                    <span className="agent-kanban__col-titles">
+                      <span className="agent-kanban__col-title">{label}</span>
+                      {alias ? (
+                        <span className="agent-kanban__col-alias">{alias}</span>
+                      ) : null}
+                    </span>
                     <span className="agent-kanban__col-count">
                       {cards.length}
                     </span>
@@ -386,15 +561,7 @@ export function KanbanBoardPage({
                     <p className="agent-kanban__none">{tr("kanban.none")}</p>
                   ) : (
                     <ul className="agent-kanban__cards" role="list">
-                      {cards.map((card) => (
-                        <AgentKanbanCardView
-                          key={card.sessionId}
-                          card={card}
-                          t={tFn}
-                          locale={locale}
-                          onSelect={onOpenCard}
-                        />
-                      ))}
+                      {cards.map((card) => renderCard(card))}
                     </ul>
                   )}
                 </section>
@@ -403,6 +570,15 @@ export function KanbanBoardPage({
           </div>
         )}
       </div>
+      {teamEnabled ? (
+        <ContextMenu
+          open={!!teamMenu}
+          x={teamMenu?.x ?? 0}
+          y={teamMenu?.y ?? 0}
+          onClose={() => setTeamMenu(null)}
+          items={teamMenuItems}
+        />
+      ) : null}
     </div>
   );
 }

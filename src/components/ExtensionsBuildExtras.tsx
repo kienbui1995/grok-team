@@ -74,6 +74,7 @@ import {
   isClaudeMarketplaceSource,
   isDefaultAllowedMarketplaceSource,
 } from "@/lib/marketplaceDefaults";
+import { SoftwareTeamDlcPanel } from "@/components/SoftwareTeamDlcPanel";
 import {
   buildPluginMarketErrorView,
   clearPluginMarketRowError,
@@ -1035,6 +1036,7 @@ export function ExtensionsBuildExtras({
             id="settings-anchor-ext-agents"
             data-testid="ext-agents-panel"
           >
+            <SoftwareTeamDlcPanel locale={locale} />
             {!hidePageToolbar ? (
               <div className="ext-ref-block__head ext-ref-toolbar">
                 <span className="ext-ref-block__actions">

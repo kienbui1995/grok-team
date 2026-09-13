@@ -528,4 +528,66 @@ describe("settingsCatalog", () => {
       importZh.some((h) => h.entry.id === "account.callLogs"),
     ).toBe(true);
   });
+
+  it("registers Software Works / SDLC Studio on extensions / agents", () => {
+    const entry = SETTINGS_ENTRIES.find((e) => e.id === "ext.softwareTeamDlc");
+    expect(entry?.section).toBe("extensions");
+    expect(entry?.tab).toBe("agents");
+    expect(entry?.anchorId).toBe("settings-anchor-software-team-dlc");
+    const tZh = createT("zh");
+    const tEn = createT("en");
+    const hits = searchSettingsEntries("software works", tZh, tEn);
+    expect(hits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const studio = searchSettingsEntries("sdlc studio", tZh, tEn);
+    expect(studio.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const dlc = searchSettingsEntries("dlc", tZh, tEn);
+    expect(dlc.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const install = searchSettingsEntries("install pack", tZh, tEn);
+    expect(install.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const repair = searchSettingsEntries("repair pack", tZh, tEn);
+    expect(repair.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const ship = searchSettingsEntries("ship gate", tZh, tEn);
+    expect(ship.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const notes = searchSettingsEntries("review notes", tZh, tEn);
+    expect(notes.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const start = searchSettingsEntries("start a delivery", tZh, tEn);
+    expect(start.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const team = searchSettingsEntries("team session", tZh, tEn);
+    expect(team.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const attach = searchSettingsEntries("attach-chat", tZh, tEn);
+    expect(attach.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const sot = searchSettingsEntries("software-works.json", tZh, tEn);
+    expect(sot.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const archive = searchSettingsEntries("archive delivery", tZh, tEn);
+    expect(archive.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const exp = searchSettingsEntries("export summary", tZh, tEn);
+    expect(exp.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const zhHits = searchSettingsEntries("软件团队", tZh, tEn);
+    expect(zhHits.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const conflict = searchSettingsEntries("pipeline conflict", tZh, tEn);
+    expect(conflict.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const keepBoard = searchSettingsEntries("keep this board", tZh, tEn);
+    expect(keepBoard.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const useFile = searchSettingsEntries("use project file", tZh, tEn);
+    expect(useFile.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const showArchived = searchSettingsEntries("show archived", tZh, tEn);
+    expect(showArchived.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(
+      true,
+    );
+    const studioPrefs = searchSettingsEntries(
+      "grok.softwareTeamDlc.studio",
+      tZh,
+      tEn,
+    );
+    expect(studioPrefs.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(
+      true,
+    );
+    const zhConflict = searchSettingsEntries("流水线文件冲突", tZh, tEn);
+    expect(zhConflict.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(
+      true,
+    );
+    expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(
+      "#/settings/extensions/agents",
+    );
+  });
 });
