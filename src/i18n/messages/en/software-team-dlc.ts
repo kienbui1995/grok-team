@@ -159,9 +159,14 @@ export const enSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "What are we shipping?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Name the slice before starting.",
   "softwareTeamDlc.startDeliveryRole": "First role",
+  "softwareTeamDlc.startDeliveryTemplate": "Template",
+  "softwareTeamDlc.templateFeature": "Feature slice",
+  "softwareTeamDlc.templateBugfix": "Bugfix",
+  "softwareTeamDlc.templateHotfix": "Hotfix",
+  "softwareTeamDlc.templateDocs": "Docs only",
   "softwareTeamDlc.startDeliveryBootstrap": "Add docs/sdlc placeholders",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Writes spec.md, design.md, and review.md under this project’s docs/sdlc if they are missing. Needs the desktop Host and a project folder.",
+    "Writes the template’s missing placeholders under this project’s docs/sdlc. Needs the desktop Host and a project folder.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Select a project folder to write docs/sdlc placeholders.",
   "softwareTeamDlc.startDeliveryNeedHost":

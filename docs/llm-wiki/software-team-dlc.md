@@ -153,9 +153,20 @@ Live `done` + gate fail → CTA **Handoff to {next role}**. Live `done` + gate o
 
 ## Start a delivery
 
-Helpers: `src/lib/softwareTeamDlc/delivery.ts`.
+Helpers: `src/lib/softwareTeamDlc/delivery.ts` + `templates.ts`.
 
-Empty board or toolbar **Start a delivery** (`GlassModal`): slice title, first role (default Product), optional `docs/sdlc/{spec,design,review}.md` placeholders.
+Empty board or toolbar **Start a delivery** (`GlassModal`): template, slice title, first role (preselected by the template, still editable), optional `docs/sdlc` placeholders.
+
+**Templates** (`SOFTWARE_TEAM_TEMPLATES`, default `feature`) preselect the first role and narrow the bootstrap write to a subset of the allowlisted relatives:
+
+| Template | First role | docs/sdlc subset |
+|----------|------------|------------------|
+| Feature slice | Product | spec + design + review |
+| Bugfix | Engineer | review |
+| Hotfix | Engineer | — (bootstrap block hidden) |
+| Docs only | Writer | — (bootstrap block hidden) |
+
+`writeSoftwareTeamWorkspaceBootstrap` takes an optional `files` subset; unknown paths are dropped and an empty subset returns `skipped` without touching the Host. With no `files` the write stays the full three-file bootstrap. `planRef` is set only when the subset includes `docs/sdlc/spec.md`; `artifactRef: "docs/sdlc"` only when the subset is non-empty.
 
 | Rule | Honesty |
 |------|---------|

@@ -169,6 +169,11 @@ import {
   softwareTeamDeliveryShipGate,
   setSoftwareTeamDeliveryNote,
   syncSoftwareTeamDeliverySliceRefs,
+  SOFTWARE_TEAM_TEMPLATES,
+  SOFTWARE_TEAM_TEMPLATE_DEFAULT,
+  SOFTWARE_TEAM_TEMPLATE_IDS,
+  softwareTeamTemplateById,
+  softwareTeamTemplateDocsRelative,
   type SoftwareTeamLaunchHost,
   type SoftwareTeamPackProbeHost,
   type SoftwareTeamPackWriteHost,
@@ -4851,5 +4856,128 @@ describe("Software Works item priority + board sort", () => {
       }).sortMode,
     ).toBe("newest");
     expect(parseSoftwareTeamStudioPrefs({}).sortMode).toBe("newest");
+  });
+});
+
+describe("Software Works delivery templates", () => {
+  it("exposes the four built-in templates with role + docs defaults", () => {
+    expect(SOFTWARE_TEAM_TEMPLATE_IDS).toEqual([
+      "feature",
+      "bugfix",
+      "hotfix",
+      "docs",
+    ]);
+    expect(SOFTWARE_TEAM_TEMPLATE_DEFAULT).toBe("feature");
+    expect(SOFTWARE_TEAM_TEMPLATES.map((template) => template.roleId)).toEqual([
+      "product",
+      "engineer",
+      "engineer",
+      "writer",
+    ]);
+    expect(SOFTWARE_TEAM_TEMPLATES.map((template) => template.docs)).toEqual([
+      ["spec", "design", "review"],
+      ["review"],
+      [],
+      [],
+    ]);
+  });
+
+  it("looks templates up by id and returns null otherwise", () => {
+    expect(softwareTeamTemplateById("bugfix")?.roleId).toBe("engineer");
+    expect(softwareTeamTemplateById(" hotfix ")?.docs).toEqual([]);
+    expect(softwareTeamTemplateById("")).toBeNull();
+    expect(softwareTeamTemplateById("unknown")).toBeNull();
+    expect(softwareTeamTemplateById(null)).toBeNull();
+  });
+
+  it("maps template docs to allowlisted bootstrap relatives only", () => {
+    expect(softwareTeamTemplateDocsRelative(softwareTeamTemplateById("feature"))).toEqual([
+      "docs/sdlc/spec.md",
+      "docs/sdlc/design.md",
+      "docs/sdlc/review.md",
+    ]);
+    expect(softwareTeamTemplateDocsRelative(softwareTeamTemplateById("bugfix"))).toEqual([
+      "docs/sdlc/review.md",
+    ]);
+    expect(softwareTeamTemplateDocsRelative(softwareTeamTemplateById("hotfix"))).toEqual(
+      [],
+    );
+    expect(softwareTeamTemplateDocsRelative(softwareTeamTemplateById("docs"))).toEqual(
+      [],
+    );
+    expect(softwareTeamTemplateDocsRelative(null)).toEqual([]);
+  });
+
+  it("narrows the bootstrap write to the template subset and skips when empty", async () => {
+    const writes: string[] = [];
+    const bugfix = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: "/repo",
+      title: "Login 500",
+      bootstrap: true,
+      files: softwareTeamTemplateDocsRelative(softwareTeamTemplateById("bugfix")),
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ error: "missing" }),
+        writeFile: async (_p, relative) => {
+          writes.push(relative);
+        },
+      },
+    });
+    expect(bugfix.ok).toBe(true);
+    expect(writes).toEqual(["docs/sdlc/review.md"]);
+
+    writes.length = 0;
+    const hotfix = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: "/repo",
+      title: "Hotfix",
+      bootstrap: true,
+      files: softwareTeamTemplateDocsRelative(softwareTeamTemplateById("hotfix")),
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ error: "missing" }),
+        writeFile: async () => {
+          throw new Error("should not write");
+        },
+      },
+    });
+    expect(hotfix).toEqual({ ok: true, reason: "skipped", files: [] });
+    expect(writes).toEqual([]);
+
+    writes.length = 0;
+    const unknownOnly = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: "/repo",
+      title: "Odd",
+      bootstrap: true,
+      files: ["docs/sdlc/other.md", "../../~/.grok/escape.md"],
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ error: "missing" }),
+        writeFile: async () => {
+          throw new Error("should not write");
+        },
+      },
+    });
+    expect(unknownOnly).toEqual({ ok: true, reason: "skipped", files: [] });
+    expect(writes).toEqual([]);
+
+    writes.length = 0;
+    const full = await writeSoftwareTeamWorkspaceBootstrap({
+      projectPath: "/repo",
+      title: "No subset",
+      bootstrap: true,
+      host: {
+        isDesktopHost: () => true,
+        readFile: async () => ({ error: "missing" }),
+        writeFile: async (_p, relative) => {
+          writes.push(relative);
+        },
+      },
+    });
+    expect(full.ok).toBe(true);
+    expect(writes.sort()).toEqual([
+      "docs/sdlc/design.md",
+      "docs/sdlc/review.md",
+      "docs/sdlc/spec.md",
+    ]);
   });
 });

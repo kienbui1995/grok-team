@@ -152,9 +152,14 @@ export const frSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "Que livrons-nous ?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Nommez la tranche avant de commencer.",
   "softwareTeamDlc.startDeliveryRole": "Premier rôle",
+  "softwareTeamDlc.startDeliveryTemplate": "Modèle",
+  "softwareTeamDlc.templateFeature": "Fonctionnalité",
+  "softwareTeamDlc.templateBugfix": "Correction de bug",
+  "softwareTeamDlc.templateHotfix": "Correctif urgent",
+  "softwareTeamDlc.templateDocs": "Docs uniquement",
   "softwareTeamDlc.startDeliveryBootstrap": "Ajouter les fichiers docs/sdlc",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Écrit spec.md, design.md et review.md sous docs/sdlc de ce projet s’ils manquent. Nécessite l’hôte bureau et un dossier projet.",
+    "Écrit les espaces réservés manquants du modèle sous docs/sdlc de ce projet. Nécessite l’hôte bureau et un dossier projet.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Choisissez un dossier projet pour écrire les fichiers docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":

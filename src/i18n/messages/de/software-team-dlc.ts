@@ -152,9 +152,14 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "Was liefern wir?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Bitte zuerst die Scheibe benennen.",
   "softwareTeamDlc.startDeliveryRole": "Erste Rolle",
+  "softwareTeamDlc.startDeliveryTemplate": "Vorlage",
+  "softwareTeamDlc.templateFeature": "Feature-Slice",
+  "softwareTeamDlc.templateBugfix": "Bugfix",
+  "softwareTeamDlc.templateHotfix": "Hotfix",
+  "softwareTeamDlc.templateDocs": "Nur Doku",
   "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc-Platzhalter anlegen",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Schreibt spec.md, design.md und review.md unter docs/sdlc dieses Projekts, wenn sie fehlen. Braucht Desktop-Host und Projektordner.",
+    "Schreibt die fehlenden Platzhalter der Vorlage unter docs/sdlc dieses Projekts. Braucht Desktop-Host und Projektordner.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Projektordner wählen, um docs/sdlc-Platzhalter zu schreiben.",
   "softwareTeamDlc.startDeliveryNeedHost":

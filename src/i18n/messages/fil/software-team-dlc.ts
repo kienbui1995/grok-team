@@ -152,9 +152,14 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "Ano ang isi-ship?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Bigyan muna ng pangalan ang slice.",
   "softwareTeamDlc.startDeliveryRole": "Unang role",
+  "softwareTeamDlc.startDeliveryTemplate": "Template",
+  "softwareTeamDlc.templateFeature": "Feature slice",
+  "softwareTeamDlc.templateBugfix": "Pag-aayos ng bug",
+  "softwareTeamDlc.templateHotfix": "Hotfix",
+  "softwareTeamDlc.templateDocs": "Docs lang",
   "softwareTeamDlc.startDeliveryBootstrap": "Magdagdag ng docs/sdlc placeholders",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Sumusulat ng spec.md, design.md, at review.md sa docs/sdlc ng proyektong ito kung wala pa. Kailangan ang desktop Host at folder ng proyekto.",
+    "Sumusulat ng mga kulang na placeholder ng template sa docs/sdlc ng proyektong ito. Kailangan ang desktop Host at folder ng proyekto.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Pumili ng folder ng proyekto para isulat ang docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":

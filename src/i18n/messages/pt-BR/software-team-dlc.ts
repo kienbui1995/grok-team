@@ -152,9 +152,14 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "O que vamos entregar?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Dê um nome à fatia antes de começar.",
   "softwareTeamDlc.startDeliveryRole": "Primeiro papel",
+  "softwareTeamDlc.startDeliveryTemplate": "Modelo",
+  "softwareTeamDlc.templateFeature": "Funcionalidade",
+  "softwareTeamDlc.templateBugfix": "Correção de bug",
+  "softwareTeamDlc.templateHotfix": "Hotfix",
+  "softwareTeamDlc.templateDocs": "Apenas documentação",
   "softwareTeamDlc.startDeliveryBootstrap": "Adicionar placeholders docs/sdlc",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Grava spec.md, design.md e review.md em docs/sdlc deste projeto se faltarem. Precisa do Host desktop e de uma pasta de projeto.",
+    "Grava os placeholders que faltam do modelo em docs/sdlc deste projeto. Precisa do Host desktop e de uma pasta de projeto.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Escolha uma pasta de projeto para gravar docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":

@@ -152,9 +152,14 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "무엇을 출시할까요?",
   "softwareTeamDlc.startDeliveryNeedTitle": "시작하기 전에 슬라이스 이름을 넣으세요.",
   "softwareTeamDlc.startDeliveryRole": "첫 역할",
+  "softwareTeamDlc.startDeliveryTemplate": "템플릿",
+  "softwareTeamDlc.templateFeature": "기능 슬라이스",
+  "softwareTeamDlc.templateBugfix": "버그 수정",
+  "softwareTeamDlc.templateHotfix": "핫픽스",
+  "softwareTeamDlc.templateDocs": "문서만",
   "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc 자리 표시자 추가",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "없으면 이 프로젝트의 docs/sdlc 에 spec.md, design.md, review.md 를 씁니다. 데스크톱 Host 와 프로젝트 폴더가 필요합니다.",
+    "템플릿의 누락된 자리 표시자를 이 프로젝트의 docs/sdlc 에 씁니다. 데스크톱 Host 와 프로젝트 폴더가 필요합니다.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "docs/sdlc 를 쓰려면 프로젝트 폴더를 고르세요.",
   "softwareTeamDlc.startDeliveryNeedHost":

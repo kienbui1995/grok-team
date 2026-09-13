@@ -144,9 +144,14 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "这次要交付什么？",
   "softwareTeamDlc.startDeliveryNeedTitle": "开始前请先给切片起名。",
   "softwareTeamDlc.startDeliveryRole": "起始角色",
+  "softwareTeamDlc.startDeliveryTemplate": "模板",
+  "softwareTeamDlc.templateFeature": "新功能",
+  "softwareTeamDlc.templateBugfix": "修复缺陷",
+  "softwareTeamDlc.templateHotfix": "紧急修复",
+  "softwareTeamDlc.templateDocs": "仅文档",
   "softwareTeamDlc.startDeliveryBootstrap": "添加 docs/sdlc 占位文件",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "若缺失则在本项目 docs/sdlc 写入 spec.md、design.md、review.md。需要桌面 Host 和项目文件夹。",
+    "按模板把缺失的占位文件写入本项目 docs/sdlc。需要桌面 Host 和项目文件夹。",
   "softwareTeamDlc.startDeliveryNeedProject": "请先选项目文件夹，才能写 docs/sdlc 占位。",
   "softwareTeamDlc.startDeliveryNeedHost":
     "工作区占位需要桌面 Host。此预览不会假装已经写入。",

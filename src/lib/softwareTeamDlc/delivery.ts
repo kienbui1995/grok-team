@@ -161,11 +161,16 @@ function bootstrapBody(relative: string, title: string): string {
   ].join("\n");
 }
 
-/** Write missing `docs/sdlc/{spec,design,review}.md` under the project. Idempotent. */
+/**
+ * Write missing `docs/sdlc/{spec,design,review}.md` under the project. Idempotent.
+ * `files` narrows the write to a subset of the allowlisted relatives
+ * (delivery templates); unknown paths are dropped, an empty subset skips.
+ */
 export async function writeSoftwareTeamWorkspaceBootstrap(input: {
   projectPath?: string | null;
   title?: string | null;
   bootstrap?: boolean;
+  files?: readonly string[];
   host?: SoftwareTeamBootstrapHost;
 }): Promise<SoftwareTeamBootstrapResult> {
   const host = input.host ?? defaultSoftwareTeamBootstrapHost();
@@ -175,6 +180,14 @@ export async function writeSoftwareTeamWorkspaceBootstrap(input: {
     host,
   });
   if (plan.reason === "skipped") {
+    return { ok: true, reason: "skipped", files: [] };
+  }
+  const requested = input.files
+    ? SOFTWARE_TEAM_BOOTSTRAP_RELATIVE.filter((relative) =>
+        input.files!.includes(relative),
+      )
+    : [...SOFTWARE_TEAM_BOOTSTRAP_RELATIVE];
+  if (!requested.length) {
     return { ok: true, reason: "skipped", files: [] };
   }
   if (
@@ -190,7 +203,7 @@ export async function writeSoftwareTeamWorkspaceBootstrap(input: {
   }
   const files: SoftwareTeamBootstrapFileResult[] = [];
   try {
-    for (const relative of SOFTWARE_TEAM_BOOTSTRAP_RELATIVE) {
+    for (const relative of requested) {
       let exists = false;
       try {
         const read = await host.readFile(plan.projectPath, relative);

@@ -159,9 +159,14 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "Chúng ta phát hành gì?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Đặt tên lát trước khi bắt đầu.",
   "softwareTeamDlc.startDeliveryRole": "Vai đầu",
+  "softwareTeamDlc.startDeliveryTemplate": "Mẫu",
+  "softwareTeamDlc.templateFeature": "Tính năng mới",
+  "softwareTeamDlc.templateBugfix": "Sửa lỗi",
+  "softwareTeamDlc.templateHotfix": "Sửa gấp",
+  "softwareTeamDlc.templateDocs": "Chỉ tài liệu",
   "softwareTeamDlc.startDeliveryBootstrap": "Thêm placeholder docs/sdlc",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Ghi spec.md, design.md, và review.md vào docs/sdlc của dự án này nếu chưa có. Cần Host máy tính và thư mục dự án.",
+    "Ghi các placeholder còn thiếu của mẫu vào docs/sdlc của dự án này. Cần Host máy tính và thư mục dự án.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Chọn thư mục dự án để ghi placeholder docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":

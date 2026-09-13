@@ -429,3 +429,14 @@ export {
   type SoftwareTeamStudioOverlay,
   type SoftwareTeamStudioOverlayFlags,
 } from "./studioOverlay";
+
+export {
+  SOFTWARE_TEAM_TEMPLATES,
+  SOFTWARE_TEAM_TEMPLATE_DEFAULT,
+  SOFTWARE_TEAM_TEMPLATE_IDS,
+  softwareTeamTemplateById,
+  softwareTeamTemplateDocsRelative,
+  type SoftwareTeamTemplate,
+  type SoftwareTeamTemplateDoc,
+  type SoftwareTeamTemplateId,
+} from "./templates";

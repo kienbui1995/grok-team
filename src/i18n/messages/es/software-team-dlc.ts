@@ -152,9 +152,14 @@ export const esSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "¿Qué vamos a entregar?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Ponle nombre a la rodaja antes de empezar.",
   "softwareTeamDlc.startDeliveryRole": "Primer rol",
+  "softwareTeamDlc.startDeliveryTemplate": "Plantilla",
+  "softwareTeamDlc.templateFeature": "Funcionalidad",
+  "softwareTeamDlc.templateBugfix": "Corrección de error",
+  "softwareTeamDlc.templateHotfix": "Hotfix",
+  "softwareTeamDlc.templateDocs": "Solo documentación",
   "softwareTeamDlc.startDeliveryBootstrap": "Añadir placeholders docs/sdlc",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Escribe spec.md, design.md y review.md bajo docs/sdlc de este proyecto si faltan. Necesita Host de escritorio y una carpeta de proyecto.",
+    "Escribe los placeholders que falten según la plantilla bajo docs/sdlc de este proyecto. Necesita Host de escritorio y una carpeta de proyecto.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Elige una carpeta de proyecto para escribir docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":

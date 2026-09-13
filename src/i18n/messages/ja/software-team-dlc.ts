@@ -152,9 +152,14 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "何を出荷しますか？",
   "softwareTeamDlc.startDeliveryNeedTitle": "開始前にスライス名を入れてください。",
   "softwareTeamDlc.startDeliveryRole": "最初の役割",
+  "softwareTeamDlc.startDeliveryTemplate": "テンプレート",
+  "softwareTeamDlc.templateFeature": "機能スライス",
+  "softwareTeamDlc.templateBugfix": "バグ修正",
+  "softwareTeamDlc.templateHotfix": "ホットフィックス",
+  "softwareTeamDlc.templateDocs": "ドキュメントのみ",
   "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc プレースホルダを追加",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "無い場合、このプロジェクトの docs/sdlc に spec.md / design.md / review.md を書きます。デスクトップ Host とプロジェクトフォルダが必要です。",
+    "テンプレートに応じて不足しているプレースホルダをこのプロジェクトの docs/sdlc に書きます。デスクトップ Host とプロジェクトフォルダが必要です。",
   "softwareTeamDlc.startDeliveryNeedProject":
     "docs/sdlc を書くにはプロジェクトフォルダを選んでください。",
   "softwareTeamDlc.startDeliveryNeedHost":

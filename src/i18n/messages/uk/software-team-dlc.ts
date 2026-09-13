@@ -152,9 +152,14 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "Що постачаємо?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Спочатку назвіть зріз.",
   "softwareTeamDlc.startDeliveryRole": "Перша роль",
+  "softwareTeamDlc.startDeliveryTemplate": "Шаблон",
+  "softwareTeamDlc.templateFeature": "Нова функція",
+  "softwareTeamDlc.templateBugfix": "Виправлення бага",
+  "softwareTeamDlc.templateHotfix": "Терміновий фікс",
+  "softwareTeamDlc.templateDocs": "Лише документація",
   "softwareTeamDlc.startDeliveryBootstrap": "Додати заготовки docs/sdlc",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Пише spec.md, design.md і review.md в docs/sdlc цього проєкту, якщо їх немає. Потрібні десктопний Host і тека проєкту.",
+    "Пише відсутні заготовки з шаблону в docs/sdlc цього проєкту. Потрібні десктопний Host і тека проєкту.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Оберіть теку проєкту, щоб писати docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":

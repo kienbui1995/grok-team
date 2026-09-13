@@ -74,7 +74,11 @@ import {
   softwareTeamDeliveryMembers,
   softwareTeamShipBlockMessageKey,
   softwareTeamDeliveryShipGate,
+  softwareTeamTemplateById,
+  softwareTeamTemplateDocsRelative,
   writeSoftwareTeamWorkspaceBootstrap,
+  SOFTWARE_TEAM_TEMPLATES,
+  SOFTWARE_TEAM_TEMPLATE_DEFAULT,
   type SoftwareTeamDeliveryDetailTarget,
   type SoftwareTeamDeliveryFilterId,
   type SoftwareTeamRoleFilterId,
@@ -86,6 +90,7 @@ import {
   type SoftwareTeamSdlcDocProbe,
   type SoftwareTeamSdlcStageId,
   type SoftwareTeamStudioSortMode,
+  type SoftwareTeamTemplateId,
 } from "@/lib/softwareTeamDlc";
 
 type TFn = (key: MessageKey, vars?: Record<string, string | number>) => string;
@@ -250,6 +255,7 @@ export function SdlcStudioPage({
   const [status, setStatus] = useState<string | null>(null);
   const [editor, setEditor] = useState<ItemDraft | null>(null);
   const [wizard, setWizard] = useState<{
+    templateId: SoftwareTeamTemplateId;
     title: string;
     roleId: SoftwareTeamRoleId;
     bootstrap: boolean;
@@ -377,7 +383,7 @@ export function SdlcStudioPage({
     });
     if (decision.markOffered) emptyWizardOffered.current = true;
     if (decision.open) {
-      setWizard({ title: "", roleId: "product", bootstrap: false });
+      setWizard({ templateId: SOFTWARE_TEAM_TEMPLATE_DEFAULT, title: "", roleId: "product", bootstrap: false });
     }
   }, [inConflict, pipeline.items.length]);
 
@@ -821,11 +827,15 @@ export function SdlcStudioPage({
     }
     let planRef = "";
     let artifactRef = "";
+    const templateDocs = softwareTeamTemplateDocsRelative(
+      softwareTeamTemplateById(wizard.templateId),
+    );
     if (wizard.bootstrap) {
       const boot = await writeSoftwareTeamWorkspaceBootstrap({
         projectPath: workspace.projectPath,
         title,
         bootstrap: true,
+        files: templateDocs,
       });
       if (!boot.ok) {
         setStatus(
@@ -838,8 +848,12 @@ export function SdlcStudioPage({
         return;
       }
       const created = boot.files.filter((file) => file.action === "created");
-      planRef = "docs/sdlc/spec.md";
-      artifactRef = "docs/sdlc";
+      if (templateDocs.includes("docs/sdlc/spec.md")) {
+        planRef = "docs/sdlc/spec.md";
+      }
+      if (templateDocs.length) {
+        artifactRef = "docs/sdlc";
+      }
       if (created.length) {
         setStatus(
           t("softwareTeamDlc.startDeliveryBootstrapped", {
@@ -1556,7 +1570,7 @@ export function SdlcStudioPage({
             type="button"
             className="btn btn--ghost btn--sm"
             onClick={() =>
-              setWizard({ title: "", roleId: "product", bootstrap: false })
+              setWizard({ templateId: SOFTWARE_TEAM_TEMPLATE_DEFAULT, title: "", roleId: "product", bootstrap: false })
             }
           >
             {t("softwareTeamDlc.startDelivery")}
@@ -1809,7 +1823,7 @@ export function SdlcStudioPage({
               type="button"
               className="btn"
               onClick={() =>
-                setWizard({ title: "", roleId: "product", bootstrap: false })
+                setWizard({ templateId: SOFTWARE_TEAM_TEMPLATE_DEFAULT, title: "", roleId: "product", bootstrap: false })
               }
             >
               {t("softwareTeamDlc.startDelivery")}
@@ -2490,6 +2504,30 @@ export function SdlcStudioPage({
             <p className="sdlc-studio__slash-note">
               {t("softwareTeamDlc.startDeliveryHint")}
             </p>
+            <div className="sdlc-studio__field">
+              <span>{t("softwareTeamDlc.startDeliveryTemplate")}</span>
+              <div className="sdlc-studio__chips" role="group">
+                {SOFTWARE_TEAM_TEMPLATES.map((template) => (
+                  <button
+                    key={template.id}
+                    type="button"
+                    className={
+                      "task-board__chip" +
+                      (wizard.templateId === template.id ? " is-active" : "")
+                    }
+                    onClick={() =>
+                      setWizard({
+                        ...wizard,
+                        templateId: template.id,
+                        roleId: template.roleId,
+                      })
+                    }
+                  >
+                    {t(template.titleKey)}
+                  </button>
+                ))}
+              </div>
+            </div>
             <label className="sdlc-studio__field">
               <span>{t("softwareTeamDlc.startDeliveryTitle")}</span>
               <input
@@ -2520,6 +2558,10 @@ export function SdlcStudioPage({
               </div>
             </div>
             {(() => {
+              const wizardTemplate = softwareTeamTemplateById(
+                wizard.templateId,
+              );
+              if (!wizardTemplate?.docs.length) return null;
               const bootPlan = planSoftwareTeamWorkspaceBootstrap({
                 projectPath: workspace.projectPath,
                 bootstrap: true,

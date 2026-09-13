@@ -152,9 +152,14 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "Apa yang kita kirim?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Beri nama irisan sebelum mulai.",
   "softwareTeamDlc.startDeliveryRole": "Peran pertama",
+  "softwareTeamDlc.startDeliveryTemplate": "Templat",
+  "softwareTeamDlc.templateFeature": "Fitur baru",
+  "softwareTeamDlc.templateBugfix": "Perbaikan bug",
+  "softwareTeamDlc.templateHotfix": "Hotfix",
+  "softwareTeamDlc.templateDocs": "Hanya dokumen",
   "softwareTeamDlc.startDeliveryBootstrap": "Tambah placeholder docs/sdlc",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Menulis spec.md, design.md, dan review.md di docs/sdlc proyek ini jika belum ada. Butuh Host desktop dan folder proyek.",
+    "Menulis placeholder yang belum ada dari templat di docs/sdlc proyek ini. Butuh Host desktop dan folder proyek.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Pilih folder proyek untuk menulis docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":

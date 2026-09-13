@@ -152,9 +152,14 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "எதை அனுப்புகிறோம்?",
   "softwareTeamDlc.startDeliveryNeedTitle": "தொடங்குவதற்கு முன் துண்டுக்கு பெயரிடுங்கள்.",
   "softwareTeamDlc.startDeliveryRole": "முதல் பங்கு",
+  "softwareTeamDlc.startDeliveryTemplate": "வார்ப்புரு",
+  "softwareTeamDlc.templateFeature": "அம்சப் பகுதி",
+  "softwareTeamDlc.templateBugfix": "பிழை திருத்தம்",
+  "softwareTeamDlc.templateHotfix": "அவசர திருத்தம்",
+  "softwareTeamDlc.templateDocs": "ஆவணம் மட்டும்",
   "softwareTeamDlc.startDeliveryBootstrap": "docs/sdlc இடம்பிடிப்பான்களை சேர்",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "இல்லையென்றால் இந்த திட்டத்தின் docs/sdlc இல் spec.md, design.md, review.md எழுதும். டெஸ்க்டாப் Host மற்றும் திட்டக் கோப்புறை தேவை.",
+    "வார்ப்புருவில் இல்லாத இடம்பிடிப்பான்களை இந்த திட்டத்தின் docs/sdlc இல் எழுதும். டெஸ்க்டாப் Host மற்றும் திட்டக் கோப்புறை தேவை.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "docs/sdlc எழுத ஒரு திட்டக் கோப்புறையை தேர்ந்தெடுக்கவும்.",
   "softwareTeamDlc.startDeliveryNeedHost":

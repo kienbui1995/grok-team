@@ -152,9 +152,14 @@ export const itSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "Cosa consegniamo?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Dai un nome alla fetta prima di iniziare.",
   "softwareTeamDlc.startDeliveryRole": "Primo ruolo",
+  "softwareTeamDlc.startDeliveryTemplate": "Modello",
+  "softwareTeamDlc.templateFeature": "Funzionalità",
+  "softwareTeamDlc.templateBugfix": "Correzione bug",
+  "softwareTeamDlc.templateHotfix": "Hotfix",
+  "softwareTeamDlc.templateDocs": "Solo documentazione",
   "softwareTeamDlc.startDeliveryBootstrap": "Aggiungi placeholder docs/sdlc",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Scrive spec.md, design.md e review.md sotto docs/sdlc di questo progetto se mancano. Serve l’Host desktop e una cartella progetto.",
+    "Scrive i segnaposto mancanti del modello sotto docs/sdlc di questo progetto. Serve l’Host desktop e una cartella progetto.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Scegli una cartella progetto per scrivere docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":

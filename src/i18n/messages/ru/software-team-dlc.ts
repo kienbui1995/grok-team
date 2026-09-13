@@ -152,9 +152,14 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.startDeliveryTitlePlaceholder": "Что поставляем?",
   "softwareTeamDlc.startDeliveryNeedTitle": "Сначала назовите срез.",
   "softwareTeamDlc.startDeliveryRole": "Первая роль",
+  "softwareTeamDlc.startDeliveryTemplate": "Шаблон",
+  "softwareTeamDlc.templateFeature": "Новая функция",
+  "softwareTeamDlc.templateBugfix": "Исправление бага",
+  "softwareTeamDlc.templateHotfix": "Срочный фикс",
+  "softwareTeamDlc.templateDocs": "Только документация",
   "softwareTeamDlc.startDeliveryBootstrap": "Добавить заготовки docs/sdlc",
   "softwareTeamDlc.startDeliveryBootstrapHint":
-    "Пишет spec.md, design.md и review.md в docs/sdlc этого проекта, если их нет. Нужны десктопный Host и папка проекта.",
+    "Пишет недостающие заготовки из шаблона в docs/sdlc этого проекта. Нужны десктопный Host и папка проекта.",
   "softwareTeamDlc.startDeliveryNeedProject":
     "Выберите папку проекта, чтобы писать docs/sdlc.",
   "softwareTeamDlc.startDeliveryNeedHost":
