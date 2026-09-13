@@ -311,6 +311,11 @@ export {
 } from "./deliveryFilter";
 
 export {
+  softwareTeamDeliveryProgress,
+  type SoftwareTeamDeliveryProgress,
+} from "./deliveryProgress";
+
+export {
   buildSoftwareTeamDeliveryDetail,
   decideSoftwareTeamDeliveryNextCta,
   softwareTeamDeliveryDetailItems,

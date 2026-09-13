@@ -813,6 +813,30 @@ html[data-theme="dark"][data-wallpaper="1"]
   gap: 6px;
 }
 
+.sdlc-studio__chip-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 7px;
+  padding-left: 7px;
+  border-left: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  font-size: 11px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.sdlc-studio__chip-progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--warning, #d4a017);
+}
+
+.sdlc-studio__chip-progress.is-ready .sdlc-studio__chip-progress-dot {
+  background: var(--success, #3d9a6a);
+}
+
 .sdlc-studio__sessions {
   max-height: 160px;
   overflow: auto;

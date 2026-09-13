@@ -40,6 +40,8 @@ import {
   isSoftwareTeamStudioSortMode,
   lastSoftwareTeamPipelineFileStatus,
   listSoftwareTeamDeliveryGroups,
+  softwareTeamDeliveryProgress,
+  type SoftwareTeamDeliveryProgress,
   loadSoftwareTeamStudioPrefs,
   commitSoftwareTeamStudioPrefs,
   resolveSoftwareTeamStudioPrefs,
@@ -521,6 +523,14 @@ export function SdlcStudioPage({
     const archivedIds = pipeline.store.archivedDeliveryIds ?? [];
     return groups.filter((group) => !archivedIds.includes(group.id));
   }, [pipeline.items, pipeline.store.archivedDeliveryIds, showArchived]);
+  const deliveryProgressById = useMemo(() => {
+    const map = new Map<string, SoftwareTeamDeliveryProgress>();
+    for (const group of deliveryGroups) {
+      const progress = softwareTeamDeliveryProgress(pipeline.items, group.id);
+      if (progress) map.set(group.id, progress);
+    }
+    return map;
+  }, [deliveryGroups, pipeline.items]);
   const unscopedCount = useMemo(
     () =>
       pipeline.items.filter((item) => {
@@ -1606,22 +1616,48 @@ export function SdlcStudioPage({
             >
               {t("softwareTeamDlc.deliveryFilterAll")}
             </button>
-            {deliveryGroups.map((group) => (
-              <button
-                key={group.id}
-                type="button"
-                className={
-                  "task-board__chip" +
-                  (deliveryFilter === group.id ? " is-active" : "")
-                }
-                onClick={() => {
-                  persistStudioPrefs({ deliveryFilter: group.id });
-                  setDetailTarget({ kind: "delivery", deliveryId: group.id });
-                }}
-              >
-                {group.title}
-              </button>
-            ))}
+            {deliveryGroups.map((group) => {
+              const progress = deliveryProgressById.get(group.id);
+              return (
+                <button
+                  key={group.id}
+                  type="button"
+                  className={
+                    "task-board__chip" +
+                    (deliveryFilter === group.id ? " is-active" : "")
+                  }
+                  onClick={() => {
+                    persistStudioPrefs({ deliveryFilter: group.id });
+                    setDetailTarget({ kind: "delivery", deliveryId: group.id });
+                  }}
+                >
+                  {group.title}
+                  {progress ? (
+                    <span
+                      className={
+                        "sdlc-studio__chip-progress" +
+                        (progress.shipReady ? " is-ready" : " is-blocked")
+                      }
+                      aria-label={t("softwareTeamDlc.deliveryProgressRoles", {
+                        visited: progress.visitedCount,
+                        total: progress.rosterTotal,
+                      })}
+                      title={
+                        progress.shipReady
+                          ? t("softwareTeamDlc.deliveryShipReady")
+                          : t("softwareTeamDlc.deliveryShipBlocked")
+                      }
+                    >
+                      <span
+                        className="sdlc-studio__chip-progress-dot"
+                        aria-hidden="true"
+                      />
+                      {progress.visitedCount}/{progress.rosterTotal}
+                    </span>
+                  ) : null}
+                </button>
+              );
+            })}
             {unscopedCount > 0 ? (
               <button
                 type="button"

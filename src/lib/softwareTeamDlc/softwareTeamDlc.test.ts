@@ -103,6 +103,7 @@ import {
   sortSoftwareTeamPipelineItems,
   serializeSoftwareTeamPipelineFile,
   softwareTeamDeliveryItemDraft,
+  softwareTeamDeliveryProgress,
   softwareTeamDeliverySiblingDraft,
   softwareTeamRoleHistoryIds,
   acceptSoftwareTeamPipelineFile,
@@ -5079,5 +5080,68 @@ describe("Software Works delivery templates", () => {
       "docs/sdlc/review.md",
       "docs/sdlc/spec.md",
     ]);
+  });
+});
+
+describe("Software Works delivery progress roll-up", () => {
+  const member = (
+    id: string,
+    roleId: "product" | "architect" | "engineer" | "reviewer" | "qa" | "writer",
+    deliveryId: string,
+    extra?: Partial<Parameters<typeof createSoftwareTeamPipelineItem>[0]>,
+  ) =>
+    createSoftwareTeamPipelineItem({
+      ...extra,
+      id,
+      roleId,
+      title: id,
+      deliveryId,
+    })!;
+
+  it("walks the roster in order and reports the delivery gate", () => {
+    const items = [
+      member("p1", "product", "d-1"),
+      member("e1", "engineer", "d-1", {
+        roleHistory: ["product", "engineer"],
+      }),
+      member("r1", "reviewer", "d-1", {
+        roleHistory: ["product", "engineer", "reviewer"],
+        reviewNote: "Diff looks right; tests named.",
+      }),
+    ];
+    const progress = softwareTeamDeliveryProgress(items, "d-1");
+    expect(progress).not.toBeNull();
+    expect(progress!.visitedRoles).toEqual(["product", "engineer", "reviewer"]);
+    expect(progress!.visitedCount).toBe(3);
+    expect(progress!.rosterTotal).toBe(6);
+    expect(progress!.memberCount).toBe(3);
+    expect(progress!.shipReady).toBe(false);
+    expect(progress!.shipBlocks).toEqual(["need_qa", "need_qa_note"]);
+  });
+
+  it("is ship-ready when sibling reviewer + qa notes unlock the gate", () => {
+    const items = [
+      member("p2", "product", "d-2"),
+      member("r2", "reviewer", "d-2", {
+        roleHistory: ["product", "reviewer"],
+        reviewNote: "No regressions found.",
+      }),
+      member("q2", "qa", "d-2", {
+        roleHistory: ["product", "reviewer", "qa"],
+        qaNote: "Happy path + edge covered.",
+      }),
+    ];
+    const progress = softwareTeamDeliveryProgress(items, "d-2");
+    expect(progress).not.toBeNull();
+    expect(progress!.visitedRoles).toEqual(["product", "reviewer", "qa"]);
+    expect(progress!.shipReady).toBe(true);
+    expect(progress!.shipBlocks).toEqual([]);
+  });
+
+  it("returns null for unknown or empty delivery ids", () => {
+    const items = [member("p3", "product", "d-3")];
+    expect(softwareTeamDeliveryProgress(items, "nope")).toBeNull();
+    expect(softwareTeamDeliveryProgress(items, "")).toBeNull();
+    expect(softwareTeamDeliveryProgress(items, null)).toBeNull();
   });
 });
