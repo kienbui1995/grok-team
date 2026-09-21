@@ -351,6 +351,8 @@ export const ukSoftwareTeamDlc = {
     "Laya не імпортується. Встановіть pip install laya>=0.3.3 — цей застосунок не ставить пакет сам.",
   "softwareTeamDlc.layaBlockedHome": "Laya не запускається проти спільного ~/.grok.",
   "softwareTeamDlc.layaHostError": "Sidecar Laya не вдався: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Час очікування Laya вичерпано. Перший виклик може тривати до 60 секунд, поки завантажуються ваги; наступні зупиняються через 15 секунд. Пропозицію не повернуто.",
   "softwareTeamDlc.layaDisabled": "Увімкніть сортування Laya в Налаштування → Розширення → Агенти.",
   "softwareTeamDlc.layaShipReady": "Оцінка Laya ship-ready: {n} (не відкриває Ship).",
   "softwareTeamDlc.layaMinConfidence": "Мінімальна впевненість, щоб вважати рішення певним",

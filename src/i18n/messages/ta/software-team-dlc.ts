@@ -353,6 +353,8 @@ export const taSoftwareTeamDlc = {
     "Laya இறக்குமதி செய்ய முடியவில்லை. pip install laya>=0.3.3 கொண்டு நிறுவவும் — இந்த பயன்பாடு pip-install செய்யாது.",
   "softwareTeamDlc.layaBlockedHome": "பகிரப்பட்ட ~/.grok-க்கு எதிராக Laya இயங்காது.",
   "softwareTeamDlc.layaHostError": "Laya சைட்கார் தோல்வி: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Laya நேரம் முடிந்தது. எடைகள் ஏற்றும்போது முதல் அழைப்பு 60 வினாடிகள் வரை ஆகலாம்; அடுத்த அழைப்புகள் 15 வினாடிகளில் நிற்கும். பரிந்துரை எதுவும் வரவில்லை.",
   "softwareTeamDlc.layaDisabled": "அமைப்புகள் → நீட்டிப்புகள் → முகவர்கள் இல் Laya வரிசையை இயக்குக.",
   "softwareTeamDlc.layaShipReady": "Laya ship-ready மதிப்பீடு: {n} (Ship-ஐத் திறக்காது).",
   "softwareTeamDlc.layaMinConfidence": "உறுதியாகக் கருத குறைந்தபட்ச நம்பிக்கை",

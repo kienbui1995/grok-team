@@ -352,6 +352,8 @@ export const idSoftwareTeamDlc = {
     "Laya tidak dapat diimpor. Pasang dengan pip install laya>=0.3.3 — aplikasi ini tidak akan memasangnya lewat pip.",
   "softwareTeamDlc.layaBlockedHome": "Laya tidak akan berjalan terhadap ~/.grok bersama.",
   "softwareTeamDlc.layaHostError": "Sidecar Laya gagal: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Laya kehabisan waktu. Panggilan pertama dapat memakan hingga 60 detik saat bobot dimuat; panggilan berikutnya berhenti setelah 15 detik. Tidak ada saran yang dikembalikan.",
   "softwareTeamDlc.layaDisabled": "Nyalakan triase Laya di Pengaturan → Ekstensi → Agen.",
   "softwareTeamDlc.layaShipReady": "Perkiraan ship-ready Laya: {n} (tidak membuka Ship).",
   "softwareTeamDlc.layaMinConfidence": "Keyakinan minimum agar dianggap pasti",

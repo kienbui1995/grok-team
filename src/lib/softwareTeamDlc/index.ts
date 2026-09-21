@@ -479,11 +479,17 @@ export {
   parseSoftwareTeamLayaMinConfidence,
   saveSoftwareTeamLayaEnabled,
   saveSoftwareTeamLayaMinConfidence,
+  softwareTeamLayaHonesty,
   softwareTeamLayaMessageKey,
 } from "./layaPref";
 
 export {
+  SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_COLD_MS,
+  SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_WARM_MS,
+  SOFTWARE_TEAM_LAYA_TIMEOUT_ERROR,
   defaultSoftwareTeamLayaHost,
+  isSoftwareTeamLayaTimeoutError,
   runSoftwareTeamLayaSuggest,
+  softwareTeamLayaPredictTimeoutMs,
   type SoftwareTeamLayaHost,
 } from "./layaHost";

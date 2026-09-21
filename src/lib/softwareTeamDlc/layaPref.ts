@@ -10,6 +10,7 @@ import {
   DEFAULT_SOFTWARE_TEAM_LAYA_MIN_CONFIDENCE,
   type SoftwareTeamLayaPlan,
 } from "./laya";
+import { isSoftwareTeamLayaTimeoutError } from "./layaHost";
 import type { SoftwareTeamDlcStorage } from "./pref";
 
 export const SOFTWARE_TEAM_DLC_LAYA_KEY = "grok.softwareTeamDlc.laya.enabled";
@@ -142,4 +143,21 @@ export function softwareTeamLayaMessageKey(
       return _never;
     }
   }
+}
+
+/** Status line for a refused suggest. Timeout is its own sentence, not a success. */
+export function softwareTeamLayaHonesty(
+  reason: SoftwareTeamLayaPlan["reason"],
+  error?: string,
+): { key: MessageKey; vars?: { error: string } } {
+  if (reason === "host_error" && isSoftwareTeamLayaTimeoutError(error)) {
+    return { key: "softwareTeamDlc.layaHostTimeout" };
+  }
+  if (reason === "host_error") {
+    return {
+      key: "softwareTeamDlc.layaHostError",
+      vars: { error: error ?? "" },
+    };
+  }
+  return { key: softwareTeamLayaMessageKey(reason) };
 }

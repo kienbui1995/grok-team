@@ -353,6 +353,8 @@ export const filSoftwareTeamDlc = {
     "Hindi ma-import ang Laya. I-install gamit ang pip install laya>=0.3.3 — hindi ito i-pip-install ng app.",
   "softwareTeamDlc.layaBlockedHome": "Hindi tatakbo ang Laya laban sa shared ~/.grok.",
   "softwareTeamDlc.layaHostError": "Nabigo ang Laya sidecar: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Nag-time out ang Laya. Ang unang tawag ay maaaring umabot ng 60 segundo habang naglo-load ang mga timbang; ang mga susunod ay humihinto pagkalipas ng 15 segundo. Walang suhestyon na ibinalik.",
   "softwareTeamDlc.layaDisabled": "I-on ang Laya triage sa Settings → Extensions → Agents.",
   "softwareTeamDlc.layaShipReady": "Tantiya ng Laya na ship-ready: {n} (hindi nag-a-unlock ng Ship).",
   "softwareTeamDlc.layaMinConfidence": "Minimum na kumpiyansa para ituring na tiyak",

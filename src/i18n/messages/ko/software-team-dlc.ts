@@ -348,6 +348,8 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.layaNeedPackage": "Laya를 가져올 수 없습니다. pip install laya>=0.3.3로 설치하세요 — 이 앱은 pip로 설치하지 않습니다.",
   "softwareTeamDlc.layaBlockedHome": "공유 ~/.grok에서는 Laya를 실행하지 않습니다.",
   "softwareTeamDlc.layaHostError": "Laya 사이드카 실패: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Laya 시간이 초과되었습니다. 가중치를 불러오는 첫 호출은 최대 60초가 걸릴 수 있습니다. 이후 호출은 15초 후에 멈춥니다. 제안이 반환되지 않았습니다.",
   "softwareTeamDlc.layaDisabled": "설정 → 확장 → 에이전트에서 Laya 트리아지를 켜세요.",
   "softwareTeamDlc.layaShipReady": "Laya ship-ready 추정: {n} (Ship을 잠금 해제하지 않음).",
   "softwareTeamDlc.layaMinConfidence": "확실하다고 볼 최소 신뢰도",

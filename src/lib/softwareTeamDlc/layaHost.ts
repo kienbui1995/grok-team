@@ -16,6 +16,27 @@ import {
   type SoftwareTeamLayaPlan,
 } from "./laya";
 
+/** Spec: Host kills the first predict after 60s (cold weight load). */
+export const SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_COLD_MS = 60_000;
+/** Spec: after a predict in this Host process returned `answers`, later calls get 15s. */
+export const SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_WARM_MS = 15_000;
+/**
+ * Stable Host token for a killed predict. Studio maps it to i18n.
+ * A timeout is never a suggestion.
+ */
+export const SOFTWARE_TEAM_LAYA_TIMEOUT_ERROR = "timeout";
+
+/** Mirrors `predict_timeout_secs` in `software_team_laya.rs`. */
+export function softwareTeamLayaPredictTimeoutMs(warm: boolean): number {
+  return warm
+    ? SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_WARM_MS
+    : SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_COLD_MS;
+}
+
+export function isSoftwareTeamLayaTimeoutError(error: unknown): boolean {
+  return error === SOFTWARE_TEAM_LAYA_TIMEOUT_ERROR;
+}
+
 export type SoftwareTeamLayaHost = {
   isDesktopHost: () => boolean;
   probe: () => Promise<{ pythonOk: boolean; layaImportOk: boolean; error?: string }>;

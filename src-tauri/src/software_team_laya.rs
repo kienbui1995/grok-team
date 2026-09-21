@@ -6,15 +6,23 @@
 use serde_json::{json, Value};
 use std::io::Write;
 use std::path::PathBuf;
-use tauri::Manager;
 use std::process::{Command, Stdio};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
+use tauri::Manager;
 
 const SCRIPT_NAME: &str = "software-works-laya.py";
 const SCRIPT_SOURCE: &str = include_str!("../../scripts/software-works-laya.py");
-const PREDICT_TIMEOUT_SECS: u64 = 60;
+/// Spec: Host kills the sidecar after 60s on the first predict.
+const PREDICT_TIMEOUT_COLD_SECS: u64 = 60;
+/// Spec: once a predict in this process has returned `answers`, later calls get 15s.
+const PREDICT_TIMEOUT_WARM_SECS: u64 = 15;
+/// Stable token. Studio maps it to i18n; it is never a suggestion.
+const PREDICT_TIMEOUT_ERROR: &str = "timeout";
+/// True after a predict child exited with an `answers` object. A timeout does not set this.
+static PREDICT_WARMED: AtomicBool = AtomicBool::new(false);
 
 /// True when `project_path` *is* shared user GROK_HOME (not `/repo/.grok`).
 pub fn is_shared_user_grok_home(raw: Option<&str>) -> bool {
@@ -153,17 +161,46 @@ fn resolve_script_path(app: Option<&tauri::AppHandle>) -> Result<PathBuf, String
     Ok(dest)
 }
 
-fn run_timed(mut cmd: Command, stdin_data: Option<&str>, timeout: Duration) -> Result<std::process::Output, String> {
+/// 60s until a predict has returned `answers`; 15s after that. Timeout stays cold.
+fn predict_timeout_secs(warmed: bool) -> u64 {
+    if warmed {
+        PREDICT_TIMEOUT_WARM_SECS
+    } else {
+        PREDICT_TIMEOUT_COLD_SECS
+    }
+}
+
+/// A finished predict (including `LAYA_STUB=1`) warms the Host. Import failures,
+/// non-JSON, and timeouts do not — the next call keeps the 60s cold budget.
+fn predict_marks_warm(value: &Value) -> bool {
+    value
+        .get("answers")
+        .and_then(|answers| answers.as_object())
+        .is_some()
+}
+
+enum SidecarFail {
+    Timeout,
+    Other(String),
+}
+
+fn run_timed(
+    mut cmd: Command,
+    stdin_data: Option<&str>,
+    timeout: Duration,
+) -> Result<std::process::Output, SidecarFail> {
     crate::process_util::apply_no_window_std(&mut cmd);
     cmd.stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
-    let mut child = cmd.spawn().map_err(|e| format!("spawn python: {e}"))?;
+    let mut child = cmd
+        .spawn()
+        .map_err(|e| SidecarFail::Other(format!("spawn python: {e}")))?;
     if let Some(data) = stdin_data {
         if let Some(mut stdin) = child.stdin.take() {
             stdin
                 .write_all(data.as_bytes())
-                .map_err(|e| format!("write sidecar stdin: {e}"))?;
+                .map_err(|e| SidecarFail::Other(format!("write sidecar stdin: {e}")))?;
         }
     }
     let id = child.id();
@@ -173,11 +210,19 @@ fn run_timed(mut cmd: Command, stdin_data: Option<&str>, timeout: Duration) -> R
     });
     match rx.recv_timeout(timeout) {
         Ok(Ok(output)) => Ok(output),
-        Ok(Err(err)) => Err(format!("wait python: {err}")),
+        Ok(Err(err)) => Err(SidecarFail::Other(format!("wait python: {err}"))),
         Err(_) => {
             kill_pid(id);
-            Err("Laya sidecar timed out".to_string())
+            Err(SidecarFail::Timeout)
         }
+    }
+}
+
+fn sidecar_error_text(fail: SidecarFail, predict: bool) -> String {
+    match fail {
+        SidecarFail::Timeout if predict => PREDICT_TIMEOUT_ERROR.to_string(),
+        SidecarFail::Timeout => "Laya sidecar timed out".to_string(),
+        SidecarFail::Other(message) => message,
     }
 }
 
@@ -261,7 +306,7 @@ pub fn software_team_laya_probe() -> Result<Value, String> {
         Err(error) => Ok(json!({
             "pythonOk": true,
             "layaImportOk": false,
-            "error": error,
+            "error": sidecar_error_text(error, false),
         })),
     }
 }
@@ -299,20 +344,25 @@ pub fn software_team_laya_predict(
     if let Some(cwd) = allowed_cwd(project_path.as_deref()) {
         cmd.current_dir(cwd);
     }
+    let warmed = PREDICT_WARMED.load(Ordering::Acquire);
     match run_timed(
         cmd,
         Some(&request_json),
-        Duration::from_secs(PREDICT_TIMEOUT_SECS),
+        Duration::from_secs(predict_timeout_secs(warmed)),
     ) {
         Ok(output) => {
             let stdout = String::from_utf8_lossy(&output.stdout);
             let stderr = String::from_utf8_lossy(&output.stderr);
-            Ok(parse_sidecar_stdout(&stdout, &stderr))
+            let parsed = parse_sidecar_stdout(&stdout, &stderr);
+            if predict_marks_warm(&parsed) {
+                PREDICT_WARMED.store(true, Ordering::Release);
+            }
+            Ok(parsed)
         }
         Err(error) => Ok(json!({
             "ok": false,
             "reason": "host_error",
-            "error": error,
+            "error": sidecar_error_text(error, true),
         })),
     }
 }
@@ -331,5 +381,33 @@ mod tests {
         assert!(!is_shared_user_grok_home(Some("/repo")));
         assert!(!is_shared_user_grok_home(Some("~/.grok-app/agent-home")));
         assert!(!is_shared_user_grok_home(None));
+    }
+
+    #[test]
+    fn predict_timeout_is_60s_cold_and_15s_warm() {
+        assert_eq!(PREDICT_TIMEOUT_COLD_SECS, 60);
+        assert_eq!(PREDICT_TIMEOUT_WARM_SECS, 15);
+        assert_eq!(predict_timeout_secs(false), 60);
+        assert_eq!(predict_timeout_secs(true), 15);
+        assert_eq!(PREDICT_TIMEOUT_ERROR, "timeout");
+    }
+
+    #[test]
+    fn answers_warm_the_host_timeout_does_not() {
+        assert!(predict_marks_warm(&json!({
+            "answers": { "priority": { "choice": "p2", "confidence": 0.8 } }
+        })));
+        assert!(!predict_marks_warm(&json!({
+            "ok": false,
+            "reason": "need_laya",
+            "error": "import laya failed"
+        })));
+        assert!(!predict_marks_warm(&json!({
+            "ok": false,
+            "reason": "host_error",
+            "error": "timeout"
+        })));
+        assert!(!predict_marks_warm(&json!({ "answers": "not-an-object" })));
+        assert!(!predict_marks_warm(&json!("nope")));
     }
 }

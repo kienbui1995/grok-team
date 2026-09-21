@@ -360,6 +360,8 @@ export const viSoftwareTeamDlc = {
     "Không import được Laya. Cài bằng pip install laya>=0.3.3 — ứng dụng này sẽ không tự pip-install.",
   "softwareTeamDlc.layaBlockedHome": "Laya sẽ không chạy với ~/.grok dùng chung.",
   "softwareTeamDlc.layaHostError": "Sidecar Laya thất bại: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Laya hết thời gian chờ. Lần gọi đầu có thể mất tới 60 giây khi tải trọng số; các lần sau dừng sau 15 giây. Không có gợi ý nào được trả về.",
   "softwareTeamDlc.layaDisabled": "Bật phân loại Laya trong Cài đặt → Tiện ích → Tác nhân.",
   "softwareTeamDlc.layaShipReady": "Ước lượng ship-ready của Laya: {n} (không mở khóa Ship).",
   "softwareTeamDlc.layaMinConfidence": "Độ tin tối thiểu để coi là chắc",

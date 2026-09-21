@@ -604,7 +604,7 @@ fn software_team_laya_probe() -> Result<serde_json::Value, String> { /* python3 
 #[tauri::command]
 fn software_team_laya_predict(project_path: Option<String>, request_json: String) -> Result<serde_json::Value, String> {
     // spawn python3 scripts/software-works-laya.py with stdin=request_json
-    // timeout 60s; cwd = project_path if allowed
+    // timeout 60s first predict / 15s after answers; cwd = project_path if allowed
 }
 ```
 

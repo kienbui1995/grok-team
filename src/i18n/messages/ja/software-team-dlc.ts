@@ -349,6 +349,8 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.layaNeedPackage": "Laya をインポートできません。pip install laya>=0.3.3 で入れてください — このアプリは pip インストールしません。",
   "softwareTeamDlc.layaBlockedHome": "共有の ~/.grok に対して Laya は実行しません。",
   "softwareTeamDlc.layaHostError": "Laya サイドカーが失敗しました: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Laya がタイムアウトしました。重みの読み込み中、最初の呼び出しは最大 60 秒かかることがあります。以降の呼び出しは 15 秒で停止します。提案は返されませんでした。",
   "softwareTeamDlc.layaDisabled": "設定 → 拡張機能 → エージェント で Laya トリアージをオンにしてください。",
   "softwareTeamDlc.layaShipReady": "Laya の ship-ready 見込み: {n}（Ship は解除しません）。",
   "softwareTeamDlc.layaMinConfidence": "確実とみなす最低信頼度",

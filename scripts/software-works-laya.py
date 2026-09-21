@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Software Works Laya sidecar. Stdin JSON → stdout JSON. Never writes ~/.grok."""
+"""Software Works Laya sidecar. Stdin JSON → stdout JSON. Never writes ~/.grok.
+
+Host kills this process after 60s on the first predict and 15s once a previous
+predict in that process returned answers. A timeout is not a suggestion.
+"""
 import json
 import os
 import sys

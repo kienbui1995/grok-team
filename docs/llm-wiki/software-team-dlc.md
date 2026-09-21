@@ -171,6 +171,8 @@ V1 intents:
 | `host_error` | Spawn / timeout / non-JSON |
 | `ok` | Parsed suggestion shown; Apply is a human click |
 
+**Predict timeout (spec):** the Host kills the sidecar after **60 seconds on the first predict** and **15 seconds once warm**. Warm means a previous predict in this Host process returned an `answers` object (including `LAYA_STUB=1`). A timeout, `need_laya`, or other non-answer payload does **not** mark the process warm, so a failed cold start keeps the 60s budget. After a warm predict, a language-switch reload stays on the 15s budget (several seconds on CPU; not a third timeout). The killed call is `host_error` with error token `timeout` — Studio shows `softwareTeamDlc.layaHostTimeout` and does not treat it as a suggestion. The `import laya` probe is a separate 15s check and is not this budget.
+
 Working directory is the project folder when allowed. The sidecar script is resolved from the repo `scripts/` path, the app resource dir, or App data — **never** copied into `~/.grok`. Hugging Face weight cache stays in the user cache, not agent `config.toml`.
 
 Sidecar **state** is built from the delivery (`softwareTeamLayaDeliveryFields`): first non-empty Product / Architect / Reviewer / QA notes across members, plus the focus card’s title / role / stage / priority. Notes that live on sibling cards are included. Cards on another `deliveryId` are not mixed in. Truncate notes; never send repo file bodies.

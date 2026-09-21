@@ -186,7 +186,12 @@ import {
   loadSoftwareTeamLayaMinConfidence,
   saveSoftwareTeamLayaEnabled,
   saveSoftwareTeamLayaMinConfidence,
+  softwareTeamLayaHonesty,
   softwareTeamLayaMessageKey,
+  softwareTeamLayaPredictTimeoutMs,
+  SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_COLD_MS,
+  SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_WARM_MS,
+  SOFTWARE_TEAM_LAYA_TIMEOUT_ERROR,
   runSoftwareTeamLayaSuggest,
   softwareTeamLayaFirstRolePatch,
   softwareTeamLayaPriorityPatch,
@@ -5498,5 +5503,54 @@ describe("Software Works Laya host adapter", () => {
     });
     expect(result).toMatchObject({ ok: false, reason: "blocked_shared_home" });
     expect(predict).not.toHaveBeenCalled();
+  });
+
+  it("locks Host predict budgets at 60s cold and 15s warm", async () => {
+    const { readFileSync } = await import("node:fs");
+    const rust = readFileSync("src-tauri/src/software_team_laya.rs", "utf8");
+    expect(SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_COLD_MS).toBe(60_000);
+    expect(SOFTWARE_TEAM_LAYA_PREDICT_TIMEOUT_WARM_MS).toBe(15_000);
+    expect(softwareTeamLayaPredictTimeoutMs(false)).toBe(60_000);
+    expect(softwareTeamLayaPredictTimeoutMs(true)).toBe(15_000);
+    expect(rust).toMatch(/PREDICT_TIMEOUT_COLD_SECS:\s*u64\s*=\s*60/);
+    expect(rust).toMatch(/PREDICT_TIMEOUT_WARM_SECS:\s*u64\s*=\s*15/);
+    expect(rust).toContain("predict_timeout_secs(warmed)");
+    expect(rust).not.toContain("PREDICT_TIMEOUT_SECS");
+    expect(SOFTWARE_TEAM_LAYA_TIMEOUT_ERROR).toBe("timeout");
+  });
+
+  it("maps a Host timeout to host_error and not a suggestion", async () => {
+    const host: SoftwareTeamLayaHost = {
+      isDesktopHost: () => true,
+      probe: async () => ({ pythonOk: true, layaImportOk: true }),
+      predict: async () => ({
+        ok: false,
+        reason: "host_error",
+        error: "timeout",
+        answers: { priority: { choice: "p1", confidence: 0.99 } },
+      }),
+    };
+    const result = await runSoftwareTeamLayaSuggest({
+      enabled: true,
+      layaEnabled: true,
+      projectPath: "/repo",
+      state: { title: "Auth" },
+      host,
+    });
+    expect(result.ok).toBe(false);
+    expect(result).toMatchObject({
+      ok: false,
+      reason: "host_error",
+      error: "timeout",
+    });
+    expect(softwareTeamLayaHonesty("host_error", "timeout")).toEqual({
+      key: "softwareTeamDlc.layaHostTimeout",
+    });
+    expect(softwareTeamLayaHonesty("host_error", "spawn python: boom")).toEqual({
+      key: "softwareTeamDlc.layaHostError",
+      vars: { error: "spawn python: boom" },
+    });
+    if (result.ok) return;
+    expect("suggestions" in result).toBe(false);
   });
 });

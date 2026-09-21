@@ -351,6 +351,8 @@ export const ruSoftwareTeamDlc = {
     "Laya нельзя импортировать. Установите pip install laya>=0.3.3 — это приложение не ставит пакет само.",
   "softwareTeamDlc.layaBlockedHome": "Laya не запускается против общего ~/.grok.",
   "softwareTeamDlc.layaHostError": "Sidecar Laya не удалось: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Время ожидания Laya истекло. Первый вызов может занять до 60 секунд, пока загружаются веса; следующие останавливаются через 15 секунд. Предложение не возвращено.",
   "softwareTeamDlc.layaDisabled": "Включите сортировку Laya в Настройки → Расширения → Агенты.",
   "softwareTeamDlc.layaShipReady": "Оценка Laya ship-ready: {n} (не открывает Ship).",
   "softwareTeamDlc.layaMinConfidence": "Минимальная уверенность, чтобы считать решение надёжным",

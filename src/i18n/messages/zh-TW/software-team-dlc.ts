@@ -319,6 +319,8 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.layaNeedPackage": "無法匯入 Laya。請用 pip install laya>=0.3.3 安裝 — 本應用不會代為 pip 安裝。",
   "softwareTeamDlc.layaBlockedHome": "Laya 不會針對共用 ~/.grok 執行。",
   "softwareTeamDlc.layaHostError": "Laya 側車失敗：{error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Laya 逾時。首次呼叫在載入權重時最多可等 60 秒；之後的呼叫在 15 秒後停止。沒有傳回建議。",
   "softwareTeamDlc.layaDisabled": "請在 設定 → 擴充功能 → 代理 中開啟 Laya 分診。",
   "softwareTeamDlc.layaShipReady": "Laya 發布就緒估計：{n}（不會解鎖發布）。",
   "softwareTeamDlc.layaMinConfidence": "視為確定所需的最低信心",

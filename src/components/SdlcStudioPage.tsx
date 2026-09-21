@@ -79,6 +79,7 @@ import {
   softwareTeamDeliveryShipGate,
   softwareTeamLayaDeliveryFields,
   softwareTeamLayaFirstRolePatch,
+  softwareTeamLayaHonesty,
   softwareTeamLayaMessageKey,
   softwareTeamLayaPriorityPatch,
   softwareTeamLayaTemplatePatch,
@@ -242,16 +243,17 @@ export function SdlcStudioPage({
     projectPath: workspace.projectPath,
     locale,
   });
-  const layaHonesty =
-    laya.last && !laya.last.ok
-      ? laya.last.reason === "host_error"
-        ? t(softwareTeamLayaMessageKey(laya.last.reason), {
-            error: "error" in laya.last ? (laya.last.error ?? "") : "",
-          })
-        : t(softwareTeamLayaMessageKey(laya.last.reason))
-      : !laya.plan.allowed
-        ? t(softwareTeamLayaMessageKey(laya.plan.reason))
-        : null;
+  const layaHonesty = (() => {
+    if (laya.last && !laya.last.ok) {
+      const honesty = softwareTeamLayaHonesty(
+        laya.last.reason,
+        "error" in laya.last ? laya.last.error : undefined,
+      );
+      return t(honesty.key, honesty.vars);
+    }
+    if (!laya.plan.allowed) return t(softwareTeamLayaMessageKey(laya.plan.reason));
+    return null;
+  })();
   const layaSuggestions = laya.last && laya.last.ok ? laya.last.suggestions : {};
   const [query, setQuery] = useState("");
   const [deliveryFilter, setDeliveryFilter] =

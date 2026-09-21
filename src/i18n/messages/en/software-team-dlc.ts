@@ -360,6 +360,8 @@ export const enSoftwareTeamDlc = {
     "Laya is not importable. Install with pip install laya>=0.3.3 — this app will not pip-install it.",
   "softwareTeamDlc.layaBlockedHome": "Laya will not run against shared ~/.grok.",
   "softwareTeamDlc.layaHostError": "Laya sidecar failed: {error}",
+  "softwareTeamDlc.layaHostTimeout":
+    "Laya timed out. The first call can take up to 60 seconds while weights load; later calls stop after 15 seconds. No suggestion was returned.",
   "softwareTeamDlc.layaDisabled": "Turn on Laya triage in Settings → Extensions → Agents.",
   "softwareTeamDlc.layaShipReady": "Laya ship-ready estimate: {n} (does not unlock Ship).",
   "softwareTeamDlc.layaMinConfidence": "Minimum confidence to treat as certain",
