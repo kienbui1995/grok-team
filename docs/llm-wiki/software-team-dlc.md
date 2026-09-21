@@ -134,6 +134,47 @@ On every Studio open (and Settings when the edition is on), probe Host `agentsLi
 
 Repair is idempotent. Shared user writes still refuse.
 
+## Laya triage
+
+Opt-in **System 1 sidecar** for Studio triage. Grok Build remains the only coding engine. Laya never writes notes, never invents Host plan/goal ids, and never unlocks Ship.
+
+| Surface | Detail |
+|---------|--------|
+| Pref | `grok.softwareTeamDlc.laya.enabled` (`localStorage`, `"1"` / `"0"`) — **off by default** |
+| Confidence | `grok.softwareTeamDlc.laya.minConfidence` (clamp 0.5–0.95, default 0.7) |
+| Settings | Settings → Extensions → Agents, under Software Works (hidden while the edition is off) |
+| Catalog | `ext.softwareTeamDlc` keywords `laya`, `decision engine`, `triage` |
+| Deep link | `#/settings/extensions/agents` |
+
+Helpers: `src/lib/softwareTeamDlc/laya.ts` (planner / schemas / parse), `layaHost.ts` (injected Host), `scripts/software-works-laya.py` (`laya.Router(preload=False)`).
+
+The sidecar is **not** an oracle. Base weights are a fast triage aid. Copy must say suggestion / triage — do not promise vendor 33 ms or 0.766 accuracy. Fine-tune is Phase B, not V1.
+
+**Router is required** (not English-only `laya.load`) because Studio state may be Vietnamese. The app does **not** `pip install` Laya. Users install `pip install laya>=0.3.3` themselves. CI uses `LAYA_STUB=1` and must not pull torch.
+
+V1 intents:
+
+| Intent | Primitive | Apply |
+|--------|-----------|--------|
+| `priority` | `choice` p1/p2/p3 | Existing card priority setter (activity `priority`) |
+| `template` | `choice` feature/bugfix/hotfix/docs | Start-delivery wizard draft only |
+| `firstRole` | `choice` six roster roles | Wizard first-role chips only |
+| `shipReady` | `noul` | **Display only** — never satisfies `softwareTeamDeliveryShipGate` |
+
+| Reason | Meaning |
+|--------|---------|
+| `disabled` | Edition off **or** Laya pref off |
+| `need_host` | Not desktop Tauri. Browser preview never fakes answers. |
+| `need_python` | No `python3` (or Windows `py -3`) |
+| `need_laya` | `import laya` failed — hint `pip install laya>=0.3.3` |
+| `blocked_shared_home` | Project path *is* shared `~/.grok`. No sidecar spawn. |
+| `host_error` | Spawn / timeout / non-JSON |
+| `ok` | Parsed suggestion shown; Apply is a human click |
+
+Working directory is the project folder when allowed. The sidecar script is resolved from the repo `scripts/` path, the app resource dir, or App data — **never** copied into `~/.grok`. Hugging Face weight cache stays in the user cache, not agent `config.toml`.
+
+Studio: **Suggest with Laya** on Start a delivery (template + first role drafts) and on the delivery pane (priority Apply + ship-ready line). Conflict overlay still wins (`pickSoftwareTeamStudioOverlay`). No `window.confirm`. No native `<select>`.
+
 ## Review → QA → Ship gate
 
 Helpers: `src/lib/softwareTeamDlc/shipGate.ts`.
