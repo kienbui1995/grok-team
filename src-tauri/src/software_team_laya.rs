@@ -50,7 +50,10 @@ pub fn is_shared_user_grok_home(raw: Option<&str>) -> bool {
 }
 
 fn normalize_project_path(raw: &str) -> String {
-    raw.trim().replace('\\', "/").trim_end_matches('/').to_string()
+    raw.trim()
+        .replace('\\', "/")
+        .trim_end_matches('/')
+        .to_string()
 }
 
 fn paths_equal(a: &str, b: &str) -> bool {
@@ -63,15 +66,13 @@ fn looks_like_home_parent(parent: &str) -> bool {
     }
     let parts: Vec<&str> = parent.split('/').filter(|p| !p.is_empty()).collect();
     // /home/user or /Users/user
-    if parts.len() == 2 && (parts[0].eq_ignore_ascii_case("home") || parts[0].eq_ignore_ascii_case("users"))
+    if parts.len() == 2
+        && (parts[0].eq_ignore_ascii_case("home") || parts[0].eq_ignore_ascii_case("users"))
     {
         return true;
     }
     // C:/Users/user
-    if parts.len() == 3
-        && parts[0].ends_with(':')
-        && parts[1].eq_ignore_ascii_case("users")
-    {
+    if parts.len() == 3 && parts[0].ends_with(':') && parts[1].eq_ignore_ascii_case("users") {
         return true;
     }
     false
@@ -80,11 +81,7 @@ fn looks_like_home_parent(parent: &str) -> bool {
 fn python_bins() -> Vec<(&'static str, Vec<&'static str>)> {
     #[cfg(target_os = "windows")]
     {
-        vec![
-            ("py", vec!["-3"]),
-            ("python3", vec![]),
-            ("python", vec![]),
-        ]
+        vec![("py", vec!["-3"]), ("python3", vec![]), ("python", vec![])]
     }
     #[cfg(not(target_os = "windows"))]
     {
