@@ -445,3 +445,18 @@ export {
   type SoftwareTeamTemplateDoc,
   type SoftwareTeamTemplateId,
 } from "./templates";
+
+export {
+  DEFAULT_SOFTWARE_TEAM_LAYA_MIN_CONFIDENCE,
+  SOFTWARE_TEAM_LAYA_INTENTS,
+  buildSoftwareTeamLayaState,
+  parseSoftwareTeamLayaResult,
+  planSoftwareTeamLayaDecide,
+  softwareTeamLayaQuestions,
+  softwareTeamLayaSuggestionUncertain,
+  softwareTeamLayaUnlocksShip,
+  type SoftwareTeamLayaIntent,
+  type SoftwareTeamLayaParse,
+  type SoftwareTeamLayaPlan,
+  type SoftwareTeamLayaSuggestion,
+} from "./laya";

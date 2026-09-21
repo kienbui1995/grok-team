@@ -175,6 +175,10 @@ import {
   SOFTWARE_TEAM_TEMPLATE_IDS,
   softwareTeamTemplateById,
   softwareTeamTemplateDocsRelative,
+  planSoftwareTeamLayaDecide,
+  softwareTeamLayaQuestions,
+  parseSoftwareTeamLayaResult,
+  softwareTeamLayaUnlocksShip,
   type SoftwareTeamLaunchHost,
   type SoftwareTeamPackProbeHost,
   type SoftwareTeamPackWriteHost,
@@ -5143,5 +5147,82 @@ describe("Software Works delivery progress roll-up", () => {
     expect(softwareTeamDeliveryProgress(items, "nope")).toBeNull();
     expect(softwareTeamDeliveryProgress(items, "")).toBeNull();
     expect(softwareTeamDeliveryProgress(items, null)).toBeNull();
+  });
+});
+
+describe("Software Works Laya triage (domain)", () => {
+  it("refuses when Laya pref is off, Host is missing, or path is ~/.grok", () => {
+    expect(
+      planSoftwareTeamLayaDecide({ enabled: false, layaEnabled: true, hasHost: true, projectPath: "/repo" }),
+    ).toMatchObject({ allowed: false, reason: "disabled" });
+    expect(
+      planSoftwareTeamLayaDecide({ enabled: true, layaEnabled: false, hasHost: true, projectPath: "/repo" }),
+    ).toMatchObject({ allowed: false, reason: "disabled" });
+    expect(
+      planSoftwareTeamLayaDecide({ enabled: true, layaEnabled: true, hasHost: false, projectPath: "/repo" }),
+    ).toMatchObject({ allowed: false, reason: "need_host" });
+    expect(
+      planSoftwareTeamLayaDecide({
+        enabled: true,
+        layaEnabled: true,
+        hasHost: true,
+        projectPath: "~/.grok",
+      }),
+    ).toMatchObject({ allowed: false, reason: "blocked_shared_home" });
+    expect(
+      planSoftwareTeamLayaDecide({
+        enabled: true,
+        layaEnabled: true,
+        hasHost: true,
+        projectPath: "/repo/.grok",
+      }),
+    ).toMatchObject({ allowed: true, reason: "ok" });
+  });
+
+  it("builds choice schemas under 20 options and parses only known keys", () => {
+    const questions = softwareTeamLayaQuestions(["priority", "template", "firstRole", "shipReady"]);
+    const priorityQ = questions.priority as { criteria: Record<string, string> };
+    const templateQ = questions.template as { criteria: Record<string, string> };
+    const firstRoleQ = questions.firstRole as { criteria: Record<string, string> };
+    const shipReadyQ = questions.shipReady as { type: string };
+    expect(Object.keys(priorityQ.criteria)).toEqual(["p1", "p2", "p3"]);
+    expect(Object.keys(templateQ.criteria)).toHaveLength(4);
+    expect(Object.keys(firstRoleQ.criteria)).toHaveLength(6);
+    expect(shipReadyQ.type).toBe("noul");
+    const parsed = parseSoftwareTeamLayaResult(
+      {
+        answers: {
+          priority: { choice: "p1", confidence: 0.91 },
+          shipReady: { noul: 0.2, confidence: 0.88 },
+        },
+        routing: { model: "multilingual", reason: "latin" },
+      },
+      { minConfidence: 0.7 },
+    );
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.suggestions.priority).toMatchObject({
+      intent: "priority",
+      choice: "p1",
+      uncertain: false,
+    });
+    expect(parsed.suggestions.shipReady?.noul).toBe(0.2);
+    expect(
+      parseSoftwareTeamLayaResult(
+        { answers: { priority: { choice: "urgent", confidence: 0.99 } } },
+        { minConfidence: 0.7 },
+      ).ok,
+    ).toBe(false);
+  });
+
+  it("marks low confidence uncertain and never treats shipReady as a gate", () => {
+    const parsed = parseSoftwareTeamLayaResult(
+      { answers: { priority: { choice: "p2", confidence: 0.4 }, shipReady: { noul: 0.99, confidence: 0.99 } } },
+      { minConfidence: 0.7 },
+    );
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.suggestions.priority?.uncertain).toBe(true);
+    expect(softwareTeamLayaUnlocksShip(parsed)).toBe(false);
   });
 });
