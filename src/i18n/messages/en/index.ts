@@ -23,6 +23,7 @@ import { enSettingsMemory } from "./settings-memory";
 import { enSettingsCode } from "./settings-code";
 import { enSettingsRemoteIm } from "./settings-remoteIm";
 import { enSettingsPet } from "./settings-pet";
+import { enSoftwareTeamDlc } from "./software-team-dlc";
 import { enStoryGates } from "./storyGates";
 
 export const en = {
@@ -50,6 +51,7 @@ export const en = {
   ...enSettingsCode,
   ...enSettingsRemoteIm,
   ...enSettingsPet,
+  ...enSoftwareTeamDlc,
   ...enStoryGates,
 } as const;
 
@@ -79,4 +81,5 @@ export { enSettingsMemory } from "./settings-memory";
 export { enSettingsCode } from "./settings-code";
 export { enSettingsRemoteIm } from "./settings-remoteIm";
 export { enSettingsPet } from "./settings-pet";
+export { enSoftwareTeamDlc } from "./software-team-dlc";
 export { enStoryGates } from "./storyGates";

@@ -94,6 +94,7 @@ const LOCALE_ALIASES: Readonly<Record<string, Locale>> = {
   "ta-in": "ta",
   "ta-lk": "ta",
   "uk-ua": "uk",
+  "vi-vn": "vi",
   "zh-cn": "zh",
   "zh-hans": "zh",
   "zh-sg": "zh",
@@ -222,6 +223,7 @@ const INTL_TAGS: Readonly<Record<Locale, string>> = {
   ru: "ru-RU",
   ta: "ta-IN",
   uk: "uk-UA",
+  vi: "vi-VN",
   zh: "zh-CN",
   "zh-TW": "zh-TW",
 };

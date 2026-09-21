@@ -23,6 +23,7 @@ import { ruSettingsMemory } from "./settings-memory";
 import { ruSettingsCode } from "./settings-code";
 import { ruSettingsRemoteIm } from "./settings-remoteIm";
 import { ruSettingsPet } from "./settings-pet";
+import { ruSoftwareTeamDlc } from "./software-team-dlc";
 import { ruStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
@@ -52,5 +53,6 @@ export const ru: Record<MessageKey, string> = {
   ...ruSettingsCode,
   ...ruSettingsRemoteIm,
   ...ruSettingsPet,
+  ...ruSoftwareTeamDlc,
   ...ruStoryGates,
 };

@@ -23,6 +23,7 @@ import { zhSettingsMemory } from "./settings-memory";
 import { zhSettingsCode } from "./settings-code";
 import { zhSettingsRemoteIm } from "./settings-remoteIm";
 import { zhSettingsPet } from "./settings-pet";
+import { zhSoftwareTeamDlc } from "./software-team-dlc";
 import { zhStoryGates } from "./storyGates";
 
 import type { MessageKey } from "../en";
@@ -52,6 +53,7 @@ export const zh: Record<MessageKey, string> = {
   ...zhSettingsCode,
   ...zhSettingsRemoteIm,
   ...zhSettingsPet,
+  ...zhSoftwareTeamDlc,
   ...zhStoryGates,
 };
 
