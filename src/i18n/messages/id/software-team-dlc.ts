@@ -300,6 +300,7 @@ export const idSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Sesi diikat",
   "softwareTeamDlc.activity.session_unbound": "Sesi dilepas",
   "softwareTeamDlc.activity.priority": "Prioritas diubah",
+  "softwareTeamDlc.activity.laya_suggest": "Saran Laya",
   "softwareTeamDlc.priorityMenu": "Prioritas",
   "softwareTeamDlc.priorityP1": "P1 · Mendesak",
   "softwareTeamDlc.priorityP2": "P2 · Tinggi",

@@ -297,6 +297,7 @@ export const koSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "세션을 묶음",
   "softwareTeamDlc.activity.session_unbound": "세션 묶기를 해제",
   "softwareTeamDlc.activity.priority": "우선순위 변경됨",
+  "softwareTeamDlc.activity.laya_suggest": "Laya 제안",
   "softwareTeamDlc.priorityMenu": "우선순위",
   "softwareTeamDlc.priorityP1": "P1 · 긴급",
   "softwareTeamDlc.priorityP2": "P2 · 높음",

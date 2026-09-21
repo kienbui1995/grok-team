@@ -299,6 +299,7 @@ export const ukSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Сесію прив’язано",
   "softwareTeamDlc.activity.session_unbound": "Сесію відв’язано",
   "softwareTeamDlc.activity.priority": "Пріоритет змінено",
+  "softwareTeamDlc.activity.laya_suggest": "Пропозиція Laya",
   "softwareTeamDlc.priorityMenu": "Пріоритет",
   "softwareTeamDlc.priorityP1": "P1 · Терміново",
   "softwareTeamDlc.priorityP2": "P2 · Високий",

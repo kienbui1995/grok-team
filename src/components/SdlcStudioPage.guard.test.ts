@@ -19,6 +19,8 @@ describe("SdlcStudioPage dialog / i18n guard", () => {
     expect(SRC).toContain('t("softwareTeamDlc.layaSuggest")');
     expect(SRC).toContain("useSoftwareTeamLaya");
     expect(SRC).toContain("pickSoftwareTeamStudioOverlay");
+    expect(SRC).toContain("softwareTeamLayaDeliveryFields");
+    expect(SRC).toContain("applyLayaPriority");
   });
 
   it("resolves pipeline conflict with GlassModal copy (close stays unresolved)", () => {

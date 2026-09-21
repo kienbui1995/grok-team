@@ -25,9 +25,11 @@ import {
   saveSoftwareTeamDlcEnabled,
   setPipelineItemRole,
   setPipelineItemStage,
+  applySoftwareTeamLayaPriority,
   setSoftwareTeamItemPriority,
   type SoftwareTeamHandoffStoreResult,
   type SoftwareTeamItemPriority,
+  type SoftwareTeamLayaSuggestion,
   type SoftwareTeamShipStoreResult,
   type SoftwareTeamPipelineItem,
   type SoftwareTeamPipelineItemDraft,
@@ -117,6 +119,10 @@ export function useSoftwareTeamPipeline(): {
   setStage: (itemId: string, stageId: SoftwareTeamSdlcStageId) => void;
   setRole: (itemId: string, roleId: SoftwareTeamRoleId) => void;
   setPriority: (itemId: string, priority: SoftwareTeamItemPriority) => void;
+  applyLayaPriority: (
+    itemId: string,
+    suggestion?: SoftwareTeamLayaSuggestion | null,
+  ) => void;
   bindSession: (itemId: string, sessionId: string) => void;
   assignSession: (
     sessionId: string,
@@ -220,6 +226,21 @@ export function useSoftwareTeamPipeline(): {
       setStore(
         rememberUndo(
           setSoftwareTeamItemPriority(loadSoftwareTeamPipelineStore(), itemId, priority),
+        ),
+      );
+    },
+    [rememberUndo],
+  );
+
+  const applyLayaPriority = useCallback(
+    (itemId: string, suggestion?: SoftwareTeamLayaSuggestion | null) => {
+      setStore(
+        rememberUndo(
+          applySoftwareTeamLayaPriority(
+            loadSoftwareTeamPipelineStore(),
+            itemId,
+            suggestion,
+          ),
         ),
       );
     },
@@ -440,6 +461,7 @@ export function useSoftwareTeamPipeline(): {
     setStage,
     setRole,
     setPriority,
+    applyLayaPriority,
     bindSession,
     assignSession,
     clearSession,

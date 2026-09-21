@@ -1,8 +1,14 @@
+import { appendSoftwareTeamActivity } from "./activity";
 import { isSoftwareTeamSharedHomePath } from "./delivery";
+import { missingSoftwareTeamDeliveryRoles } from "./deliveryAttach";
+import { softwareTeamDeliveryTitle } from "./deliveryFilter";
+import type { SoftwareTeamPipelineItem, SoftwareTeamPipelineStore } from "./pipeline";
 import { SOFTWARE_TEAM_ROLE_IDS, type SoftwareTeamRoleId } from "./roles";
+import { firstSoftwareTeamNonEmptyField } from "./shipGate";
 import { SOFTWARE_TEAM_TEMPLATE_IDS, type SoftwareTeamTemplateId } from "./templates";
 import {
   normalizeSoftwareTeamItemPriority,
+  setSoftwareTeamItemPriority,
   type SoftwareTeamItemPriority,
 } from "./priority";
 
@@ -228,6 +234,82 @@ export function softwareTeamLayaFirstRolePatch(
   return (SOFTWARE_TEAM_ROLE_IDS as readonly string[]).includes(choice)
     ? (choice as SoftwareTeamRoleId)
     : null;
+}
+
+/**
+ * Sidecar state for a delivery. Notes are first-non-empty across members
+ * (Reviewer/QA notes live on those cards). Role / stage / priority stay on
+ * the focus card. Another deliveryId is never mixed in.
+ */
+export function softwareTeamLayaDeliveryFields(input: {
+  items: readonly SoftwareTeamPipelineItem[];
+  focus?: SoftwareTeamPipelineItem | null;
+  deliveryTitle?: string;
+  templateId?: string;
+  locale?: string;
+}): Parameters<typeof buildSoftwareTeamLayaState>[0] {
+  const focus = input.focus ?? input.items[0] ?? null;
+  const deliveryId = (focus?.deliveryId ?? "").trim();
+  const members = deliveryId
+    ? input.items.filter((item) => item.deliveryId.trim() === deliveryId)
+    : focus
+      ? [focus]
+      : [];
+  return {
+    title: focus?.title,
+    deliveryTitle:
+      input.deliveryTitle ??
+      (deliveryId ? softwareTeamDeliveryTitle(members, deliveryId) : focus?.title),
+    roleId: focus?.roleId,
+    stageId: focus?.stageId,
+    templateId: input.templateId,
+    priority: focus?.priority,
+    productNote: firstSoftwareTeamNonEmptyField(
+      members.map((item) => item.productNote),
+    ),
+    architectNote: firstSoftwareTeamNonEmptyField(
+      members.map((item) => item.architectNote),
+    ),
+    reviewNote: firstSoftwareTeamNonEmptyField(
+      members.map((item) => item.reviewNote),
+    ),
+    qaNote: firstSoftwareTeamNonEmptyField(members.map((item) => item.qaNote)),
+    missingRoles: deliveryId
+      ? missingSoftwareTeamDeliveryRoles(input.items, deliveryId)
+      : [],
+    locale: input.locale,
+  };
+}
+
+/**
+ * Apply a Laya priority suggestion onto the focus card. Logs `laya_suggest`
+ * in addition to the existing `priority` mutate. Never unlocks Ship.
+ */
+export function applySoftwareTeamLayaPriority(
+  store: SoftwareTeamPipelineStore,
+  itemId: string,
+  suggestion?: SoftwareTeamLayaSuggestion | null,
+  now = Date.now(),
+): SoftwareTeamPipelineStore {
+  const priority = softwareTeamLayaPriorityPatch(suggestion);
+  if (!priority || !suggestion) return store;
+  const item = store.items.find((row) => row.id === itemId);
+  if (!item) return store;
+  const next = setSoftwareTeamItemPriority(store, itemId, priority, now);
+  return {
+    ...next,
+    activity: appendSoftwareTeamActivity(next.activity, {
+      at: now,
+      type: "laya_suggest",
+      deliveryId: item.deliveryId,
+      itemId: item.id,
+      priority,
+      layaIntent: "priority",
+      layaChoice: suggestion.choice,
+      layaConfidence: suggestion.confidence,
+      layaUncertain: suggestion.uncertain,
+    }),
+  };
 }
 
 function pack(

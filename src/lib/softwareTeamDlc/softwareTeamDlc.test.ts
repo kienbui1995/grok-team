@@ -191,6 +191,8 @@ import {
   softwareTeamLayaFirstRolePatch,
   softwareTeamLayaPriorityPatch,
   softwareTeamLayaTemplatePatch,
+  applySoftwareTeamLayaPriority,
+  softwareTeamLayaDeliveryFields,
   type SoftwareTeamLayaHost,
   type SoftwareTeamLaunchHost,
   type SoftwareTeamPackProbeHost,
@@ -5240,6 +5242,133 @@ describe("Software Works Laya triage (domain)", () => {
     expect(softwareTeamLayaPriorityPatch(parsed.suggestions.priority)).toBe("p2");
     expect(softwareTeamLayaTemplatePatch({ intent: "template", choice: "hotfix", confidence: 0.9, uncertain: false })).toBe("hotfix");
     expect(softwareTeamLayaFirstRolePatch({ intent: "firstRole", choice: "engineer", confidence: 0.9, uncertain: false })).toBe("engineer");
+  });
+
+  it("builds sidecar state from delivery-wide notes, not only the focus card", () => {
+    const engineer = createSoftwareTeamPipelineItem({
+      id: "eng-laya",
+      roleId: "engineer",
+      stageId: "build",
+      title: "Auth",
+      deliveryId: "d-laya",
+      priority: "p3",
+    })!;
+    const product = createSoftwareTeamPipelineItem({
+      id: "prod-laya",
+      roleId: "product",
+      stageId: "backlog",
+      title: "Auth",
+      deliveryId: "d-laya",
+      productNote: "SSO for mobile",
+    })!;
+    const architect = createSoftwareTeamPipelineItem({
+      id: "arch-laya",
+      roleId: "architect",
+      stageId: "design",
+      title: "Auth",
+      deliveryId: "d-laya",
+      architectNote: "reuse existing auth module",
+    })!;
+    const reviewer = createSoftwareTeamPipelineItem({
+      id: "rev-laya",
+      roleId: "reviewer",
+      stageId: "review",
+      title: "Auth",
+      deliveryId: "d-laya",
+      reviewNote: "must-fix auth",
+    })!;
+    const qa = createSoftwareTeamPipelineItem({
+      id: "qa-laya",
+      roleId: "qa",
+      stageId: "review",
+      title: "Auth",
+      deliveryId: "d-laya",
+      qaNote: "vitest pass",
+    })!;
+    const other = createSoftwareTeamPipelineItem({
+      id: "other-laya",
+      roleId: "engineer",
+      stageId: "build",
+      title: "Unrelated",
+      deliveryId: "d-other",
+      reviewNote: "do not leak",
+      qaNote: "do not leak qa",
+    })!;
+    const fields = softwareTeamLayaDeliveryFields({
+      items: [engineer, product, architect, reviewer, qa, other],
+      focus: engineer,
+      locale: "vi",
+    });
+    expect(fields).toMatchObject({
+      title: "Auth",
+      deliveryTitle: "Auth",
+      roleId: "engineer",
+      stageId: "build",
+      priority: "p3",
+      productNote: "SSO for mobile",
+      architectNote: "reuse existing auth module",
+      reviewNote: "must-fix auth",
+      qaNote: "vitest pass",
+      locale: "vi",
+    });
+    expect(fields.missingRoles).toEqual(["writer"]);
+    expect(fields.reviewNote).not.toContain("do not leak");
+    const empty = softwareTeamLayaDeliveryFields({
+      items: [engineer],
+      focus: engineer,
+    });
+    expect(empty.reviewNote).toBe("");
+    expect(empty.qaNote).toBe("");
+    expect(empty.productNote).toBe("");
+  });
+
+  it("logs laya_suggest on Apply and never unlocks Ship", () => {
+    const engineer = createSoftwareTeamPipelineItem({
+      id: "eng-apply",
+      roleId: "engineer",
+      stageId: "build",
+      title: "Auth",
+      deliveryId: "d-apply",
+    })!;
+    const store = {
+      items: [engineer],
+      activity: [],
+      archivedDeliveryIds: [],
+    };
+    const next = applySoftwareTeamLayaPriority(store, "eng-apply", {
+      intent: "priority",
+      choice: "p1",
+      confidence: 0.91,
+      uncertain: false,
+    }, 99);
+    expect(pipelineItemById(next, "eng-apply")?.priority).toBe("p1");
+    expect(next.activity.map((event) => event.type)).toEqual([
+      "priority",
+      "laya_suggest",
+    ]);
+    expect(next.activity[1]).toMatchObject({
+      type: "laya_suggest",
+      deliveryId: "d-apply",
+      itemId: "eng-apply",
+      layaIntent: "priority",
+      layaChoice: "p1",
+      layaConfidence: 0.91,
+      layaUncertain: false,
+    });
+    const parsed = parseSoftwareTeamActivityList(next.activity);
+    expect(parsed[1]?.layaChoice).toBe("p1");
+    expect(softwareTeamActivityMessageKey("laya_suggest")).toBe(
+      "softwareTeamDlc.activity.laya_suggest",
+    );
+    expect(softwareTeamDeliveryShipGate(next.items).ok).toBe(false);
+    expect(
+      applySoftwareTeamLayaPriority(store, "eng-apply", {
+        intent: "shipReady",
+        noul: 0.99,
+        confidence: 0.99,
+        uncertain: false,
+      }),
+    ).toBe(store);
   });
 });
 

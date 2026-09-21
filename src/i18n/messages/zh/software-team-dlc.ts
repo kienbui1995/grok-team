@@ -274,6 +274,7 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "已绑定会话",
   "softwareTeamDlc.activity.session_unbound": "已解除会话绑定",
   "softwareTeamDlc.activity.priority": "已更改优先级",
+  "softwareTeamDlc.activity.laya_suggest": "Laya 建议",
   "softwareTeamDlc.priorityMenu": "优先级",
   "softwareTeamDlc.priorityP1": "P1 · 紧急",
   "softwareTeamDlc.priorityP2": "P2 · 高",

@@ -31,6 +31,7 @@ export const SOFTWARE_TEAM_ACTIVITY_TYPES = [
   "session_bound",
   "session_unbound",
   "priority",
+  "laya_suggest",
 ] as const;
 
 export type SoftwareTeamActivityType =
@@ -57,6 +58,11 @@ export type SoftwareTeamActivityEvent = {
   stageId?: SoftwareTeamSdlcStageId;
   noteKind?: SoftwareTeamActivityNoteKind;
   priority?: SoftwareTeamItemPriority;
+  layaIntent?: string;
+  layaChoice?: string;
+  layaNoul?: number;
+  layaConfidence?: number;
+  layaUncertain?: boolean;
 };
 
 export function isSoftwareTeamActivityType(
@@ -103,6 +109,19 @@ export function parseSoftwareTeamActivityEvent(
     typeof rec.priority === "string" ? rec.priority.trim().toLowerCase() : "";
   if (priorityRaw === "p1" || priorityRaw === "p2" || priorityRaw === "p3") {
     event.priority = priorityRaw;
+  }
+  const layaIntent =
+    typeof rec.layaIntent === "string" ? rec.layaIntent.trim() : "";
+  if (layaIntent) event.layaIntent = layaIntent;
+  const layaChoice =
+    typeof rec.layaChoice === "string" ? rec.layaChoice.trim() : "";
+  if (layaChoice) event.layaChoice = layaChoice;
+  const layaNoul = Number(rec.layaNoul);
+  if (Number.isFinite(layaNoul)) event.layaNoul = layaNoul;
+  const layaConfidence = Number(rec.layaConfidence);
+  if (Number.isFinite(layaConfidence)) event.layaConfidence = layaConfidence;
+  if (typeof rec.layaUncertain === "boolean") {
+    event.layaUncertain = rec.layaUncertain;
   }
   return event;
 }
@@ -177,6 +196,8 @@ export function softwareTeamActivityMessageKey(
       return "softwareTeamDlc.activity.session_unbound";
     case "priority":
       return "softwareTeamDlc.activity.priority";
+    case "laya_suggest":
+      return "softwareTeamDlc.activity.laya_suggest";
     default: {
       const _never: never = type;
       return _never;

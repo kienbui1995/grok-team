@@ -299,6 +299,7 @@ export const ptBRSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Sessão vinculada",
   "softwareTeamDlc.activity.session_unbound": "Sessão desvinculada",
   "softwareTeamDlc.activity.priority": "Prioridade alterada",
+  "softwareTeamDlc.activity.laya_suggest": "Sugestão Laya",
   "softwareTeamDlc.priorityMenu": "Prioridade",
   "softwareTeamDlc.priorityP1": "P1 · Urgente",
   "softwareTeamDlc.priorityP2": "P2 · Alta",

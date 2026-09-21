@@ -308,6 +308,7 @@ export const viSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Đã gắn một phiên",
   "softwareTeamDlc.activity.session_unbound": "Đã bỏ gắn phiên",
   "softwareTeamDlc.activity.priority": "Đã đổi mức ưu tiên",
+  "softwareTeamDlc.activity.laya_suggest": "Gợi ý Laya",
   "softwareTeamDlc.priorityMenu": "Mức ưu tiên",
   "softwareTeamDlc.priorityP1": "P1 · Khẩn cấp",
   "softwareTeamDlc.priorityP2": "P2 · Cao",

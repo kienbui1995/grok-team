@@ -300,6 +300,7 @@ export const taSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "அமர்வு இணைக்கப்பட்டது",
   "softwareTeamDlc.activity.session_unbound": "அமர்வு இணைப்பு நீக்கப்பட்டது",
   "softwareTeamDlc.activity.priority": "முன்னுரிமை மாற்றப்பட்டது",
+  "softwareTeamDlc.activity.laya_suggest": "Laya பரிந்துரை",
   "softwareTeamDlc.priorityMenu": "முன்னுரிமை",
   "softwareTeamDlc.priorityP1": "P1 · அவசரம்",
   "softwareTeamDlc.priorityP2": "P2 · உயர்ந்தது",

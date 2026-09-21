@@ -297,6 +297,7 @@ export const jaSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "セッションを結びました",
   "softwareTeamDlc.activity.session_unbound": "セッションの結びを解除",
   "softwareTeamDlc.activity.priority": "優先度を変更",
+  "softwareTeamDlc.activity.laya_suggest": "Laya の提案",
   "softwareTeamDlc.priorityMenu": "優先度",
   "softwareTeamDlc.priorityP1": "P1 · 緊急",
   "softwareTeamDlc.priorityP2": "P2 · 高",

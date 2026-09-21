@@ -299,6 +299,7 @@ export const ruSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Сессия привязана",
   "softwareTeamDlc.activity.session_unbound": "Сессия отвязана",
   "softwareTeamDlc.activity.priority": "Приоритет изменён",
+  "softwareTeamDlc.activity.laya_suggest": "Подсказка Laya",
   "softwareTeamDlc.priorityMenu": "Приоритет",
   "softwareTeamDlc.priorityP1": "P1 · Срочно",
   "softwareTeamDlc.priorityP2": "P2 · Высокий",

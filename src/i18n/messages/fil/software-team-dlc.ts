@@ -300,6 +300,7 @@ export const filSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Nag-bind ng session",
   "softwareTeamDlc.activity.session_unbound": "Inalis ang bind ng session",
   "softwareTeamDlc.activity.priority": "Nagbago ang priyoridad",
+  "softwareTeamDlc.activity.laya_suggest": "Mungkahi ng Laya",
   "softwareTeamDlc.priorityMenu": "Priyoridad",
   "softwareTeamDlc.priorityP1": "P1 · Kailangan agad",
   "softwareTeamDlc.priorityP2": "P2 · Mataas",

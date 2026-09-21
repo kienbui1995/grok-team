@@ -58,7 +58,7 @@ Switching folders persists/loads that project’s cache and resets pipeline-file
 
 Schema: `{ schema: "software-works.pipeline", version: 3, updatedAt, items, activity, archivedDeliveryIds }`. **v1–v2 still load** (`activity` / `archivedDeliveryIds` hydrate to `[]`; item `archived` missing = false). Writes are v3. Host `fs_write_file` may **create** this allowlisted path, docs/sdlc placeholders, and `docs/sdlc/<slug>-delivery.md` when missing. Parse failure still refuses overwrite and may write `.grok/software-works.json.bak`.
 
-`activity[]` events: `{ at, type, deliveryId, itemId, … }` for add, stage, handoff, notes, start delivery, archive, unarchive, `item_removed`, `item_moved`, `session_bound`, `session_unbound`, `delivery_renamed`, `delivery_duplicated`, `git_branch`, `priority`. Unknown types are skipped. Cap 200. Old items without activity still hydrate.
+`activity[]` events: `{ at, type, deliveryId, itemId, … }` for add, stage, handoff, notes, start delivery, archive, unarchive, `item_removed`, `item_moved`, `session_bound`, `session_unbound`, `delivery_renamed`, `delivery_duplicated`, `git_branch`, `priority`, `laya_suggest`. Unknown types are skipped. Cap 200. Old items without activity still hydrate. `laya_suggest` is a trail of an applied Laya priority suggestion (`intent` / `choice` / `confidence` / `uncertain`); it never gates Ship.
 
 **Priority:** each item carries an optional triage label `priority` (`""` / `p1` / `p2` / `p3`; v3 files without the field hydrate empty). It is informational — it never gates Ship and never touches sessions. Set/clear from the card context menu (**Priority** submenu); the card shows a P1/P2/P3 chip, and the Studio toolbar **Sort** control (`newest` / `oldest` / `priority`, persisted in `grok.softwareTeamDlc.studio`) orders cards inside each column (`priority` ranks P1 → P3, no-priority last, recency as tie-break).
 
@@ -156,7 +156,7 @@ V1 intents:
 
 | Intent | Primitive | Apply |
 |--------|-----------|--------|
-| `priority` | `choice` p1/p2/p3 | Existing card priority setter (activity `priority`) |
+| `priority` | `choice` p1/p2/p3 | Existing card priority setter (activity `priority` + `laya_suggest`) |
 | `template` | `choice` feature/bugfix/hotfix/docs | Start-delivery wizard draft only |
 | `firstRole` | `choice` six roster roles | Wizard first-role chips only |
 | `shipReady` | `noul` | **Display only** — never satisfies `softwareTeamDeliveryShipGate` |
@@ -173,7 +173,9 @@ V1 intents:
 
 Working directory is the project folder when allowed. The sidecar script is resolved from the repo `scripts/` path, the app resource dir, or App data — **never** copied into `~/.grok`. Hugging Face weight cache stays in the user cache, not agent `config.toml`.
 
-Studio: **Suggest with Laya** on Start a delivery (template + first role drafts) and on the delivery pane (priority Apply + ship-ready line). Conflict overlay still wins (`pickSoftwareTeamStudioOverlay`). No `window.confirm`. No native `<select>`.
+Sidecar **state** is built from the delivery (`softwareTeamLayaDeliveryFields`): first non-empty Product / Architect / Reviewer / QA notes across members, plus the focus card’s title / role / stage / priority. Notes that live on sibling cards are included. Cards on another `deliveryId` are not mixed in. Truncate notes; never send repo file bodies.
+
+Studio: **Suggest with Laya** on Start a delivery (template + first role drafts) and on the delivery pane (priority Apply + ship-ready line). Apply on the pane writes the focus card’s priority and appends `laya_suggest`. Conflict overlay still wins (`pickSoftwareTeamStudioOverlay`). No `window.confirm`. No native `<select>`.
 
 ## Review → QA → Ship gate
 

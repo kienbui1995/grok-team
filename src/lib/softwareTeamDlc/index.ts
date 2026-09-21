@@ -449,9 +449,11 @@ export {
 export {
   DEFAULT_SOFTWARE_TEAM_LAYA_MIN_CONFIDENCE,
   SOFTWARE_TEAM_LAYA_INTENTS,
+  applySoftwareTeamLayaPriority,
   buildSoftwareTeamLayaState,
   parseSoftwareTeamLayaResult,
   planSoftwareTeamLayaDecide,
+  softwareTeamLayaDeliveryFields,
   softwareTeamLayaFirstRolePatch,
   softwareTeamLayaPriorityPatch,
   softwareTeamLayaQuestions,

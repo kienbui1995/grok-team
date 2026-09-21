@@ -274,6 +274,7 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "已綁定工作階段",
   "softwareTeamDlc.activity.session_unbound": "已解除工作階段綁定",
   "softwareTeamDlc.activity.priority": "已變更優先順序",
+  "softwareTeamDlc.activity.laya_suggest": "Laya 建議",
   "softwareTeamDlc.priorityMenu": "優先順序",
   "softwareTeamDlc.priorityP1": "P1 · 緊急",
   "softwareTeamDlc.priorityP2": "P2 · 高",

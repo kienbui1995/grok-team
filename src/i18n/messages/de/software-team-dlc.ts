@@ -300,6 +300,7 @@ export const deSoftwareTeamDlc = {
   "softwareTeamDlc.activity.session_bound": "Sitzung gebunden",
   "softwareTeamDlc.activity.session_unbound": "Sitzung gelöst",
   "softwareTeamDlc.activity.priority": "Priorität geändert",
+  "softwareTeamDlc.activity.laya_suggest": "Laya-Vorschlag",
   "softwareTeamDlc.priorityMenu": "Priorität",
   "softwareTeamDlc.priorityP1": "P1 · Dringend",
   "softwareTeamDlc.priorityP2": "P2 · Hoch",

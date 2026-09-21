@@ -12,6 +12,7 @@ See `docs/llm-wiki/release.md`.
 ## [Unreleased]
 
 ### Fixed
+- **Software Works Laya delivery-wide state**: Suggest on the delivery pane now sends first-non-empty Product / Architect / Reviewer / QA notes from every card on that `deliveryId`, not only the focused card. Apply still writes priority on the focus card, logs `laya_suggest`, and never unlocks Ship. Shared `~/.grok` still refused.
 - **Software Works pack install shared-home leak**: Project-target pack install / repair / probe now refuse when the workbench folder *is* shared `~/.grok` (including `/home/u/.grok` and a trailing slash). Independent `~/.grok-app/agent-home` stays allowed. No Host write, no fake success.
 
 ### Added
@@ -38,6 +39,7 @@ See `docs/llm-wiki/release.md`.
 - **Custom appearance chrome**: Settings → Appearance → Theme can set a text color (default follows Light / Dark near-black / near-white) and an optional text shadow (off by default). Restore defaults asks for confirmation and resets both. These fields travel with `.grokskin` import / export.
 
 **中文 · 修复**
+- **Software Works Laya 整次交付状态**：交付详情里的 Suggest 会把同一 `deliveryId` 上各角色卡的首个非空 Product / Architect / Reviewer / QA 备注送给侧车，不再只读当前聚焦卡。Apply 仍只改聚焦卡优先级，并记 `laya_suggest`，不解锁发布。共享 `~/.grok` 仍拒绝。
 - **Software Works 安装包共享家目录泄漏**：项目目标的安装 / 补写 / 探测在工作台目录就是共享 `~/.grok` 时拒绝（含 `/home/u/.grok` 和末尾斜杠）。独立 `~/.grok-app/agent-home` 仍允许。不写 Host，不假装成功。
 
 **中文 · 新增**

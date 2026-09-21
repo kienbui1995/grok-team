@@ -77,6 +77,7 @@ import {
   softwareTeamDeliveryMembers,
   softwareTeamShipBlockMessageKey,
   softwareTeamDeliveryShipGate,
+  softwareTeamLayaDeliveryFields,
   softwareTeamLayaFirstRolePatch,
   softwareTeamLayaMessageKey,
   softwareTeamLayaPriorityPatch,
@@ -2252,33 +2253,19 @@ export function SdlcStudioPage({
           if (!focus) return;
           void laya.suggest({
             intents: ["priority", "shipReady"],
-            state: {
-              title: focus.title,
+            state: softwareTeamLayaDeliveryFields({
+              items: pipeline.items,
+              focus,
               deliveryTitle: deliveryDetail?.title,
-              roleId: focus.roleId,
-              stageId: focus.stageId,
-              priority: focus.priority,
-              productNote: focus.productNote,
-              architectNote: focus.architectNote,
-              reviewNote: focus.reviewNote,
-              qaNote: focus.qaNote,
-              missingRoles: deliveryDetail?.deliveryId
-                ? missingSoftwareTeamDeliveryRoles(
-                    pipeline.items,
-                    deliveryDetail.deliveryId,
-                  )
-                : [],
               locale,
-            },
+            }),
           });
         }}
         onLayaApplyPriority={() => {
           const focus = deliveryDetail?.focusItem;
-          const priority = softwareTeamLayaPriorityPatch(
-            layaSuggestions.priority,
-          );
-          if (!focus || !priority) return;
-          pipeline.setPriority(focus.id, priority);
+          if (!focus || !layaSuggestions.priority) return;
+          pipeline.applyLayaPriority(focus.id, layaSuggestions.priority);
+          laya.dismiss();
         }}
         onLayaDismiss={laya.dismiss}
         onSaveSliceRefs={(refs) => {
