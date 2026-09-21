@@ -102,6 +102,20 @@ export function saveSoftwareTeamLayaMinConfidence(
   } catch {
     /* private mode / quota */
   }
+  if (
+    typeof window !== "undefined" &&
+    typeof window.dispatchEvent === "function"
+  ) {
+    try {
+      window.dispatchEvent(
+        new CustomEvent(SOFTWARE_TEAM_DLC_LAYA_CHANGE_EVENT, {
+          detail: { minConfidence: clamped },
+        }),
+      );
+    } catch {
+      /* ignore */
+    }
+  }
   return clamped;
 }
 

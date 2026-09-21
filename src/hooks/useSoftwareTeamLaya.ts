@@ -46,7 +46,8 @@ export function useSoftwareTeamLaya(input: {
   );
   const [applying, setApplying] = useState(false);
   const [last, setLast] = useState<SoftwareTeamLayaSuggestResult | null>(null);
-  const host = input.host ?? defaultSoftwareTeamLayaHost();
+  const fallbackHost = useMemo(() => defaultSoftwareTeamLayaHost(), []);
+  const host = input.host ?? fallbackHost;
 
   useEffect(() => {
     const sync = () => {
@@ -75,13 +76,17 @@ export function useSoftwareTeamLaya(input: {
     }) => {
       setApplying(true);
       try {
+        const enabledNow = loadSoftwareTeamLayaEnabled();
+        const minNow = loadSoftwareTeamLayaMinConfidence();
+        setLayaEnabled(enabledNow);
+        setMinConfidence(minNow);
         const result = await runSoftwareTeamLayaSuggest({
           enabled: input.enabled,
-          layaEnabled,
+          layaEnabled: enabledNow,
           projectPath: input.projectPath,
           intents: args.intents,
           state: { ...args.state, locale: args.state.locale ?? input.locale },
-          minConfidence,
+          minConfidence: minNow,
           host,
         });
         setLast(result);

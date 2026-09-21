@@ -180,6 +180,7 @@ import {
   parseSoftwareTeamLayaResult,
   softwareTeamLayaUnlocksShip,
   DEFAULT_SOFTWARE_TEAM_LAYA_ENABLED,
+  SOFTWARE_TEAM_DLC_LAYA_CHANGE_EVENT,
   SOFTWARE_TEAM_DLC_LAYA_KEY,
   loadSoftwareTeamLayaEnabled,
   loadSoftwareTeamLayaMinConfidence,
@@ -5260,6 +5261,16 @@ describe("Software Works Laya prefs", () => {
     expect(softwareTeamLayaMessageKey("disabled")).toBe(
       "softwareTeamDlc.layaDisabled",
     );
+  });
+
+  it("notifies listeners when min confidence is saved", () => {
+    const dispatch = vi.fn();
+    vi.stubGlobal("window", { dispatchEvent: dispatch });
+    saveSoftwareTeamLayaMinConfidence(0.9, memoryStore());
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    const ev = dispatch.mock.calls[0][0] as CustomEvent;
+    expect(ev.type).toBe(SOFTWARE_TEAM_DLC_LAYA_CHANGE_EVENT);
+    vi.unstubAllGlobals();
   });
 
   it("sidecar stub prints parseable answers", async () => {
