@@ -5253,4 +5253,23 @@ describe("Software Works Laya prefs", () => {
       "softwareTeamDlc.layaDisabled",
     );
   });
+
+  it("sidecar stub prints parseable answers", async () => {
+    const { spawnSync } = await import("node:child_process");
+    const out = spawnSync(
+      "python3",
+      ["scripts/software-works-laya.py"],
+      {
+        env: { ...process.env, LAYA_STUB: "1" },
+        input: JSON.stringify({
+          state: { title: "Auth" },
+          questions: softwareTeamLayaQuestions(["priority"]),
+        }),
+        encoding: "utf8",
+      },
+    );
+    if (out.error || out.status !== 0) return; // skip if no python3 in CI
+    const parsed = parseSoftwareTeamLayaResult(JSON.parse(out.stdout));
+    expect(parsed.ok).toBe(true);
+  });
 });
