@@ -339,4 +339,20 @@ export const taSoftwareTeamDlc = {
     "இந்தப் பலகை திட்டக் கோப்பில் எழுதப்பட்டது. மற்ற நகல் {file} இல் உள்ளது.",
   "softwareTeamDlc.conflictKeepFailed":
     "இந்தப் பலகையைத் திட்டக் கோப்பின் மேல் எழுத முடியவில்லை.",
+  "softwareTeamDlc.layaEnable": "Laya வரிசைப்படுத்தல் பரிந்துரைகளை இயக்கு",
+  "softwareTeamDlc.layaEnableDesc":
+    "விருப்ப உள்ளூர் System 1 சைட்கார் (Python + Laya). முன்னுரிமை, வழங்கல் வார்ப்புரு, முதல் பங்கைப் பரிந்துரைக்கும். Ship-ஐ ஒருபோதும் திறக்காது, ~/.grok-இல் எழுதாது, Host id-களை உருவாக்காது. அடிப்படை எடைகள் வேக வரிசை உதவி — சோதிடம் அல்ல.",
+  "softwareTeamDlc.layaSuggest": "Laya மூலம் பரிந்துரை",
+  "softwareTeamDlc.layaApply": "பரிந்துரையைப் பயன்படுத்து",
+  "softwareTeamDlc.layaDismiss": "நிராகரி",
+  "softwareTeamDlc.layaUncertain": "குறைந்த நம்பிக்கை ({n}). பயன்படுத்தும் முன் சரிபார்க்கவும்.",
+  "softwareTeamDlc.layaNeedHost": "Laya பரிந்துரைகளுக்கு டெஸ்க்டாப் Host தேவை.",
+  "softwareTeamDlc.layaNeedPython": "Python 3 நிறுவி மீண்டும் முயல்க.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Laya இறக்குமதி செய்ய முடியவில்லை. pip install laya>=0.3.3 கொண்டு நிறுவவும் — இந்த பயன்பாடு pip-install செய்யாது.",
+  "softwareTeamDlc.layaBlockedHome": "பகிரப்பட்ட ~/.grok-க்கு எதிராக Laya இயங்காது.",
+  "softwareTeamDlc.layaHostError": "Laya சைட்கார் தோல்வி: {error}",
+  "softwareTeamDlc.layaDisabled": "அமைப்புகள் → நீட்டிப்புகள் → முகவர்கள் இல் Laya வரிசையை இயக்குக.",
+  "softwareTeamDlc.layaShipReady": "Laya ship-ready மதிப்பீடு: {n} (Ship-ஐத் திறக்காது).",
+  "softwareTeamDlc.layaMinConfidence": "உறுதியாகக் கருத குறைந்தபட்ச நம்பிக்கை",
 } as const;

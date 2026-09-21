@@ -299,6 +299,9 @@ describe("i18n catalog", () => {
       ["softwareTeamDlc.removeItemConfirmBody", ["{title}"]],
       ["softwareTeamDlc.movedToDelivery", ["{title}"]],
       ["softwareTeamDlc.missingRoles", ["{roles}"]],
+      ["softwareTeamDlc.layaUncertain", ["{n}"]],
+      ["softwareTeamDlc.layaHostError", ["{error}"]],
+      ["softwareTeamDlc.layaShipReady", ["{n}"]],
     ];
     for (const loc of LOCALES) {
       for (const [key, vars] of cases) {

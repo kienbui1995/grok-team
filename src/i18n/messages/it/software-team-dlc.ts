@@ -337,4 +337,20 @@ export const itSoftwareTeamDlc = {
     "Questa bacheca è stata scritta nel file di progetto. L’altra copia è in {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Impossibile scrivere questa bacheca sul file di progetto.",
+  "softwareTeamDlc.layaEnable": "Attiva i suggerimenti di triage Laya",
+  "softwareTeamDlc.layaEnableDesc":
+    "Sidecar System 1 locale opzionale (Python + Laya). Suggerisce priorità, modello di consegna e primo ruolo. Non sblocca mai Ship, non scrive mai ~/.grok, non inventa id Host. I pesi base sono un aiuto di triage veloce — non un oracolo.",
+  "softwareTeamDlc.layaSuggest": "Suggerisci con Laya",
+  "softwareTeamDlc.layaApply": "Applica suggerimento",
+  "softwareTeamDlc.layaDismiss": "Ignora",
+  "softwareTeamDlc.layaUncertain": "Confidenza bassa ({n}). Controlla prima di applicare.",
+  "softwareTeamDlc.layaNeedHost": "I suggerimenti Laya richiedono l’Host desktop.",
+  "softwareTeamDlc.layaNeedPython": "Installa Python 3, poi riprova.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Laya non è importabile. Installa con pip install laya>=0.3.3 — questa app non lo installerà con pip.",
+  "softwareTeamDlc.layaBlockedHome": "Laya non verrà eseguito contro il ~/.grok condiviso.",
+  "softwareTeamDlc.layaHostError": "Sidecar Laya non riuscito: {error}",
+  "softwareTeamDlc.layaDisabled": "Attiva il triage Laya in Impostazioni → Estensioni → Agenti.",
+  "softwareTeamDlc.layaShipReady": "Stima ship-ready Laya: {n} (non sblocca Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Confidenza minima per considerarla certa",
 } as const;

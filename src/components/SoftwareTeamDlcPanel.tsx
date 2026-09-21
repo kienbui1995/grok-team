@@ -8,16 +8,23 @@ import { createT, type Locale, type MessageKey } from "@/i18n";
 import { UiSwitch } from "@/components/settings/shared";
 import { useSettingsModel } from "@/providers/SettingsModelContext";
 import { useSoftwareTeamDlcPref } from "@/hooks/useSoftwareTeamDlc";
+import * as api from "@/lib/api";
 import {
   SOFTWARE_TEAM_DLC_INSTALL_TARGETS,
   SOFTWARE_TEAM_ROLES,
   SOFTWARE_TEAM_SDLC_STAGES,
   installSoftwareTeamDlcPack,
+  loadSoftwareTeamLayaEnabled,
+  loadSoftwareTeamLayaMinConfidence,
   planSoftwareTeamDlcPackWrite,
+  planSoftwareTeamLayaDecide,
   probeSoftwareTeamDlcPack,
   repairSoftwareTeamDlcPack,
+  saveSoftwareTeamLayaEnabled,
+  saveSoftwareTeamLayaMinConfidence,
   softwareTeamDlcPackManifest,
   softwareTeamInstallFailMessageKey,
+  softwareTeamLayaMessageKey,
   softwareTeamPackStatusMessageKey,
   softwareTeamRoleSlashHint,
   type SoftwareTeamDlcInstallTarget,
@@ -44,6 +51,16 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
     null,
   );
   const [installStatus, setInstallStatus] = useState<string | null>(null);
+  const [layaEnabled, setLayaEnabled] = useState(loadSoftwareTeamLayaEnabled);
+  const [layaMinConfidence, setLayaMinConfidence] = useState(
+    loadSoftwareTeamLayaMinConfidence,
+  );
+  const layaPlan = planSoftwareTeamLayaDecide({
+    enabled,
+    layaEnabled,
+    hasHost: api.isDesktopHost(),
+    projectPath,
+  });
 
   const refreshPackStatus = useCallback(async () => {
     setProbing(true);
@@ -137,6 +154,57 @@ export function SoftwareTeamDlcPanel({ locale }: { locale: Locale }) {
 
       {enabled ? (
         <>
+          <div className="settings-row">
+            <div className="settings-row__text">
+              <div className="settings-row__label">
+                {t("softwareTeamDlc.layaEnable")}
+              </div>
+              <div className="settings-row__desc">
+                {t("softwareTeamDlc.layaEnableDesc")}
+              </div>
+            </div>
+            <UiSwitch
+              checked={layaEnabled}
+              label={t("softwareTeamDlc.layaEnable")}
+              onChange={(next) => {
+                saveSoftwareTeamLayaEnabled(next);
+                setLayaEnabled(next);
+              }}
+            />
+          </div>
+          <div className="settings-row">
+            <div className="settings-row__text">
+              <div className="settings-row__label">
+                {t("softwareTeamDlc.layaMinConfidence")}
+              </div>
+            </div>
+            <div
+              className="sdlc-studio__chips"
+              role="group"
+              aria-label={t("softwareTeamDlc.layaMinConfidence")}
+            >
+              {[0.5, 0.7, 0.9].map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={
+                    "task-board__chip" +
+                    (layaMinConfidence === value ? " is-active" : "")
+                  }
+                  onClick={() => {
+                    setLayaMinConfidence(saveSoftwareTeamLayaMinConfidence(value));
+                  }}
+                >
+                  {value.toFixed(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="ext-ref-block__lead" role="status">
+            {layaPlan.reason === "host_error"
+              ? t(softwareTeamLayaMessageKey(layaPlan.reason), { error: "" })
+              : t(softwareTeamLayaMessageKey(layaPlan.reason))}
+          </p>
           <p className="ext-ref-block__lead">{t("softwareTeamDlc.openStudio")}</p>
           <div className="ext-ref-section-label">{t("softwareTeamDlc.rosterTitle")}</div>
           <p className="ext-ref-block__lead">{t("softwareTeamDlc.rosterHint")}</p>

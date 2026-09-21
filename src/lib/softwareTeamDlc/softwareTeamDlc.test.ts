@@ -179,6 +179,13 @@ import {
   softwareTeamLayaQuestions,
   parseSoftwareTeamLayaResult,
   softwareTeamLayaUnlocksShip,
+  DEFAULT_SOFTWARE_TEAM_LAYA_ENABLED,
+  SOFTWARE_TEAM_DLC_LAYA_KEY,
+  loadSoftwareTeamLayaEnabled,
+  loadSoftwareTeamLayaMinConfidence,
+  saveSoftwareTeamLayaEnabled,
+  saveSoftwareTeamLayaMinConfidence,
+  softwareTeamLayaMessageKey,
   type SoftwareTeamLaunchHost,
   type SoftwareTeamPackProbeHost,
   type SoftwareTeamPackWriteHost,
@@ -5224,5 +5231,26 @@ describe("Software Works Laya triage (domain)", () => {
     if (!parsed.ok) return;
     expect(parsed.suggestions.priority?.uncertain).toBe(true);
     expect(softwareTeamLayaUnlocksShip(parsed)).toBe(false);
+  });
+});
+
+describe("Software Works Laya prefs", () => {
+  it("defaults off and clamps min confidence", () => {
+    const storage = memoryStore();
+    expect(DEFAULT_SOFTWARE_TEAM_LAYA_ENABLED).toBe(false);
+    expect(loadSoftwareTeamLayaEnabled(storage)).toBe(false);
+    saveSoftwareTeamLayaEnabled(true, storage);
+    expect(storage.getItem(SOFTWARE_TEAM_DLC_LAYA_KEY)).toBe("1");
+    expect(loadSoftwareTeamLayaEnabled(storage)).toBe(true);
+    expect(loadSoftwareTeamLayaMinConfidence(storage)).toBe(0.7);
+    expect(saveSoftwareTeamLayaMinConfidence(0.2, storage)).toBe(0.5);
+    expect(loadSoftwareTeamLayaMinConfidence(storage)).toBe(0.5);
+    expect(saveSoftwareTeamLayaMinConfidence(1, storage)).toBe(0.95);
+    expect(softwareTeamLayaMessageKey("need_laya")).toBe(
+      "softwareTeamDlc.layaNeedPackage",
+    );
+    expect(softwareTeamLayaMessageKey("disabled")).toBe(
+      "softwareTeamDlc.layaDisabled",
+    );
   });
 });

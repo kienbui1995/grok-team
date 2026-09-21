@@ -338,4 +338,20 @@ export const esSoftwareTeamDlc = {
     "Este tablero se escribió en el archivo del proyecto. La otra copia está en {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "No se pudo escribir este tablero sobre el archivo del proyecto.",
+  "softwareTeamDlc.layaEnable": "Activar sugerencias de triaje de Laya",
+  "softwareTeamDlc.layaEnableDesc":
+    "Sidecar local opcional de System 1 (Python + Laya). Sugiere prioridad, plantilla de entrega y primer rol. Nunca desbloquea Ship, nunca escribe ~/.grok, nunca inventa ids de Host. Los pesos base son una ayuda de triaje rápido — no un oráculo.",
+  "softwareTeamDlc.layaSuggest": "Sugerir con Laya",
+  "softwareTeamDlc.layaApply": "Aplicar sugerencia",
+  "softwareTeamDlc.layaDismiss": "Descartar",
+  "softwareTeamDlc.layaUncertain": "Confianza baja ({n}). Revisa antes de aplicar.",
+  "softwareTeamDlc.layaNeedHost": "Las sugerencias de Laya necesitan el Host de escritorio.",
+  "softwareTeamDlc.layaNeedPython": "Instala Python 3 y vuelve a intentarlo.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Laya no se puede importar. Instálalo con pip install laya>=0.3.3 — esta app no lo instalará con pip.",
+  "softwareTeamDlc.layaBlockedHome": "Laya no se ejecutará contra el ~/.grok compartido.",
+  "softwareTeamDlc.layaHostError": "El sidecar de Laya falló: {error}",
+  "softwareTeamDlc.layaDisabled": "Activa el triaje de Laya en Ajustes → Extensiones → Agentes.",
+  "softwareTeamDlc.layaShipReady": "Estimación ship-ready de Laya: {n} (no desbloquea Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Confianza mínima para tratarla como segura",
 } as const;

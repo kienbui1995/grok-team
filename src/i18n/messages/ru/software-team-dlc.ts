@@ -337,4 +337,20 @@ export const ruSoftwareTeamDlc = {
     "Эта доска записана в файл проекта. Другая копия — в {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Не удалось записать эту доску поверх файла проекта.",
+  "softwareTeamDlc.layaEnable": "Включить подсказки сортировки Laya",
+  "softwareTeamDlc.layaEnableDesc":
+    "Необязательный локальный sidecar System 1 (Python + Laya). Предлагает приоритет, шаблон поставки и первую роль. Никогда не открывает Ship, не пишет ~/.grok и не выдумывает id Host. Базовые веса — быстрая помощь в сортировке, не оракул.",
+  "softwareTeamDlc.layaSuggest": "Предложить через Laya",
+  "softwareTeamDlc.layaApply": "Применить предложение",
+  "softwareTeamDlc.layaDismiss": "Отклонить",
+  "softwareTeamDlc.layaUncertain": "Низкая уверенность ({n}). Проверьте перед применением.",
+  "softwareTeamDlc.layaNeedHost": "Подсказки Laya требуют настольный Host.",
+  "softwareTeamDlc.layaNeedPython": "Установите Python 3 и повторите.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Laya нельзя импортировать. Установите pip install laya>=0.3.3 — это приложение не ставит пакет само.",
+  "softwareTeamDlc.layaBlockedHome": "Laya не запускается против общего ~/.grok.",
+  "softwareTeamDlc.layaHostError": "Sidecar Laya не удалось: {error}",
+  "softwareTeamDlc.layaDisabled": "Включите сортировку Laya в Настройки → Расширения → Агенты.",
+  "softwareTeamDlc.layaShipReady": "Оценка Laya ship-ready: {n} (не открывает Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Минимальная уверенность, чтобы считать решение надёжным",
 } as const;

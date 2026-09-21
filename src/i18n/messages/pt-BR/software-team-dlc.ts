@@ -338,4 +338,20 @@ export const ptBRSoftwareTeamDlc = {
     "Este quadro foi gravado no arquivo do projeto. A outra cópia está em {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Não foi possível gravar este quadro sobre o arquivo do projeto.",
+  "softwareTeamDlc.layaEnable": "Ativar sugestões de triagem do Laya",
+  "softwareTeamDlc.layaEnableDesc":
+    "Sidecar local opcional de System 1 (Python + Laya). Sugere prioridade, modelo de entrega e primeiro papel. Nunca destrava o Ship, nunca grava ~/.grok, nunca inventa ids de Host. Os pesos base são um auxílio rápido de triagem — não um oráculo.",
+  "softwareTeamDlc.layaSuggest": "Sugerir com Laya",
+  "softwareTeamDlc.layaApply": "Aplicar sugestão",
+  "softwareTeamDlc.layaDismiss": "Dispensar",
+  "softwareTeamDlc.layaUncertain": "Confiança baixa ({n}). Verifique antes de aplicar.",
+  "softwareTeamDlc.layaNeedHost": "As sugestões do Laya precisam do Host desktop.",
+  "softwareTeamDlc.layaNeedPython": "Instale o Python 3 e tente de novo.",
+  "softwareTeamDlc.layaNeedPackage":
+    "O Laya não é importável. Instale com pip install laya>=0.3.3 — este app não fará o pip-install.",
+  "softwareTeamDlc.layaBlockedHome": "O Laya não será executado contra o ~/.grok compartilhado.",
+  "softwareTeamDlc.layaHostError": "O sidecar Laya falhou: {error}",
+  "softwareTeamDlc.layaDisabled": "Ative a triagem Laya em Configurações → Extensões → Agentes.",
+  "softwareTeamDlc.layaShipReady": "Estimativa ship-ready do Laya: {n} (não destrava o Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Confiança mínima para tratar como certa",
 } as const;

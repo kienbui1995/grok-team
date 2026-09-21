@@ -338,4 +338,20 @@ export const deSoftwareTeamDlc = {
     "Dieses Board wurde in die Projektdatei geschrieben. Die andere Kopie liegt in {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Dieses Board konnte nicht über die Projektdatei geschrieben werden.",
+  "softwareTeamDlc.layaEnable": "Laya-Triage-Vorschläge aktivieren",
+  "softwareTeamDlc.layaEnableDesc":
+    "Optionale lokale System-1-Sidecar (Python + Laya). Schlägt Priorität, Liefervorlage und erste Rolle vor. Schaltet Ship nie frei, schreibt nie ~/.grok, erfindet keine Host-IDs. Basisgewichte sind eine schnelle Triage-Hilfe — kein Orakel.",
+  "softwareTeamDlc.layaSuggest": "Mit Laya vorschlagen",
+  "softwareTeamDlc.layaApply": "Vorschlag übernehmen",
+  "softwareTeamDlc.layaDismiss": "Verwerfen",
+  "softwareTeamDlc.layaUncertain": "Niedrige Konfidenz ({n}). Vor dem Übernehmen prüfen.",
+  "softwareTeamDlc.layaNeedHost": "Laya-Vorschläge brauchen den Desktop-Host.",
+  "softwareTeamDlc.layaNeedPython": "Python 3 installieren, dann erneut versuchen.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Laya ist nicht importierbar. Installieren mit pip install laya>=0.3.3 — diese App installiert es nicht per pip.",
+  "softwareTeamDlc.layaBlockedHome": "Laya läuft nicht gegen das geteilte ~/.grok.",
+  "softwareTeamDlc.layaHostError": "Laya-Sidecar fehlgeschlagen: {error}",
+  "softwareTeamDlc.layaDisabled": "Laya-Triage unter Einstellungen → Erweiterungen → Agenten einschalten.",
+  "softwareTeamDlc.layaShipReady": "Laya-Schätzwert ship-ready: {n} (schaltet Ship nicht frei).",
+  "softwareTeamDlc.layaMinConfidence": "Mindestkonfidenz, um als sicher zu gelten",
 } as const;

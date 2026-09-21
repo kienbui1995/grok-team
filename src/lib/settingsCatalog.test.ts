@@ -586,6 +586,12 @@ describe("settingsCatalog", () => {
     expect(zhConflict.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(
       true,
     );
+    const laya = searchSettingsEntries("laya", tZh, tEn);
+    expect(laya.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const engine = searchSettingsEntries("decision engine", tZh, tEn);
+    expect(engine.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
+    const triage = searchSettingsEntries("triage", tZh, tEn);
+    expect(triage.some((h) => h.entry.id === "ext.softwareTeamDlc")).toBe(true);
     expect(buildSettingsHash({ section: "extensions", tab: "agents" })).toBe(
       "#/settings/extensions/agents",
     );

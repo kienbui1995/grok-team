@@ -306,4 +306,19 @@ export const zhSoftwareTeamDlc = {
   "softwareTeamDlc.conflictKeptBoard":
     "已把本看板写入项目文件。另一份在 {file}。",
   "softwareTeamDlc.conflictKeepFailed": "无法用本看板覆盖项目文件。",
+  "softwareTeamDlc.layaEnable": "启用 Laya 分诊建议",
+  "softwareTeamDlc.layaEnableDesc":
+    "可选的本机 System 1 侧车（Python + Laya）。建议优先级、交付模板和起始角色。绝不解锁发布、不写 ~/.grok、不编造 Host id。基础权重只是快速分诊辅助，不是神谕。",
+  "softwareTeamDlc.layaSuggest": "用 Laya 建议",
+  "softwareTeamDlc.layaApply": "应用建议",
+  "softwareTeamDlc.layaDismiss": "忽略",
+  "softwareTeamDlc.layaUncertain": "置信度低（{n}）。应用前请核对。",
+  "softwareTeamDlc.layaNeedHost": "Laya 建议需要桌面 Host。",
+  "softwareTeamDlc.layaNeedPython": "请安装 Python 3 后再试。",
+  "softwareTeamDlc.layaNeedPackage": "无法导入 Laya。请用 pip install laya>=0.3.3 安装 — 本应用不会代为 pip 安装。",
+  "softwareTeamDlc.layaBlockedHome": "Laya 不会针对共享 ~/.grok 运行。",
+  "softwareTeamDlc.layaHostError": "Laya 侧车失败：{error}",
+  "softwareTeamDlc.layaDisabled": "请在 设置 → 扩展 → 代理 中打开 Laya 分诊。",
+  "softwareTeamDlc.layaShipReady": "Laya 发布就绪估计：{n}（不会解锁发布）。",
+  "softwareTeamDlc.layaMinConfidence": "视为确定所需的最低置信度",
 } as const;

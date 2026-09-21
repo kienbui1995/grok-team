@@ -337,4 +337,20 @@ export const ukSoftwareTeamDlc = {
     "Цю дошку записано у файл проєкту. Інша копія — у {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Не вдалося записати цю дошку поверх файлу проєкту.",
+  "softwareTeamDlc.layaEnable": "Увімкнути підказки сортування Laya",
+  "softwareTeamDlc.layaEnableDesc":
+    "Необов’язковий локальний sidecar System 1 (Python + Laya). Пропонує пріоритет, шаблон поставки та першу роль. Ніколи не відкриває Ship, не пише ~/.grok і не вигадує id Host. Базові ваги — швидка допомога в сортуванні, не оракул.",
+  "softwareTeamDlc.layaSuggest": "Запропонувати через Laya",
+  "softwareTeamDlc.layaApply": "Застосувати пропозицію",
+  "softwareTeamDlc.layaDismiss": "Відхилити",
+  "softwareTeamDlc.layaUncertain": "Низька впевненість ({n}). Перевірте перед застосуванням.",
+  "softwareTeamDlc.layaNeedHost": "Підказки Laya потребують настільний Host.",
+  "softwareTeamDlc.layaNeedPython": "Встановіть Python 3 і спробуйте знову.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Laya не імпортується. Встановіть pip install laya>=0.3.3 — цей застосунок не ставить пакет сам.",
+  "softwareTeamDlc.layaBlockedHome": "Laya не запускається проти спільного ~/.grok.",
+  "softwareTeamDlc.layaHostError": "Sidecar Laya не вдався: {error}",
+  "softwareTeamDlc.layaDisabled": "Увімкніть сортування Laya в Налаштування → Розширення → Агенти.",
+  "softwareTeamDlc.layaShipReady": "Оцінка Laya ship-ready: {n} (не відкриває Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Мінімальна впевненість, щоб вважати рішення певним",
 } as const;

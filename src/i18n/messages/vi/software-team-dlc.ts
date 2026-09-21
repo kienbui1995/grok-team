@@ -346,4 +346,20 @@ export const viSoftwareTeamDlc = {
     "Đã ghi bảng này vào tệp dự án. Bản kia ở {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Không ghi được bảng này đè lên tệp dự án.",
+  "softwareTeamDlc.layaEnable": "Bật gợi ý phân loại Laya",
+  "softwareTeamDlc.layaEnableDesc":
+    "Sidecar System 1 cục bộ tùy chọn (Python + Laya). Gợi ý mức ưu tiên, mẫu giao hàng và vai trò đầu. Không bao giờ mở khóa Ship, không ghi ~/.grok, không bịa id Host. Trọng số gốc chỉ là trợ giúp phân loại nhanh — không phải tiên tri.",
+  "softwareTeamDlc.layaSuggest": "Gợi ý bằng Laya",
+  "softwareTeamDlc.layaApply": "Áp dụng gợi ý",
+  "softwareTeamDlc.layaDismiss": "Bỏ qua",
+  "softwareTeamDlc.layaUncertain": "Độ tin thấp ({n}). Kiểm tra trước khi áp dụng.",
+  "softwareTeamDlc.layaNeedHost": "Gợi ý Laya cần Host máy tính.",
+  "softwareTeamDlc.layaNeedPython": "Cài Python 3 rồi thử lại.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Không import được Laya. Cài bằng pip install laya>=0.3.3 — ứng dụng này sẽ không tự pip-install.",
+  "softwareTeamDlc.layaBlockedHome": "Laya sẽ không chạy với ~/.grok dùng chung.",
+  "softwareTeamDlc.layaHostError": "Sidecar Laya thất bại: {error}",
+  "softwareTeamDlc.layaDisabled": "Bật phân loại Laya trong Cài đặt → Tiện ích → Tác nhân.",
+  "softwareTeamDlc.layaShipReady": "Ước lượng ship-ready của Laya: {n} (không mở khóa Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Độ tin tối thiểu để coi là chắc",
 } as const;

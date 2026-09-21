@@ -335,4 +335,19 @@ export const koSoftwareTeamDlc = {
     "이 보드를 프로젝트 파일에 썼습니다. 다른 복사본은 {file}에 있습니다.",
   "softwareTeamDlc.conflictKeepFailed":
     "이 보드로 프로젝트 파일을 덮어쓰지 못했습니다.",
+  "softwareTeamDlc.layaEnable": "Laya 트리아지 제안 사용",
+  "softwareTeamDlc.layaEnableDesc":
+    "선택적 로컬 System 1 사이드카(Python + Laya). 우선순위, 전달 템플릿, 첫 역할을 제안합니다. Ship을 절대 잠금 해제하지 않고, ~/.grok에 쓰지 않으며, Host id를 만들지 않습니다. 기본 가중치는 빠른 트리아지 보조일 뿐 신탁이 아닙니다.",
+  "softwareTeamDlc.layaSuggest": "Laya로 제안",
+  "softwareTeamDlc.layaApply": "제안 적용",
+  "softwareTeamDlc.layaDismiss": "닫기",
+  "softwareTeamDlc.layaUncertain": "신뢰도가 낮습니다({n}). 적용 전에 확인하세요.",
+  "softwareTeamDlc.layaNeedHost": "Laya 제안에는 데스크톱 Host가 필요합니다.",
+  "softwareTeamDlc.layaNeedPython": "Python 3을 설치한 뒤 다시 시도하세요.",
+  "softwareTeamDlc.layaNeedPackage": "Laya를 가져올 수 없습니다. pip install laya>=0.3.3로 설치하세요 — 이 앱은 pip로 설치하지 않습니다.",
+  "softwareTeamDlc.layaBlockedHome": "공유 ~/.grok에서는 Laya를 실행하지 않습니다.",
+  "softwareTeamDlc.layaHostError": "Laya 사이드카 실패: {error}",
+  "softwareTeamDlc.layaDisabled": "설정 → 확장 → 에이전트에서 Laya 트리아지를 켜세요.",
+  "softwareTeamDlc.layaShipReady": "Laya ship-ready 추정: {n} (Ship을 잠금 해제하지 않음).",
+  "softwareTeamDlc.layaMinConfidence": "확실하다고 볼 최소 신뢰도",
 } as const;

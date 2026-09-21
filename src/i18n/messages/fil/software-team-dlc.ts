@@ -339,4 +339,20 @@ export const filSoftwareTeamDlc = {
     "Naisulat ang board na ito sa file ng proyek. Ang kabilang kopya ay nasa {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Hindi maisulat ang board na ito sa file ng proyek.",
+  "softwareTeamDlc.layaEnable": "I-enable ang mga mungkahi sa triage ng Laya",
+  "softwareTeamDlc.layaEnableDesc":
+    "Opsyonal na lokal na System 1 sidecar (Python + Laya). Nagmumungkahi ng priority, delivery template, at unang role. Hindi kailanman nag-a-unlock ng Ship, hindi sumusulat sa ~/.grok, hindi gumagawa ng Host ids. Ang base weights ay mabilis na tulong sa triage — hindi orakulo.",
+  "softwareTeamDlc.layaSuggest": "Magmungkahi gamit ang Laya",
+  "softwareTeamDlc.layaApply": "Ilapat ang mungkahi",
+  "softwareTeamDlc.layaDismiss": "I-dismiss",
+  "softwareTeamDlc.layaUncertain": "Mababang kumpiyansa ({n}). Suriin bago ilapat.",
+  "softwareTeamDlc.layaNeedHost": "Kailangan ng desktop Host ang mga mungkahi ng Laya.",
+  "softwareTeamDlc.layaNeedPython": "I-install ang Python 3, tapos subukan ulit.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Hindi ma-import ang Laya. I-install gamit ang pip install laya>=0.3.3 — hindi ito i-pip-install ng app.",
+  "softwareTeamDlc.layaBlockedHome": "Hindi tatakbo ang Laya laban sa shared ~/.grok.",
+  "softwareTeamDlc.layaHostError": "Nabigo ang Laya sidecar: {error}",
+  "softwareTeamDlc.layaDisabled": "I-on ang Laya triage sa Settings → Extensions → Agents.",
+  "softwareTeamDlc.layaShipReady": "Tantiya ng Laya na ship-ready: {n} (hindi nag-a-unlock ng Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Minimum na kumpiyansa para ituring na tiyak",
 } as const;

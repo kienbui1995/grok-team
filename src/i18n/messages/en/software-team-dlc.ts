@@ -346,4 +346,20 @@ export const enSoftwareTeamDlc = {
     "This board was written to the project file. The other copy is in {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Could not write this board over the project file.",
+  "softwareTeamDlc.layaEnable": "Enable Laya triage suggestions",
+  "softwareTeamDlc.layaEnableDesc":
+    "Optional local System 1 sidecar (Python + Laya). Suggests priority, delivery template, and first role. Never unlocks Ship, never writes ~/.grok, never invents Host ids. Base weights are a fast triage aid — not an oracle.",
+  "softwareTeamDlc.layaSuggest": "Suggest with Laya",
+  "softwareTeamDlc.layaApply": "Apply suggestion",
+  "softwareTeamDlc.layaDismiss": "Dismiss",
+  "softwareTeamDlc.layaUncertain": "Low confidence ({n}). Check before applying.",
+  "softwareTeamDlc.layaNeedHost": "Laya suggestions need the desktop Host.",
+  "softwareTeamDlc.layaNeedPython": "Install Python 3, then retry.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Laya is not importable. Install with pip install laya>=0.3.3 — this app will not pip-install it.",
+  "softwareTeamDlc.layaBlockedHome": "Laya will not run against shared ~/.grok.",
+  "softwareTeamDlc.layaHostError": "Laya sidecar failed: {error}",
+  "softwareTeamDlc.layaDisabled": "Turn on Laya triage in Settings → Extensions → Agents.",
+  "softwareTeamDlc.layaShipReady": "Laya ship-ready estimate: {n} (does not unlock Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Minimum confidence to treat as certain",
 } as const;

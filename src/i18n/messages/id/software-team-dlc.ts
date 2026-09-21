@@ -338,4 +338,20 @@ export const idSoftwareTeamDlc = {
     "Papan ini ditulis ke file proyek. Salinan lain ada di {file}.",
   "softwareTeamDlc.conflictKeepFailed":
     "Tidak bisa menimpa file proyek dengan papan ini.",
+  "softwareTeamDlc.layaEnable": "Aktifkan saran triase Laya",
+  "softwareTeamDlc.layaEnableDesc":
+    "Sidecar System 1 lokal opsional (Python + Laya). Menyarankan prioritas, templat pengiriman, dan peran pertama. Tidak pernah membuka Ship, tidak menulis ~/.grok, tidak mengarang id Host. Bobot dasar adalah bantuan triase cepat — bukan ramalan.",
+  "softwareTeamDlc.layaSuggest": "Sarankan dengan Laya",
+  "softwareTeamDlc.layaApply": "Terapkan saran",
+  "softwareTeamDlc.layaDismiss": "Tutup",
+  "softwareTeamDlc.layaUncertain": "Keyakinan rendah ({n}). Periksa sebelum menerapkan.",
+  "softwareTeamDlc.layaNeedHost": "Saran Laya membutuhkan Host desktop.",
+  "softwareTeamDlc.layaNeedPython": "Pasang Python 3, lalu coba lagi.",
+  "softwareTeamDlc.layaNeedPackage":
+    "Laya tidak dapat diimpor. Pasang dengan pip install laya>=0.3.3 — aplikasi ini tidak akan memasangnya lewat pip.",
+  "softwareTeamDlc.layaBlockedHome": "Laya tidak akan berjalan terhadap ~/.grok bersama.",
+  "softwareTeamDlc.layaHostError": "Sidecar Laya gagal: {error}",
+  "softwareTeamDlc.layaDisabled": "Nyalakan triase Laya di Pengaturan → Ekstensi → Agen.",
+  "softwareTeamDlc.layaShipReady": "Perkiraan ship-ready Laya: {n} (tidak membuka Ship).",
+  "softwareTeamDlc.layaMinConfidence": "Keyakinan minimum agar dianggap pasti",
 } as const;

@@ -306,4 +306,19 @@ export const zhTWSoftwareTeamDlc = {
   "softwareTeamDlc.conflictKeptBoard":
     "已將此看板寫入專案檔。另一份在 {file}。",
   "softwareTeamDlc.conflictKeepFailed": "無法用此看板覆寫專案檔。",
+  "softwareTeamDlc.layaEnable": "啟用 Laya 分診建議",
+  "softwareTeamDlc.layaEnableDesc":
+    "可選的本機 System 1 側車（Python + Laya）。建議優先順序、交付範本與起始角色。絕不解鎖發布、不寫 ~/.grok、不編造 Host id。基礎權重只是快速分診輔助，不是神諭。",
+  "softwareTeamDlc.layaSuggest": "用 Laya 建議",
+  "softwareTeamDlc.layaApply": "套用建議",
+  "softwareTeamDlc.layaDismiss": "略過",
+  "softwareTeamDlc.layaUncertain": "信心偏低（{n}）。套用前請核對。",
+  "softwareTeamDlc.layaNeedHost": "Laya 建議需要桌面 Host。",
+  "softwareTeamDlc.layaNeedPython": "請安裝 Python 3 後再試。",
+  "softwareTeamDlc.layaNeedPackage": "無法匯入 Laya。請用 pip install laya>=0.3.3 安裝 — 本應用不會代為 pip 安裝。",
+  "softwareTeamDlc.layaBlockedHome": "Laya 不會針對共用 ~/.grok 執行。",
+  "softwareTeamDlc.layaHostError": "Laya 側車失敗：{error}",
+  "softwareTeamDlc.layaDisabled": "請在 設定 → 擴充功能 → 代理 中開啟 Laya 分診。",
+  "softwareTeamDlc.layaShipReady": "Laya 發布就緒估計：{n}（不會解鎖發布）。",
+  "softwareTeamDlc.layaMinConfidence": "視為確定所需的最低信心",
 } as const;

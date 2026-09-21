@@ -336,4 +336,19 @@ export const jaSoftwareTeamDlc = {
     "このボードをプロジェクトのファイルに書きました。もう一方は {file} にあります。",
   "softwareTeamDlc.conflictKeepFailed":
     "このボードでプロジェクトのファイルを上書きできませんでした。",
+  "softwareTeamDlc.layaEnable": "Laya のトリアージ提案を有効にする",
+  "softwareTeamDlc.layaEnableDesc":
+    "任意のローカル System 1 サイドカー（Python + Laya）。優先度、デリバリーテンプレート、最初のロールを提案します。Ship は解除せず、~/.grok にも書き込まず、Host id も作りません。ベース重みは速いトリアージ補助であり、神託ではありません。",
+  "softwareTeamDlc.layaSuggest": "Laya で提案",
+  "softwareTeamDlc.layaApply": "提案を適用",
+  "softwareTeamDlc.layaDismiss": "閉じる",
+  "softwareTeamDlc.layaUncertain": "信頼度が低いです（{n}）。適用前に確認してください。",
+  "softwareTeamDlc.layaNeedHost": "Laya の提案にはデスクトップ Host が必要です。",
+  "softwareTeamDlc.layaNeedPython": "Python 3 をインストールしてから再試行してください。",
+  "softwareTeamDlc.layaNeedPackage": "Laya をインポートできません。pip install laya>=0.3.3 で入れてください — このアプリは pip インストールしません。",
+  "softwareTeamDlc.layaBlockedHome": "共有の ~/.grok に対して Laya は実行しません。",
+  "softwareTeamDlc.layaHostError": "Laya サイドカーが失敗しました: {error}",
+  "softwareTeamDlc.layaDisabled": "設定 → 拡張機能 → エージェント で Laya トリアージをオンにしてください。",
+  "softwareTeamDlc.layaShipReady": "Laya の ship-ready 見込み: {n}（Ship は解除しません）。",
+  "softwareTeamDlc.layaMinConfidence": "確実とみなす最低信頼度",
 } as const;
