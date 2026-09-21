@@ -15,6 +15,12 @@ describe("SdlcStudioPage dialog / i18n guard", () => {
     expect(SRC).not.toMatch(/className=["']menu-panel["']/);
   });
 
+  it("uses Laya suggest copy and does not grow AppWorkbench", () => {
+    expect(SRC).toContain('t("softwareTeamDlc.layaSuggest")');
+    expect(SRC).toContain("useSoftwareTeamLaya");
+    expect(SRC).toContain("pickSoftwareTeamStudioOverlay");
+  });
+
   it("resolves pipeline conflict with GlassModal copy (close stays unresolved)", () => {
     expect(SRC).toContain("<GlassModal");
     expect(SRC).toContain('open={overlay === "conflict"}');

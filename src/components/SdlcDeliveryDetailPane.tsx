@@ -51,6 +51,16 @@ export type SdlcDeliveryDetailPaneProps = {
   onSaveArchitectNote?: (text: string) => void;
   onSaveReviewNote?: (text: string) => void;
   onSaveQaNote?: (text: string) => void;
+  layaAllowed?: boolean;
+  layaApplying?: boolean;
+  layaHonesty?: string | null;
+  layaUncertain?: boolean;
+  layaConfidence?: number | null;
+  layaPriority?: "p1" | "p2" | "p3" | null;
+  layaShipReady?: string | null;
+  onLayaSuggest?: () => void;
+  onLayaApplyPriority?: () => void;
+  onLayaDismiss?: () => void;
 };
 
 function formatActivityAt(locale: Locale, at: number): string {
@@ -92,6 +102,16 @@ export function SdlcDeliveryDetailPane({
   onSaveArchitectNote,
   onSaveReviewNote,
   onSaveQaNote,
+  layaAllowed = false,
+  layaApplying = false,
+  layaHonesty = null,
+  layaUncertain = false,
+  layaConfidence = null,
+  layaPriority = null,
+  layaShipReady = null,
+  onLayaSuggest,
+  onLayaApplyPriority,
+  onLayaDismiss,
 }: SdlcDeliveryDetailPaneProps) {
   const tr = useMemo(() => createT(locale), [locale]);
   const t: TFn = (k, vars) => tr(k, vars);
@@ -218,6 +238,54 @@ export function SdlcDeliveryDetailPane({
           <p className="sdlc-studio__slash-note">
             {t("softwareTeamDlc.deliveryDetailHint")}
           </p>
+          {onLayaSuggest ? (
+            <div className="sdlc-studio__field">
+              <div className="sdlc-studio__chips" role="group">
+                <button
+                  type="button"
+                  className="task-board__chip"
+                  disabled={!layaAllowed || layaApplying}
+                  onClick={onLayaSuggest}
+                >
+                  {t("softwareTeamDlc.layaSuggest")}
+                </button>
+                {layaPriority && onLayaApplyPriority ? (
+                  <button
+                    type="button"
+                    className="task-board__chip"
+                    disabled={layaApplying}
+                    onClick={onLayaApplyPriority}
+                  >
+                    {t("softwareTeamDlc.layaApply")}
+                  </button>
+                ) : null}
+                {onLayaDismiss && (layaPriority || layaShipReady) ? (
+                  <button
+                    type="button"
+                    className="task-board__chip"
+                    onClick={onLayaDismiss}
+                  >
+                    {t("softwareTeamDlc.layaDismiss")}
+                  </button>
+                ) : null}
+              </div>
+              {layaHonesty ? (
+                <p className="sdlc-studio__slash-note" role="status">
+                  {layaHonesty}
+                </p>
+              ) : null}
+              {layaUncertain ? (
+                <p className="sdlc-studio__slash-note" role="status">
+                  {t("softwareTeamDlc.layaUncertain", { n: layaConfidence ?? "" })}
+                </p>
+              ) : null}
+              {layaShipReady ? (
+                <p className="sdlc-studio__slash-note" role="status">
+                  {layaShipReady}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
           {onRenameDelivery && detail.deliveryId ? (
             <div className="sdlc-studio__field">
               <span>{t("softwareTeamDlc.deliveryName")}</span>

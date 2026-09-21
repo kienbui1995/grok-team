@@ -11,6 +11,7 @@ import { GlassModal } from "@/components/GlassModal";
 import { Select } from "@/components/Select";
 import { SdlcDeliveryDetailPane } from "@/components/SdlcDeliveryDetailPane";
 import { useSoftwareTeamPipeline } from "@/hooks/useSoftwareTeamDlc";
+import { useSoftwareTeamLaya } from "@/hooks/useSoftwareTeamLaya";
 import {
   itemToStarterFields,
   studioWorkspaceFromInputs,
@@ -76,6 +77,10 @@ import {
   softwareTeamDeliveryMembers,
   softwareTeamShipBlockMessageKey,
   softwareTeamDeliveryShipGate,
+  softwareTeamLayaFirstRolePatch,
+  softwareTeamLayaMessageKey,
+  softwareTeamLayaPriorityPatch,
+  softwareTeamLayaTemplatePatch,
   softwareTeamTemplateById,
   softwareTeamTemplateDocsRelative,
   writeSoftwareTeamWorkspaceBootstrap,
@@ -231,6 +236,22 @@ export function SdlcStudioPage({
     pipelineItems: pipeline.items,
     onSelectSession,
   });
+  const laya = useSoftwareTeamLaya({
+    enabled: true,
+    projectPath: workspace.projectPath,
+    locale,
+  });
+  const layaHonesty =
+    laya.last && !laya.last.ok
+      ? laya.last.reason === "host_error"
+        ? t(softwareTeamLayaMessageKey(laya.last.reason), {
+            error: "error" in laya.last ? (laya.last.error ?? "") : "",
+          })
+        : t(softwareTeamLayaMessageKey(laya.last.reason))
+      : !laya.plan.allowed
+        ? t(softwareTeamLayaMessageKey(laya.plan.reason))
+        : null;
+  const layaSuggestions = laya.last && laya.last.ok ? laya.last.suggestions : {};
   const [query, setQuery] = useState("");
   const [deliveryFilter, setDeliveryFilter] =
     useState<SoftwareTeamDeliveryFilterId>(
@@ -2213,6 +2234,53 @@ export function SdlcStudioPage({
         onAddSdlcDocs={
           sdlcDocs.some((row) => !row.exists) ? () => void onAddSdlcDocs() : undefined
         }
+        layaAllowed={laya.plan.allowed}
+        layaApplying={laya.applying}
+        layaHonesty={layaHonesty}
+        layaUncertain={!!layaSuggestions.priority?.uncertain}
+        layaConfidence={layaSuggestions.priority?.confidence ?? null}
+        layaPriority={softwareTeamLayaPriorityPatch(layaSuggestions.priority)}
+        layaShipReady={
+          typeof layaSuggestions.shipReady?.noul === "number"
+            ? t("softwareTeamDlc.layaShipReady", {
+                n: layaSuggestions.shipReady.noul,
+              })
+            : null
+        }
+        onLayaSuggest={() => {
+          const focus = deliveryDetail?.focusItem;
+          if (!focus) return;
+          void laya.suggest({
+            intents: ["priority", "shipReady"],
+            state: {
+              title: focus.title,
+              deliveryTitle: deliveryDetail?.title,
+              roleId: focus.roleId,
+              stageId: focus.stageId,
+              priority: focus.priority,
+              productNote: focus.productNote,
+              architectNote: focus.architectNote,
+              reviewNote: focus.reviewNote,
+              qaNote: focus.qaNote,
+              missingRoles: deliveryDetail?.deliveryId
+                ? missingSoftwareTeamDeliveryRoles(
+                    pipeline.items,
+                    deliveryDetail.deliveryId,
+                  )
+                : [],
+              locale,
+            },
+          });
+        }}
+        onLayaApplyPriority={() => {
+          const focus = deliveryDetail?.focusItem;
+          const priority = softwareTeamLayaPriorityPatch(
+            layaSuggestions.priority,
+          );
+          if (!focus || !priority) return;
+          pipeline.setPriority(focus.id, priority);
+        }}
+        onLayaDismiss={laya.dismiss}
         onSaveSliceRefs={(refs) => {
           if (deliveryDetail?.deliveryId) {
             const ok = pipeline.syncDeliverySliceRefs(
@@ -2526,6 +2594,25 @@ export function SdlcStudioPage({
             </button>
             <button
               type="button"
+              className="btn btn--ghost"
+              disabled={!laya.plan.allowed || laya.applying || !wizard}
+              onClick={() => {
+                if (!wizard) return;
+                void laya.suggest({
+                  intents: ["template", "firstRole"],
+                  state: {
+                    title: wizard.title,
+                    templateId: wizard.templateId,
+                    roleId: wizard.roleId,
+                    locale,
+                  },
+                });
+              }}
+            >
+              {t("softwareTeamDlc.layaSuggest")}
+            </button>
+            <button
+              type="button"
               className="btn"
               disabled={actions.launching || !(wizard?.title ?? "").trim()}
               onClick={() => void onStartDelivery()}
@@ -2593,6 +2680,58 @@ export function SdlcStudioPage({
                 ))}
               </div>
             </div>
+            {layaHonesty ? (
+              <p className="sdlc-studio__slash-note" role="status">
+                {layaHonesty}
+              </p>
+            ) : null}
+            {layaSuggestions.template || layaSuggestions.firstRole ? (
+              <div className="sdlc-studio__field">
+                {layaSuggestions.template?.uncertain ||
+                layaSuggestions.firstRole?.uncertain ? (
+                  <p className="sdlc-studio__slash-note" role="status">
+                    {t("softwareTeamDlc.layaUncertain", {
+                      n:
+                        layaSuggestions.template?.confidence ??
+                        layaSuggestions.firstRole?.confidence ??
+                        "",
+                    })}
+                  </p>
+                ) : null}
+                <div className="sdlc-studio__chips" role="group">
+                  <button
+                    type="button"
+                    className="task-board__chip"
+                    disabled={laya.applying}
+                    onClick={() => {
+                      const template = softwareTeamLayaTemplatePatch(
+                        layaSuggestions.template,
+                      );
+                      const firstRole = softwareTeamLayaFirstRolePatch(
+                        layaSuggestions.firstRole,
+                      );
+                      const nextTemplate = template ?? wizard.templateId;
+                      const roleFromTemplate =
+                        softwareTeamTemplateById(nextTemplate)?.roleId;
+                      setWizard({
+                        ...wizard,
+                        templateId: nextTemplate,
+                        roleId: firstRole ?? roleFromTemplate ?? wizard.roleId,
+                      });
+                    }}
+                  >
+                    {t("softwareTeamDlc.layaApply")}
+                  </button>
+                  <button
+                    type="button"
+                    className="task-board__chip"
+                    onClick={laya.dismiss}
+                  >
+                    {t("softwareTeamDlc.layaDismiss")}
+                  </button>
+                </div>
+              </div>
+            ) : null}
             {(() => {
               const wizardTemplate = softwareTeamTemplateById(
                 wizard.templateId,

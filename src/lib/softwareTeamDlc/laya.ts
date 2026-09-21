@@ -3,6 +3,7 @@ import { SOFTWARE_TEAM_ROLE_IDS, type SoftwareTeamRoleId } from "./roles";
 import { SOFTWARE_TEAM_TEMPLATE_IDS, type SoftwareTeamTemplateId } from "./templates";
 import {
   normalizeSoftwareTeamItemPriority,
+  type SoftwareTeamItemPriority,
 } from "./priority";
 
 export const SOFTWARE_TEAM_LAYA_INTENTS = [
@@ -197,6 +198,36 @@ export function parseSoftwareTeamLayaResult(
 
 export function softwareTeamLayaUnlocksShip(_parsed: SoftwareTeamLayaParse): boolean {
   return false;
+}
+
+export function softwareTeamLayaPriorityPatch(
+  suggestion?: SoftwareTeamLayaSuggestion | null,
+): Exclude<SoftwareTeamItemPriority, ""> | null {
+  if (!suggestion || suggestion.intent !== "priority" || !suggestion.choice) {
+    return null;
+  }
+  const priority = normalizeSoftwareTeamItemPriority(suggestion.choice);
+  return priority === "p1" || priority === "p2" || priority === "p3"
+    ? priority
+    : null;
+}
+
+export function softwareTeamLayaTemplatePatch(
+  suggestion?: SoftwareTeamLayaSuggestion | null,
+): SoftwareTeamTemplateId | null {
+  const choice = suggestion?.choice ?? "";
+  return (SOFTWARE_TEAM_TEMPLATE_IDS as readonly string[]).includes(choice)
+    ? (choice as SoftwareTeamTemplateId)
+    : null;
+}
+
+export function softwareTeamLayaFirstRolePatch(
+  suggestion?: SoftwareTeamLayaSuggestion | null,
+): SoftwareTeamRoleId | null {
+  const choice = suggestion?.choice ?? "";
+  return (SOFTWARE_TEAM_ROLE_IDS as readonly string[]).includes(choice)
+    ? (choice as SoftwareTeamRoleId)
+    : null;
 }
 
 function pack(

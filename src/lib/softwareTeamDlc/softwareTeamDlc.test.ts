@@ -187,6 +187,9 @@ import {
   saveSoftwareTeamLayaMinConfidence,
   softwareTeamLayaMessageKey,
   runSoftwareTeamLayaSuggest,
+  softwareTeamLayaFirstRolePatch,
+  softwareTeamLayaPriorityPatch,
+  softwareTeamLayaTemplatePatch,
   type SoftwareTeamLayaHost,
   type SoftwareTeamLaunchHost,
   type SoftwareTeamPackProbeHost,
@@ -5233,6 +5236,9 @@ describe("Software Works Laya triage (domain)", () => {
     if (!parsed.ok) return;
     expect(parsed.suggestions.priority?.uncertain).toBe(true);
     expect(softwareTeamLayaUnlocksShip(parsed)).toBe(false);
+    expect(softwareTeamLayaPriorityPatch(parsed.suggestions.priority)).toBe("p2");
+    expect(softwareTeamLayaTemplatePatch({ intent: "template", choice: "hotfix", confidence: 0.9, uncertain: false })).toBe("hotfix");
+    expect(softwareTeamLayaFirstRolePatch({ intent: "firstRole", choice: "engineer", confidence: 0.9, uncertain: false })).toBe("engineer");
   });
 });
 
