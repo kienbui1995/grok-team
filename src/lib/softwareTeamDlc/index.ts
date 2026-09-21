@@ -476,3 +476,9 @@ export {
   saveSoftwareTeamLayaMinConfidence,
   softwareTeamLayaMessageKey,
 } from "./layaPref";
+
+export {
+  defaultSoftwareTeamLayaHost,
+  runSoftwareTeamLayaSuggest,
+  type SoftwareTeamLayaHost,
+} from "./layaHost";

@@ -186,6 +186,8 @@ import {
   saveSoftwareTeamLayaEnabled,
   saveSoftwareTeamLayaMinConfidence,
   softwareTeamLayaMessageKey,
+  runSoftwareTeamLayaSuggest,
+  type SoftwareTeamLayaHost,
   type SoftwareTeamLaunchHost,
   type SoftwareTeamPackProbeHost,
   type SoftwareTeamPackWriteHost,
@@ -5271,5 +5273,84 @@ describe("Software Works Laya prefs", () => {
     if (out.error || out.status !== 0) return; // skip if no python3 in CI
     const parsed = parseSoftwareTeamLayaResult(JSON.parse(out.stdout));
     expect(parsed.ok).toBe(true);
+  });
+});
+
+describe("Software Works Laya host adapter", () => {
+  it("maps probe fail to need_laya", async () => {
+    const host: SoftwareTeamLayaHost = {
+      isDesktopHost: () => true,
+      probe: async () => ({ pythonOk: true, layaImportOk: false, error: "no laya" }),
+      predict: async () => {
+        throw new Error("predict should not run");
+      },
+    };
+    const result = await runSoftwareTeamLayaSuggest({
+      enabled: true,
+      layaEnabled: true,
+      projectPath: "/repo",
+      state: { title: "Auth" },
+      host,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "need_laya" });
+  });
+
+  it("parses a predict fixture as p1", async () => {
+    const host: SoftwareTeamLayaHost = {
+      isDesktopHost: () => true,
+      probe: async () => ({ pythonOk: true, layaImportOk: true }),
+      predict: async () => ({
+        answers: { priority: { choice: "p1", confidence: 0.91 } },
+      }),
+    };
+    const result = await runSoftwareTeamLayaSuggest({
+      enabled: true,
+      layaEnabled: true,
+      projectPath: "/repo",
+      state: { title: "Auth" },
+      host,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.suggestions.priority).toMatchObject({
+      choice: "p1",
+      uncertain: false,
+    });
+  });
+
+  it("maps spawn throw to host_error", async () => {
+    const host: SoftwareTeamLayaHost = {
+      isDesktopHost: () => true,
+      probe: async () => ({ pythonOk: true, layaImportOk: true }),
+      predict: async () => {
+        throw new Error("boom");
+      },
+    };
+    const result = await runSoftwareTeamLayaSuggest({
+      enabled: true,
+      layaEnabled: true,
+      projectPath: "/repo",
+      state: { title: "Auth" },
+      host,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "host_error", error: "boom" });
+  });
+
+  it("never calls predict against ~/.grok", async () => {
+    const predict = vi.fn();
+    const host: SoftwareTeamLayaHost = {
+      isDesktopHost: () => true,
+      probe: async () => ({ pythonOk: true, layaImportOk: true }),
+      predict,
+    };
+    const result = await runSoftwareTeamLayaSuggest({
+      enabled: true,
+      layaEnabled: true,
+      projectPath: "~/.grok",
+      state: { title: "Auth" },
+      host,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "blocked_shared_home" });
+    expect(predict).not.toHaveBeenCalled();
   });
 });

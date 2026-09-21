@@ -161,6 +161,8 @@ mod session_manager;
 
 mod session_title;
 
+mod software_team_laya;
+
 mod skill_compat;
 
 mod skill_edit;
@@ -1724,6 +1726,9 @@ pub fn run() {
             pet_window::pet_push_tasks,
             pet_window::pet_get_tasks,
             pet_window::pet_set_hit_chrome,
+
+            software_team_laya::software_team_laya_probe,
+            software_team_laya::software_team_laya_predict,
 
         ])
 
